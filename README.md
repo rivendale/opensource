@@ -17,6 +17,23 @@ engineering lessons from small games we built.
 5. **Start the game repo from [`templates/`](templates/)**: an `AGENTS.md` every AI tool reads, and a
    `THIRD_PARTY.md` recording every file you borrowed and its license.
 
+## Graphics, engines and starting projects
+
+- [`art/blender.md`](art/blender.md): 3D game art with Blender, from modeling to engine export,
+  3D-to-2D sprite rendering, Python automation, and letting AI tools drive Blender.
+- [`art/2d.md`](art/2d.md): 2D art with GIMP, Krita, Inkscape and pixel-art tools, tile maps,
+  texture atlases and batch automation.
+- [`engines/`](engines/): [Godot](engines/godot.md), [Unity](engines/unity.md) (not open source;
+  its terms are summarized), and [others](engines/others.md): Bevy, Phaser, LOVE, raylib,
+  MonoGame, Defold and web libraries.
+- [`scaffolds/`](scaffolds/README.md): the best-maintained open-source starter templates per engine,
+  plus [MCP servers](scaffolds/mcps.md) that let AI tools operate art tools and engines. Rebuilt by
+  `tools/find_scaffolds.py`.
+- [`ai/graphics.md`](ai/graphics.md): AI and game graphics, safely.
+
+**MCP servers and add-ons run code on your machine.** Read the code, pin a version, keep them
+local, and give them the least access that works.
+
 ## The license rule
 
 | reuse class | licenses | what you may do |

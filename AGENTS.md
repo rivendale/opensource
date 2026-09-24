@@ -8,7 +8,9 @@ game started from it.
 A reference chassis, not a game: `catalog/` (open-source games by genre, license and activity
 read from GitHub), `playbooks/` (how to build each genre), `ai/` (how to build with AI tools),
 `lessons/` (what went wrong and right in small games we built), `templates/` (start files for a new
-game repo). `data/catalog.json` is the machine-readable catalog; `tools/` rebuilds it.
+game repo), `art/` (Blender and 2D tools for game assets), `engines/` (Godot, Unity and others),
+`scaffolds/` (starter templates and MCP servers, with a hand-checked shortlist). `data/catalog.json`
+and `data/scaffolds.json` are the machine-readable lists; `tools/` rebuilds them.
 
 ## Rules when you use it to build a game
 
@@ -24,7 +26,10 @@ game repo). `data/catalog.json` is the machine-readable catalog; `tools/` rebuil
 
 ## Rules when you change this repository
 
-- The catalog is generated. Change `tools/build_catalog.py` and rebuild; do not hand-edit
-  `catalog/*.md` or `data/catalog.json`.
+- The catalog and scaffold lists are generated. Change `tools/build_catalog.py` or
+  `tools/find_scaffolds.py` and rebuild; do not hand-edit `catalog/*.md`, `scaffolds/scaffolds.md`,
+  `scaffolds/mcps.md` or `data/*.json`.
+- Anything that runs code on a reader's machine (an MCP server, an add-on, an install command) gets
+  its risk stated next to it and a pinned version, and links the checklist in `ai/graphics.md`.
 - Public repository: no personal names, hosts, keys or private project details in any file.
 - American English, plain words, no em dashes.

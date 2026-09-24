@@ -173,7 +173,9 @@ you commit to a roster size.
 
 - [Kenney](https://kenney.nl/assets): CC0 packs, including [Impact Sounds](https://kenney.nl/assets/impact-sounds)
   and 3D [Mini Characters](https://kenney.nl/assets/mini-characters).
-- [Quaternius](https://quaternius.com/): CC0 3D models.
+- [Quaternius](https://quaternius.com/license.html): 3D models, not CC0 any more. The Quaternius Asset
+  License v1.0 (2026-08-28) allows commercial games with no credit, but not redistributing the assets
+  as assets, including in a template or asset pack, so keep them out of a public starter repo.
 - [OpenGameArt](https://opengameart.org/): every asset has its own license (CC0, CC-BY, CC-BY-SA,
   GPL and others). This chassis treats CC-BY-SA as `study only`; filter for CC0 or CC-BY.
 - [Freesound](https://freesound.org/): licensed per sound, and some are CC-BY-NC (non-commercial).
