@@ -1,0 +1,35 @@
+{
+ "_comment": "Manual license corrections where GitHub's detector is wrong. Each needs a reason a reader can check. reuse_ok: true only when the corrected license is permissive AND verified by reading the repository's license files.",
+ "GNOME/aisleriot": {
+  "license": "GPL-3.0-or-later",
+  "why": "the code is GPL-3.0-or-later; GitHub's detector picked one of several COPYING files (card art)"
+ },
+ "xrLil-Batya/xray-oxygen": {
+  "license": "proprietary engine code",
+  "why": "ships GSC Game World's X-Ray engine source, licensed only for non-commercial use"
+ },
+ "urxp/dRally": {
+  "decompiled": true,
+  "why": "decompiler output of a commercial game"
+ },
+ "zaps166/NFSIISE": {
+  "decompiled": true,
+  "why": "built on a disassembly of a commercial game"
+ },
+ "mboyd-1240/ea-fc-27-pc-setup-gameplay-hub": {
+  "drop": true,
+  "why": "download lure named after a commercial game"
+ },
+ "riverflow668/Lostminer-der-einfache-einstieg": {
+  "drop": true,
+  "why": "README-only page whose download goes through a URL shortener"
+ },
+ "helloyanis/Groove2offline": {
+  "drop": true,
+  "why": "README distributes a modified commercial APK from file hosts"
+ },
+ "deokseon/D-BMS": {
+  "note": "README links an off-site executable; build from source",
+  "why": "off-site binary"
+ }
+}
