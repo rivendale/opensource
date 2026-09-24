@@ -32,11 +32,11 @@ A useful design is to let a large generative model set a goal at a slower cadenc
 
 [Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) is TypeSafe's typed decision service: it takes state plus typed questions and returns choices, scores or yes/no-style decisions. Its public price on 2026-09-24 was $0.042 per million input tokens; the TypeSafe site described output tokens as free. [TypeSafe product page and pricing, read 2026-09-24](https://typesafe.ai/). No accuracy, speed or benchmark figures are included here.
 
-### Tev1: a public, local option for typed choices
+### Tev1: a local option for typed choices (license pending)
 
 [Tev1-4B-experimental](https://huggingface.co/togethercomputer/Tev1-4B-experimental) is a public, ungated supervised fine-tune of Qwen3.5-4B. It takes a structured state, a question and 2 to 24 labeled options, then returns the chosen option's letter. It is an autoregressive, Jev-inspired experiment, not the Jev runtime. A community GGUF build can run through Ollama or llama.cpp, including on CPU; its Q6_K file is 3.46 GB. These model card and build details were checked 2026-09-24.
 
-The model card has no license tag, so public weights do not establish an open license for reuse. The [training code](https://github.com/togethercomputer/tev1) is MIT, but its listed training data have mixed, unknown or unspecified licenses, and the recipe warns that redistribution needs license review. Do not infer that the model weights or combined data are MIT licensed. Together's published hosted price on 2026-09-24 was $0.042 per million input tokens, with output free. Use the local model when avoiding a hosted classifier matters, but validate its selected letter against your own legal-action list before it can affect a game.
+Its model card says, as read on 2026-09-24, that "the release license for these fine-tuned weights is being finalized before public conversion": the weights are downloadable, but no license for them has been granted yet. Treat it as something to evaluate, not to ship, until that license is published. The [training code](https://github.com/togethercomputer/tev1) is MIT, but its listed training data have mixed, unknown or unspecified licenses, and the recipe warns that redistribution needs license review. Do not infer that the model weights or combined data are MIT licensed. Together's published hosted price on 2026-09-24 was $0.042 per million input tokens, with output free. Use the local model when avoiding a hosted classifier matters, but validate its selected letter against your own legal-action list before it can affect a game.
 
 ## Shared worlds with children
 
