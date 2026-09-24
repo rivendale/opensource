@@ -216,6 +216,16 @@ unless you need .NET libraries or a C# team; for C#, start from chickensoft-game
 
 ## AI tooling
 
+**You may not need an MCP server.** Godot's scenes (`.tscn`) and scripts (`.gd`) are plain text, so an
+agent can edit them with ordinary file tools and drive the engine from the command line: `--headless`
+runs without a window, and `--export-release`, `--export-debug` and `--export-pack` build from a preset
+([command line tutorial](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html),
+read 2026-09-24). A developer reported building a complete game in one seven-hour autonomous loop this
+way and credited skipping MCP with fewer tool calls, a faster loop and a cleaner result (a relayed
+post, not verified). The most-starred Godot MCP server, listed below, has had no push since April
+2026. Godot 4.7.2 is the current stable release; 4.8 is in development snapshots (dev 6 on
+2026-09-15), per godotengine.org on 2026-09-24.
+
 **Point Claude Code or Codex at the project.** Copy [../templates/AGENTS.md](../templates/AGENTS.md) into
 the game repository and add the block below; [../ai/README.md](../ai/README.md) covers one instruction file
 and checking each tool loaded it. Keep this chassis beside the game (`claude --add-dir ../opensource`;

@@ -326,6 +326,7 @@ disclosure rules, and discard anything resembling a known character or product.
 | [Blender Studio](https://studio.blender.org/remixing/) | CC-BY | open-movie assets; each states its license; credit the Blender Foundation |
 | [OpenGameArt](https://opengameart.org/content/faq) | per asset: CC0, CC-BY, CC-BY-SA, OGA-BY, GPL | share-alike terms on CC-BY-SA and GPL; with several listed, follow one |
 | [Quaternius](https://quaternius.com/license.html) | **not CC0 any more**: Quaternius Asset License v1.0 (2026-08-28) | free in commercial games, no credit; no redistributing the assets as assets, which the license says includes a template or asset pack; the version in effect when you downloaded an asset governs it, so record the date |
+| [Mixamo](https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html) (Adobe) | royalty-free in commercial games, per Adobe's FAQ (read 2026-09-24) | rigged characters and animations; the FAQ does not state terms for redistributing the raw files, so keep them out of a public repository |
 
 Record each file's source and license in [`THIRD_PARTY.md`](../templates/THIRD_PARTY.md), and
 credit CC-BY work on screen.
