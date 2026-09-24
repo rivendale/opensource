@@ -160,7 +160,9 @@ and physically based textures, plus weapon and impact sounds that carry informat
 - **[LibreQuake](https://github.com/lavenderdotpet/LibreQuake)** (`check first`; `docs/COPYING` is
   BSD-3-Clause): free content for Quake engines, which otherwise need "proprietary data files from
   id Software".
-- **[Quaternius](https://quaternius.com/faq.html):** "All models are under the CC0 License."
+- **[Quaternius](https://quaternius.com/license.html):** not CC0 any more. The Quaternius Asset
+  License v1.0 (2026-08-28) allows commercial games with no credit, but forbids redistributing the
+  assets as assets, including in a template or asset pack, so keep them out of a public starter repo.
 - **[Poly Haven](https://polyhaven.com/license):** "Our assets are all licensed as CC0".
 - **[ambientCG](https://docs.ambientcg.com/license/):** all assets under CC0 1.0 Universal.
 - **[Kenney](https://kenney.nl/support):** "all game assets on the asset pages are public domain

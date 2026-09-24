@@ -159,7 +159,8 @@ license; its source list says Zlib), a small Lua framework with Box2D physics bu
 - [Kenney](https://kenney.nl/assets): CC0, including the [Sports Pack](https://kenney.nl/assets/sports-pack)
   and [Minigolf Kit](https://kenney.nl/assets/minigolf-kit); Open Golf ships Kenney's Nature Kit.
 - [Poly Haven](https://polyhaven.com/license) and [ambientCG](https://ambientcg.com/license): CC0
-  grass, court and wood textures. [Quaternius](https://quaternius.com/): CC0 models.
+  grass, court and wood textures. [Quaternius](https://quaternius.com/license.html): models under the Quaternius Asset
+  License v1.0 (not CC0 since 2026-08-28): free in commercial games, but not in a public template or asset pack.
 - [Freesound](https://freesound.org/): crowd, whistle and ball sounds, licensed per sound; some are
   CC-BY-NC (non-commercial). [OpenGameArt](https://opengameart.org/): licensed per asset.
 - Or synthesize simple sounds (bounce, kick, whistle) in code, which leaves no audio license to

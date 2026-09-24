@@ -147,7 +147,9 @@ recovery, and every enemy needs hit, knockdown and getting-up animations.
 
 - **[Kenney](https://kenney.nl/support):** "all game assets on the asset pages are public domain
   licensed (CC0)", including for commercial projects.
-- **[Quaternius](https://quaternius.com/faq.html):** "All models are under the CC0 License."
+- **[Quaternius](https://quaternius.com/license.html):** not CC0 any more. The Quaternius Asset
+  License v1.0 (2026-08-28) allows commercial games with no credit, but forbids redistributing the
+  assets as assets, including in a template or asset pack, so keep them out of a public starter repo.
   Useful for 3D prototypes and third-person action.
 - **[OpenGameArt](https://opengameart.org/content/faq):** each asset has its own license (CC0,
   CC-BY, CC-BY-SA, OGA-BY, GPL). This chassis groups CC-BY-SA with `study only`, so filter for
