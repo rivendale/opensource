@@ -153,6 +153,13 @@ The examples use Fly.io; each lesson has an equivalent on other hosts.
 
 A code license says nothing about art, audio, maps or data.
 
+- **Other companies' characters are not yours to use, even in a free fan game.** A disclaimer
+  that "all characters belong to their owners" grants nothing: names and likenesses are protected
+  as trademarks and as copyrighted works, and money need not change hands for a rights holder to
+  act. Nintendo took down the Metroid II remake AM2R and the fan game Pokemon Uranium in August
+  2016, No Mario's Sky in September 2016, and a Super Mario 64 HD remake in March 2015 (news
+  sources cited in Wikipedia's [Fan game](https://en.wikipedia.org/wiki/Fan_game) article, read
+  2026-09-24). An AI tool that can generate a famous character on request does not change this.
 - **Register before you process.** Record each third-party file's source URL, author, license,
   size and SHA-256. Download only from an approved list and quarantine raw archives.
 - **CC0 first; CC-BY with a credits screen; CC-BY-SA blocked by default** (share-alike reaches

@@ -1,7 +1,9 @@
 # Other engines and frameworks
 
 Bevy, Phaser, LÖVE, raylib, MonoGame, Defold, and three.js, PixiJS and Excalibur for the web. For
-Godot see [`godot.md`](godot.md); for Unity, which is not open source, see [`unity.md`](unity.md).
+Godot see [`godot.md`](godot.md); for Unreal, which is source-available under Epic's EULA, see
+[`unreal.md`](unreal.md). For Unity, which is not open source, see [`unity.md`](unity.md).
+For Rust browser games using WebGPU and WebGL2, see [`rust-wasm-webgpu.md`](rust-wasm-webgpu.md).
 
 How this page was checked, on 2026-09-23:
 

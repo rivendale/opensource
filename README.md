@@ -13,7 +13,8 @@ engineering lessons from small games we built.
    reuse class (below). Reuse code only from `copy` projects, with attribution.
 3. **Pick an engine.** The chassis is engine-neutral; each playbook lists engines that fit the genre.
 4. **Build with AI tools** following [`ai/README.md`](ai/README.md): which tool for which stage,
-   prompt templates, and how to use a second model as a reviewer.
+   prompt templates, and how to use a second model as a reviewer. See also [AI game agents](ai/game-agents.md)
+   and [code-only animation](ai/animation.md).
 5. **Start the game repo from [`templates/`](templates/)**: an `AGENTS.md` every AI tool reads, and a
    `THIRD_PARTY.md` recording every file you borrowed and its license.
 
@@ -23,9 +24,10 @@ engineering lessons from small games we built.
   3D-to-2D sprite rendering, Python automation, and letting AI tools drive Blender.
 - [`art/2d.md`](art/2d.md): 2D art with GIMP, Krita, Inkscape and pixel-art tools, tile maps,
   texture atlases and batch automation.
-- [`engines/`](engines/): [Godot](engines/godot.md), [Unity](engines/unity.md) (not open source;
-  its terms are summarized), and [others](engines/others.md): Bevy, Phaser, LOVE, raylib,
-  MonoGame, Defold and web libraries.
+- [`engines/`](engines/): [Godot](engines/godot.md), [Unreal](engines/unreal.md) (source-available
+  under Epic's EULA), [Unity](engines/unity.md) (not open source; its terms are summarized), and
+  [others](engines/others.md): Bevy, Phaser, LOVE, raylib, MonoGame, Defold and web libraries.
+  See the [Rust, WebAssembly and WebGPU guide](engines/rust-wasm-webgpu.md) for browser games.
 - [`scaffolds/`](scaffolds/README.md): the best-maintained open-source starter templates per engine,
   plus [MCP servers](scaffolds/mcps.md) that let AI tools operate art tools and engines. Rebuilt by
   `tools/find_scaffolds.py`.

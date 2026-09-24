@@ -1,5 +1,7 @@
 # AI and game graphics
 
+Related guides: [AI agents that play or live in games](game-agents.md) and [code-only animation and video](animation.md).
+
 AI helps with game art in two different ways, and they carry different risks:
 
 1. **An AI tool operates your art tools.** Through MCP, Claude Code, Codex or the Grok CLI can
