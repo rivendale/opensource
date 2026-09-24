@@ -32,6 +32,23 @@ A useful design is to let a large generative model set a goal at a slower cadenc
 
 [Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) is TypeSafe's typed decision service: it takes state plus typed questions and returns choices, scores or yes/no-style decisions. Its public price on 2026-09-24 was $0.042 per million input tokens; the TypeSafe site described output tokens as free. [TypeSafe product page and pricing, read 2026-09-24](https://typesafe.ai/). No accuracy, speed or benchmark figures are included here.
 
+### Real-time games: one planner, many fast deciders
+
+The same split scales to real-time strategy: a large model writes a plan once before an
+encounter, and each squad or key unit gets its own small, fast decider that picks the next
+action from a list the game code builds, several times a second. The decider never writes
+code or free text; it only chooses. That keeps the expensive model out of the tight loop and
+keeps every action inside an allowlist. Developers have reported trying this with a hosted
+decision model and with a small local model; no public code or paper for those experiments was
+found on 2026-09-24, so treat the numbers in such posts as claims.
+
+To experiment in StarCraft II, the maintained Python option is
+[BurnySc2/python-sc2](https://github.com/BurnySc2/python-sc2) (MIT, last push 2026-04-25).
+DeepMind's [PySC2](https://github.com/google-deepmind/pysc2) (Apache-2.0) and the multi-agent
+benchmarks [SMAC](https://github.com/oxwhirl/smac) and [SMACv2](https://github.com/oxwhirl/smacv2)
+(both MIT) are widely cited but have had no push since 2024. All four read from GitHub's API on
+2026-09-24. You need a licensed copy of the game client to run any of them.
+
 ### Tev1: a local option for typed choices (license pending)
 
 [Tev1-4B-experimental](https://huggingface.co/togethercomputer/Tev1-4B-experimental) is a public, ungated supervised fine-tune of Qwen3.5-4B. It takes a structured state, a question and 2 to 24 labeled options, then returns the chosen option's letter. It is an autoregressive, Jev-inspired experiment, not the Jev runtime. A community GGUF build can run through Ollama or llama.cpp, including on CPU; its Q6_K file is 3.46 GB. These model card and build details were checked 2026-09-24.
