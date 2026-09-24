@@ -33,3 +33,5 @@ and `data/scaffolds.json` are the machine-readable lists; `tools/` rebuilds them
   its risk stated next to it and a pinned version, and links the checklist in `ai/graphics.md`.
 - Public repository: no personal names, hosts, keys or private project details in any file.
 - American English, plain words, no em dashes.
+- Run `python3 tools/check_links.py` before opening a pull request; it checks every relative
+  link and `#anchor` in the markdown, and `--selftest` checks the checker.
