@@ -227,6 +227,34 @@ progress along the centerline. Add tools/drift-bench: the same AI lap with and w
 drifting; print both lap times and the difference.
 ```
 
+**Art (image models, image-to-3D, an agent driving Blender).** One browser kart racer launched in
+September 2026, [KARTS.COM](https://karts.com/) (20 city tracks), reports this pipeline in a public
+post: character concept images from image models, converted to 3D by a hosted image-to-3D service,
+tracks built by a coding model driving Blender, and the game assembled in Three.js. That account is
+relayed, not measured. What its live site served on 2026-09-26 is checkable: characters, karts and
+landmarks load as `.glb` files through a glTF loader, every asset is versioned by a content hash, each
+music track ships as both `.m4a` and `.ogg`, and the tracks key off a centerline, checkpoints and a
+racing line, the structure section 2 builds first. If you copy the pipeline:
+
+- Settle each character as an image, with one palette and one reference sheet for the whole cast,
+  before converting any of them; the 3D step reproduces whatever the image got wrong, and sets drift
+  (see [style drift](../ai/graphics.md#generating-images-and-3d-models-with-ai)).
+- Read the 3D service's output terms for the plan you actually use: ownership, commercial use and
+  whether your models are public can differ between plans. Save a dated copy and record the model,
+  plan and prompt in [`THIRD_PARTY.md`](../templates/THIRD_PARTY.md#ai-generated-and-ai-assisted-assets).
+  Open alternatives, with licenses read on GitHub and Hugging Face on 2026-09-26:
+  [TRELLIS.2](https://github.com/microsoft/TRELLIS.2) (MIT code and weights; Linux with a 24 GB NVIDIA GPU) and
+  [TripoSR](https://github.com/VAST-AI-Research/TripoSR) (MIT, older).
+- Budget generated meshes before they reach the browser: a triangle and texture budget per kart and
+  per character, cleanup or decimation in Blender, then real scale, facing and `.glb` export per
+  [the Blender workflow](../art/blender.md#a-game-asset-workflow).
+- Make an agent-built track export its data with its mesh: centerline, checkpoints, surfaces, spawn
+  grid and racing line, for example as named curves and empties. Geometry alone gives the lap system
+  nothing to key off. Run the shortcut and autoplay scripts above on every new track.
+- Prefer a Blender script the agent writes and you can rerun over live edits nobody recorded, and
+  follow [Driving Blender with AI tools](../art/blender.md#driving-blender-with-ai-tools): an MCP
+  server runs code with your permissions.
+
 **Review (Grok, blind).** Give it the symptom ("cars clip through the barrier at turn 3 above
 <speed>") and the physics files, not your theory. Never paste `study only` code such as
 SuperTuxKart's AI into a prompt; describe the behavior in your own words (see `ai/README.md`).
@@ -241,6 +269,7 @@ playing. Budget for people.
 - [ ] The same input script gives the same lap time at 30, 60 and 144 FPS.
 - [ ] Gamepad steering at top speed is controllable; keyboard steering is not binary.
 - [ ] Every AI car finishes every track, and recovers after being pushed off.
+- [ ] Every generated track exports its centerline, checkpoints and racing line, not only a mesh.
 - [ ] A ghost replays the recorded lap exactly.
 - [ ] Reset works everywhere, including wedged against a wall or upside down.
 - [ ] Split-screen (if any) holds the target frame rate with all cars on screen.
