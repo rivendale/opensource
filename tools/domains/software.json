@@ -1,0 +1,1979 @@
+{
+ "_comment": "Curated seeds for the software domain. build_catalog.py --domain software reads this file, asks GitHub for each repository's license, language, stars and last push, and writes software/. Edit the seeds here and rebuild; never hand-edit the generated files. Each seed: name, url, category, why (one line, our own words).",
+ "title": "Software",
+ "intro": [
+  "Open-source applications, tools, libraries and curated lists beyond games: self-hosting, home automation, local AI, documents, media, notes, reading, learning, personal finance, privacy and web development.",
+  "Each row is a hand-picked project with one line on why it is useful. Its license, language, stars and last push are read from GitHub's API when the list is built, and its reuse class follows the same [license rule](../README.md#the-license-rule) as the games catalog. Rows are chosen for being maintained and widely used, not for completeness; the [resources](#resources) below go wider.",
+  "**Anything you install runs code on your machine.** Prefer a project's own releases or an official package, pin a version, read what access it asks for, and keep services that hold your data off the open internet unless you mean to publish them. **A code license says nothing about model weights, voices, fonts, art or data**, which often carry their own terms. This is practical guidance, not legal advice."
+ ],
+ "categories": [
+  {
+   "slug": "self-hosting",
+   "title": "Self-hosting",
+   "scope": "servers, reverse proxies, remote access, monitoring and household apps you run yourself"
+  },
+  {
+   "slug": "home-automation",
+   "title": "Home automation",
+   "scope": "hubs, device bridges, cameras and automations that run locally"
+  },
+  {
+   "slug": "local-ai-agents",
+   "title": "Local AI and agents",
+   "scope": "model runners and servers, coding agents, agent frameworks and evaluation",
+   "note": "Agents run code and edit files with your access. Read the code, pin a version and give them the least access that works; the [safe setup checklist](../../ai/graphics.md#safe-setup-checklist) applies. A code license says nothing about model weights; read each model card."
+  },
+  {
+   "slug": "mcp",
+   "title": "MCP servers and SDKs",
+   "scope": "Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software",
+   "note": "**Every MCP server runs code on your machine with the access you give it.** Read the code, pin a version, keep it local, and apply the [safe setup checklist](../../ai/graphics.md#safe-setup-checklist) before connecting one to an agent."
+  },
+  {
+   "slug": "speech",
+   "title": "Speech",
+   "scope": "speech-to-text and text-to-speech that run locally",
+   "note": "A code license says nothing about model weights or voices, which often carry their own terms; read each model card. Clone a voice only with its owner's consent."
+  },
+  {
+   "slug": "dev-security",
+   "title": "Developer tools and security",
+   "scope": "package managers, linters, scanners, supply-chain checks and command-line tools"
+  },
+  {
+   "slug": "media-photo",
+   "title": "Photo libraries",
+   "scope": "photo backup and libraries, RAW development, duplicates and metadata"
+  },
+  {
+   "slug": "media-video-audio",
+   "title": "Video and audio",
+   "scope": "editing, encoding, recording, music, stem separation and video made from code"
+  },
+  {
+   "slug": "media-image",
+   "title": "Images and diagrams",
+   "scope": "image processing, generation, painting, design tools and diagrams",
+   "note": "A code license says nothing about model weights; read each model card before using generated images."
+  },
+  {
+   "slug": "media-3d",
+   "title": "3D, CAD and printing",
+   "scope": "3D creation, CAD, slicers, scans and 3D on the web",
+   "note": "A code license says nothing about model weights; read each model card."
+  },
+  {
+   "slug": "documents-ocr",
+   "title": "Documents and OCR",
+   "scope": "PDF tools, OCR, document conversion and typesetting"
+  },
+  {
+   "slug": "knowledge-search",
+   "title": "Notes, wikis and search",
+   "scope": "notes, wikis, bookmarks, web archiving, search engines and vector search"
+  },
+  {
+   "slug": "reading",
+   "title": "Reading",
+   "scope": "e-books, audiobooks, comics, feeds and read-it-later"
+  },
+  {
+   "slug": "learning",
+   "title": "Learning",
+   "scope": "flashcards, spaced repetition, learning platforms and offline reference"
+  },
+  {
+   "slug": "finance",
+   "title": "Personal finance",
+   "scope": "budgeting, plain-text accounting, invoicing and investment tracking"
+  },
+  {
+   "slug": "privacy-backups",
+   "title": "Privacy, security and backups",
+   "scope": "backups, encryption, passwords, two-factor codes, messaging and file transfer"
+  },
+  {
+   "slug": "web-frontend",
+   "title": "Web and app frameworks",
+   "scope": "frameworks, UI libraries, static sites, testing and app wrappers"
+  },
+  {
+   "slug": "resources",
+   "title": "Resources",
+   "scope": "curated indexes and courses",
+   "note": "More curated lists, each with its license and whether a tool may parse it or only link to it, are in the [resources table](../README.md#resources)."
+  }
+ ],
+ "resources": [
+  {
+   "name": "sindresorhus/awesome",
+   "url": "https://github.com/sindresorhus/awesome",
+   "covers": "lists of curated lists on every subject",
+   "license": "CC0-1.0",
+   "use": "parse"
+  },
+  {
+   "name": "awesome-selfhosted/awesome-selfhosted",
+   "url": "https://github.com/awesome-selfhosted/awesome-selfhosted",
+   "covers": "self-hosted network services and web applications",
+   "license": "CC-BY-SA-3.0 (LICENSE file)",
+   "use": "link only"
+  },
+  {
+   "name": "awesome-selfhosted/awesome-selfhosted-data",
+   "url": "https://github.com/awesome-selfhosted/awesome-selfhosted-data",
+   "covers": "the same list as structured YAML",
+   "license": "CC-BY-SA-3.0 (LICENSE file)",
+   "use": "link only"
+  },
+  {
+   "name": "pluja/awesome-privacy",
+   "url": "https://github.com/pluja/awesome-privacy",
+   "covers": "privacy-respecting apps and services",
+   "license": "CC0-1.0",
+   "use": "parse"
+  },
+  {
+   "name": "meichthys/foss_photo_libraries",
+   "url": "https://github.com/meichthys/foss_photo_libraries",
+   "covers": "self-hosted photo libraries compared",
+   "license": "MIT",
+   "use": "parse, keep the notice"
+  },
+  {
+   "name": "krzemienski/awesome-video",
+   "url": "https://github.com/krzemienski/awesome-video",
+   "covers": "video tools, codecs, players and streaming",
+   "license": "CC0-1.0",
+   "use": "parse"
+  },
+  {
+   "name": "ad-si/awesome-music-production",
+   "url": "https://github.com/ad-si/awesome-music-production",
+   "covers": "music production software and hardware",
+   "license": "ISC",
+   "use": "parse, keep the notice"
+  },
+  {
+   "name": "frenck/awesome-home-assistant",
+   "url": "https://github.com/frenck/awesome-home-assistant",
+   "covers": "Home Assistant add-ons, integrations and guides",
+   "license": "CC-BY-4.0",
+   "use": "parse with attribution"
+  },
+  {
+   "name": "docker/awesome-compose",
+   "url": "https://github.com/docker/awesome-compose",
+   "covers": "Docker Compose samples for common stacks",
+   "license": "CC0-1.0",
+   "use": "parse"
+  },
+  {
+   "name": "punkpeye/awesome-mcp-servers",
+   "url": "https://github.com/punkpeye/awesome-mcp-servers",
+   "covers": "MCP servers by category",
+   "license": "MIT",
+   "use": "parse, keep the notice"
+  },
+  {
+   "name": "public-apis/public-apis",
+   "url": "https://github.com/public-apis/public-apis",
+   "covers": "free public APIs by category",
+   "license": "MIT",
+   "use": "parse, keep the notice"
+  },
+  {
+   "name": "EbookFoundation/free-programming-books",
+   "url": "https://github.com/EbookFoundation/free-programming-books",
+   "covers": "free programming books and courses in many languages",
+   "license": "CC-BY-4.0",
+   "use": "parse with attribution"
+  },
+  {
+   "name": "terkelg/awesome-creative-coding",
+   "url": "https://github.com/terkelg/awesome-creative-coding",
+   "covers": "creative coding, generative art and shaders",
+   "license": "CC0 stated in the README; no LICENSE file",
+   "use": "link only until confirmed"
+  },
+  {
+   "name": "transitive-bullshit/awesome-ffmpeg",
+   "url": "https://github.com/transitive-bullshit/awesome-ffmpeg",
+   "covers": "FFmpeg guides, wrappers and tools",
+   "license": "CC0 stated in the README; no LICENSE file",
+   "use": "link only until confirmed"
+  }
+ ],
+ "seeds": [
+  {
+   "name": "louislam/uptime-kuma",
+   "url": "https://github.com/louislam/uptime-kuma",
+   "category": "self-hosting",
+   "why": "Simple status and uptime monitor with many notification channels."
+  },
+  {
+   "name": "home-assistant/core",
+   "url": "https://github.com/home-assistant/core",
+   "category": "home-automation",
+   "why": "Home automation hub that runs locally and integrates thousands of devices without a cloud account."
+  },
+  {
+   "name": "caddyserver/caddy",
+   "url": "https://github.com/caddyserver/caddy",
+   "category": "self-hosting",
+   "why": "Web server and reverse proxy with automatic HTTPS and a one-file config."
+  },
+  {
+   "name": "traefik/traefik",
+   "url": "https://github.com/traefik/traefik",
+   "category": "self-hosting",
+   "why": "Reverse proxy that discovers container services and handles TLS automatically."
+  },
+  {
+   "name": "coollabsio/coolify",
+   "url": "https://github.com/coollabsio/coolify",
+   "category": "self-hosting",
+   "why": "Self-hosted Heroku/Netlify-style PaaS for deploying apps and databases on your own servers."
+  },
+  {
+   "name": "go-gitea/gitea",
+   "url": "https://github.com/go-gitea/gitea",
+   "category": "self-hosting",
+   "why": "Lightweight self-hosted Git forge with issues, CI and packages."
+  },
+  {
+   "name": "juanfont/headscale",
+   "url": "https://github.com/juanfont/headscale",
+   "category": "self-hosting",
+   "why": "Self-hosted control server for Tailscale clients, removing the hosted coordination dependency."
+  },
+  {
+   "name": "portainer/portainer",
+   "url": "https://github.com/portainer/portainer",
+   "category": "self-hosting",
+   "why": "Web UI for managing Docker and Kubernetes hosts."
+  },
+  {
+   "name": "IceWhaleTech/CasaOS",
+   "url": "https://github.com/IceWhaleTech/CasaOS",
+   "category": "self-hosting",
+   "why": "Simple home-server OS layer with an app store for containers."
+  },
+  {
+   "name": "tailscale/tailscale",
+   "url": "https://github.com/tailscale/tailscale",
+   "category": "self-hosting",
+   "why": "WireGuard mesh VPN client that makes private services reachable across devices."
+  },
+  {
+   "name": "NginxProxyManager/nginx-proxy-manager",
+   "url": "https://github.com/NginxProxyManager/nginx-proxy-manager",
+   "category": "self-hosting",
+   "why": "Point-and-click reverse proxy with certificate management."
+  },
+  {
+   "name": "authelia/authelia",
+   "url": "https://github.com/authelia/authelia",
+   "category": "self-hosting",
+   "why": "Single sign-on and two-factor gateway in front of self-hosted apps."
+  },
+  {
+   "name": "grocy/grocy",
+   "url": "https://github.com/grocy/grocy",
+   "category": "self-hosting",
+   "why": "Household groceries, stock and chores tracker."
+  },
+  {
+   "name": "syncthing/syncthing",
+   "url": "https://github.com/syncthing/syncthing",
+   "category": "self-hosting",
+   "why": "Peer-to-peer continuous file sync between your own devices, no central server."
+  },
+  {
+   "name": "netdata/netdata",
+   "url": "https://github.com/netdata/netdata",
+   "category": "self-hosting",
+   "why": "Per-second system and container metrics with zero-config dashboards."
+  },
+  {
+   "name": "dani-garcia/vaultwarden",
+   "url": "https://github.com/dani-garcia/vaultwarden",
+   "category": "self-hosting",
+   "why": "Lightweight Bitwarden-compatible password server for small households."
+  },
+  {
+   "name": "jellyfin/jellyfin",
+   "url": "https://github.com/jellyfin/jellyfin",
+   "category": "self-hosting",
+   "why": "Media server for your own films, shows and music, with no subscription or account."
+  },
+  {
+   "name": "AdguardTeam/AdGuardHome",
+   "url": "https://github.com/AdguardTeam/AdGuardHome",
+   "category": "self-hosting",
+   "why": "Network-wide DNS filtering with encrypted DNS support and a web UI."
+  },
+  {
+   "name": "nextcloud/server",
+   "url": "https://github.com/nextcloud/server",
+   "category": "self-hosting",
+   "why": "File sync, calendar and contacts on your own server; the self-hosted office suite backbone."
+  },
+  {
+   "name": "gethomepage/homepage",
+   "url": "https://github.com/gethomepage/homepage",
+   "category": "self-hosting",
+   "why": "Config-file dashboard for homelab services with live status widgets."
+  },
+  {
+   "name": "mealie-recipes/mealie",
+   "url": "https://github.com/mealie-recipes/mealie",
+   "category": "self-hosting",
+   "why": "Recipe manager and meal planner with URL import and shopping lists."
+  },
+  {
+   "name": "pi-hole/pi-hole",
+   "url": "https://github.com/pi-hole/pi-hole",
+   "category": "self-hosting",
+   "why": "Network-wide DNS ad and tracker blocking."
+  },
+  {
+   "name": "goauthentik/authentik",
+   "url": "https://github.com/goauthentik/authentik",
+   "category": "self-hosting",
+   "why": "Identity provider (OIDC, SAML, LDAP) for a self-hosted stack."
+  },
+  {
+   "name": "anomalyco/opencode",
+   "url": "https://github.com/anomalyco/opencode",
+   "category": "local-ai-agents",
+   "why": "Terminal coding agent that works with many providers including local ones."
+  },
+  {
+   "name": "openai/codex",
+   "url": "https://github.com/openai/codex",
+   "category": "local-ai-agents",
+   "why": "OpenAI's open-source terminal coding agent."
+  },
+  {
+   "name": "OpenHands/OpenHands",
+   "url": "https://github.com/OpenHands/OpenHands",
+   "category": "local-ai-agents",
+   "why": "Open agent platform for autonomous software tasks in a sandbox."
+  },
+  {
+   "name": "cline/cline",
+   "url": "https://github.com/cline/cline",
+   "category": "local-ai-agents",
+   "why": "VS Code agent that plans and edits with approval gates, any model provider."
+  },
+  {
+   "name": "crewAIInc/crewAI",
+   "url": "https://github.com/crewAIInc/crewAI",
+   "category": "local-ai-agents",
+   "why": "Role-based multi-agent orchestration framework in Python."
+  },
+  {
+   "name": "aaif-goose/goose",
+   "url": "https://github.com/aaif-goose/goose",
+   "category": "local-ai-agents",
+   "why": "Extensible local agent that drives tools through MCP."
+  },
+  {
+   "name": "Aider-AI/aider",
+   "url": "https://github.com/Aider-AI/aider",
+   "category": "local-ai-agents",
+   "why": "Terminal pair-programmer that edits a git repo with any LLM, local or hosted."
+  },
+  {
+   "name": "langchain-ai/langgraph",
+   "url": "https://github.com/langchain-ai/langgraph",
+   "category": "local-ai-agents",
+   "why": "Graph-based stateful agent orchestration with checkpoints."
+  },
+  {
+   "name": "stanfordnlp/dspy",
+   "url": "https://github.com/stanfordnlp/dspy",
+   "category": "local-ai-agents",
+   "why": "Program LLM pipelines declaratively and optimize their prompts against metrics."
+  },
+  {
+   "name": "openai/openai-agents-python",
+   "url": "https://github.com/openai/openai-agents-python",
+   "category": "local-ai-agents",
+   "why": "Lightweight multi-agent SDK with handoffs, guardrails and tracing."
+  },
+  {
+   "name": "huggingface/smolagents",
+   "url": "https://github.com/huggingface/smolagents",
+   "category": "local-ai-agents",
+   "why": "Small agent library where agents write code as their actions."
+  },
+  {
+   "name": "promptfoo/promptfoo",
+   "url": "https://github.com/promptfoo/promptfoo",
+   "category": "local-ai-agents",
+   "why": "Test and red-team prompts and models from a config file, locally."
+  },
+  {
+   "name": "pydantic/pydantic-ai",
+   "url": "https://github.com/pydantic/pydantic-ai",
+   "category": "local-ai-agents",
+   "why": "Typed Python agent framework with structured outputs and evals."
+  },
+  {
+   "name": "dottxt-ai/outlines",
+   "url": "https://github.com/dottxt-ai/outlines",
+   "category": "local-ai-agents",
+   "why": "Constrained generation so model output always matches a schema or grammar."
+  },
+  {
+   "name": "simonw/llm",
+   "url": "https://github.com/simonw/llm",
+   "category": "local-ai-agents",
+   "why": "CLI and Python library for prompting many models and logging every call to SQLite."
+  },
+  {
+   "name": "microsoft/autogen",
+   "url": "https://github.com/microsoft/autogen",
+   "category": "local-ai-agents",
+   "why": "Framework for multi-agent conversations and tool use."
+  },
+  {
+   "name": "BerriAI/litellm",
+   "url": "https://github.com/BerriAI/litellm",
+   "category": "local-ai-agents",
+   "why": "One OpenAI-compatible proxy in front of many model providers, with budgets and logging."
+  },
+  {
+   "name": "langfuse/langfuse",
+   "url": "https://github.com/langfuse/langfuse",
+   "category": "local-ai-agents",
+   "why": "Self-hostable tracing, evals and prompt management for LLM apps."
+  },
+  {
+   "name": "vercel/ai",
+   "url": "https://github.com/vercel/ai",
+   "category": "local-ai-agents",
+   "why": "TypeScript toolkit for streaming chat and tool calls across providers."
+  },
+  {
+   "name": "upstash/context7",
+   "url": "https://github.com/upstash/context7",
+   "category": "mcp",
+   "why": "Serves current library documentation to coding agents to cut stale-API mistakes."
+  },
+  {
+   "name": "ChromeDevTools/chrome-devtools-mcp",
+   "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+   "category": "mcp",
+   "why": "Lets an agent inspect and debug a live Chrome with DevTools."
+  },
+  {
+   "name": "microsoft/playwright-mcp",
+   "url": "https://github.com/microsoft/playwright-mcp",
+   "category": "mcp",
+   "why": "Browser automation for agents via accessibility snapshots rather than screenshots."
+  },
+  {
+   "name": "github/github-mcp-server",
+   "url": "https://github.com/github/github-mcp-server",
+   "category": "mcp",
+   "why": "GitHub's official MCP server for repos, issues and pull requests."
+  },
+  {
+   "name": "PrefectHQ/fastmcp",
+   "url": "https://github.com/PrefectHQ/fastmcp",
+   "category": "mcp",
+   "why": "High-level Python framework for building MCP servers quickly."
+  },
+  {
+   "name": "modelcontextprotocol/python-sdk",
+   "url": "https://github.com/modelcontextprotocol/python-sdk",
+   "category": "mcp",
+   "why": "Official Python SDK for writing MCP servers and clients."
+  },
+  {
+   "name": "awslabs/mcp",
+   "url": "https://github.com/awslabs/mcp",
+   "category": "mcp",
+   "why": "AWS's collection of MCP servers for its services and docs."
+  },
+  {
+   "name": "idosal/git-mcp",
+   "url": "https://github.com/idosal/git-mcp",
+   "category": "mcp",
+   "why": "Turns any GitHub repo into a documentation MCP endpoint."
+  },
+  {
+   "name": "firecrawl/firecrawl-mcp-server",
+   "url": "https://github.com/firecrawl/firecrawl-mcp-server",
+   "category": "mcp",
+   "why": "Web scraping and crawling tools for agents (needs a Firecrawl backend)."
+  },
+  {
+   "name": "grafana/mcp-grafana",
+   "url": "https://github.com/grafana/mcp-grafana",
+   "category": "mcp",
+   "why": "Query dashboards, metrics and logs in Grafana from an agent."
+  },
+  {
+   "name": "stacklok/toolhive",
+   "url": "https://github.com/stacklok/toolhive",
+   "category": "mcp",
+   "why": "Runs MCP servers in isolated containers with scoped permissions."
+  },
+  {
+   "name": "docker/mcp-gateway",
+   "url": "https://github.com/docker/mcp-gateway",
+   "category": "mcp",
+   "why": "Docker's gateway for running and brokering containerized MCP servers."
+  },
+  {
+   "name": "modelcontextprotocol/servers",
+   "url": "https://github.com/modelcontextprotocol/servers",
+   "category": "mcp",
+   "why": "Reference MCP servers (filesystem, git, fetch, memory) to read before trusting third-party ones."
+  },
+  {
+   "name": "oraios/serena",
+   "url": "https://github.com/oraios/serena",
+   "category": "mcp",
+   "why": "Semantic code navigation and editing tools for agents via language servers."
+  },
+  {
+   "name": "modelcontextprotocol/typescript-sdk",
+   "url": "https://github.com/modelcontextprotocol/typescript-sdk",
+   "category": "mcp",
+   "why": "Official TypeScript SDK for writing MCP servers and clients."
+  },
+  {
+   "name": "modelcontextprotocol/inspector",
+   "url": "https://github.com/modelcontextprotocol/inspector",
+   "category": "mcp",
+   "why": "Interactive debugger for testing an MCP server's tools before wiring it to an agent."
+  },
+  {
+   "name": "astral-sh/uv",
+   "url": "https://github.com/astral-sh/uv",
+   "category": "dev-security",
+   "why": "Very fast Python package and project manager."
+  },
+  {
+   "name": "nektos/act",
+   "url": "https://github.com/nektos/act",
+   "category": "dev-security",
+   "why": "Run GitHub Actions workflows locally."
+  },
+  {
+   "name": "BurntSushi/ripgrep",
+   "url": "https://github.com/BurntSushi/ripgrep",
+   "category": "dev-security",
+   "why": "Fast recursive search that respects ignore files."
+  },
+  {
+   "name": "astral-sh/ruff",
+   "url": "https://github.com/astral-sh/ruff",
+   "category": "dev-security",
+   "why": "Very fast Python linter and formatter."
+  },
+  {
+   "name": "mitmproxy/mitmproxy",
+   "url": "https://github.com/mitmproxy/mitmproxy",
+   "category": "dev-security",
+   "why": "Intercepting proxy to see exactly what an app sends over the network."
+  },
+  {
+   "name": "aquasecurity/trivy",
+   "url": "https://github.com/aquasecurity/trivy",
+   "category": "dev-security",
+   "why": "Scanner for vulnerabilities, misconfigurations and secrets in images, repos and IaC."
+  },
+  {
+   "name": "projectdiscovery/nuclei",
+   "url": "https://github.com/projectdiscovery/nuclei",
+   "category": "dev-security",
+   "why": "Template-driven vulnerability scanner for your own services."
+  },
+  {
+   "name": "pre-commit/pre-commit",
+   "url": "https://github.com/pre-commit/pre-commit",
+   "category": "dev-security",
+   "why": "Framework for managing git pre-commit hooks across languages."
+  },
+  {
+   "name": "crowdsecurity/crowdsec",
+   "url": "https://github.com/crowdsecurity/crowdsec",
+   "category": "dev-security",
+   "why": "Collaborative intrusion detection and IP blocking for exposed services."
+  },
+  {
+   "name": "anchore/grype",
+   "url": "https://github.com/anchore/grype",
+   "category": "dev-security",
+   "why": "Vulnerability scanner that consumes SBOMs or images."
+  },
+  {
+   "name": "google/osv-scanner",
+   "url": "https://github.com/google/osv-scanner",
+   "category": "dev-security",
+   "why": "Checks lockfiles against the OSV vulnerability database."
+  },
+  {
+   "name": "anchore/syft",
+   "url": "https://github.com/anchore/syft",
+   "category": "dev-security",
+   "why": "Generates software bills of materials from images and filesystems."
+  },
+  {
+   "name": "mvdan/sh",
+   "url": "https://github.com/mvdan/sh",
+   "category": "dev-security",
+   "why": "Shell parser and formatter (shfmt)."
+  },
+  {
+   "name": "zizmorcore/zizmor",
+   "url": "https://github.com/zizmorcore/zizmor",
+   "category": "dev-security",
+   "why": "Static analysis for GitHub Actions workflow security bugs."
+  },
+  {
+   "name": "sigstore/cosign",
+   "url": "https://github.com/sigstore/cosign",
+   "category": "dev-security",
+   "why": "Sign and verify container images and artifacts."
+  },
+  {
+   "name": "ossf/scorecard",
+   "url": "https://github.com/ossf/scorecard",
+   "category": "dev-security",
+   "why": "Scores a repository's supply-chain security practices; useful before adopting a dependency."
+  },
+  {
+   "name": "rhysd/actionlint",
+   "url": "https://github.com/rhysd/actionlint",
+   "category": "dev-security",
+   "why": "Linter for GitHub Actions workflow files."
+  },
+  {
+   "name": "semgrep/semgrep",
+   "url": "https://github.com/semgrep/semgrep",
+   "category": "dev-security",
+   "why": "Fast pattern-based static analysis with community rules."
+  },
+  {
+   "name": "koalaman/shellcheck",
+   "url": "https://github.com/koalaman/shellcheck",
+   "category": "dev-security",
+   "why": "Static analysis for shell scripts; catches quoting and pipefail mistakes."
+  },
+  {
+   "name": "jqlang/jq",
+   "url": "https://github.com/jqlang/jq",
+   "category": "dev-security",
+   "why": "Command-line JSON processor."
+  },
+  {
+   "name": "bats-core/bats-core",
+   "url": "https://github.com/bats-core/bats-core",
+   "category": "dev-security",
+   "why": "Test runner for Bash scripts, suited to end-to-end script checks."
+  },
+  {
+   "name": "LibrePhotos/librephotos",
+   "url": "https://github.com/LibrePhotos/librephotos",
+   "category": "media-photo",
+   "why": "Self-hosted photo manager with face recognition and timelines."
+  },
+  {
+   "name": "immich-app/immich",
+   "url": "https://github.com/immich-app/immich",
+   "category": "media-photo",
+   "why": "Self-hosted photo and video backup with mobile apps, face and object search."
+  },
+  {
+   "name": "ente/ente",
+   "url": "https://github.com/ente/ente",
+   "category": "media-photo",
+   "why": "End-to-end encrypted photo storage with a self-hostable server."
+  },
+  {
+   "name": "darktable-org/darktable",
+   "url": "https://github.com/darktable-org/darktable",
+   "category": "media-photo",
+   "why": "Non-destructive RAW photo development."
+  },
+  {
+   "name": "simulot/immich-go",
+   "url": "https://github.com/simulot/immich-go",
+   "category": "media-photo",
+   "why": "Bulk uploader for Immich, including Google Photos Takeout archives."
+  },
+  {
+   "name": "photoprism/photoprism",
+   "url": "https://github.com/photoprism/photoprism",
+   "category": "media-photo",
+   "why": "AI-tagged self-hosted photo library."
+  },
+  {
+   "name": "yt-dlp/yt-dlp",
+   "url": "https://github.com/yt-dlp/yt-dlp",
+   "category": "media-video-audio",
+   "why": "Downloader for online video and audio, for content you have rights to."
+  },
+  {
+   "name": "ManimCommunity/manim",
+   "url": "https://github.com/ManimCommunity/manim",
+   "category": "media-video-audio",
+   "why": "Python engine for precise mathematical and explanatory animations."
+  },
+  {
+   "name": "beetbox/beets",
+   "url": "https://github.com/beetbox/beets",
+   "category": "media-video-audio",
+   "why": "Music library organizer with metadata auto-tagging."
+  },
+  {
+   "name": "obsproject/obs-studio",
+   "url": "https://github.com/obsproject/obs-studio",
+   "category": "media-video-audio",
+   "why": "Screen recording and live streaming."
+  },
+  {
+   "name": "mifi/lossless-cut",
+   "url": "https://github.com/mifi/lossless-cut",
+   "category": "media-video-audio",
+   "why": "Fast lossless trimming and cutting of video without re-encoding."
+  },
+  {
+   "name": "navidrome/navidrome",
+   "url": "https://github.com/navidrome/navidrome",
+   "category": "media-video-audio",
+   "why": "Self-hosted music streaming server compatible with Subsonic apps."
+  },
+  {
+   "name": "KDE/kdenlive",
+   "url": "https://github.com/KDE/kdenlive",
+   "category": "media-video-audio",
+   "why": "Non-linear video editor."
+  },
+  {
+   "name": "OHF-Voice/piper1-gpl",
+   "url": "https://github.com/OHF-Voice/piper1-gpl",
+   "category": "speech",
+   "why": "Maintained successor to Piper, a fast text-to-speech engine that runs on a CPU."
+  },
+  {
+   "name": "FFmpeg/FFmpeg",
+   "url": "https://github.com/FFmpeg/FFmpeg",
+   "category": "media-video-audio",
+   "why": "The underlying toolkit for converting, cutting and encoding audio and video."
+  },
+  {
+   "name": "HandBrake/HandBrake",
+   "url": "https://github.com/HandBrake/HandBrake",
+   "category": "media-video-audio",
+   "why": "Video transcoder with sensible presets."
+  },
+  {
+   "name": "audacity/audacity",
+   "url": "https://github.com/audacity/audacity",
+   "category": "media-video-audio",
+   "why": "Multi-track audio editor and recorder."
+  },
+  {
+   "name": "lovell/sharp",
+   "url": "https://github.com/lovell/sharp",
+   "category": "media-image",
+   "why": "Node image resizing and conversion built on libvips."
+  },
+  {
+   "name": "invoke-ai/InvokeAI",
+   "url": "https://github.com/invoke-ai/InvokeAI",
+   "category": "media-image",
+   "why": "Polished local Stable Diffusion studio with canvas and workflows."
+  },
+  {
+   "name": "GoogleChromeLabs/squoosh",
+   "url": "https://github.com/GoogleChromeLabs/squoosh",
+   "category": "media-image",
+   "why": "Image compression web app for comparing codecs."
+  },
+  {
+   "name": "danielgatis/rembg",
+   "url": "https://github.com/danielgatis/rembg",
+   "category": "media-image",
+   "why": "Local background removal for images."
+  },
+  {
+   "name": "libvips/libvips",
+   "url": "https://github.com/libvips/libvips",
+   "category": "media-image",
+   "why": "Fast, low-memory image processing library."
+  },
+  {
+   "name": "AUTOMATIC1111/stable-diffusion-webui",
+   "url": "https://github.com/AUTOMATIC1111/stable-diffusion-webui",
+   "category": "media-image",
+   "why": "Widely used local image-generation web UI with a large extension ecosystem."
+  },
+  {
+   "name": "Comfy-Org/ComfyUI",
+   "url": "https://github.com/Comfy-Org/ComfyUI",
+   "category": "media-image",
+   "why": "Node-graph pipeline for local image and video diffusion models."
+  },
+  {
+   "name": "upscayl/upscayl",
+   "url": "https://github.com/upscayl/upscayl",
+   "category": "media-image",
+   "why": "Desktop AI image upscaler."
+  },
+  {
+   "name": "RawTherapee/RawTherapee",
+   "url": "https://github.com/RawTherapee/RawTherapee",
+   "category": "media-image",
+   "why": "RAW photo processing with advanced demosaicing."
+  },
+  {
+   "name": "nerfstudio-project/nerfstudio",
+   "url": "https://github.com/nerfstudio-project/nerfstudio",
+   "category": "media-3d",
+   "why": "Framework for NeRF and Gaussian-splat scene capture from photos."
+  },
+  {
+   "name": "google/model-viewer",
+   "url": "https://github.com/google/model-viewer",
+   "category": "media-3d",
+   "why": "Web component for displaying 3D models, including AR."
+  },
+  {
+   "name": "FreeCAD/FreeCAD",
+   "url": "https://github.com/FreeCAD/FreeCAD",
+   "category": "media-3d",
+   "why": "Parametric 3D CAD modeler."
+  },
+  {
+   "name": "OrcaSlicer/OrcaSlicer",
+   "url": "https://github.com/OrcaSlicer/OrcaSlicer",
+   "category": "media-3d",
+   "why": "Multi-brand 3D printer slicer."
+  },
+  {
+   "name": "prusa3d/PrusaSlicer",
+   "url": "https://github.com/prusa3d/PrusaSlicer",
+   "category": "media-3d",
+   "why": "Slicer for turning 3D models into printer instructions."
+  },
+  {
+   "name": "blender/blender",
+   "url": "https://github.com/blender/blender",
+   "category": "media-3d",
+   "why": "Full 3D creation suite (mirror of the official repo)."
+  },
+  {
+   "name": "Tencent-Hunyuan/Hunyuan3D-2",
+   "url": "https://github.com/Tencent-Hunyuan/Hunyuan3D-2",
+   "category": "media-3d",
+   "why": "Image-to-3D asset generation model and pipeline."
+  },
+  {
+   "name": "openscad/openscad",
+   "url": "https://github.com/openscad/openscad",
+   "category": "media-3d",
+   "why": "Code-first solid modeling for 3D printing."
+  },
+  {
+   "name": "microsoft/markitdown",
+   "url": "https://github.com/microsoft/markitdown",
+   "category": "documents-ocr",
+   "why": "Converts Office files, PDFs and more to Markdown for LLM input."
+  },
+  {
+   "name": "typst/typst",
+   "url": "https://github.com/typst/typst",
+   "category": "documents-ocr",
+   "why": "Modern markup-based typesetting system, a faster LaTeX alternative."
+  },
+  {
+   "name": "mozilla/pdf.js",
+   "url": "https://github.com/mozilla/pdf.js",
+   "category": "documents-ocr",
+   "why": "PDF rendering in the browser."
+  },
+  {
+   "name": "Unstructured-IO/unstructured",
+   "url": "https://github.com/Unstructured-IO/unstructured",
+   "category": "documents-ocr",
+   "why": "Partitions many document types into clean elements for pipelines."
+  },
+  {
+   "name": "gotenberg/gotenberg",
+   "url": "https://github.com/gotenberg/gotenberg",
+   "category": "documents-ocr",
+   "why": "Docker API for converting HTML and Office documents to PDF."
+  },
+  {
+   "name": "jsvine/pdfplumber",
+   "url": "https://github.com/jsvine/pdfplumber",
+   "category": "documents-ocr",
+   "why": "Precise PDF table and character extraction."
+  },
+  {
+   "name": "qpdf/qpdf",
+   "url": "https://github.com/qpdf/qpdf",
+   "category": "documents-ocr",
+   "why": "Structural PDF transformation, repair and encryption."
+  },
+  {
+   "name": "apache/tika",
+   "url": "https://github.com/apache/tika",
+   "category": "documents-ocr",
+   "why": "Detects and extracts text and metadata from a thousand file types."
+  },
+  {
+   "name": "ocrmypdf/OCRmyPDF",
+   "url": "https://github.com/ocrmypdf/OCRmyPDF",
+   "category": "documents-ocr",
+   "why": "Adds a searchable text layer to scanned PDFs."
+  },
+  {
+   "name": "jgm/pandoc",
+   "url": "https://github.com/jgm/pandoc",
+   "category": "documents-ocr",
+   "why": "Universal document converter between markup formats."
+  },
+  {
+   "name": "docusealco/docuseal",
+   "url": "https://github.com/docusealco/docuseal",
+   "category": "documents-ocr",
+   "why": "Self-hosted document signing and form filling."
+  },
+  {
+   "name": "pymupdf/PyMuPDF",
+   "url": "https://github.com/pymupdf/PyMuPDF",
+   "category": "documents-ocr",
+   "why": "Fast Python PDF text, image and layout extraction."
+  },
+  {
+   "name": "Stirling-Tools/Stirling-PDF",
+   "url": "https://github.com/Stirling-Tools/Stirling-PDF",
+   "category": "documents-ocr",
+   "why": "Self-hosted web toolbox for merging, splitting, converting and OCR-ing PDFs."
+  },
+  {
+   "name": "opendatalab/MinerU",
+   "url": "https://github.com/opendatalab/MinerU",
+   "category": "documents-ocr",
+   "why": "High-quality PDF-to-Markdown/JSON extraction including formulas and tables."
+  },
+  {
+   "name": "py-pdf/pypdf",
+   "url": "https://github.com/py-pdf/pypdf",
+   "category": "documents-ocr",
+   "why": "Pure-Python PDF reading, splitting and merging."
+  },
+  {
+   "name": "usememos/memos",
+   "url": "https://github.com/usememos/memos",
+   "category": "knowledge-search",
+   "why": "Lightweight self-hosted note and memo stream."
+  },
+  {
+   "name": "ArchiveBox/ArchiveBox",
+   "url": "https://github.com/ArchiveBox/ArchiveBox",
+   "category": "knowledge-search",
+   "why": "Self-hosted web archiver that saves pages in several formats."
+  },
+  {
+   "name": "BookStackApp/BookStack",
+   "url": "https://github.com/BookStackApp/BookStack",
+   "category": "knowledge-search",
+   "why": "Simple self-hosted wiki organized as books and chapters."
+  },
+  {
+   "name": "quickwit-oss/tantivy",
+   "url": "https://github.com/quickwit-oss/tantivy",
+   "category": "knowledge-search",
+   "why": "Full-text search engine library in Rust."
+  },
+  {
+   "name": "miniflux/v2",
+   "url": "https://github.com/miniflux/v2",
+   "category": "reading",
+   "why": "Minimalist, fast self-hosted feed reader."
+  },
+  {
+   "name": "silverbulletmd/silverbullet",
+   "url": "https://github.com/silverbulletmd/silverbullet",
+   "category": "knowledge-search",
+   "why": "Markdown notebook that is programmable with queries."
+  },
+  {
+   "name": "AppFlowy-IO/AppFlowy",
+   "url": "https://github.com/AppFlowy-IO/AppFlowy",
+   "category": "knowledge-search",
+   "why": "Open alternative to Notion with local data."
+  },
+  {
+   "name": "siyuan-note/siyuan",
+   "url": "https://github.com/siyuan-note/siyuan",
+   "category": "knowledge-search",
+   "why": "Local-first block-based personal knowledge base."
+  },
+  {
+   "name": "logseq/logseq",
+   "url": "https://github.com/logseq/logseq",
+   "category": "knowledge-search",
+   "why": "Local-first outliner and knowledge graph on plain files."
+  },
+  {
+   "name": "TriliumNext/Trilium",
+   "url": "https://github.com/TriliumNext/Trilium",
+   "category": "knowledge-search",
+   "why": "Hierarchical notes with scripting and self-hosted sync."
+  },
+  {
+   "name": "searxng/searxng",
+   "url": "https://github.com/searxng/searxng",
+   "category": "knowledge-search",
+   "why": "Private metasearch engine aggregating many search backends."
+  },
+  {
+   "name": "karakeep-app/karakeep",
+   "url": "https://github.com/karakeep-app/karakeep",
+   "category": "knowledge-search",
+   "why": "Bookmark and read-later app with AI tagging and full-text search."
+  },
+  {
+   "name": "requarks/wiki",
+   "url": "https://github.com/requarks/wiki",
+   "category": "knowledge-search",
+   "why": "Wiki.js, a Git-backed self-hosted wiki."
+  },
+  {
+   "name": "typesense/typesense",
+   "url": "https://github.com/typesense/typesense",
+   "category": "knowledge-search",
+   "why": "Fast in-memory search engine, simple to operate."
+  },
+  {
+   "name": "docmost/docmost",
+   "url": "https://github.com/docmost/docmost",
+   "category": "knowledge-search",
+   "why": "Collaborative wiki and docs, self-hosted."
+  },
+  {
+   "name": "linkwarden/linkwarden",
+   "url": "https://github.com/linkwarden/linkwarden",
+   "category": "knowledge-search",
+   "why": "Collaborative bookmark manager that archives page copies."
+  },
+  {
+   "name": "FreshRSS/FreshRSS",
+   "url": "https://github.com/FreshRSS/FreshRSS",
+   "category": "reading",
+   "why": "Self-hosted RSS aggregator."
+  },
+  {
+   "name": "toeverything/AFFiNE",
+   "url": "https://github.com/toeverything/AFFiNE",
+   "category": "knowledge-search",
+   "why": "Docs, whiteboards and databases in one local-first workspace."
+  },
+  {
+   "name": "meilisearch/meilisearch",
+   "url": "https://github.com/meilisearch/meilisearch",
+   "category": "knowledge-search",
+   "why": "Fast typo-tolerant search engine with hybrid vector search."
+  },
+  {
+   "name": "outline/outline",
+   "url": "https://github.com/outline/outline",
+   "category": "knowledge-search",
+   "why": "Team wiki and knowledge base with a clean editor."
+  },
+  {
+   "name": "zotero/zotero",
+   "url": "https://github.com/zotero/zotero",
+   "category": "knowledge-search",
+   "why": "Reference and source manager for research."
+  },
+  {
+   "name": "oppia/oppia",
+   "url": "https://github.com/oppia/oppia",
+   "category": "learning",
+   "why": "Interactive, story-based lessons with feedback."
+  },
+  {
+   "name": "jupyterlite/jupyterlite",
+   "url": "https://github.com/jupyterlite/jupyterlite",
+   "category": "learning",
+   "why": "Jupyter running entirely in the browser; no server needed."
+  },
+  {
+   "name": "open-spaced-repetition/fsrs4anki",
+   "url": "https://github.com/open-spaced-repetition/fsrs4anki",
+   "category": "learning",
+   "why": "The FSRS scheduler that makes Anki reviews more efficient."
+  },
+  {
+   "name": "st3v3nmw/obsidian-spaced-repetition",
+   "url": "https://github.com/st3v3nmw/obsidian-spaced-repetition",
+   "category": "learning",
+   "why": "Flashcards and note review inside Obsidian."
+  },
+  {
+   "name": "learningequality/kolibri",
+   "url": "https://github.com/learningequality/kolibri",
+   "category": "learning",
+   "why": "Offline-first learning platform with curated content for low-connectivity settings."
+  },
+  {
+   "name": "open-spaced-repetition/ts-fsrs",
+   "url": "https://github.com/open-spaced-repetition/ts-fsrs",
+   "category": "learning",
+   "why": "FSRS scheduling in TypeScript for web apps."
+  },
+  {
+   "name": "open-spaced-repetition/py-fsrs",
+   "url": "https://github.com/open-spaced-repetition/py-fsrs",
+   "category": "learning",
+   "why": "FSRS scheduling in Python for building your own review app."
+  },
+  {
+   "name": "monkeytypegame/monkeytype",
+   "url": "https://github.com/monkeytypegame/monkeytype",
+   "category": "learning",
+   "why": "Minimal, customizable typing practice."
+  },
+  {
+   "name": "ankidroid/Anki-Android",
+   "url": "https://github.com/ankidroid/Anki-Android",
+   "category": "learning",
+   "why": "Android client for Anki decks."
+  },
+  {
+   "name": "moodle/moodle",
+   "url": "https://github.com/moodle/moodle",
+   "category": "learning",
+   "why": "Full learning-management system."
+  },
+  {
+   "name": "kiwix/kiwix-tools",
+   "url": "https://github.com/kiwix/kiwix-tools",
+   "category": "learning",
+   "why": "Serves Wikipedia and other reference content offline."
+  },
+  {
+   "name": "scratchfoundation/scratch-editor",
+   "url": "https://github.com/scratchfoundation/scratch-editor",
+   "category": "learning",
+   "why": "Current home of the Scratch block-programming editor for kids."
+  },
+  {
+   "name": "ankitects/anki",
+   "url": "https://github.com/ankitects/anki",
+   "category": "learning",
+   "why": "Spaced-repetition flashcards; the de facto standard."
+  },
+  {
+   "name": "mnemosyne-proj/mnemosyne",
+   "url": "https://github.com/mnemosyne-proj/mnemosyne",
+   "category": "learning",
+   "why": "Research-oriented spaced-repetition flashcards."
+  },
+  {
+   "name": "actualbudget/actual",
+   "url": "https://github.com/actualbudget/actual",
+   "category": "finance",
+   "why": "Local-first envelope budgeting with optional sync server."
+  },
+  {
+   "name": "mayswind/ezbookkeeping",
+   "url": "https://github.com/mayswind/ezbookkeeping",
+   "category": "finance",
+   "why": "Lightweight self-hosted personal bookkeeping app."
+  },
+  {
+   "name": "beancount/fava",
+   "url": "https://github.com/beancount/fava",
+   "category": "finance",
+   "why": "Web interface for Beancount ledgers."
+  },
+  {
+   "name": "firefly-iii/firefly-iii",
+   "url": "https://github.com/firefly-iii/firefly-iii",
+   "category": "finance",
+   "why": "Self-hosted personal finance manager with rules and reports."
+  },
+  {
+   "name": "we-promise/sure",
+   "url": "https://github.com/we-promise/sure",
+   "category": "finance",
+   "why": "Community-maintained continuation of the archived Maybe personal finance app."
+  },
+  {
+   "name": "ghostfolio/ghostfolio",
+   "url": "https://github.com/ghostfolio/ghostfolio",
+   "category": "finance",
+   "why": "Self-hosted portfolio and net-worth tracker."
+  },
+  {
+   "name": "wealthfolio/wealthfolio",
+   "url": "https://github.com/wealthfolio/wealthfolio",
+   "category": "finance",
+   "why": "Local desktop investment tracker."
+  },
+  {
+   "name": "beancount/beancount",
+   "url": "https://github.com/beancount/beancount",
+   "category": "finance",
+   "why": "Plain-text double-entry accounting in Python."
+  },
+  {
+   "name": "hledgerorg/hledger",
+   "url": "https://github.com/hledgerorg/hledger",
+   "category": "finance",
+   "why": "Plain-text accounting tool, fast and robust."
+  },
+  {
+   "name": "akaunting/akaunting",
+   "url": "https://github.com/akaunting/akaunting",
+   "category": "finance",
+   "why": "Online accounting for small businesses."
+  },
+  {
+   "name": "invoiceninja/invoiceninja",
+   "url": "https://github.com/invoiceninja/invoiceninja",
+   "category": "finance",
+   "why": "Invoicing, quotes and payments platform."
+  },
+  {
+   "name": "ledger/ledger",
+   "url": "https://github.com/ledger/ledger",
+   "category": "finance",
+   "why": "The original plain-text double-entry accounting CLI."
+  },
+  {
+   "name": "Gnucash/gnucash",
+   "url": "https://github.com/Gnucash/gnucash",
+   "category": "finance",
+   "why": "Desktop double-entry accounting for households and small businesses."
+  },
+  {
+   "name": "rclone/rclone",
+   "url": "https://github.com/rclone/rclone",
+   "category": "privacy-backups",
+   "why": "Sync and copy to dozens of cloud storage providers, with encryption."
+  },
+  {
+   "name": "kopia/kopia",
+   "url": "https://github.com/kopia/kopia",
+   "category": "privacy-backups",
+   "why": "Encrypted, deduplicated snapshots with a UI and many storage backends."
+  },
+  {
+   "name": "restic/rest-server",
+   "url": "https://github.com/restic/rest-server",
+   "category": "privacy-backups",
+   "why": "Append-only capable HTTP backend for restic backups."
+  },
+  {
+   "name": "getsops/sops",
+   "url": "https://github.com/getsops/sops",
+   "category": "privacy-backups",
+   "why": "Encrypts secret values inside config files, keeping keys readable."
+  },
+  {
+   "name": "wg-easy/wg-easy",
+   "url": "https://github.com/wg-easy/wg-easy",
+   "category": "privacy-backups",
+   "why": "Simplest way to run a WireGuard VPN with a web UI."
+  },
+  {
+   "name": "simplex-chat/simplex-chat",
+   "url": "https://github.com/simplex-chat/simplex-chat",
+   "category": "privacy-backups",
+   "why": "Messenger without user identifiers."
+  },
+  {
+   "name": "signalapp/Signal-Desktop",
+   "url": "https://github.com/signalapp/Signal-Desktop",
+   "category": "privacy-backups",
+   "why": "Desktop client for end-to-end encrypted messaging."
+  },
+  {
+   "name": "cryptomator/cryptomator",
+   "url": "https://github.com/cryptomator/cryptomator",
+   "category": "privacy-backups",
+   "why": "Client-side encryption for files stored in any cloud folder."
+  },
+  {
+   "name": "garethgeorge/backrest",
+   "url": "https://github.com/garethgeorge/backrest",
+   "category": "privacy-backups",
+   "why": "Web UI and scheduler for restic repositories."
+  },
+  {
+   "name": "Bubka/2FAuth",
+   "url": "https://github.com/Bubka/2FAuth",
+   "category": "privacy-backups",
+   "why": "Self-hosted web app for two-factor codes."
+  },
+  {
+   "name": "borgmatic-collective/borgmatic",
+   "url": "https://github.com/borgmatic-collective/borgmatic",
+   "category": "privacy-backups",
+   "why": "Config-driven wrapper that schedules and verifies Borg backups."
+  },
+  {
+   "name": "keepassxreboot/keepassxc",
+   "url": "https://github.com/keepassxreboot/keepassxc",
+   "category": "privacy-backups",
+   "why": "Offline password manager with a local encrypted database."
+  },
+  {
+   "name": "bitwarden/server",
+   "url": "https://github.com/bitwarden/server",
+   "category": "privacy-backups",
+   "why": "Bitwarden's own server code."
+  },
+  {
+   "name": "duplicati/duplicati",
+   "url": "https://github.com/duplicati/duplicati",
+   "category": "privacy-backups",
+   "why": "Encrypted scheduled backups to cloud storage with a web UI."
+  },
+  {
+   "name": "borgbackup/borg",
+   "url": "https://github.com/borgbackup/borg",
+   "category": "privacy-backups",
+   "why": "Deduplicating, encrypted backups."
+  },
+  {
+   "name": "veracrypt/VeraCrypt",
+   "url": "https://github.com/veracrypt/VeraCrypt",
+   "category": "privacy-backups",
+   "why": "Encrypted volumes and full-disk encryption."
+  },
+  {
+   "name": "PrivateBin/PrivateBin",
+   "url": "https://github.com/PrivateBin/PrivateBin",
+   "category": "privacy-backups",
+   "why": "Pastebin where the server cannot read what is stored."
+  },
+  {
+   "name": "vercel/next.js",
+   "url": "https://github.com/vercel/next.js",
+   "category": "web-frontend",
+   "why": "React framework with server rendering and routing."
+  },
+  {
+   "name": "excalidraw/excalidraw",
+   "url": "https://github.com/excalidraw/excalidraw",
+   "category": "web-frontend",
+   "why": "Hand-drawn style collaborative whiteboard, embeddable."
+  },
+  {
+   "name": "shadcn-ui/ui",
+   "url": "https://github.com/shadcn-ui/ui",
+   "category": "web-frontend",
+   "why": "Copy-in accessible React components built on Radix and Tailwind."
+  },
+  {
+   "name": "tauri-apps/tauri",
+   "url": "https://github.com/tauri-apps/tauri",
+   "category": "web-frontend",
+   "why": "Small, secure desktop and mobile apps from a web frontend."
+  },
+  {
+   "name": "supabase/supabase",
+   "url": "https://github.com/supabase/supabase",
+   "category": "web-frontend",
+   "why": "Postgres-based backend platform, self-hostable."
+  },
+  {
+   "name": "tailwindlabs/tailwindcss",
+   "url": "https://github.com/tailwindlabs/tailwindcss",
+   "category": "web-frontend",
+   "why": "Utility-first CSS framework."
+  },
+  {
+   "name": "microsoft/playwright",
+   "url": "https://github.com/microsoft/playwright",
+   "category": "web-frontend",
+   "why": "Cross-browser end-to-end testing and automation."
+  },
+  {
+   "name": "vitejs/vite",
+   "url": "https://github.com/vitejs/vite",
+   "category": "web-frontend",
+   "why": "Fast dev server and bundler for modern web apps."
+  },
+  {
+   "name": "pocketbase/pocketbase",
+   "url": "https://github.com/pocketbase/pocketbase",
+   "category": "web-frontend",
+   "why": "Single-file backend with database, auth and file storage."
+  },
+  {
+   "name": "TanStack/query",
+   "url": "https://github.com/TanStack/query",
+   "category": "web-frontend",
+   "why": "Data fetching, caching and sync for web apps."
+  },
+  {
+   "name": "preactjs/preact",
+   "url": "https://github.com/preactjs/preact",
+   "category": "web-frontend",
+   "why": "3kB React-compatible UI library."
+  },
+  {
+   "name": "biomejs/biome",
+   "url": "https://github.com/biomejs/biome",
+   "category": "web-frontend",
+   "why": "Fast formatter and linter for JS/TS/JSON/CSS."
+  },
+  {
+   "name": "sveltejs/kit",
+   "url": "https://github.com/sveltejs/kit",
+   "category": "web-frontend",
+   "why": "Svelte application framework with SSR and static output."
+  },
+  {
+   "name": "radix-ui/primitives",
+   "url": "https://github.com/radix-ui/primitives",
+   "category": "web-frontend",
+   "why": "Unstyled accessible UI primitives for React."
+  },
+  {
+   "name": "vitest-dev/vitest",
+   "url": "https://github.com/vitest-dev/vitest",
+   "category": "web-frontend",
+   "why": "Vite-native unit and component test runner."
+  },
+  {
+   "name": "ionic-team/capacitor",
+   "url": "https://github.com/ionic-team/capacitor",
+   "category": "web-frontend",
+   "why": "Wraps a web app as a native iOS/Android app."
+  },
+  {
+   "name": "GoogleChrome/workbox",
+   "url": "https://github.com/GoogleChrome/workbox",
+   "category": "web-frontend",
+   "why": "Libraries for service-worker caching and offline PWAs."
+  },
+  {
+   "name": "withastro/starlight",
+   "url": "https://github.com/withastro/starlight",
+   "category": "web-frontend",
+   "why": "Documentation site theme built on Astro."
+  },
+  {
+   "name": "vite-pwa/vite-plugin-pwa",
+   "url": "https://github.com/vite-pwa/vite-plugin-pwa",
+   "category": "web-frontend",
+   "why": "Zero-config PWA manifests and service workers for Vite apps."
+  },
+  {
+   "name": "withastro/astro",
+   "url": "https://github.com/withastro/astro",
+   "category": "web-frontend",
+   "why": "Content-first site framework that ships little JavaScript."
+  },
+  {
+   "name": "tldraw/tldraw",
+   "url": "https://github.com/tldraw/tldraw",
+   "category": "web-frontend",
+   "why": "Infinite-canvas SDK for whiteboard features."
+  },
+  {
+   "name": "bigskysoftware/htmx",
+   "url": "https://github.com/bigskysoftware/htmx",
+   "category": "web-frontend",
+   "why": "HTML-attribute-driven interactivity without a JS framework."
+  },
+  {
+   "name": "ollama/ollama",
+   "url": "https://github.com/ollama/ollama",
+   "category": "local-ai-agents",
+   "why": "Runs open-weight language models on your own machine behind a one-line CLI and a local HTTP API; the usual starting point for local AI."
+  },
+  {
+   "name": "ggml-org/llama.cpp",
+   "url": "https://github.com/ggml-org/llama.cpp",
+   "category": "local-ai-agents",
+   "why": "C/C++ inference engine and GGUF model format underneath most local runners; works on CPUs and on Vulkan, Metal, CUDA and ROCm GPUs."
+  },
+  {
+   "name": "paperless-ngx/paperless-ngx",
+   "url": "https://github.com/paperless-ngx/paperless-ngx",
+   "category": "documents-ocr",
+   "why": "Turns scanned mail and PDFs into an OCR'd, tagged, full-text searchable archive that files new documents automatically."
+  },
+  {
+   "name": "restic/restic",
+   "url": "https://github.com/restic/restic",
+   "category": "privacy-backups",
+   "why": "Encrypted, deduplicating backup CLI with snapshots and restore testing; writes to local disks, SFTP, S3 and anything rclone reaches."
+  },
+  {
+   "name": "open-webui/open-webui",
+   "url": "https://github.com/open-webui/open-webui",
+   "category": "local-ai-agents",
+   "why": "Self-hosted chat interface for local and cloud models with accounts, document upload and retrieval."
+  },
+  {
+   "name": "ggml-org/whisper.cpp",
+   "url": "https://github.com/ggml-org/whisper.cpp",
+   "category": "speech",
+   "why": "Whisper speech-to-text in plain C/C++; fast on ordinary CPUs and consumer GPUs with no Python stack."
+  },
+  {
+   "name": "docling-project/docling",
+   "url": "https://github.com/docling-project/docling",
+   "category": "documents-ocr",
+   "why": "Converts PDFs, Office files and scans into clean Markdown or JSON that keeps tables, layout and reading order, ready to hand to a model."
+  },
+  {
+   "name": "esphome/esphome",
+   "url": "https://github.com/esphome/esphome",
+   "category": "home-automation",
+   "why": "Builds firmware for ESP32 and similar boards from a short YAML file, so cheap sensors and switches report locally to Home Assistant."
+  },
+  {
+   "name": "Koenkk/zigbee2mqtt",
+   "url": "https://github.com/Koenkk/zigbee2mqtt",
+   "category": "home-automation",
+   "why": "Bridges Zigbee devices from many brands to MQTT through one USB coordinator, replacing each vendor's hub and cloud app."
+  },
+  {
+   "name": "blakeblackshear/frigate",
+   "url": "https://github.com/blakeblackshear/frigate",
+   "category": "home-automation",
+   "why": "Local camera recorder with real-time object detection, so alerts fire on people or cars rather than every moving shadow; no cloud subscription."
+  },
+  {
+   "name": "kovidgoyal/calibre",
+   "url": "https://github.com/kovidgoyal/calibre",
+   "category": "reading",
+   "why": "The e-book library workhorse: converts formats, fixes metadata and covers, sends books to readers and serves the library over the network."
+  },
+  {
+   "name": "advplyr/audiobookshelf",
+   "url": "https://github.com/advplyr/audiobookshelf",
+   "category": "reading",
+   "why": "Self-hosted audiobook and podcast server with phone apps that sync listening progress and work offline."
+  },
+  {
+   "name": "localsend/localsend",
+   "url": "https://github.com/localsend/localsend",
+   "category": "privacy-backups",
+   "why": "Sends files between phones and computers on the same network with no account, cloud or cable, on every major OS."
+  },
+  {
+   "name": "gitleaks/gitleaks",
+   "url": "https://github.com/gitleaks/gitleaks",
+   "category": "dev-security",
+   "why": "Scans commits and git history for secrets; fast enough for a pre-commit hook and a CI gate."
+  },
+  {
+   "name": "binwiederhier/ntfy",
+   "url": "https://github.com/binwiederhier/ntfy",
+   "category": "self-hosting",
+   "why": "Push notifications over plain HTTP: one curl to a topic reaches phones and desktops. Easy to self-host and easy to call from scripts and alert rules."
+  },
+  {
+   "name": "SYSTRAN/faster-whisper",
+   "url": "https://github.com/SYSTRAN/faster-whisper",
+   "category": "speech",
+   "why": "Whisper reimplemented on CTranslate2, several times faster with less memory; the engine inside many transcription tools."
+  },
+  {
+   "name": "hexgrad/kokoro",
+   "url": "https://github.com/hexgrad/kokoro",
+   "category": "speech",
+   "why": "Small text-to-speech model (about 82M parameters) with natural voices that runs quickly on a CPU."
+  },
+  {
+   "name": "rustdesk/rustdesk",
+   "url": "https://github.com/rustdesk/rustdesk",
+   "category": "self-hosting",
+   "why": "Remote desktop for helping someone at their own computer, with a relay server you run yourself instead of a vendor account."
+  },
+  {
+   "name": "node-red/node-red",
+   "url": "https://github.com/node-red/node-red",
+   "category": "home-automation",
+   "why": "Browser-based flow editor that wires devices, APIs and schedules together; the usual step up when simple automation rules run out."
+  },
+  {
+   "name": "mermaid-js/mermaid",
+   "url": "https://github.com/mermaid-js/mermaid",
+   "category": "media-image",
+   "why": "Draws flowcharts, sequence, Gantt and other diagrams from plain text inside Markdown; GitHub and many editors render it natively."
+  },
+  {
+   "name": "laurent22/joplin",
+   "url": "https://github.com/laurent22/joplin",
+   "category": "knowledge-search",
+   "why": "Note-taking app for desktop and phone with end-to-end encrypted sync through its own server, WebDAV or common cloud drives."
+  },
+  {
+   "name": "tesseract-ocr/tesseract",
+   "url": "https://github.com/tesseract-ocr/tesseract",
+   "category": "documents-ocr",
+   "why": "The standard open OCR engine, more than 100 languages; it is the layer under OCRmyPDF and Paperless."
+  },
+  {
+   "name": "mrdoob/three.js",
+   "url": "https://github.com/mrdoob/three.js",
+   "category": "media-3d",
+   "why": "The standard JavaScript library for 3D in the browser over WebGL and WebGPU; most web 3D scenes start here."
+  },
+  {
+   "name": "motion-canvas/motion-canvas",
+   "url": "https://github.com/motion-canvas/motion-canvas",
+   "category": "media-video-audio",
+   "why": "Animations written in TypeScript with a live preview editor, aimed at explainer and diagram videos made from code."
+  },
+  {
+   "name": "m-bain/whisperX",
+   "url": "https://github.com/m-bain/whisperX",
+   "category": "speech",
+   "why": "Adds word-level timestamps and speaker labels on top of Whisper, which is what subtitles and meeting transcripts need."
+  },
+  {
+   "name": "FiloSottile/age",
+   "url": "https://github.com/FiloSottile/age",
+   "category": "privacy-backups",
+   "why": "Simple modern file encryption with short keys and no configuration; replaces GPG for encrypting files, and sops supports it as one of several backends."
+  },
+  {
+   "name": "gorhill/uBlock",
+   "url": "https://github.com/gorhill/uBlock",
+   "category": "privacy-backups",
+   "why": "Lightweight browser content blocker for ads, trackers and malicious domains, with filter lists you can audit."
+  },
+  {
+   "name": "grafana/grafana",
+   "url": "https://github.com/grafana/grafana",
+   "category": "self-hosting",
+   "why": "Dashboards and alerting over Prometheus, logs, SQL and dozens of other sources."
+  },
+  {
+   "name": "prometheus/prometheus",
+   "url": "https://github.com/prometheus/prometheus",
+   "category": "self-hosting",
+   "why": "Pull-based metrics database with a query language and alert rules; the reference for watching servers and services."
+  },
+  {
+   "name": "duckdb/duckdb",
+   "url": "https://github.com/duckdb/duckdb",
+   "category": "dev-security",
+   "why": "In-process analytical SQL that queries CSV, Parquet and JSON files in place; answers questions about a big export without loading a database."
+  },
+  {
+   "name": "gohugoio/hugo",
+   "url": "https://github.com/gohugoio/hugo",
+   "category": "web-frontend",
+   "why": "Single-binary static site generator that builds large sites in milliseconds; no Node toolchain required."
+  },
+  {
+   "name": "koreader/koreader",
+   "url": "https://github.com/koreader/koreader",
+   "category": "reading",
+   "why": "Reader for e-ink devices and Android with strong PDF reflow, dictionary lookup, highlights and progress sync."
+  },
+  {
+   "name": "Kareadita/Kavita",
+   "url": "https://github.com/Kareadita/Kavita",
+   "category": "reading",
+   "why": "Self-hosted reading server for e-books, comics and manga with a web reader, per-user progress and OPDS."
+  },
+  {
+   "name": "exiftool/exiftool",
+   "url": "https://github.com/exiftool/exiftool",
+   "category": "media-photo",
+   "why": "Reads and rewrites metadata in almost every photo and video format; the tool for repairing dates, time zones and GPS after an export."
+  },
+  {
+   "name": "qarmin/czkawka",
+   "url": "https://github.com/qarmin/czkawka",
+   "category": "media-photo",
+   "why": "Finds duplicate files, visually similar photos and videos, broken files and empty folders, with a GUI and a CLI."
+  },
+  {
+   "name": "datalab-to/marker",
+   "url": "https://github.com/datalab-to/marker",
+   "category": "documents-ocr",
+   "why": "Converts PDFs and e-books to Markdown with tables, equations and images; faster on a GPU. The model weights carry their own terms."
+  },
+  {
+   "name": "PaddlePaddle/PaddleOCR",
+   "url": "https://github.com/PaddlePaddle/PaddleOCR",
+   "category": "documents-ocr",
+   "why": "Deep-learning OCR that handles rotated, dense and multilingual text better than classic engines, plus layout and table parsing."
+  },
+  {
+   "name": "unclecode/crawl4ai",
+   "url": "https://github.com/unclecode/crawl4ai",
+   "category": "local-ai-agents",
+   "why": "Crawls sites, renders JavaScript and returns clean Markdown for model pipelines and agents."
+  },
+  {
+   "name": "mostlygeek/llama-swap",
+   "url": "https://github.com/mostlygeek/llama-swap",
+   "category": "local-ai-agents",
+   "why": "Proxy that starts and stops local model servers on demand behind one OpenAI-compatible endpoint, so several models share one GPU."
+  },
+  {
+   "name": "vllm-project/vllm",
+   "url": "https://github.com/vllm-project/vllm",
+   "category": "local-ai-agents",
+   "why": "High-throughput model server with continuous batching; the choice when one GPU box serves many requests at once."
+  },
+  {
+   "name": "speaches-ai/speaches",
+   "url": "https://github.com/speaches-ai/speaches",
+   "category": "speech",
+   "why": "OpenAI-compatible server for local speech-to-text and text-to-speech, so apps written for the cloud audio API can point at your own machine."
+  },
+  {
+   "name": "resemble-ai/chatterbox",
+   "url": "https://github.com/resemble-ai/chatterbox",
+   "category": "speech",
+   "why": "Open text-to-speech models, including a multilingual one, with voice cloning from a short reference clip."
+  },
+  {
+   "name": "Kozea/Radicale",
+   "url": "https://github.com/Kozea/Radicale",
+   "category": "self-hosting",
+   "why": "Small CalDAV and CardDAV server for shared calendars and contacts; plain files on disk, almost nothing to maintain."
+  },
+  {
+   "name": "bitfireAT/davx5-ose",
+   "url": "https://github.com/bitfireAT/davx5-ose",
+   "category": "self-hosting",
+   "why": "Android sync adapter that connects the phone's own calendar, contacts and tasks to any CalDAV or CardDAV server."
+  },
+  {
+   "name": "stalwartlabs/stalwart",
+   "url": "https://github.com/stalwartlabs/stalwart",
+   "category": "self-hosting",
+   "why": "All-in-one mail server in Rust (SMTP, IMAP, JMAP) with spam filtering and built-in calendar and contacts."
+  },
+  {
+   "name": "Freika/dawarich",
+   "url": "https://github.com/Freika/dawarich",
+   "category": "self-hosting",
+   "why": "Self-hosted location history that replaces a phone vendor's timeline; imports old exports and maps trips and visits."
+  },
+  {
+   "name": "sysadminsmedia/homebox",
+   "url": "https://github.com/sysadminsmedia/homebox",
+   "category": "self-hosting",
+   "why": "Home inventory for belongings, warranties, receipts and where things are stored, with QR labels."
+  },
+  {
+   "name": "dgtlmoon/changedetection.io",
+   "url": "https://github.com/dgtlmoon/changedetection.io",
+   "category": "self-hosting",
+   "why": "Watches web pages for changes such as prices, restocks or new notices and sends an alert through many channels."
+  },
+  {
+   "name": "music-assistant/server",
+   "url": "https://github.com/music-assistant/server",
+   "category": "home-automation",
+   "why": "Music library server that merges local files and streaming accounts and plays to many speaker brands; integrates with Home Assistant."
+  },
+  {
+   "name": "trufflesecurity/trufflehog",
+   "url": "https://github.com/trufflesecurity/trufflehog",
+   "category": "dev-security",
+   "why": "Finds leaked credentials in git, buckets and chat exports and checks whether each key is still live, which sorts real leaks from noise."
+  },
+  {
+   "name": "Kunzisoft/KeePassDX",
+   "url": "https://github.com/Kunzisoft/KeePassDX",
+   "category": "privacy-backups",
+   "why": "Android KeePass client that opens the same database file as KeePassXC, with biometric unlock and autofill."
+  },
+  {
+   "name": "beemdevelopment/Aegis",
+   "url": "https://github.com/beemdevelopment/Aegis",
+   "category": "privacy-backups",
+   "why": "Open Android authenticator for TOTP and HOTP codes with an encrypted vault and exportable backups."
+  },
+  {
+   "name": "icloud-photos-downloader/icloud_photos_downloader",
+   "url": "https://github.com/icloud-photos-downloader/icloud_photos_downloader",
+   "category": "media-photo",
+   "why": "Downloads a whole iCloud Photos library to local storage and keeps it current on a schedule."
+  },
+  {
+   "name": "ostris/ai-toolkit",
+   "url": "https://github.com/ostris/ai-toolkit",
+   "category": "media-image",
+   "why": "Trains LoRA adapters for image and video diffusion models on a consumer GPU, the usual way to teach a model one consistent character or style."
+  },
+  {
+   "name": "Acly/krita-ai-diffusion",
+   "url": "https://github.com/Acly/krita-ai-diffusion",
+   "category": "media-image",
+   "why": "Generative image tools inside Krita (inpainting, sketch to image, regional prompts) driven by a local ComfyUI backend."
+  },
+  {
+   "name": "KDE/krita",
+   "url": "https://github.com/KDE/krita",
+   "category": "media-image",
+   "why": "Full digital painting application with brush engines, layers and animation; GitHub copy of the KDE repository."
+  },
+  {
+   "name": "GraphiteEditor/Graphite",
+   "url": "https://github.com/GraphiteEditor/Graphite",
+   "category": "media-image",
+   "why": "Vector and raster editor built on a node graph, so edits stay procedural and re-editable; runs in the browser."
+  },
+  {
+   "name": "penpot/penpot",
+   "url": "https://github.com/penpot/penpot",
+   "category": "media-image",
+   "why": "Open design and prototyping tool that can be self-hosted; designs map to CSS and design tokens for building web apps."
+  },
+  {
+   "name": "jgraph/drawio-desktop",
+   "url": "https://github.com/jgraph/drawio-desktop",
+   "category": "media-image",
+   "why": "Offline diagram editor that saves plain XML, including editable diagrams embedded in PNG and SVG files."
+  },
+  {
+   "name": "remotion-dev/remotion",
+   "url": "https://github.com/remotion-dev/remotion",
+   "category": "media-video-audio",
+   "why": "Builds videos from React components rendered frame by frame."
+  },
+  {
+   "name": "Zulko/moviepy",
+   "url": "https://github.com/Zulko/moviepy",
+   "category": "media-video-audio",
+   "why": "Python library for cutting, compositing, titling and exporting video from a script."
+  },
+  {
+   "name": "Tonejs/Tone.js",
+   "url": "https://github.com/Tonejs/Tone.js",
+   "category": "media-video-audio",
+   "why": "Web Audio framework for synths, effects and sample-accurate sequencing in the browser."
+  },
+  {
+   "name": "musescore/MuseScore",
+   "url": "https://github.com/musescore/MuseScore",
+   "category": "media-video-audio",
+   "why": "Music notation editor with playback, parts and MusicXML import and export."
+  },
+  {
+   "name": "nomadkaraoke/python-audio-separator",
+   "url": "https://github.com/nomadkaraoke/python-audio-separator",
+   "category": "media-video-audio",
+   "why": "Command-line and Python stem separation (vocals, drums, bass and more) using the UVR and Demucs model families."
+  },
+  {
+   "name": "ahujasid/mcp-for-blender",
+   "url": "https://github.com/ahujasid/mcp-for-blender",
+   "category": "mcp",
+   "why": "Connects an agent to a running Blender over MCP so it can build and edit scenes, materials and renders by instruction."
+  },
+  {
+   "name": "playcanvas/supersplat",
+   "url": "https://github.com/playcanvas/supersplat",
+   "category": "media-3d",
+   "why": "Browser editor for cleaning, cropping and compressing Gaussian splat captures before publishing them."
+  },
+  {
+   "name": "gumyr/build123d",
+   "url": "https://github.com/gumyr/build123d",
+   "category": "media-3d",
+   "why": "Python CAD library on OpenCascade for parametric parts defined in code, exported to STEP or STL for printing."
+  },
+  {
+   "name": "qdrant/qdrant",
+   "url": "https://github.com/qdrant/qdrant",
+   "category": "knowledge-search",
+   "why": "Vector database for semantic search and retrieval, one container with filtering and snapshots."
+  },
+  {
+   "name": "asg017/sqlite-vec",
+   "url": "https://github.com/asg017/sqlite-vec",
+   "category": "knowledge-search",
+   "why": "Vector search as a SQLite extension, for small local semantic search with no server at all."
+  },
+  {
+   "name": "gramps-project/gramps-web",
+   "url": "https://github.com/gramps-project/gramps-web",
+   "category": "knowledge-search",
+   "why": "Web app for shared genealogy research on the Gramps database: people, sources, media and trees, with multiple editors."
+  },
+  {
+   "name": "lfnovo/open-notebook",
+   "url": "https://github.com/lfnovo/open-notebook",
+   "category": "learning",
+   "why": "Self-hosted research notebook in the style of NotebookLM: add sources, ask cited questions and generate audio summaries with local or cloud models."
+  },
+  {
+   "name": "yomidevs/yomitan",
+   "url": "https://github.com/yomidevs/yomitan",
+   "category": "learning",
+   "why": "Pop-up dictionary browser extension for language learners that creates Anki cards in one click; maintained successor to Yomichan."
+  },
+  {
+   "name": "asbplayer/asbplayer",
+   "url": "https://github.com/asbplayer/asbplayer",
+   "category": "learning",
+   "why": "Browser video player with interactive subtitles that turns sentences from shows into Anki cards with audio and screenshots."
+  },
+  {
+   "name": "wallabag/wallabag",
+   "url": "https://github.com/wallabag/wallabag",
+   "category": "reading",
+   "why": "Self-hosted read-it-later service that saves clean article text for offline reading on phones and e-readers."
+  },
+  {
+   "name": "jackyzha0/quartz",
+   "url": "https://github.com/jackyzha0/quartz",
+   "category": "web-frontend",
+   "why": "Publishes a folder of Markdown notes as a fast static site with backlinks, search and a graph view."
+  },
+  {
+   "name": "honojs/hono",
+   "url": "https://github.com/honojs/hono",
+   "category": "web-frontend",
+   "why": "Small, fast web framework on Web Standards that runs unchanged on Cloudflare Workers, Deno, Bun and Node."
+  },
+  {
+   "name": "portfolio-performance/portfolio",
+   "url": "https://github.com/portfolio-performance/portfolio",
+   "category": "finance",
+   "why": "Desktop investment tracker that computes time-weighted and money-weighted returns across accounts and imports broker statements."
+  },
+  {
+   "name": "public-apis/public-apis",
+   "url": "https://github.com/public-apis/public-apis",
+   "category": "resources",
+   "why": "Large categorized index of free public APIs; a quick way to find a data source for a small app."
+  },
+  {
+   "name": "punkpeye/awesome-mcp-servers",
+   "url": "https://github.com/punkpeye/awesome-mcp-servers",
+   "category": "resources",
+   "why": "Big curated index of MCP servers by category; the first place to look before writing one."
+  },
+  {
+   "name": "mlabonne/llm-course",
+   "url": "https://github.com/mlabonne/llm-course",
+   "category": "resources",
+   "why": "Structured course with notebooks on how language models work, fine-tuning, quantization and deployment."
+  }
+ ]
+}

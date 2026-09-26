@@ -1,5 +1,20 @@
 # opensource
 
+Open-source projects to build on instead of starting from scratch, each with its license read from
+GitHub and a plain rule for what you may reuse. Two domains so far: games, and software beyond games.
+
+## Domains
+
+| domain | what it holds | start here |
+|---|---|---|
+| Games | a genre catalog of 2,718 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
+| Software | 295 hand-picked open-source applications, tools, libraries and curated lists beyond games, in 18 categories from self-hosting and local AI to documents, media, learning and personal finance | [`software/`](software/README.md) |
+
+Both follow the same [license rule](#the-license-rule). The games material sits at the top level of
+this repository; everything else lives under [`software/`](software/).
+
+## Games
+
 A chassis for building new games **from open source instead of from scratch**: a genre catalog of
 2,718 open-source games and engines with each project's license and activity read from GitHub,
 a build playbook per genre, a guide to building with AI coding tools (Claude, Codex, Grok), and
@@ -95,6 +110,9 @@ Genres come from the lists' own headings and keywords, mapped to one taxonomy; e
 projects in a neighboring genre. Corrections are welcome as pull requests to the mapping in
 `tools/build_catalog.py`.
 
+The software list is built differently, from curated seeds rather than parsed lists, with the same
+GitHub lookup and license rule; see [how it is built](software/README.md#how-this-list-is-built).
+
 ## Sources and credit
 
 - [bobeff/open-source-games](https://github.com/bobeff/open-source-games) (CC0)
@@ -107,5 +125,6 @@ Thank you to the maintainers of those lists. Every listed project keeps its own 
 
 ## License
 
-This repository's tools and documents are MIT licensed (see [LICENSE](LICENSE)). The catalog data
-derives from CC0 lists and GitHub metadata.
+This repository's tools and documents are MIT licensed (see [LICENSE](LICENSE)). The games catalog
+data derives from CC0 lists and GitHub metadata; the software list from its own curated seeds and
+GitHub metadata.

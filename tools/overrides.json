@@ -1,5 +1,5 @@
 {
- "_comment": "Manual license corrections where GitHub's detector is wrong. Each needs a reason a reader can check. reuse_ok: true only when the corrected license is permissive AND verified by reading the repository's license files.",
+ "_comment": "Manual license corrections where GitHub's detector is wrong. Each needs a reason a reader can check. reuse_ok: true only when the corrected license is permissive AND verified by reading the repository's license files. evidence names the license file read and a line from it; read is the date it was read. Overrides apply to every domain.",
  "GNOME/aisleriot": {
   "license": "GPL-3.0-or-later",
   "why": "the code is GPL-3.0-or-later; GitHub's detector picked one of several COPYING files (card art)"
@@ -31,5 +31,791 @@
  "deokseon/D-BMS": {
   "note": "README links an off-site executable; build from source",
   "why": "off-site binary"
+ },
+ "vercel/ai": {
+  "license": "Apache-2.0",
+  "why": "LICENSE is the short Apache-2.0 notice without the full text, which GitHub's detector does not match",
+  "reuse_ok": true,
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Licensed under the Apache License, Version 2.0 (the \"License\");"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "modelcontextprotocol/servers": {
+  "license": "Apache-2.0",
+  "why": "new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
+  "reuse_ok": true,
+  "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 (\"Apache-2.0\"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0."
+   },
+   {
+    "file": "LICENSE",
+    "line": "Documentation in this project (excluding specifications) is licensed under"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "modelcontextprotocol/typescript-sdk": {
+  "license": "Apache-2.0",
+  "why": "new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
+  "reuse_ok": true,
+  "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 (\"Apache-2.0\"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0."
+   },
+   {
+    "file": "LICENSE",
+    "line": "Documentation in this project (excluding specifications) is licensed under"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "modelcontextprotocol/inspector": {
+  "license": "Apache-2.0",
+  "why": "new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
+  "reuse_ok": true,
+  "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 (\"Apache-2.0\"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0."
+   },
+   {
+    "file": "LICENSE",
+    "line": "Documentation in this project (excluding specifications) is licensed under"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "microsoft/autogen": {
+  "license": "MIT",
+  "why": "code is MIT per LICENSE-CODE; GitHub reported LICENSE, which is CC-BY-4.0 and covers documentation",
+  "reuse_ok": true,
+  "note": "documentation is CC-BY-4.0; in maintenance mode, and its README points new users to Microsoft Agent Framework ([microsoft/agent-framework](https://github.com/microsoft/agent-framework), MIT)",
+  "evidence": [
+   {
+    "file": "LICENSE-CODE",
+    "line": "MIT License"
+   },
+   {
+    "file": "LICENSE",
+    "line": "Attribution 4.0 International"
+   },
+   {
+    "file": "README.md",
+    "line": "> AutoGen is now in maintenance mode. It will not receive new features or enhancements and is community managed going forward."
+   },
+   {
+    "file": "README.md",
+    "line": "> New users should start with [Microsoft Agent Framework](https://github.com/microsoft/agent-framework)."
+   },
+   {
+    "repo": "microsoft/agent-framework",
+    "file": "LICENSE",
+    "line": "MIT License"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "jqlang/jq": {
+  "license": "MIT",
+  "why": "COPYING is MIT followed by notices for bundled permissive code, which GitHub's detector does not match",
+  "reuse_ok": true,
+  "note": "docs/ is CC-BY-3.0; bundled dtoa, decNumber (ICU) and BSD-2-Clause files keep their own notices",
+  "evidence": [
+   {
+    "file": "COPYING",
+    "line": "jq is copyright (C) 2012 Stephen Dolan"
+   },
+   {
+    "file": "COPYING",
+    "line": "jq's documentation (everything found under the docs/ subdirectory in"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "bats-core/bats-core": {
+  "license": "MIT",
+  "why": "LICENSE.md holds two MIT notices, bats-core and the original bats, which GitHub's detector does not match",
+  "reuse_ok": true,
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "Copyright (c) 2017 bats-core contributors"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "bats-core project are held by Sam Stephenson, 2014 as part of the project"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "py-pdf/pypdf": {
+  "license": "BSD-3-Clause",
+  "why": "LICENSE is a three-clause BSD text with 'the name of the author' wording, and pyproject.toml declares BSD-3-Clause",
+  "reuse_ok": true,
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "* The name of the author may not be used to endorse or promote products"
+   },
+   {
+    "file": "pyproject.toml",
+    "line": "license = \"BSD-3-Clause\""
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "ledger/ledger": {
+  "license": "BSD-3-Clause",
+  "why": "LICENSE.md is the three-clause BSD text with dash bullets instead of numbered clauses",
+  "reuse_ok": true,
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "- Neither the name of New Artisans LLC nor the names of its"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "borgbackup/borg": {
+  "license": "BSD-3-Clause",
+  "why": "LICENSE is a three-clause BSD text with 'the name of the author' wording, and pyproject.toml declares BSD-3-Clause",
+  "reuse_ok": true,
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "3. The name of the author may not be used to endorse or promote"
+   },
+   {
+    "file": "pyproject.toml",
+    "line": "license = \"BSD-3-Clause\""
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "withastro/astro": {
+  "license": "MIT",
+  "why": "LICENSE is MIT followed by MIT notices for code taken from SvelteKit and Vite",
+  "reuse_ok": true,
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "MIT License"
+   },
+   {
+    "file": "LICENSE",
+    "line": "This license applies to parts of the `packages/create-astro` and `packages/astro` subdirectories originating from the https://github.com/sveltejs/kit repository:"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "bigskysoftware/htmx": {
+  "license": "0BSD",
+  "why": "LICENSE is the Zero-Clause BSD text",
+  "reuse_ok": true,
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Zero-Clause BSD"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "PrivateBin/PrivateBin": {
+  "license": "Zlib",
+  "why": "LICENSE.md: PrivateBin's own code is Zlib; the file also reproduces the licenses of bundled libraries",
+  "reuse_ok": true,
+  "note": "bundled rawinflate is GPL-2.0; other bundled libraries are BSD-3-Clause, MIT or Apache-2.0; favicon, icon and logo are CC-BY",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "Sauvage in 2012 and falls under the Zlib/libpng license. Also included are"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "libraries that fall under the GPLv2 (rawinflate), BSD 3-clause (Showdown), MIT"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "FFmpeg/FFmpeg": {
+  "license": "LGPL-2.1-or-later",
+  "why": "LICENSE.md: most files are LGPL-2.1-or-later; optional GPL parts apply only when built with --enable-gpl",
+  "note": "a build configured with --enable-gpl is GPL-2.0-or-later",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "Most files in FFmpeg are under the GNU Lesser General Public License version 2.1"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "these parts are used by default, you have to explicitly pass `--enable-gpl` to"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "pi-hole/pi-hole": {
+  "license": "EUPL-1.2",
+  "why": "LICENSE is the EUPL v1.2 behind a project preamble, which GitHub's detector does not match",
+  "note": "commits before v3.0 keep the licenses they were made under",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "This software is licensed under the European Union Public License (EUPL)"
+   },
+   {
+    "file": "LICENSE",
+    "line": "- any commits made to the master branch prior to the release of version 3.0"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "oraios/serena": {
+  "license": "GPL-3.0-or-later",
+  "why": "licensed per component: the Serena application is GPL-3.0-or-later, the SolidLSP library is MIT",
+  "note": "src/solidlsp/ is MIT and can be reused on its own; releases up to v1.7.0 are MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "This repository is licensed per component: SolidLSP under the MIT License and"
+   },
+   {
+    "file": "LICENSE",
+    "line": "Last MIT-licensed release: v1.7.0"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "photoprism/photoprism": {
+  "license": "AGPL-3.0",
+  "why": "LICENSE is the AGPL-3.0 with an added trademark term (section 18), which GitHub's detector does not match",
+  "note": "the added term bars using the PhotoPrism name in a derived product's name",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "GNU AFFERO GENERAL PUBLIC LICENSE"
+   },
+   {
+    "file": "LICENSE",
+    "line": "18. PhotoPrism® Trademark and Brand Assets"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "HandBrake/HandBrake": {
+  "license": "GPL-2.0",
+  "why": "LICENSE: a compiled build is GPLv2; individual files are GPLv2, GPLv2+, LGPLv2.1+ or BSD/MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "In any case, a compiled HandBrake build is licensed under GPLv2"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "audacity/audacity": {
+  "license": "GPL-3.0",
+  "why": "LICENSE.txt: the program is GPLv3, files without their own notice default to GPL-2.0-or-later, documentation is CC-BY-3.0",
+  "evidence": [
+   {
+    "file": "LICENSE.txt",
+    "line": "Audacity is released under the GNU General Public License version 3 (GPLv3)."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "blender/blender": {
+  "license": "GPL-2.0-or-later",
+  "why": "COPYING says Blender is available only under the GNU GPL; source files carry GPL-2.0-or-later SPDX identifiers, with some GPL-3.0-or-later and permissive files",
+  "evidence": [
+   {
+    "file": "COPYING",
+    "line": "Apart from the GNU GPL, Blender is not available under other licenses."
+   },
+   {
+    "file": "doc/license/SPDX-license-identifiers.txt",
+    "line": "GPL-2.0-or-later          GPL-license.txt           https://spdx.org/licenses/GPL-2.0-or-later.html"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "openscad/openscad": {
+  "license": "GPL-2.0-or-later",
+  "why": "COPYING is the GPLv2 text with a CGAL linking exception; source headers say version 2 or any later version",
+  "note": "carries a linking exception for the CGAL library",
+  "evidence": [
+   {
+    "file": "COPYING",
+    "line": "As a special exception, you have permission to link this program"
+   },
+   {
+    "file": "src/openscad.cc",
+    "line": "*  the Free Software Foundation; either version 2 of the License, or"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "zotero/zotero": {
+  "license": "AGPL-3.0",
+  "why": "COPYING states the source is distributed under AGPLv3 and reproduces it; the preamble defeats GitHub's detector",
+  "note": "the Zotero name is a registered trademark",
+  "evidence": [
+   {
+    "file": "COPYING",
+    "line": "under the GNU Affero General Public License, version 3 (AGPLv3). The full text"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "ankitects/anki": {
+  "license": "AGPL-3.0-or-later",
+  "why": "LICENSE: AGPL-3.0-or-later, some user contributions BSD-3-Clause, listed bundled files under MIT, Apache-2.0 or CC-BY-4.0",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Anki is licensed under the GNU Affero General Public License, version 3 or"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "Gnucash/gnucash": {
+  "license": "GPL-2.0-or-later",
+  "why": "LICENSE: almost all files GPL-2.0-or-later, some GPL-2.0 and/or GPL-3.0, some with an OpenSSL linking exception",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Almost all of the source files are licensed under the GNU GPL, Version"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "keepassxreboot/keepassxc": {
+  "license": "GPL-2.0-only OR GPL-3.0-only",
+  "why": "COPYING: GPL version 2 or, at your option, version 3, plus a per-file list of bundled licenses",
+  "evidence": [
+   {
+    "file": "COPYING",
+    "line": "the Free Software Foundation, either version 2 or (at your option)"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "goauthentik/authentik": {
+  "license": "MIT + authentik Enterprise Edition license",
+  "why": "MIT except authentik/enterprise/, whose license requires a commercial agreement for production use; website/ is CC-BY-SA-4.0",
+  "note": "code outside authentik/enterprise/ and website/ is MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "* All content that resides under the \"authentik/enterprise/\" directory of this repository, if that directory exists, is licensed under the license defined in \"authentik/enterprise/LICENSE\"."
+   },
+   {
+    "file": "authentik/enterprise/LICENSE",
+    "line": "The authentik Enterprise Edition (EE) license (the “EE License”)"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "BerriAI/litellm": {
+  "license": "MIT + BerriAI Enterprise license",
+  "why": "MIT except enterprise/, whose license requires a commercial agreement for production use",
+  "note": "code outside enterprise/ is MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "* All content that resides under the \"enterprise/\" directory of this repository, if that directory exists, is licensed under the license defined in \"enterprise/LICENSE\"."
+   },
+   {
+    "file": "enterprise/LICENSE.md",
+    "line": "The BerriAI Enterprise license (the \"Enterprise License\")"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "langfuse/langfuse": {
+  "license": "MIT + Langfuse Enterprise license",
+  "why": "MIT except ee/, web/src/ee/ and worker/src/ee/, which are under a commercial enterprise license",
+  "note": "code outside the ee/ directories is MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "- All content that resides under the \"ee/\", \"web/src/ee/\", and/or \"worker/src/ee/\" directories of this repository, if these directories exist, is licensed under the license defined in \"ee/LICENSE\"."
+   },
+   {
+    "file": "ee/LICENSE",
+    "line": "Certain parts of the periphery of Langfuse are commercially"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "Stirling-Tools/Stirling-PDF": {
+  "license": "MIT + Stirling PDF User License",
+  "why": "MIT except the proprietary, saas, engine, desktop, cloud, prototypes and portal directories listed in LICENSE, which need a paid license for production use",
+  "note": "code outside the directories listed in LICENSE is MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "* All content that resides under the \"app/proprietary/\" directory of this repository,"
+   },
+   {
+    "file": "app/proprietary/LICENSE",
+    "line": "Production use of the Stirling PDF Software is only permitted with a valid Stirling PDF User License."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "opendatalab/MinerU": {
+  "license": "Apache-2.0 + MinerU additional terms",
+  "why": "Apache-2.0 with added terms: a separate commercial license above stated user and revenue thresholds, mandatory attribution for online services, and automatic termination",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "MinerU is licensed under Apache License 2.0 and is subject to the additional terms below. Except to the extent expressly modified or supplemented by these additional terms, your other rights and obligations are governed by Apache License 2.0."
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "MinerU may be used for commercial purposes without a separate commercial license. However, if you and your Affiliates, on a consolidated basis, meet either of the following thresholds, you must obtain a separate commercial license from [MinerU Team] before continuing such use:"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "toeverything/AFFiNE": {
+  "license": "MIT + AFFiNE Enterprise Edition license",
+  "why": "MIT except packages/backend and packages/common/native, whose license requires a subscription agreement for production use",
+  "note": "code outside packages/backend and packages/common/native is MIT (LICENSE-MIT)",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "- All content that resides under the \"packages/backend\" and \"packages/common/native\" directory of this repository, if that directory exists, is licensed under the license defined in \"packages/backend/server/LICENSE\"."
+   },
+   {
+    "file": "packages/backend/server/LICENSE",
+    "line": "The AFFiNE Enterprise Edition (EE) license (the “EE License”)"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "meilisearch/meilisearch": {
+  "license": "MIT + BUSL-1.1",
+  "why": "MIT except files marked Enterprise Edition, which are under an adapted Business Source License 1.1 that allows non-production use only",
+  "note": "code outside the Enterprise Edition modules is MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "`SPDX-License-Identifier: MIT AND BUSL-1.1`"
+   },
+   {
+    "file": "LICENSE-EE",
+    "line": "Production use of the Licensed Work requires a commercial license agreement with Meilisearch. Contact bonjour@meilisearch.com for licensing."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "outline/outline": {
+  "license": "BUSL-1.1",
+  "why": "Business Source License 1.1: source-available, no use as a commercial document service; each version converts to Apache-2.0 on its change date (2030-09-09 for the current one)",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Business Source License 1.1"
+   },
+   {
+    "file": "LICENSE",
+    "line": "Change Date:          2030-09-09"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "mnemosyne-proj/mnemosyne": {
+  "license": "AGPL-3.0 + Mnemosyne naming provision",
+  "why": "mnemosyne/LICENSE adds a non-standard requirement to AGPL-3.0 that derived works display the Mnemosyne name, details to be agreed with the maintainers; openSM2sync/ is LGPL-3.0",
+  "note": "openSM2sync/ is LGPL-3.0 without the extra provision",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "-the rest of mnemosyne uses mnemosyne/LICENSE"
+   },
+   {
+    "file": "mnemosyne/LICENSE",
+    "line": "reproduced below, but with one extra provision: if your derived"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "akaunting/akaunting": {
+  "license": "BUSL-1.1",
+  "why": "Business Source License 1.1: production use capped at two users, one company or 1,000 invoices, no white-labeling, no accounting service; converts to GPL-3.0 four years after each release",
+  "evidence": [
+   {
+    "file": "LICENSE.txt",
+    "line": "“Business Source License” is a trademark of MariaDB Corporation Ab."
+   },
+   {
+    "file": "LICENSE.txt",
+    "line": "(1) Use the Licensed Work with a total of more than two users or"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "invoiceninja/invoiceninja": {
+  "license": "Elastic-2.0",
+  "why": "Elastic License 2.0: source-available, no offering as a hosted service, no circumventing license keys",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Elastic License 2.0 (ELv2)"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "bitwarden/server": {
+  "license": "AGPL-3.0 + Bitwarden License v1.0",
+  "why": "AGPL-3.0 by default; bitwarden_license/ holds commercial modules under the Bitwarden License Agreement, which must be accepted to copy or use them",
+  "note": "code outside bitwarden_license/ is AGPL-3.0",
+  "evidence": [
+   {
+    "file": "LICENSE.txt",
+    "line": "Source code in this repository is covered by one of two licenses: (i) the GNU"
+   },
+   {
+    "file": "LICENSE_BITWARDEN.txt",
+    "line": "BITWARDEN LICENSE AGREEMENT"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "duplicati/duplicati": {
+  "license": "MIT + Duplicati Inc Software license",
+  "why": "MIT except proprietary/, whose license requires a commercial agreement for production use",
+  "note": "code outside proprietary/ is MIT",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "-   All content that resides under the \"proprietary/\" directory of this repository, if that directory exists, is licensed under the license defined in \"proprietary/LICENSE\"."
+   },
+   {
+    "file": "proprietary/LICENSE",
+    "line": "The Duplicati Inc Software license (the “Software License”)"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "veracrypt/VeraCrypt": {
+  "license": "Apache-2.0 + TrueCrypt-3.0",
+  "why": "code inherited from TrueCrypt remains under the TrueCrypt License 3.0, a custom license that is not OSI-approved",
+  "evidence": [
+   {
+    "file": "License.txt",
+    "line": "VeraCrypt is multi-licensed under Apache License 2.0 and"
+   },
+   {
+    "file": "License.txt",
+    "line": "TrueCrypt License Version 3.0"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "tldraw/tldraw": {
+  "license": "tldraw license (custom)",
+  "why": "custom source-available license: no production use without a license key, no standalone redistribution",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "# tldraw license"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "- Not to use the Software in Production Environments."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "Tencent-Hunyuan/Hunyuan3D-2": {
+  "license": "Tencent Hunyuan 3D 2.0 Community License",
+  "why": "custom model license: excludes the EU, UK and South Korea, requires a separate license above 1 million monthly active users, and carries an acceptable use policy",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "TENCENT HUNYUAN 3D 2.0 COMMUNITY LICENSE AGREEMENT"
+   },
+   {
+    "file": "LICENSE",
+    "line": "THIS LICENSE AGREEMENT DOES NOT APPLY IN THE EUROPEAN UNION, UNITED KINGDOM AND SOUTH KOREA AND IS EXPRESSLY LIMITED TO THE TERRITORY, AS DEFINED BELOW."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "open-webui/open-webui": {
+  "license": "BSD-3-Clause + Open WebUI branding clause",
+  "why": "LICENSE is BSD-3-Clause with an added clause 4 that bars removing or altering Open WebUI branding above 50 end users without written permission or an enterprise license",
+  "note": "materials under earlier licenses keep them, per LICENSE_HISTORY",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "4. Notwithstanding any other provision of this License, and as a material"
+   },
+   {
+    "file": "LICENSE",
+    "line": "to the application) does not exceed fifty (50) within any rolling"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "esphome/esphome": {
+  "license": "MIT + GPL-3.0",
+  "why": "LICENSE: the C and C++ runtime is GPL-3.0 and the Python code and everything else is MIT, which GitHub's detector does not match",
+  "note": "the Python code is MIT; the C and C++ runtime is GPL-3.0",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "The ESPHome License is made up of two base licenses: MIT and the GNU GENERAL PUBLIC LICENSE."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "laurent22/joplin": {
+  "license": "AGPL-3.0-or-later + Joplin Server Personal Use License",
+  "why": "LICENSE: AGPL-3.0-or-later unless a directory has its own LICENSE; packages/server carries a personal use license",
+  "note": "code outside directories with their own LICENSE is AGPL-3.0-or-later; logos and icons are all rights reserved",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "All code in this repository is licensed under the AGPL-3.0-or-later License"
+   },
+   {
+    "file": "packages/server/LICENSE.md",
+    "line": "**JOPLIN SERVER PERSONAL USE LICENSE**"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "qarmin/czkawka": {
+  "license": "MIT + GPL + CC-BY-4.0",
+  "why": "licensed per directory: code outside the Cargo app and library directories is MIT, each app and library directory has its own license files, including a GPL file in krokiet/",
+  "note": "czkawka_core, czkawka_cli and czkawka_gui carry MIT license files; krokiet/ also carries a GPL license file",
+  "evidence": [
+   {
+    "file": "LICENSE_MIT_EVERYTHING_OUTSIDE_ANY_CARGO_APP_LIBRARY",
+    "line": "MIT License"
+   },
+   {
+    "file": "krokiet/",
+    "line": "LICENSE_CC_BY_4_AUDIO_FILES, LICENSE_CC_BY_4_ICONS, LICENSE_GPL_APP, LICENSE_MIT_CODE"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "stalwartlabs/stalwart": {
+  "license": "AGPL-3.0-only + Stalwart Enterprise License",
+  "why": "no root LICENSE; LICENSES/ holds AGPL-3.0-only.txt and LicenseRef-SEL.txt and the README states dual licensing under AGPL-3.0 and the Stalwart Enterprise License v2",
+  "note": "enterprise features are under a commercial license",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "This project is dual-licensed under the **GNU Affero General Public License v3.0** (AGPL-3.0; as published by the Free Software Foundation) and the **Stalwart Enterprise License v2 (SELv2)**:"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "remotion-dev/remotion": {
+  "license": "Remotion License (custom)",
+  "why": "custom source-available license: free for individuals, non-profits and companies with up to 3 employees, a paid company license above that, and no selling a derivative of Remotion",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "- a for-profit organization with up to 3 employees"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "It is not allowed to copy or modify Remotion code for the purpose of selling, renting, licensing, relicensing, or sublicensing your own derivate of Remotion."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "musescore/MuseScore": {
+  "license": "GPL-3.0",
+  "why": "LICENSE.txt states GPL version 3 behind a project preamble, which GitHub's detector does not match",
+  "note": "bundled fonts carry their own terms",
+  "evidence": [
+   {
+    "file": "LICENSE.txt",
+    "line": "under the terms of the GNU General Public License version 3 as published"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "unclecode/crawl4ai": {
+  "license": "Apache-2.0 + Crawl4AI attribution requirement",
+  "why": "GitHub reports Apache-2.0, but LICENSE adds an Attribution Requirement section after the Apache terms",
+  "note": "the added section requires a fixed credit line in every distribution, publication or public use, such as a README or NOTICE file, a website's About or Credits page, or a command-line tool's help output",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Apache License"
+   },
+   {
+    "file": "LICENSE",
+    "line": "Attribution Requirement"
+   },
+   {
+    "file": "LICENSE",
+    "line": "All distributions, publications, or public uses of this software, or derivative works based on this software, must include the following attribution:"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "docusealco/docuseal": {
+  "why": "LICENSE_ADDITIONAL_TERMS adds a term under AGPL section 7(b), which GitHub's license field does not show",
+  "note": "an added AGPL section 7(b) term (LICENSE_ADDITIONAL_TERMS) requires a covered work to keep the original DocuSeal attribution in interactive user interfaces",
+  "evidence": [
+   {
+    "file": "LICENSE_ADDITIONAL_TERMS",
+    "line": "In accordance with Section 7(b) of the GNU Affero General Public License,"
+   },
+   {
+    "file": "LICENSE_ADDITIONAL_TERMS",
+    "line": "a covered work must retain the original DocuSeal attribution in interactive"
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "awslabs/mcp": {
+  "why": "the README names a successor, which GitHub's metadata does not show",
+  "note": "its README names Agent Toolkit for AWS as the successor to these servers; this repository still works and accepts contributions",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "The Agent Toolkit for AWS is the successor to the MCP servers, plugins, and skills available on AWS Labs"
+   },
+   {
+    "file": "README.md",
+    "line": "This repo continues to work and accept contributions."
+   }
+  ],
+  "read": "2026-09-26"
+ },
+ "ahujasid/mcp-for-blender": {
+  "why": "the README's Telemetry Control section says an anonymous usage record is sent unless telemetry is turned off",
+  "note": "sends an anonymous usage record by default (install and session IDs, tool name, versions, operating system) until `DISABLE_TELEMETRY=true` is set; a pinned setup with telemetry off is in [ai/graphics.md](../../ai/graphics.md#safe-setup-checklist)",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "**What is collected by default (no opt-in):** a minimal anonymous usage record so I can count active users and see which tools get used"
+   },
+   {
+    "file": "README.md",
+    "line": "**To turn off telemetry entirely**, including the minimal anonymous usage record, set an environment variable:"
+   }
+  ],
+  "read": "2026-09-26"
  }
 }
