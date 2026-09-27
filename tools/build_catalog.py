@@ -533,7 +533,15 @@ def write_domain(spec, out, drops, root, today, domain):
             "tool may **parse** the list into generated data like this catalog or only **link** to it. A share-alike "
             "list (CC-BY-SA) would carry its license into this repository's MIT data, so it is linked, never parsed. "
             "A license stated only in a README badge, with no license file, is treated like a list's claim: link only "
-            "until confirmed.", ""] + res + ["",
+            "until confirmed.", "",
+            "This catalog's seeds were chosen by hand. Some candidates were found through four permissively licensed "
+            "lists, taking project names and addresses only: "
+            "[pluja/awesome-privacy](https://github.com/pluja/awesome-privacy) (CC0-1.0), "
+            "[krzemienski/awesome-video](https://github.com/krzemienski/awesome-video) (CC0-1.0), "
+            "[meichthys/foss_photo_libraries](https://github.com/meichthys/foss_photo_libraries) (MIT) and "
+            "[ad-si/awesome-music-production](https://github.com/ad-si/awesome-music-production) (ISC). Thanks to their "
+            "maintainers. The one-line descriptions were written for this catalog; some stay close to the project's own "
+            "description.", ""] + res + ["",
             "## How this list is built", "",
             f"Seeds live in [`tools/domains/{domain}.json`](../tools/domains/{domain}.json): name, repository, category "
             f"and one line on why. `tools/build_catalog.py --domain {domain}` (it needs the GitHub CLI, `gh`, installed and signed in) asks GitHub's API for each repository's "

@@ -1,5 +1,5 @@
 {
- "_comment": "Curated seeds for the software domain. build_catalog.py --domain software reads this file, asks GitHub for each repository's license, language, stars and last push, and writes software/. Edit the seeds here and rebuild; never hand-edit the generated files. Each seed: name, url, category, why (one line, our own words).",
+ "_comment": "Curated seeds for the software domain. build_catalog.py --domain software reads this file, asks GitHub for each repository's license, language, stars and last push, and writes software/. Edit the seeds here and rebuild; never hand-edit the generated files. Each seed: name, url, category, why (one line on why it is useful, written for this catalog; some stay close to the project's own description).",
  "title": "Software",
  "intro": [
   "Open-source applications, tools, libraries and curated lists beyond games: self-hosting, home automation, local AI, documents, media, notes, reading, learning, personal finance, privacy and web development.",
