@@ -18,9 +18,10 @@ stars, and any project whose name or description reads like a lure is dropped un
 stars. The dropped count is printed in catalog/README.md; nothing is removed silently.
 
 A LIST NEVER UNLOCKS "copy". Only a license GitHub itself reports (or a manual override) can make
-a project `copy`. A list's license, a repository GitHub cannot find, or a failed lookup reads
-`check first`. Decompiled or disassembled commercial games are `check first` whatever their
-stated license: reconstructed code does not carry the original rights holder's permission.
+a project `copy`. A list's license or a repository GitHub cannot find reads `check first`; a
+failed lookup stops the build before anything is written. Decompiled or disassembled commercial
+games are `check first` whatever their stated license: reconstructed code does not carry the
+original rights holder's permission.
 
 Every GitHub repository is then looked up in GitHub's own API: license (SPDX), primary
 language, stars, last push, archived. A list's claim about a license is never trusted when the
@@ -28,6 +29,16 @@ repository itself can be asked. Repositories off GitHub keep the license their l
 marked as such.
 
 Writes data/catalog.json, catalog/<genre>.md and catalog/README.md.
+
+OTHER DOMAINS. `--domain software` builds the non-game list from curated seeds in
+tools/domains/software.json (name, url, category, why) instead of parsing lists:
+
+    python3 tools/build_catalog.py --domain software --src sources --out .
+
+The same GitHub lookup, license classes and overrides apply. A seed is dropped, and listed with
+its reason, when GitHub cannot find it, it is archived, or it redirects to a repository already
+listed. A failed lookup writes nothing and caches nothing. Writes data/software.json,
+software/catalog/<category>.md and software/README.md.
 """
 import argparse, collections, datetime, json, os, re, subprocess, sys
 
@@ -108,6 +119,23 @@ def license_class(spdx):
     return "check"
 
 
+def reuse_of(lic, lic_src, ov):
+    """Only GitHub's own answer or a reviewed override (reuse_ok) can make a project `copy`;
+    a license made of several parts (" + ") is always `check`."""
+    reuse = license_class(lic) if (lic_src == "github" or (ov and ov.get("reuse_ok"))) else \
+        ("check" if license_class(lic) == "copy" else license_class(lic))
+    if " + " in (lic or ""):
+        reuse = "check"
+    return reuse
+
+
+def load_overrides():
+    ov_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "overrides.json")
+    if not os.path.exists(ov_path):
+        return {}
+    return {k.lower(): v for k, v in json.load(open(ov_path)).items() if not k.startswith("_")}
+
+
 def gh_slug(url):
     m = re.match(r"https?://(?:www\.)?github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$", url or "")
     return f"{m.group(1)}/{m.group(2)}" if m and m.group(1).lower() not in ("topics", "orgs", "sponsors") else None
@@ -179,13 +207,47 @@ def parse_topic(path, entries):
         add(entries, r["name"], r["html_url"], src, r.get("topics", []), (r.get("description") or "")[:200])
 
 
+def read_batch(stdout, n):
+    """GitHub's answers for aliases r0..r{n-1}, or (None, why) when the reply is not an answer.
+    A batch is answered only when "data" is an object. A null is kept only when GitHub sent a
+    NOT_FOUND error for that alias; any other error, or a null nobody explained, is not an answer."""
+    try:
+        body = json.loads(stdout)
+    except ValueError:
+        return None, "the reply is not JSON"
+    data = body.get("data") if isinstance(body, dict) else None
+    errors = body.get("errors") if isinstance(body, dict) else None
+    if not isinstance(data, dict):
+        kinds = sorted({str(e.get("type") or e.get("message")) for e in errors if isinstance(e, dict)}) \
+            if isinstance(errors, list) else []
+        return None, "no data in the reply" + (f" (errors: {', '.join(kinds)})" if kinds else "")
+    if not isinstance(errors, (list, type(None))):
+        return None, "the reply's errors field is not a list"
+    missing = set()
+    for e in errors or []:
+        path = e.get("path") if isinstance(e, dict) else None
+        if isinstance(e, dict) and e.get("type") == "NOT_FOUND" and isinstance(path, list) and len(path) == 1:
+            missing.add(path[0])
+        else:
+            return None, f"GitHub error {(e.get('type') or e.get('message')) if isinstance(e, dict) else e!r}"
+    answers = []
+    for j in range(n):
+        g = data.get(f"r{j}")
+        if g is None and f"r{j}" not in missing:
+            return None, f"r{j} is null without a NOT_FOUND error"
+        answers.append(g)   # None only here: GitHub says there is no such repository
+    return answers, None
+
+
 def enrich(entries, cache_path, batch=50):
     """One GraphQL query per 50 repositories: GitHub's own answer for license and activity.
-    Cached in the sources directory so a rebuild does not re-query; delete it to refresh."""
+    Cached in the sources directory so a rebuild does not re-query; delete it to refresh.
+    A batch that is not answered after a retry (see read_batch) stops the build: nothing is
+    written and nothing from this run is cached."""
     slugs = sorted({e["github"] for e in entries.values() if e["github"]})
     info = json.load(open(cache_path)) if os.path.exists(cache_path) else {}
     todo = [s for s in slugs if s.lower() not in info]
-    failed = set()
+    new = {}
     for i in range(0, len(todo), batch):
         chunk = todo[i:i + batch]
         parts = []
@@ -195,31 +257,32 @@ def enrich(entries, cache_path, batch=50):
                          '{ nameWithOwner licenseInfo { spdxId } primaryLanguage { name } stargazerCount '
                          'pushedAt isArchived description homepageUrl }')
         q = "query {" + " ".join(parts) + "}"
-        data, ok = {}, False
         for _attempt in range(2):
             p = subprocess.run(["gh", "api", "graphql", "-f", f"query={q}"], capture_output=True, text=True)
-            try:
-                body = json.loads(p.stdout)
-                data, ok = body.get("data") or {}, "data" in body
-            except ValueError:
-                ok = False
-            if ok:
+            answers, why = read_batch(p.stdout, len(chunk))
+            if answers is not None:
                 break
+        if answers is None:
+            sys.exit(f"GitHub lookup failed for {len(chunk)} repositories starting at {chunk[0]}: {why}. "
+                     "Nothing written and nothing cached from this run; rerun.")
         for j, s in enumerate(chunk):
-            if ok:
-                info[s.lower()] = data.get(f"r{j}")   # None here means GitHub says: no such repository
-            else:
-                failed.add(s.lower())
+            new[s.lower()] = answers[j]
         print(f"  enriched {min(i + batch, len(todo))}/{len(todo)} (cached {len(slugs) - len(todo)})", file=sys.stderr)
-    json.dump(info, open(cache_path, "w"))
-    return info, failed
+    if new:
+        info.update(new)
+        os.makedirs(os.path.dirname(os.path.abspath(cache_path)), exist_ok=True)   # sources/ is not in a fresh clone
+        json.dump(info, open(cache_path, "w"))
+    return info
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--domain", default="games", help="games (default) or a seed file in tools/domains/, e.g. software")
     a = ap.parse_args()
+    if a.domain != "games":
+        return build_domain(a)
     entries = {}
     parse_markdown_list(os.path.join(a.src, "bobeff.md"), "bobeff", entries, skip_sections=("Other lists", "Table of contents"))
     parse_markdown_list(os.path.join(a.src, "michelpereira.md"), "awesome-open-source-games", entries,
@@ -230,19 +293,14 @@ def main():
     counts = collections.Counter(s for e in entries.values() for s in e["sources"])
     print(f"parsed {len(entries)} unique projects: {dict(counts)}", file=sys.stderr)
 
-    info, failed = enrich(entries, os.path.join(a.src, "github_cache.json"))
-    overrides = {}
-    ov_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "overrides.json")
-    if os.path.exists(ov_path):
-        overrides = {k.lower(): v for k, v in json.load(open(ov_path)).items() if not k.startswith("_")}
+    info = enrich(entries, os.path.join(a.src, "github_cache.json"))
+    overrides = load_overrides()
     today = datetime.date.today()
     out, dropped = [], collections.Counter()
     for e in entries.values():
         key = (e["github"] or "").lower()
         g = info.get(key) if e["github"] else None
-        if e["github"] and key in failed:
-            e["github_status"] = "GitHub lookup failed at build time"
-        elif e["github"] and g is None:
+        if e["github"] and g is None:
             e["github_status"] = "repository not found on GitHub"
         stars = (g or {}).get("stargazerCount") or 0
         topic_only = all(s.startswith("github-topic") for s in e["sources"])
@@ -274,10 +332,7 @@ def main():
         ov = overrides.get(key)
         if ov and ov.get("license"):
             lic, lic_src = ov["license"], f"corrected: {ov['why']}"
-        reuse = license_class(lic) if (lic_src == "github" or (ov and ov.get("reuse_ok"))) else \
-            ("check" if license_class(lic) == "copy" else license_class(lic))
-        if " + " in (lic or ""):
-            reuse = "check"
+        reuse = reuse_of(lic, lic_src, ov)
         decomp = bool(DECOMP.search(text + " " + " ".join(e["labels"]))) or bool(ov and ov.get("decompiled"))
         if decomp:
             reuse = "check"
@@ -346,6 +401,156 @@ def write_markdown(out, root, today, dropped):
                       f"{r['stars'] if r['stars'] is not None else ''} | {last} | {about} |")
         open(os.path.join(root, "catalog", f"{slug}.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
     open(os.path.join(root, "catalog", "README.md"), "w", encoding="utf-8").write("\n".join(idx) + "\n")
+
+
+RANK = {"copy": 0, "library": 1, "study": 2, "check": 3}
+
+
+def build_domain(a):
+    """A domain other than games: curated seeds, GitHub's answer for each, every drop listed."""
+    spec_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "domains", f"{a.domain}.json")
+    if not os.path.exists(spec_path):
+        sys.exit(f"no seed file for domain {a.domain!r}: {spec_path}")
+    spec = json.load(open(spec_path, encoding="utf-8"))
+    cats = [c["slug"] for c in spec["categories"]]
+    seeds, entries, dropped = spec["seeds"], {}, []
+    for s in seeds:
+        if s["category"] not in cats:
+            sys.exit(f"{s['name']}: category {s['category']!r} is not in {spec_path}")
+        slug = gh_slug(s["url"])
+        if not slug:
+            dropped.append((s, "not a GitHub repository URL"))
+        elif slug.lower() in entries:
+            dropped.append((s, "listed twice in the seed file"))
+        else:
+            entries[slug.lower()] = {"github": slug, "seed": s}
+    print(f"{len(seeds)} seeds, {len(entries)} distinct GitHub repositories", file=sys.stderr)
+    info = enrich(entries, os.path.join(a.src, f"github_cache_{a.domain}.json"))   # exits on a failed lookup
+    overrides = load_overrides()
+    today = datetime.date.today()
+    out, kept = [], set()
+    for key, e in entries.items():
+        s, g = e["seed"], info.get(key)
+        if g is None:
+            dropped.append((s, "repository not found on GitHub"))
+            continue
+        canon = g["nameWithOwner"]
+        ov = overrides.get(canon.lower()) or overrides.get(key)
+        if g.get("isArchived"):
+            dropped.append((s, "archived on GitHub"))
+            continue
+        if ov and ov.get("drop"):
+            dropped.append((s, f"removed by a reviewed override: {ov.get('why')}"))
+            continue
+        if canon.lower() in kept:
+            dropped.append((s, f"redirects to {canon}, which is already listed"))
+            continue
+        kept.add(canon.lower())
+        lic, lic_src = (g.get("licenseInfo") or {}).get("spdxId"), "github"
+        if ov and ov.get("license"):
+            lic, lic_src = ov["license"], f"corrected: {ov['why']}"
+        pushed = g.get("pushedAt")
+        age_days = (today - datetime.date.fromisoformat(pushed[:10])).days if pushed else None
+        out.append({
+            "name": canon if s["name"].lower() == key else s["name"], "category": s["category"],
+            "repo": f"https://github.com/{canon}", "homepage": g.get("homepageUrl") or None, "why": s["why"],
+            "language": (g.get("primaryLanguage") or {}).get("name"),
+            "license": lic, "license_from": lic_src, "reuse": reuse_of(lic, lic_src, ov),
+            "stars": g.get("stargazerCount"), "pushed": pushed[:10] if pushed else None,
+            "active": age_days is not None and age_days <= 730, "note": (ov or {}).get("note") or None,
+        })
+    if len(out) + len(dropped) != len(seeds):
+        sys.exit(f"reconcile failed: {len(seeds)} seeds, {len(out)} rows, {len(dropped)} dropped")
+    out.sort(key=lambda r: (cats.index(r["category"]), RANK[r["reuse"]], -(r["stars"] or 0), r["name"].lower()))
+    drops = [{"name": s["name"], "url": s["url"], "reason": why} for s, why in dropped]
+    os.makedirs(os.path.join(a.out, "data"), exist_ok=True)
+    json.dump({"built": today.isoformat(), "domain": a.domain, "count": len(out), "seeds": len(seeds),
+               "dropped": drops, "categories": spec["categories"], "entries": out},
+              open(os.path.join(a.out, "data", f"{a.domain}.json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    write_domain(spec, out, drops, os.path.join(a.out, a.domain), today, a.domain)
+    print(f"{len(seeds)} seeds = {len(out)} rows + {len(drops)} dropped", file=sys.stderr)
+    for d in drops:
+        print(f"  dropped {d['name']}: {d['reason']}", file=sys.stderr)
+
+
+def write_domain(spec, out, drops, root, today, domain):
+    os.makedirs(os.path.join(root, "catalog"), exist_ok=True)
+    by = collections.defaultdict(list)
+    for r in out:
+        by[r["category"]].append(r)
+    counts = lambda rows, cls: sum(r["reuse"] == cls for r in rows)
+    table = ["| category | projects | copy | library use | study only | check first | covers |", "|---|---|---|---|---|---|---|"]
+    for c in spec["categories"]:
+        rows = by.get(c["slug"], [])
+        if not rows:
+            continue
+        table.append(f"| [{c['title']}](catalog/{c['slug']}.md) | {len(rows)} | {counts(rows, 'copy')} | "
+                     f"{counts(rows, 'library')} | {counts(rows, 'study')} | {counts(rows, 'check')} | {esc(c['scope'])} |")
+        md = [f"# {c['title']}", "",
+              f"{c['scope'][0].upper() + c['scope'][1:]}. {len(rows)} projects; {counts(rows, 'copy')} with a permissive "
+              f"code license. Sorted by reuse, then stars. Part of the [{spec['title'].lower()} list](../README.md), which "
+              "explains the reuse classes.", ""]
+        if c.get("note"):
+            md += [c["note"], ""]
+        md += ["| project | reuse | license | language | stars | last push | why |", "|---|---|---|---|---|---|---|"]
+        for r in rows:
+            lic = (r["license"] or "none") + (" (per license file)" if r["license_from"] != "github" else "")
+            why = esc(r["why"]) + (f" **{esc(r['note'])}**" if r["note"] else "")
+            md.append(f"| [{esc(r['name'])}]({r['repo']}) | {REUSE_TEXT[r['reuse']]} | {esc(lic)} | {esc(r['language'] or '')} | "
+                      f"{r['stars'] if r['stars'] is not None else ''} | {r['pushed'] or ''} | {why} |")
+        if any(r["license_from"] != "github" for r in rows):
+            md += ["", "A license marked *per license file* was read from the repository's own license files, because "
+                   "GitHub's detector could not classify it or reported only part of it; the file and the reason are recorded in "
+                   "[tools/overrides.json](../../tools/overrides.json)."]
+        open(os.path.join(root, "catalog", f"{c['slug']}.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
+    res = ["| list | covers | license | use |", "|---|---|---|---|"]
+    for r in spec.get("resources", []):
+        res.append(f"| [{esc(r['name'])}]({r['url']}) | {esc(r['covers'])} | {esc(r['license'])} | {esc(r['use'])} |")
+    left = [f"- [{esc(d['name'])}]({d['url']}): {esc(d['reason'])}" for d in drops] or \
+        ["Nothing: every seed was found on GitHub, is not archived, and is listed once."]
+    idx = [f"# {spec['title']}", ""]
+    for p in spec["intro"]:
+        idx += [p, ""]
+    idx += ["## Reuse classes", "",
+            "The same four classes as the games catalog; which licenses fall in each is set by the "
+            "[license rule](../README.md#the-license-rule).", "",
+            "| reuse class | what it means for an application or tool |", "|---|---|",
+            "| `copy` | copy its code into your project, keep the copyright notice, and record it in `THIRD_PARTY.md` |",
+            "| `library use` | depend on it unmodified as a library; do not paste its code into yours |",
+            "| `study only` | run it and read it for design; copy none of its code |",
+            "| `check first` | treat the code as all rights reserved until you have read its license yourself |", "",
+            "**Running a GPL or AGPL program unmodified is fine; the class limits copying code.** Installing a "
+            "`study only` application and using it as it ships is ordinary use. Obligations start when you copy its "
+            "code into your own project, or, for AGPL, when you modify it and let other people use the modified "
+            "version over a network. Some `check first` rows are source-available (a Business Source, Elastic or "
+            "enterprise license, or an open core with a commercial directory), and those terms can limit production "
+            "or commercial use even when you change nothing: read them before you deploy.", "",
+            "## Categories", "",
+            f"Built {today.isoformat()}: {len(out)} projects, {counts(out, 'copy')} with a permissive code license, "
+            f"{sum(1 for r in out if r['active'])} pushed in the last 2 years.", ""] + table + ["",
+            "## Resources", "",
+            "Curated lists that go wider than this one. Each keeps its own license, and that license decides whether a "
+            "tool may **parse** the list into generated data like this catalog or only **link** to it. A share-alike "
+            "list (CC-BY-SA) would carry its license into this repository's MIT data, so it is linked, never parsed. "
+            "A license stated only in a README badge, with no license file, is treated like a list's claim: link only "
+            "until confirmed.", "",
+            "This catalog's seeds were chosen by hand. Some candidates were found through four permissively licensed "
+            "lists, taking project names and addresses only: "
+            "[pluja/awesome-privacy](https://github.com/pluja/awesome-privacy) (CC0-1.0), "
+            "[krzemienski/awesome-video](https://github.com/krzemienski/awesome-video) (CC0-1.0), "
+            "[meichthys/foss_photo_libraries](https://github.com/meichthys/foss_photo_libraries) (MIT) and "
+            "[ad-si/awesome-music-production](https://github.com/ad-si/awesome-music-production) (ISC). Thanks to their "
+            "maintainers. The one-line descriptions were written for this catalog; some stay close to the project's own "
+            "description.", ""] + res + ["",
+            "## How this list is built", "",
+            f"Seeds live in [`tools/domains/{domain}.json`](../tools/domains/{domain}.json): name, repository, category "
+            f"and one line on why. `tools/build_catalog.py --domain {domain}` (it needs the GitHub CLI, `gh`, installed and signed in) asks GitHub's API for each repository's "
+            "license, language, stars, last push and archived flag. License corrections, each with the file it was "
+            "read from, live in [`tools/overrides.json`](../tools/overrides.json). To add a project, add a seed and "
+            "rebuild; do not hand-edit this file, `catalog/` or the data file.", "",
+            "```sh", f"python3 tools/build_catalog.py --domain {domain} --src sources --out .", "```", "",
+            f"**Left out at build time:** {len(drops)} of {len(out) + len(drops)} seeds.", ""] + left
+    open(os.path.join(root, "README.md"), "w", encoding="utf-8").write("\n".join(idx) + "\n")
 
 
 def esc(s):

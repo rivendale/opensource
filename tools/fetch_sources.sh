@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Fetch the four public lists the catalog is built from, into ./sources. Needs `gh` (logged in)
-# and `git`. Read-only against every source.
+# Fetch the three public lists and the GitHub topic searches the games catalog is built from, into
+# ./sources. Needs `gh` (logged in) and `git`. Read-only against every source.
 set -euo pipefail
 mkdir -p sources && cd sources
 gh api repos/bobeff/open-source-games/contents/README.md -H 'Accept: application/vnd.github.raw' > bobeff.md
@@ -21,8 +21,9 @@ for page in range(1, 11):
         break
 json.dump(out, open("topic.json", "w"))
 print(f"topic:open-source-game: {len(out)} repositories")
-# The four lists are thin on some genres (fighting: 11 projects in all four). Top 100 by stars
-# for a few genre topics fills them; each result keeps the topic that found it.
+# The three lists and the topic search above are thin on some genres (fighting: 11 projects across
+# all four sources). Top 100 by stars for a few genre topics fills them; each result keeps the
+# topic that found it.
 extra = []
 for t in ["fighting-game", "beat-em-up", "rollback-netcode", "racing-game", "sports-game", "rhythm-game", "sandbox-game"]:
     r = subprocess.run(["gh", "api", "-X", "GET", "search/repositories", "-f", f"q=topic:{t}",
