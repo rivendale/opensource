@@ -17,40 +17,41 @@ The same four classes as the games catalog; which licenses fall in each is set b
 | `study only` | run it and read it for design; copy none of its code |
 | `check first` | treat the code as all rights reserved until you have read its license yourself |
 
+A `copy` row that carries a note reads `copy (see note)`: the note names a part under other terms, such as a bundled GPL file, or something to know before you run or copy it.
+
 **Running a GPL or AGPL program unmodified is fine; the class limits copying code.** Installing a `study only` application and using it as it ships is ordinary use. Obligations start when you copy its code into your own project, or, for AGPL, when you modify it and let other people use the modified version over a network. Some `check first` rows are source-available (a Business Source, Elastic or enterprise license, or an open core with a commercial directory), and those terms can limit production or commercial use even when you change nothing: read them before you deploy.
 
 ## Categories
 
-Built 2026-09-26: 295 projects, 173 with a permissive code license, 295 pushed in the last 2 years.
+Built 2026-09-27: 290 projects, 168 with a permissive code license.
 
 | category | projects | copy | library use | study only | check first | covers |
 |---|---|---|---|---|---|---|
 | [Self-hosting](catalog/self-hosting.md) | 32 | 15 | 1 | 14 | 2 | servers, reverse proxies, remote access, monitoring and household apps you run yourself |
 | [Home automation](catalog/home-automation.md) | 6 | 4 | 0 | 1 | 1 | hubs, device bridges, cameras and automations that run locally |
 | [Local AI and agents](catalog/local-ai-agents.md) | 25 | 21 | 0 | 0 | 4 | model runners and servers, coding agents, agent frameworks and evaluation |
-| [MCP servers and SDKs](catalog/mcp.md) | 17 | 16 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
+| [MCP servers and SDKs](catalog/mcp.md) | 16 | 15 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
 | [Speech](catalog/speech.md) | 7 | 6 | 0 | 1 | 0 | speech-to-text and text-to-speech that run locally |
 | [Developer tools and security](catalog/dev-security.md) | 24 | 21 | 1 | 2 | 0 | package managers, linters, scanners, supply-chain checks and command-line tools |
 | [Photo libraries](catalog/media-photo.md) | 9 | 2 | 0 | 6 | 1 | photo backup and libraries, RAW development, duplicates and metadata |
 | [Video and audio](catalog/media-video-audio.md) | 16 | 7 | 1 | 7 | 1 | editing, encoding, recording, music, stem separation and video made from code |
 | [Images and diagrams](catalog/media-image.md) | 16 | 7 | 2 | 7 | 0 | image processing, generation, painting, design tools and diagrams |
-| [3D, CAD and printing](catalog/media-3d.md) | 11 | 5 | 1 | 4 | 1 | 3D creation, CAD, slicers, scans and 3D on the web |
+| [3D, CAD and printing](catalog/media-3d.md) | 10 | 4 | 1 | 4 | 1 | 3D creation, CAD, slicers, scans and 3D on the web |
 | [Documents and OCR](catalog/documents-ocr.md) | 20 | 13 | 1 | 4 | 2 | PDF tools, OCR, document conversion and typesetting |
 | [Notes, wikis and search](catalog/knowledge-search.md) | 23 | 7 | 0 | 12 | 4 | notes, wikis, bookmarks, web archiving, search engines and vector search |
 | [Reading](catalog/reading.md) | 7 | 2 | 0 | 5 | 0 | e-books, audiobooks, comics, feeds and read-it-later |
 | [Learning](catalog/learning.md) | 17 | 8 | 0 | 8 | 1 | flashcards, spaced repetition, learning platforms and offline reference |
 | [Personal finance](catalog/finance.md) | 14 | 4 | 1 | 7 | 2 | budgeting, plain-text accounting, invoicing and investment tracking |
-| [Privacy, security and backups](catalog/privacy-backups.md) | 23 | 8 | 1 | 11 | 3 | backups, encryption, passwords, two-factor codes, messaging and file transfer |
+| [Privacy, passwords and backups](catalog/privacy-backups.md) | 23 | 8 | 1 | 11 | 3 | backups, encryption, passwords, two-factor codes, messaging and file transfer |
 | [Web and app frameworks](catalog/web-frontend.md) | 25 | 24 | 0 | 0 | 1 | frameworks, UI libraries, static sites, testing and app wrappers |
-| [Resources](catalog/resources.md) | 3 | 3 | 0 | 0 | 0 | curated indexes and courses |
 
 ## Resources
 
-Curated lists that go wider than this one. Each keeps its own license, and that license decides whether a tool may **parse** the list into generated data like this catalog or only **link** to it. A share-alike list (CC-BY-SA) would carry its license into this repository's MIT data, so it is linked, never parsed. A license stated only in a README badge, with no license file, is treated like a list's claim: link only until confirmed.
+Curated lists and courses that go wider than this one. Each keeps its own license, and that license decides whether a tool may **parse** the list into generated data like this catalog or only **link** to it. A share-alike list (CC-BY-SA) would carry its license into this repository's MIT data, so it is linked, never parsed. A license stated only in a README badge, with no license file, is treated like a list's claim: link only until confirmed.
 
 This catalog's seeds were chosen by hand. Some candidates were found through four permissively licensed lists, taking project names and addresses only: [pluja/awesome-privacy](https://github.com/pluja/awesome-privacy) (CC0-1.0), [krzemienski/awesome-video](https://github.com/krzemienski/awesome-video) (CC0-1.0), [meichthys/foss_photo_libraries](https://github.com/meichthys/foss_photo_libraries) (MIT) and [ad-si/awesome-music-production](https://github.com/ad-si/awesome-music-production) (ISC). Thanks to their maintainers. The one-line descriptions were written for this catalog; some stay close to the project's own description.
 
-| list | covers | license | use |
+| resource | covers | license | use |
 |---|---|---|---|
 | [sindresorhus/awesome](https://github.com/sindresorhus/awesome) | lists of curated lists on every subject | CC0-1.0 | parse |
 | [awesome-selfhosted/awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) | self-hosted network services and web applications | CC-BY-SA-3.0 (LICENSE file) | link only |
@@ -64,6 +65,7 @@ This catalog's seeds were chosen by hand. Some candidates were found through fou
 | [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) | MCP servers by category | MIT | parse, keep the notice |
 | [public-apis/public-apis](https://github.com/public-apis/public-apis) | free public APIs by category | MIT | parse, keep the notice |
 | [EbookFoundation/free-programming-books](https://github.com/EbookFoundation/free-programming-books) | free programming books and courses in many languages | CC-BY-4.0 | parse with attribution |
+| [mlabonne/llm-course](https://github.com/mlabonne/llm-course) | a course with notebooks on how language models work, fine-tuning, quantization and deployment | Apache-2.0 | parse, keep the notice |
 | [terkelg/awesome-creative-coding](https://github.com/terkelg/awesome-creative-coding) | creative coding, generative art and shaders | CC0 stated in the README; no LICENSE file | link only until confirmed |
 | [transitive-bullshit/awesome-ffmpeg](https://github.com/transitive-bullshit/awesome-ffmpeg) | FFmpeg guides, wrappers and tools | CC0 stated in the README; no LICENSE file | link only until confirmed |
 
@@ -75,6 +77,11 @@ Seeds live in [`tools/domains/software.json`](../tools/domains/software.json): n
 python3 tools/build_catalog.py --domain software --src sources --out .
 ```
 
-**Left out at build time:** 0 of 295 seeds.
+**Left out at build time:** 0 of 292 seeds.
 
-Nothing: every seed was found on GitHub, is not archived, and is listed once.
+Nothing: every seed was found on GitHub and is not archived.
+
+**Listed once, elsewhere in this repository:** 2.
+
+- [mrdoob/three.js](https://github.com/mrdoob/three.js): see [catalog/engines.md](../catalog/engines.md)
+- [ahujasid/mcp-for-blender](https://github.com/ahujasid/mcp-for-blender): see [scaffolds/mcps.md](../scaffolds/mcps.md)

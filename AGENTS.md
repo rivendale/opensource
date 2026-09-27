@@ -48,3 +48,5 @@ curated lists beyond games, by category, with the same reuse classes.
 - American English, plain words, no em dashes.
 - Run `python3 tools/check_links.py` before opening a pull request; it checks every relative
   link and `#anchor` in the markdown, and `--selftest` checks the checker.
+- After changing `tools/build_catalog.py` or `tools/fetch_sources.sh`, run `python3 tools/check_build.py`.
+  It runs both against a fake `gh`, with no network, and checks what happens when GitHub fails.

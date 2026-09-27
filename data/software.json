@@ -1,9 +1,22 @@
 {
- "built": "2026-09-26",
+ "built": "2026-09-27",
  "domain": "software",
- "count": 295,
- "seeds": 295,
- "dropped": [],
+ "count": 290,
+ "seeds": 292,
+ "dropped": [
+  {
+   "name": "mrdoob/three.js",
+   "url": "https://github.com/mrdoob/three.js",
+   "reason": "listed in catalog/engines.md, not repeated here",
+   "listed_in": "catalog/engines.md"
+  },
+  {
+   "name": "ahujasid/mcp-for-blender",
+   "url": "https://github.com/ahujasid/mcp-for-blender",
+   "reason": "listed in scaffolds/mcps.md, not repeated here",
+   "listed_in": "scaffolds/mcps.md"
+  }
+ ],
  "categories": [
   {
    "slug": "self-hosting",
@@ -87,19 +100,13 @@
   },
   {
    "slug": "privacy-backups",
-   "title": "Privacy, security and backups",
+   "title": "Privacy, passwords and backups",
    "scope": "backups, encryption, passwords, two-factor codes, messaging and file transfer"
   },
   {
    "slug": "web-frontend",
    "title": "Web and app frameworks",
    "scope": "frameworks, UI libraries, static sites, testing and app wrappers"
-  },
-  {
-   "slug": "resources",
-   "title": "Resources",
-   "scope": "curated indexes and courses",
-   "note": "More curated lists, each with its license and whether a tool may parse it or only link to it, are in the [resources table](../README.md#resources)."
   }
  ],
  "entries": [
@@ -113,8 +120,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 91857,
-   "pushed": "2026-09-26",
+   "stars": 91863,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -128,7 +135,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 76094,
+   "stars": 76101,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -143,7 +150,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 66256,
+   "stars": 66257,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -158,7 +165,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 64975,
+   "stars": 64978,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -173,7 +180,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 62290,
+   "stars": 62300,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -188,8 +195,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 58172,
-   "pushed": "2026-09-26",
+   "stars": 58173,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -203,7 +210,7 @@
    "license": "BSD-3-Clause",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 44149,
+   "stars": 44150,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -218,7 +225,7 @@
    "license": "Zlib",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 38579,
+   "stars": 38581,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -248,7 +255,7 @@
    "license": "BSD-3-Clause",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 36897,
+   "stars": 36905,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -263,7 +270,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 34581,
+   "stars": 34583,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -278,7 +285,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 34463,
+   "stars": 34467,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -293,7 +300,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 34243,
+   "stars": 34244,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -308,8 +315,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 29097,
-   "pushed": "2026-09-26",
+   "stars": 29099,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -323,7 +330,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 9534,
+   "stars": 9537,
    "pushed": "2026-09-16",
    "active": true,
    "note": null
@@ -338,7 +345,7 @@
    "license": "MPL-2.0",
    "license_from": "github",
    "reuse": "library",
-   "stars": 88957,
+   "stars": 88958,
    "pushed": "2026-09-23",
    "active": true,
    "note": null
@@ -353,7 +360,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 124593,
+   "stars": 124599,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -368,7 +375,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 80666,
+   "stars": 80668,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -383,8 +390,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 76933,
-   "pushed": "2026-09-26",
+   "stars": 76936,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -398,7 +405,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 68197,
+   "stars": 68204,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -413,7 +420,7 @@
    "license": "EUPL-1.2",
    "license_from": "corrected: LICENSE is the EUPL v1.2 behind a project preamble, which GitHub's detector does not match",
    "reuse": "study",
-   "stars": 61084,
+   "stars": 61085,
    "pushed": "2026-09-26",
    "active": true,
    "note": "commits before v3.0 keep the licenses they were made under"
@@ -428,7 +435,7 @@
    "license": "GPL-2.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 57546,
+   "stars": 57550,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -443,7 +450,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 37076,
+   "stars": 37079,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -459,7 +466,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 36933,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -473,8 +480,8 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 32872,
-   "pushed": "2026-09-26",
+   "stars": 32874,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -488,8 +495,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 13331,
-   "pushed": "2026-09-26",
+   "stars": 13332,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -518,7 +525,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 7385,
+   "stars": 7386,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -533,7 +540,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 5048,
+   "stars": 5049,
    "pushed": "2026-09-24",
    "active": true,
    "note": null
@@ -563,8 +570,8 @@
    "license": "MIT + authentik Enterprise Edition license",
    "license_from": "corrected: MIT except authentik/enterprise/, whose license requires a commercial agreement for production use; website/ is CC-BY-SA-4.0",
    "reuse": "check",
-   "stars": 25735,
-   "pushed": "2026-09-26",
+   "stars": 25740,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "code outside authentik/enterprise/ and website/ is MIT"
   },
@@ -578,7 +585,7 @@
    "license": "AGPL-3.0-only + Stalwart Enterprise License",
    "license_from": "corrected: no root LICENSE; LICENSES/ holds AGPL-3.0-only.txt and LicenseRef-SEL.txt and the README states dual licensing under AGPL-3.0 and the Stalwart Enterprise License v2",
    "reuse": "check",
-   "stars": 14830,
+   "stars": 14832,
    "pushed": "2026-09-26",
    "active": true,
    "note": "enterprise features are under a commercial license"
@@ -593,8 +600,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 91160,
-   "pushed": "2026-09-26",
+   "stars": 91163,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -608,7 +615,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 36118,
+   "stars": 36122,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -623,7 +630,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 23688,
+   "stars": 23689,
    "pushed": "2026-09-18",
    "active": true,
    "note": null
@@ -638,8 +645,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 3112,
-   "pushed": "2026-09-26",
+   "stars": 3113,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -668,8 +675,8 @@
    "license": "MIT + GPL-3.0",
    "license_from": "corrected: LICENSE: the C and C++ runtime is GPL-3.0 and the Python code and everything else is MIT, which GitHub's detector does not match",
    "reuse": "check",
-   "stars": 11731,
-   "pushed": "2026-09-26",
+   "stars": 11732,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "the Python code is MIT; the C and C++ runtime is GPL-3.0"
   },
@@ -683,8 +690,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 210238,
-   "pushed": "2026-09-26",
+   "stars": 210264,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -698,7 +705,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 181775,
+   "stars": 181786,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -713,8 +720,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 129613,
-   "pushed": "2026-09-26",
+   "stars": 129630,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -728,8 +735,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 126617,
-   "pushed": "2026-09-26",
+   "stars": 126653,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -743,8 +750,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 92726,
-   "pushed": "2026-09-26",
+   "stars": 92736,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -758,7 +765,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 89231,
+   "stars": 89244,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -773,8 +780,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 69393,
-   "pushed": "2026-09-26",
+   "stars": 69407,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -788,7 +795,7 @@
    "license": "MIT",
    "license_from": "corrected: code is MIT per LICENSE-CODE; GitHub reported LICENSE, which is CC-BY-4.0 and covers documentation",
    "reuse": "copy",
-   "stars": 61179,
+   "stars": 61180,
    "pushed": "2026-04-15",
    "active": true,
    "note": "documentation is CC-BY-4.0; in maintenance mode, and its README points new users to Microsoft Agent Framework ([microsoft/agent-framework](https://github.com/microsoft/agent-framework), MIT)"
@@ -803,7 +810,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 59066,
+   "stars": 59073,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -818,7 +825,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 54690,
+   "stars": 54692,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -833,7 +840,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 49206,
+   "stars": 49209,
    "pushed": "2026-05-22",
    "active": true,
    "note": null
@@ -848,8 +855,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 42330,
-   "pushed": "2026-09-26",
+   "stars": 42335,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -863,8 +870,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 38353,
-   "pushed": "2026-09-26",
+   "stars": 38361,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -878,7 +885,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 29709,
+   "stars": 29713,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -893,7 +900,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 29505,
+   "stars": 29506,
    "pushed": "2026-09-23",
    "active": true,
    "note": null
@@ -908,8 +915,8 @@
    "license": "Apache-2.0",
    "license_from": "corrected: LICENSE is the short Apache-2.0 notice without the full text, which GitHub's detector does not match",
    "reuse": "copy",
-   "stars": 26969,
-   "pushed": "2026-09-26",
+   "stars": 26976,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -923,8 +930,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 25478,
-   "pushed": "2026-09-26",
+   "stars": 25482,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -938,8 +945,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 20195,
-   "pushed": "2026-09-26",
+   "stars": 20200,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -953,7 +960,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 15885,
+   "stars": 15886,
    "pushed": "2026-09-21",
    "active": true,
    "note": null
@@ -968,7 +975,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 12556,
+   "stars": 12558,
    "pushed": "2026-09-22",
    "active": true,
    "note": null
@@ -983,7 +990,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 5756,
+   "stars": 5758,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -998,7 +1005,7 @@
    "license": "BSD-3-Clause + Open WebUI branding clause",
    "license_from": "corrected: LICENSE is BSD-3-Clause with an added clause 4 that bars removing or altering Open WebUI branding above 50 end users without written permission or an enterprise license",
    "reuse": "check",
-   "stars": 153267,
+   "stars": 153281,
    "pushed": "2026-09-26",
    "active": true,
    "note": "materials under earlier licenses keep them, per LICENSE_HISTORY"
@@ -1013,7 +1020,7 @@
    "license": "Apache-2.0 + Crawl4AI attribution requirement",
    "license_from": "corrected: GitHub reports Apache-2.0, but LICENSE adds an Attribution Requirement section after the Apache terms",
    "reuse": "check",
-   "stars": 84310,
+   "stars": 84316,
    "pushed": "2026-09-25",
    "active": true,
    "note": "the added section requires a fixed credit line in every distribution, publication or public use, such as a README or NOTICE file, a website's About or Credits page, or a command-line tool's help output"
@@ -1028,8 +1035,8 @@
    "license": "MIT + BerriAI Enterprise license",
    "license_from": "corrected: MIT except enterprise/, whose license requires a commercial agreement for production use",
    "reuse": "check",
-   "stars": 59672,
-   "pushed": "2026-09-26",
+   "stars": 59686,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "code outside enterprise/ is MIT"
   },
@@ -1043,8 +1050,8 @@
    "license": "MIT + Langfuse Enterprise license",
    "license_from": "corrected: MIT except ee/, web/src/ee/ and worker/src/ee/, which are under a commercial enterprise license",
    "reuse": "check",
-   "stars": 35081,
-   "pushed": "2026-09-26",
+   "stars": 35087,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "code outside the ee/ directories is MIT"
   },
@@ -1055,11 +1062,11 @@
    "homepage": "https://modelcontextprotocol.io",
    "why": "Reference MCP servers (filesystem, git, fetch, memory) to read before trusting third-party ones.",
    "language": "TypeScript",
-   "license": "Apache-2.0",
+   "license": "Apache-2.0 AND MIT",
    "license_from": "corrected: new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
    "reuse": "copy",
-   "stars": 90611,
-   "pushed": "2026-09-26",
+   "stars": 90614,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0"
   },
@@ -1073,7 +1080,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 62451,
+   "stars": 62454,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1088,8 +1095,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 52640,
-   "pushed": "2026-09-25",
+   "stars": 52644,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -1103,7 +1110,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 37591,
+   "stars": 37596,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1118,25 +1125,10 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 33222,
+   "stars": 33226,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
-  },
-  {
-   "name": "ahujasid/mcp-for-blender",
-   "category": "mcp",
-   "repo": "https://github.com/ahujasid/mcp-for-blender",
-   "homepage": "https://www.mcp-for-blender.com/",
-   "why": "Connects an agent to a running Blender over MCP so it can build and edit scenes, materials and renders by instruction.",
-   "language": "Python",
-   "license": "MIT",
-   "license_from": "github",
-   "reuse": "copy",
-   "stars": 29429,
-   "pushed": "2026-09-25",
-   "active": true,
-   "note": "sends an anonymous usage record by default (install and session IDs, tool name, versions, operating system) until `DISABLE_TELEMETRY=true` is set; a pinned setup with telemetry off is in [ai/graphics.md](../../ai/graphics.md#safe-setup-checklist)"
   },
   {
    "name": "PrefectHQ/fastmcp",
@@ -1149,7 +1141,7 @@
    "license_from": "github",
    "reuse": "copy",
    "stars": 27907,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -1163,7 +1155,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 24407,
+   "stars": 24408,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1175,11 +1167,11 @@
    "homepage": "https://ts.sdk.modelcontextprotocol.io/v2",
    "why": "Official TypeScript SDK for writing MCP servers and clients.",
    "language": "TypeScript",
-   "license": "Apache-2.0",
+   "license": "Apache-2.0 AND MIT",
    "license_from": "corrected: new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
    "reuse": "copy",
-   "stars": 13466,
-   "pushed": "2026-09-26",
+   "stars": 13467,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0"
   },
@@ -1190,11 +1182,11 @@
    "homepage": "https://modelcontextprotocol.io/docs/2026-07-28/tools/inspector",
    "why": "Interactive debugger for testing an MCP server's tools before wiring it to an agent.",
    "language": "TypeScript",
-   "license": "Apache-2.0",
+   "license": "Apache-2.0 AND MIT",
    "license_from": "corrected: new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
    "reuse": "copy",
    "stars": 10963,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0"
   },
@@ -1223,7 +1215,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 8429,
+   "stars": 8431,
    "pushed": "2026-05-08",
    "active": true,
    "note": null
@@ -1253,7 +1245,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 3500,
+   "stars": 3502,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1268,7 +1260,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 2209,
+   "stars": 2211,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1298,7 +1290,7 @@
    "license": "GPL-3.0-or-later",
    "license_from": "corrected: licensed per component: the Serena application is GPL-3.0-or-later, the SolidLSP library is MIT",
    "reuse": "study",
-   "stars": 29829,
+   "stars": 29830,
    "pushed": "2026-09-24",
    "active": true,
    "note": "src/solidlsp/ is MIT and can be reused on its own; releases up to v1.7.0 are MIT"
@@ -1313,7 +1305,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 53945,
+   "stars": 53948,
    "pushed": "2026-09-24",
    "active": true,
    "note": null
@@ -1328,7 +1320,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 26573,
+   "stars": 26575,
    "pushed": "2026-07-21",
    "active": true,
    "note": null
@@ -1343,7 +1335,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 25587,
+   "stars": 25591,
    "pushed": "2025-11-19",
    "active": true,
    "note": null
@@ -1358,7 +1350,7 @@
    "license": "BSD-2-Clause",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 24252,
+   "stars": 24254,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1373,7 +1365,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 9020,
+   "stars": 9026,
    "pushed": "2025-08-06",
    "active": true,
    "note": null
@@ -1418,8 +1410,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 90200,
-   "pushed": "2026-09-26",
+   "stars": 90202,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -1433,7 +1425,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 72117,
+   "stars": 72118,
    "pushed": "2026-08-09",
    "active": true,
    "note": null
@@ -1448,7 +1440,7 @@
    "license": "Unlicense",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 68630,
+   "stars": 68635,
    "pushed": "2026-08-04",
    "active": true,
    "note": null
@@ -1463,8 +1455,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 49804,
-   "pushed": "2026-09-26",
+   "stars": 49807,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -1478,7 +1470,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 45157,
+   "stars": 45164,
    "pushed": "2026-09-10",
    "active": true,
    "note": null
@@ -1493,7 +1485,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 41720,
+   "stars": 41723,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1508,7 +1500,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 38086,
+   "stars": 38089,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1523,8 +1515,8 @@
    "license": "MIT",
    "license_from": "corrected: COPYING is MIT followed by notices for bundled permissive code, which GitHub's detector does not match",
    "reuse": "copy",
-   "stars": 35699,
-   "pushed": "2026-09-25",
+   "stars": 35701,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "docs/ is CC-BY-3.0; bundled dtoa, decNumber (ICU) and BSD-2-Clause files keep their own notices"
   },
@@ -1538,7 +1530,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 31547,
+   "stars": 31554,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1553,7 +1545,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 29498,
+   "stars": 29499,
    "pushed": "2026-09-23",
    "active": true,
    "note": null
@@ -1568,7 +1560,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 15595,
+   "stars": 15596,
    "pushed": "2026-08-17",
    "active": true,
    "note": null
@@ -1583,7 +1575,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 14977,
+   "stars": 14978,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1598,7 +1590,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 12932,
+   "stars": 12933,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1628,7 +1620,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 9613,
+   "stars": 9615,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1643,7 +1635,7 @@
    "license": "BSD-3-Clause",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 9089,
+   "stars": 9088,
    "pushed": "2026-09-22",
    "active": true,
    "note": null
@@ -1733,7 +1725,7 @@
    "license": "LGPL-2.1",
    "license_from": "github",
    "reuse": "library",
-   "stars": 16774,
+   "stars": 16773,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1748,7 +1740,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 40090,
+   "stars": 40088,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1763,7 +1755,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 28076,
+   "stars": 28087,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1793,7 +1785,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 8083,
+   "stars": 8082,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -1808,8 +1800,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 115100,
-   "pushed": "2026-09-26",
+   "stars": 115110,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -1824,7 +1816,7 @@
    "license_from": "corrected: LICENSE is the AGPL-3.0 with an added trademark term (section 18), which GitHub's detector does not match",
    "reuse": "study",
    "stars": 40238,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": "the added term bars using the PhotoPrism name in a derived product's name"
   },
@@ -1838,7 +1830,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 29097,
+   "stars": 29100,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -1854,7 +1846,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 13139,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -1883,7 +1875,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 5092,
+   "stars": 5094,
    "pushed": "2026-05-27",
    "active": true,
    "note": null
@@ -1898,7 +1890,7 @@
    "license": "MIT + GPL + CC-BY-4.0",
    "license_from": "corrected: licensed per directory: code outside the Cargo app and library directories is MIT, each app and library directory has its own license files, including a GPL file in krokiet/",
    "reuse": "check",
-   "stars": 33743,
+   "stars": 33744,
    "pushed": "2026-09-16",
    "active": true,
    "note": "czkawka_core, czkawka_cli and czkawka_gui carry MIT license files; krokiet/ also carries a GPL license file"
@@ -1913,7 +1905,7 @@
    "license": "Unlicense",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 193771,
+   "stars": 193798,
    "pushed": "2026-09-16",
    "active": true,
    "note": null
@@ -1928,7 +1920,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 41068,
+   "stars": 41070,
    "pushed": "2026-09-22",
    "active": true,
    "note": null
@@ -2018,8 +2010,8 @@
    "license": "LGPL-2.1-or-later",
    "license_from": "corrected: LICENSE.md: most files are LGPL-2.1-or-later; optional GPL parts apply only when built with --enable-gpl",
    "reuse": "library",
-   "stars": 64547,
-   "pushed": "2026-09-26",
+   "stars": 64554,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "a build configured with --enable-gpl is GPL-2.0-or-later"
   },
@@ -2033,7 +2025,7 @@
    "license": "GPL-2.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 76655,
+   "stars": 76661,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2048,7 +2040,7 @@
    "license": "GPL-2.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 44074,
+   "stars": 44084,
    "pushed": "2026-09-23",
    "active": true,
    "note": null
@@ -2063,7 +2055,7 @@
    "license": "GPL-2.0",
    "license_from": "corrected: LICENSE: a compiled build is GPLv2; individual files are GPLv2, GPLv2+, LGPLv2.1+ or BSD/MIT",
    "reuse": "study",
-   "stars": 24508,
+   "stars": 24511,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2078,8 +2070,8 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 23823,
-   "pushed": "2026-09-26",
+   "stars": 23827,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2108,7 +2100,7 @@
    "license": "GPL-3.0",
    "license_from": "corrected: LICENSE.txt states GPL version 3 behind a project preamble, which GitHub's detector does not match",
    "reuse": "study",
-   "stars": 15140,
+   "stars": 15141,
    "pushed": "2026-09-25",
    "active": true,
    "note": "bundled fonts carry their own terms"
@@ -2123,7 +2115,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 5743,
+   "stars": 5744,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2138,7 +2130,7 @@
    "license": "Remotion License (custom)",
    "license_from": "corrected: custom source-available license: free for individuals, non-profits and companies with up to 3 employees, a paid company license above that, and no selling a derivative of Remotion",
    "reuse": "check",
-   "stars": 60597,
+   "stars": 60630,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2168,7 +2160,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 32724,
+   "stars": 32725,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2183,7 +2175,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 28300,
+   "stars": 28301,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2198,8 +2190,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 27366,
-   "pushed": "2026-09-26",
+   "stars": 27367,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2213,7 +2205,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 25954,
+   "stars": 25955,
    "pushed": "2026-09-23",
    "active": true,
    "note": null
@@ -2228,7 +2220,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 24891,
+   "stars": 24894,
    "pushed": "2026-09-20",
    "active": true,
    "note": null
@@ -2243,7 +2235,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 12133,
+   "stars": 12135,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2258,7 +2250,7 @@
    "license": "MPL-2.0",
    "license_from": "github",
    "reuse": "library",
-   "stars": 60422,
+   "stars": 60424,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2273,7 +2265,7 @@
    "license": "LGPL-2.1",
    "license_from": "github",
    "reuse": "library",
-   "stars": 11681,
+   "stars": 11680,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2288,7 +2280,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 165138,
+   "stars": 165139,
    "pushed": "2026-03-02",
    "active": true,
    "note": null
@@ -2303,8 +2295,8 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 135108,
-   "pushed": "2026-09-26",
+   "stars": 135135,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2333,7 +2325,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 49924,
+   "stars": 49933,
    "pushed": "2026-09-15",
    "active": true,
    "note": null
@@ -2380,21 +2372,6 @@
    "reuse": "study",
    "stars": 4185,
    "pushed": "2026-09-21",
-   "active": true,
-   "note": null
-  },
-  {
-   "name": "mrdoob/three.js",
-   "category": "media-3d",
-   "repo": "https://github.com/mrdoob/three.js",
-   "homepage": "https://threejs.org/",
-   "why": "The standard JavaScript library for 3D in the browser over WebGL and WebGPU; most web 3D scenes start here.",
-   "language": "JavaScript",
-   "license": "MIT",
-   "license_from": "github",
-   "reuse": "copy",
-   "stars": 115948,
-   "pushed": "2026-09-26",
    "active": true,
    "note": null
   },
@@ -2453,7 +2430,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 3211,
+   "stars": 3212,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2468,8 +2445,8 @@
    "license": "LGPL-2.1",
    "license_from": "github",
    "reuse": "library",
-   "stars": 33775,
-   "pushed": "2026-09-26",
+   "stars": 33780,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2483,7 +2460,7 @@
    "license": "GPL-2.0-or-later",
    "license_from": "corrected: COPYING says Blender is available only under the GNU GPL; source files carry GPL-2.0-or-later SPDX identifiers, with some GPL-3.0-or-later and permissive files",
    "reuse": "study",
-   "stars": 20548,
+   "stars": 20552,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2513,8 +2490,8 @@
    "license": "GPL-2.0-or-later",
    "license_from": "corrected: COPYING is the GPLv2 text with a CGAL linking exception; source headers say version 2 or any later version",
    "reuse": "study",
-   "stars": 10303,
-   "pushed": "2026-09-23",
+   "stars": 10306,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "carries a linking exception for the CGAL library"
   },
@@ -2528,7 +2505,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 9372,
+   "stars": 9373,
    "pushed": "2026-09-21",
    "active": true,
    "note": null
@@ -2558,7 +2535,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 187173,
+   "stars": 187197,
    "pushed": "2026-09-21",
    "active": true,
    "note": null
@@ -2573,7 +2550,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 90251,
+   "stars": 90257,
    "pushed": "2026-09-16",
    "active": true,
    "note": null
@@ -2588,7 +2565,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 76701,
+   "stars": 76703,
    "pushed": "2026-09-11",
    "active": true,
    "note": null
@@ -2603,7 +2580,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 68001,
+   "stars": 68012,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -2633,7 +2610,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 53950,
+   "stars": 53949,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -2648,7 +2625,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 39989,
+   "stars": 39994,
    "pushed": "2026-09-13",
    "active": true,
    "note": null
@@ -2678,7 +2655,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 13166,
+   "stars": 13168,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -2708,7 +2685,7 @@
    "license": "BSD-3-Clause",
    "license_from": "corrected: LICENSE is a three-clause BSD text with 'the name of the author' wording, and pyproject.toml declares BSD-3-Clause",
    "reuse": "copy",
-   "stars": 10225,
+   "stars": 10228,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2769,7 +2746,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 46417,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2783,8 +2760,8 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 46064,
-   "pushed": "2026-09-26",
+   "stars": 46072,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2798,7 +2775,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 18621,
+   "stars": 18623,
    "pushed": "2026-09-21",
    "active": true,
    "note": "an added AGPL section 7(b) term (LICENSE_ADDITIONAL_TERMS) requires a covered work to keep the original DocuSeal attribution in interactive user interfaces"
@@ -2828,8 +2805,8 @@
    "license": "MIT + Stirling PDF User License",
    "license_from": "corrected: MIT except the proprietary, saas, engine, desktop, cloud, prototypes and portal directories listed in LICENSE, which need a paid license for production use",
    "reuse": "check",
-   "stars": 93068,
-   "pushed": "2026-09-26",
+   "stars": 93073,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "code outside the directories listed in LICENSE is MIT"
   },
@@ -2843,7 +2820,7 @@
    "license": "Apache-2.0 + MinerU additional terms",
    "license_from": "corrected: Apache-2.0 with added terms: a separate commercial license above stated user and revenue thresholds, mandatory attribution for online services, and automatic termination",
    "reuse": "check",
-   "stars": 80681,
+   "stars": 80688,
    "pushed": "2026-09-24",
    "active": true,
    "note": null
@@ -2858,8 +2835,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 63356,
-   "pushed": "2026-09-26",
+   "stars": 63358,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2873,7 +2850,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 34838,
+   "stars": 34839,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -2888,8 +2865,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 28624,
-   "pushed": "2026-09-26",
+   "stars": 28625,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2904,7 +2881,7 @@
    "license_from": "github",
    "reuse": "copy",
    "stars": 19056,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2963,7 +2940,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 76943,
+   "stars": 76942,
    "pushed": "2026-09-22",
    "active": true,
    "note": null
@@ -2979,7 +2956,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 46527,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -2994,7 +2971,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 45064,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3008,8 +2985,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 38005,
-   "pushed": "2026-09-26",
+   "stars": 38012,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3038,8 +3015,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 29294,
-   "pushed": "2026-09-26",
+   "stars": 29296,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3054,7 +3031,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 28973,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3068,7 +3045,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 26597,
+   "stars": 26598,
    "pushed": "2026-09-24",
    "active": true,
    "note": null
@@ -3083,7 +3060,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 21793,
+   "stars": 21794,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3098,7 +3075,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 19847,
+   "stars": 19846,
    "pushed": "2026-09-10",
    "active": true,
    "note": null
@@ -3113,7 +3090,7 @@
    "license": "AGPL-3.0",
    "license_from": "corrected: COPYING states the source is distributed under AGPLv3 and reproduces it; the preamble defeats GitHub's detector",
    "reuse": "study",
-   "stars": 15402,
+   "stars": 15405,
    "pushed": "2026-09-26",
    "active": true,
    "note": "the Zotero name is a registered trademark"
@@ -3143,7 +3120,7 @@
    "license": "MIT + AFFiNE Enterprise Edition license",
    "license_from": "corrected: MIT except packages/backend and packages/common/native, whose license requires a subscription agreement for production use",
    "reuse": "check",
-   "stars": 73002,
+   "stars": 73005,
    "pushed": "2026-09-26",
    "active": true,
    "note": "code outside packages/backend and packages/common/native is MIT (LICENSE-MIT)"
@@ -3158,7 +3135,7 @@
    "license": "MIT + BUSL-1.1",
    "license_from": "corrected: MIT except files marked Enterprise Edition, which are under an adapted Business Source License 1.1 that allows non-production use only",
    "reuse": "check",
-   "stars": 59415,
+   "stars": 59418,
    "pushed": "2026-09-24",
    "active": true,
    "note": "code outside the Enterprise Edition modules is MIT"
@@ -3174,7 +3151,7 @@
    "license_from": "corrected: LICENSE: AGPL-3.0-or-later unless a directory has its own LICENSE; packages/server carries a personal use license",
    "reuse": "check",
    "stars": 56497,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": "code outside directories with their own LICENSE is AGPL-3.0-or-later; logos and icons are all rights reserved"
   },
@@ -3188,8 +3165,8 @@
    "license": "BUSL-1.1",
    "license_from": "corrected: Business Source License 1.1: source-available, no use as a commercial document service; each version converts to Apache-2.0 on its change date (2030-09-09 for the current one)",
    "reuse": "check",
-   "stars": 40718,
-   "pushed": "2026-09-26",
+   "stars": 40720,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3203,7 +3180,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 12986,
+   "stars": 12987,
    "pushed": "2026-09-21",
    "active": true,
    "note": null
@@ -3218,7 +3195,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 9742,
+   "stars": 9743,
    "pushed": "2026-09-23",
    "active": true,
    "note": null
@@ -3233,8 +3210,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 29938,
-   "pushed": "2026-09-26",
+   "stars": 29942,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3263,7 +3240,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 16151,
+   "stars": 16153,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3278,7 +3255,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 14456,
+   "stars": 14459,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3293,7 +3270,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 11751,
+   "stars": 11753,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3308,7 +3285,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 39532,
+   "stars": 39536,
    "pushed": "2026-09-20",
    "active": true,
    "note": null
@@ -3383,7 +3360,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 1122,
+   "stars": 1123,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3428,7 +3405,7 @@
    "license": "AGPL-3.0-or-later",
    "license_from": "corrected: LICENSE: AGPL-3.0-or-later, some user contributions BSD-3-Clause, listed bundled files under MIT, Apache-2.0 or CC-BY-4.0",
    "reuse": "study",
-   "stars": 31581,
+   "stars": 31586,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -3458,7 +3435,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 11865,
+   "stars": 11866,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3504,7 +3481,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 1451,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3534,7 +3511,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 287,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3563,7 +3540,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 29165,
+   "stars": 29169,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -3578,7 +3555,7 @@
    "license": "BSD-3-Clause",
    "license_from": "corrected: LICENSE.md is the three-clause BSD text with dash bullets instead of numbered clauses",
    "reuse": "copy",
-   "stars": 6043,
+   "stars": 6044,
    "pushed": "2026-09-22",
    "active": true,
    "note": null
@@ -3593,8 +3570,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 5663,
-   "pushed": "2026-09-26",
+   "stars": 5665,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3638,8 +3615,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 24743,
-   "pushed": "2026-09-26",
+   "stars": 24742,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3653,8 +3630,8 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 10069,
-   "pushed": "2026-09-26",
+   "stars": 10141,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3698,7 +3675,7 @@
    "license": "GPL-2.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 6037,
+   "stars": 6038,
    "pushed": "2026-08-23",
    "active": true,
    "note": null
@@ -3714,7 +3691,7 @@
    "license_from": "github",
    "reuse": "study",
    "stars": 4732,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3729,7 +3706,7 @@
    "license_from": "corrected: LICENSE: almost all files GPL-2.0-or-later, some GPL-2.0 and/or GPL-3.0, some with an OpenSSL linking exception",
    "reuse": "study",
    "stars": 4358,
-   "pushed": "2026-09-26",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3758,7 +3735,7 @@
    "license": "Elastic-2.0",
    "license_from": "corrected: Elastic License 2.0: source-available, no offering as a hosted service, no circumventing license keys",
    "reuse": "check",
-   "stars": 10117,
+   "stars": 10118,
    "pushed": "2026-09-22",
    "active": true,
    "note": null
@@ -3773,7 +3750,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 92762,
+   "stars": 92779,
    "pushed": "2026-09-24",
    "active": true,
    "note": null
@@ -3788,7 +3765,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 59961,
+   "stars": 59960,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3803,7 +3780,7 @@
    "license": "BSD-2-Clause",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 36274,
+   "stars": 36276,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -3834,7 +3811,7 @@
    "license_from": "github",
    "reuse": "copy",
    "stars": 14201,
-   "pushed": "2026-09-25",
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -3848,7 +3825,7 @@
    "license": "BSD-3-Clause",
    "license_from": "corrected: LICENSE is a three-clause BSD text with 'the name of the author' wording, and pyproject.toml declares BSD-3-Clause",
    "reuse": "copy",
-   "stars": 13776,
+   "stars": 13777,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3863,7 +3840,7 @@
    "license": "Zlib",
    "license_from": "corrected: LICENSE.md: PrivateBin's own code is Zlib; the file also reproduces the licenses of bundled libraries",
    "reuse": "copy",
-   "stars": 8626,
+   "stars": 8629,
    "pushed": "2026-09-24",
    "active": true,
    "note": "bundled rawinflate is GPL-2.0; other bundled libraries are BSD-3-Clause, MIT or Apache-2.0; favicon, icon and logo are CC-BY"
@@ -3908,7 +3885,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 68139,
+   "stars": 68141,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -3923,7 +3900,7 @@
    "license": "GPL-2.0-only OR GPL-3.0-only",
    "license_from": "corrected: COPYING: GPL version 2 or, at your option, version 3, plus a per-file list of bundled licenses",
    "reuse": "study",
-   "stars": 28975,
+   "stars": 28978,
    "pushed": "2026-09-23",
    "active": true,
    "note": null
@@ -3998,7 +3975,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 13162,
+   "stars": 13163,
    "pushed": "2026-09-06",
    "active": true,
    "note": null
@@ -4028,7 +4005,7 @@
    "license": "GPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 7377,
+   "stars": 7378,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -4043,7 +4020,7 @@
    "license": "AGPL-3.0",
    "license_from": "github",
    "reuse": "study",
-   "stars": 4165,
+   "stars": 4166,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -4073,8 +4050,8 @@
    "license": "AGPL-3.0 + Bitwarden License v1.0",
    "license_from": "corrected: AGPL-3.0 by default; bitwarden_license/ holds commercial modules under the Bitwarden License Agreement, which must be accepted to copy or use them",
    "reuse": "check",
-   "stars": 20204,
-   "pushed": "2026-09-26",
+   "stars": 20206,
+   "pushed": "2026-09-27",
    "active": true,
    "note": "code outside bitwarden_license/ is AGPL-3.0"
   },
@@ -4118,8 +4095,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 142624,
-   "pushed": "2026-09-26",
+   "stars": 142676,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -4133,7 +4110,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 133024,
+   "stars": 133034,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -4148,7 +4125,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 124639,
+   "stars": 124651,
    "pushed": "2026-09-24",
    "active": true,
    "note": null
@@ -4163,7 +4140,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 111413,
+   "stars": 111415,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -4178,8 +4155,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 110784,
-   "pushed": "2026-09-26",
+   "stars": 110792,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -4193,7 +4170,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 97696,
+   "stars": 97698,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -4208,8 +4185,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 96711,
-   "pushed": "2026-09-26",
+   "stars": 96717,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -4223,7 +4200,7 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 89963,
+   "stars": 89964,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -4238,7 +4215,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 83026,
+   "stars": 83027,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -4253,7 +4230,7 @@
    "license": "MIT",
    "license_from": "corrected: LICENSE is MIT followed by MIT notices for code taken from SvelteKit and Vite",
    "reuse": "copy",
-   "stars": 62841,
+   "stars": 62846,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -4268,7 +4245,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 61163,
+   "stars": 61166,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -4283,7 +4260,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 50364,
+   "stars": 50365,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -4328,8 +4305,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 32352,
-   "pushed": "2026-09-26",
+   "stars": 32354,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -4343,8 +4320,8 @@
    "license": "Apache-2.0",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 25863,
-   "pushed": "2026-09-26",
+   "stars": 25864,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -4358,7 +4335,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 20829,
+   "stars": 20828,
    "pushed": "2026-09-26",
    "active": true,
    "note": null
@@ -4388,8 +4365,8 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 17159,
-   "pushed": "2026-09-26",
+   "stars": 17160,
+   "pushed": "2026-09-27",
    "active": true,
    "note": null
   },
@@ -4403,7 +4380,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 16736,
+   "stars": 16737,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -4418,7 +4395,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 13290,
+   "stars": 13292,
    "pushed": "2026-09-20",
    "active": true,
    "note": null
@@ -4448,7 +4425,7 @@
    "license": "MIT",
    "license_from": "github",
    "reuse": "copy",
-   "stars": 9307,
+   "stars": 9310,
    "pushed": "2026-09-25",
    "active": true,
    "note": null
@@ -4478,53 +4455,8 @@
    "license": "tldraw license (custom)",
    "license_from": "corrected: custom source-available license: no production use without a license key, no standalone redistribution",
    "reuse": "check",
-   "stars": 50585,
+   "stars": 50592,
    "pushed": "2026-09-26",
-   "active": true,
-   "note": null
-  },
-  {
-   "name": "public-apis/public-apis",
-   "category": "resources",
-   "repo": "https://github.com/public-apis/public-apis",
-   "homepage": "https://APILayer.com/?utm_source=Github&utm_medium=Referral&utm_campaign=Public-apis-repo",
-   "why": "Large categorized index of free public APIs; a quick way to find a data source for a small app.",
-   "language": "Python",
-   "license": "MIT",
-   "license_from": "github",
-   "reuse": "copy",
-   "stars": 483566,
-   "pushed": "2026-09-26",
-   "active": true,
-   "note": null
-  },
-  {
-   "name": "punkpeye/awesome-mcp-servers",
-   "category": "resources",
-   "repo": "https://github.com/punkpeye/awesome-mcp-servers",
-   "homepage": "https://glama.ai/mcp/servers",
-   "why": "Big curated index of MCP servers by category; the first place to look before writing one.",
-   "language": null,
-   "license": "MIT",
-   "license_from": "github",
-   "reuse": "copy",
-   "stars": 95557,
-   "pushed": "2026-09-23",
-   "active": true,
-   "note": null
-  },
-  {
-   "name": "mlabonne/llm-course",
-   "category": "resources",
-   "repo": "https://github.com/mlabonne/llm-course",
-   "homepage": "https://mlabonne.github.io/blog/",
-   "why": "Structured course with notebooks on how language models work, fine-tuning, quantization and deployment.",
-   "language": null,
-   "license": "Apache-2.0",
-   "license_from": "github",
-   "reuse": "copy",
-   "stars": 83163,
-   "pushed": "2026-02-05",
    "active": true,
    "note": null
   }

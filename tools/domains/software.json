@@ -1,5 +1,5 @@
 {
- "_comment": "Curated seeds for the software domain. build_catalog.py --domain software reads this file, asks GitHub for each repository's license, language, stars and last push, and writes software/. Edit the seeds here and rebuild; never hand-edit the generated files. Each seed: name, url, category, why (one line on why it is useful, written for this catalog; some stay close to the project's own description).",
+ "_comment": "Curated seeds for the software domain. build_catalog.py --domain software reads this file, asks GitHub for each repository's license, language, stars and last push, and writes software/. Edit the seeds here and rebuild; never hand-edit the generated files. Each seed: name, url, category, why (one line on why it is useful, written for this catalog; some stay close to the project's own description). Optional listed_in: a page in this repository that already lists the repository (for example catalog/engines.md); the seed is then linked from its category page instead of listed twice, and the build stops if that page no longer lists it.",
  "title": "Software",
  "intro": [
   "Open-source applications, tools, libraries and curated lists beyond games: self-hosting, home automation, local AI, documents, media, notes, reading, learning, personal finance, privacy and web development.",
@@ -89,19 +89,13 @@
   },
   {
    "slug": "privacy-backups",
-   "title": "Privacy, security and backups",
+   "title": "Privacy, passwords and backups",
    "scope": "backups, encryption, passwords, two-factor codes, messaging and file transfer"
   },
   {
    "slug": "web-frontend",
    "title": "Web and app frameworks",
    "scope": "frameworks, UI libraries, static sites, testing and app wrappers"
-  },
-  {
-   "slug": "resources",
-   "title": "Resources",
-   "scope": "curated indexes and courses",
-   "note": "More curated lists, each with its license and whether a tool may parse it or only link to it, are in the [resources table](../README.md#resources)."
   }
  ],
  "resources": [
@@ -188,6 +182,13 @@
    "covers": "free programming books and courses in many languages",
    "license": "CC-BY-4.0",
    "use": "parse with attribution"
+  },
+  {
+   "name": "mlabonne/llm-course",
+   "url": "https://github.com/mlabonne/llm-course",
+   "covers": "a course with notebooks on how language models work, fine-tuning, quantization and deployment",
+   "license": "Apache-2.0",
+   "use": "parse, keep the notice"
   },
   {
    "name": "terkelg/awesome-creative-coding",
@@ -1631,7 +1632,8 @@
    "name": "mrdoob/three.js",
    "url": "https://github.com/mrdoob/three.js",
    "category": "media-3d",
-   "why": "The standard JavaScript library for 3D in the browser over WebGL and WebGPU; most web 3D scenes start here."
+   "why": "The standard JavaScript library for 3D in the browser over WebGL and WebGPU; most web 3D scenes start here.",
+   "listed_in": "catalog/engines.md"
   },
   {
    "name": "motion-canvas/motion-canvas",
@@ -1883,7 +1885,8 @@
    "name": "ahujasid/mcp-for-blender",
    "url": "https://github.com/ahujasid/mcp-for-blender",
    "category": "mcp",
-   "why": "Connects an agent to a running Blender over MCP so it can build and edit scenes, materials and renders by instruction."
+   "why": "Connects an agent to a running Blender over MCP so it can build and edit scenes, materials and renders by instruction.",
+   "listed_in": "scaffolds/mcps.md"
   },
   {
    "name": "playcanvas/supersplat",
@@ -1956,24 +1959,6 @@
    "url": "https://github.com/portfolio-performance/portfolio",
    "category": "finance",
    "why": "Desktop investment tracker that computes time-weighted and money-weighted returns across accounts and imports broker statements."
-  },
-  {
-   "name": "public-apis/public-apis",
-   "url": "https://github.com/public-apis/public-apis",
-   "category": "resources",
-   "why": "Large categorized index of free public APIs; a quick way to find a data source for a small app."
-  },
-  {
-   "name": "punkpeye/awesome-mcp-servers",
-   "url": "https://github.com/punkpeye/awesome-mcp-servers",
-   "category": "resources",
-   "why": "Big curated index of MCP servers by category; the first place to look before writing one."
-  },
-  {
-   "name": "mlabonne/llm-course",
-   "url": "https://github.com/mlabonne/llm-course",
-   "category": "resources",
-   "why": "Structured course with notebooks on how language models work, fine-tuning, quantization and deployment."
   }
  ]
 }

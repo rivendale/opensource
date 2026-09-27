@@ -45,7 +45,7 @@
   "read": "2026-09-26"
  },
  "modelcontextprotocol/servers": {
-  "license": "Apache-2.0",
+  "license": "Apache-2.0 AND MIT",
   "why": "new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
   "reuse_ok": true,
   "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0",
@@ -62,7 +62,7 @@
   "read": "2026-09-26"
  },
  "modelcontextprotocol/typescript-sdk": {
-  "license": "Apache-2.0",
+  "license": "Apache-2.0 AND MIT",
   "why": "new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
   "reuse_ok": true,
   "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0",
@@ -79,7 +79,7 @@
   "read": "2026-09-26"
  },
  "modelcontextprotocol/inspector": {
-  "license": "Apache-2.0",
+  "license": "Apache-2.0 AND MIT",
   "why": "new code is Apache-2.0 and older contributions stay MIT until relicensed, both permissive; the transition preamble defeats GitHub's detector",
   "reuse_ok": true,
   "note": "keep both the Apache-2.0 and MIT notices when copying; documentation is CC-BY-4.0",

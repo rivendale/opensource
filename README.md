@@ -8,7 +8,7 @@ GitHub and a plain rule for what you may reuse. Two domains so far: games, and s
 | domain | what it holds | start here |
 |---|---|---|
 | Games | a genre catalog of 2,718 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
-| Software | 295 hand-picked open-source applications, tools, libraries and curated lists beyond games, in 18 categories from self-hosting and local AI to documents, media, learning and personal finance | [`software/`](software/README.md) |
+| Software | 290 hand-picked open-source applications, tools and libraries beyond games, in 17 categories from self-hosting and local AI to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
 
 Both follow the same [license rule](#the-license-rule). The games material sits at the top level of
 this repository; everything else lives under [`software/`](software/).
@@ -100,6 +100,13 @@ license marked "per list, unverified" and read `check first`. Rebuild:
 ```sh
 tools/fetch_sources.sh && python3 tools/build_catalog.py --src sources --out .
 ```
+
+Both need the GitHub CLI, `gh`, installed and signed in; the build says so in one line when it is
+not. `fetch_sources.sh` replaces the lists in `sources/` only when every download and search
+succeeded. A GitHub lookup that fails is retried with growing waits; one that still fails stops the
+build before anything is written, and the lookups that succeeded stay cached in `sources/`, so a
+rerun picks up where it stopped. `python3 tools/check_build.py` checks those failure paths with a
+fake `gh` and no network.
 
 **Safety:** topic searches pull in malware lures named after commercial games, so 444 projects found
 only by a topic search with under 10 stars or no code, named like a download lure, or removed on review, are left out (counts in
