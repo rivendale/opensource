@@ -1710,7 +1710,7 @@
    "stars": 2749,
    "pushed": "2026-09-01",
    "active": true,
-   "note": "ONNX Runtime's official builds turn telemetry on by default; set `ORT_DISABLE_TELEMETRY=1` before it loads (Linux and macOS); the Kokoro-82M weights are Apache-2.0 per their model card; the phonemizer it uses bundles espeak-ng (GPL-3.0)"
+   "note": "ONNX Runtime's official builds turn telemetry on by default; set `ORT_DISABLE_TELEMETRY=1` before it loads (Linux and macOS); the Kokoro-82M weights are Apache-2.0 per their model card; two dependencies are GPL-3.0: phonemizer, and the espeak-ng library that espeakng-loader bundles"
   },
   {
    "name": "OHF-Voice/piper1-gpl",

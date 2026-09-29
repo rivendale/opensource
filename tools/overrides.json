@@ -847,7 +847,7 @@
     "line": "timestamp (Any, optional): Platform-only temporal parameter. Not supported in OSS."
    }
   ],
-  "read": "2026-09-28"
+  "read": "2026-09-29"
  },
  "vectorize-io/hindsight": {
   "why": "defaults that send data to hosted services are in the source and README, not in GitHub's metadata",
@@ -870,7 +870,7 @@
     "line": "# Defaults to Hindsight Cloud; pass hindsight_api_url for a self-hosted server."
    }
   ],
-  "read": "2026-09-28"
+  "read": "2026-09-29"
  },
  "getzep/graphiti": {
   "why": "the README's Telemetry section says usage statistics are sent unless turned off, and its prerequisites say it defaults to OpenAI; the graph databases it needs carry their own licenses",
@@ -906,7 +906,7 @@
     "line": "search_filter if search_filter is not None else SearchFilters(),"
    }
   ],
-  "read": "2026-09-28"
+  "read": "2026-09-29"
  },
  "topoteretes/cognee": {
   "why": "the source sends telemetry by default with a machine ID that survives reinstalls, and the no-key path installs packages at runtime; neither is in the README",
@@ -937,7 +937,7 @@
     "line": "> **⚠️ Warning:** Using Postgres as a graph store is currently released as a demo feature. The production-ready version is available as a licensed product."
    }
   ],
-  "read": "2026-09-28"
+  "read": "2026-09-29"
  },
  "volcengine/OpenViking": {
   "why": "licensed per component and relicensed once, which GitHub's single license field does not show; the embedding default is a hosted service",
@@ -972,7 +972,7 @@
     "line": "This edition adds distributed deployment and official support, activated by a license key."
    }
   ],
-  "read": "2026-09-28"
+  "read": "2026-09-29"
  },
  "letta-ai/letta-code": {
   "why": "LICENSE appends a Brand Assets Exclusion that GitHub does not show; it removes the Letta names and artwork from the grant and adds no condition on the code, so the code stays Apache-2.0",
@@ -999,7 +999,7 @@
     "line": "return process.env.DISABLE_AUTOUPDATER !== \"1\";"
    }
   ],
-  "read": "2026-09-28"
+  "read": "2026-09-29"
  },
  "oblien/openship": {
   "why": "LICENSE is Apache-2.0 for Openship-authored code, but the repository vendors a GPL-3.0 mail engine and mail client and server code with no license file, which GitHub's license field does not show",
@@ -1018,7 +1018,7 @@
     "line": "The `api` container mounts the host Docker socket so the control plane can build + run your apps as host containers"
    }
   ],
-  "read": "2026-09-28"
+  "read": "2026-09-29"
  },
  "garrytan/gbrain": {
   "why": "what an agent's saved memories expose by default is in the README, not in GitHub's metadata",
@@ -1241,13 +1241,36 @@
   "read": "2026-09-29"
  },
  "thewh1teagle/kokoro-onnx": {
-  "why": "its dependency ONNX Runtime sends telemetry by default, which GitHub's metadata for this repository does not show",
-  "note": "ONNX Runtime's official builds turn telemetry on by default; set `ORT_DISABLE_TELEMETRY=1` before it loads (Linux and macOS); the Kokoro-82M weights are Apache-2.0 per their model card; the phonemizer it uses bundles espeak-ng (GPL-3.0)",
+  "why": "two of its dependencies are GPL-3.0 and ONNX Runtime sends telemetry by default; neither shows in GitHub's metadata for this repository",
+  "note": "ONNX Runtime's official builds turn telemetry on by default; set `ORT_DISABLE_TELEMETRY=1` before it loads (Linux and macOS); the Kokoro-82M weights are Apache-2.0 per their model card; two dependencies are GPL-3.0: phonemizer, and the espeak-ng library that espeakng-loader bundles",
   "evidence": [
    {
     "repo": "microsoft/onnxruntime",
     "file": "docs/Privacy.md",
     "line": "Telemetry is turned **ON** by default in the official builds"
+   },
+   {
+    "file": "pyproject.toml",
+    "line": "\"phonemizer>=3.4.0\","
+   },
+   {
+    "repo": "bootphon/phonemizer",
+    "file": "LICENSE",
+    "line": "GNU GENERAL PUBLIC LICENSE"
+   },
+   {
+    "file": "pyproject.toml",
+    "line": "\"espeakng-loader>=0.2.4\","
+   },
+   {
+    "repo": "thewh1teagle/espeakng-loader",
+    "file": "README.md",
+    "line": "This package loads the espeak-ng shared library so it will be available for other libraries."
+   },
+   {
+    "repo": "espeak-ng/espeak-ng",
+    "file": "COPYING",
+    "line": "GNU GENERAL PUBLIC LICENSE"
    }
   ],
   "read": "2026-09-29"

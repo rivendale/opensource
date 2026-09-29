@@ -239,9 +239,9 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
   smoke test, visual and bot playtest templates, a canvas pixel inspector that records which GPU drew
   the frames, and a run ID evidence manifest. With Tripo, Gemini or ElevenLabs keys set, three
   optional skills send prompts and images to those services and use them by default for premium
-  assets; its key check reads your shell profiles; and its documented install is global at `main`.
-  Install per project from a reviewed commit (`8286774` on 2026-09-29) with those keys absent, after
-  the [safe setup checklist](../ai/graphics.md#safe-setup-checklist).
+  assets; its key check sources (runs) your shell profiles; and its documented install is global at
+  `main`. Install per project from a reviewed commit (`8286774` on 2026-09-29) with those keys absent,
+  after the [safe setup checklist](../ai/graphics.md#safe-setup-checklist).
 - **Catalog:** 15 rows mention three.js, 10 `copy`.
 
 ### PixiJS

@@ -131,8 +131,9 @@ Cautions:
 - It ships no game assets, so playing it needs your own copy of the original game.
 - Its releases are Windows executables. Build from source, per the
   [catalog's safety rule](../README.md#how-the-catalog-is-built).
-- A GamingOnLinux report (2026-08) says AI tools helped interpret the disassembly and every change was
-  reviewed against the original executable; that account is relayed, not checked.
+- A [GamingOnLinux report](https://www.gamingonlinux.com/2026/08/opents-is-a-new-open-source-reconstruction-of-command-conquer-tiberian-sun/)
+  (2026-08-31) says AI tools helped interpret the disassembly and every change was reviewed against
+  the original executable; that account is relayed, not checked.
 
 ## 4. Reusable permissive code
 
