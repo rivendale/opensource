@@ -116,7 +116,8 @@ turned players into level designers.
 ## 4. Reusable permissive code
 
 Catalog projects keep the catalog's class. Libraries marked "not in the catalog" had their license
-read from GitHub on 2026-09-23; re-read the LICENSE file at the commit you copy from.
+read from GitHub on 2026-09-23 (ZzFX and jsfxr on 2026-09-29); re-read the LICENSE file at the
+commit you copy from.
 
 | need | project | class | license |
 |---|---|---|---|
@@ -127,6 +128,8 @@ read from GitHub on 2026-09-23; re-read the LICENSE file at the commit you copy 
 | rooms and state sync as a framework | [Colyseus](https://github.com/colyseus/colyseus) (Node.js) | not in the catalog | MIT |
 | peer-to-peer browser versus with rollback | [netplayjs](https://github.com/rameshvarun/netplayjs) (TypeScript) | `copy` | ISC |
 | chiptune sound effects | [rFXGen](https://github.com/raysan5/rfxgen), a tool that exports `.wav` | `copy` | Zlib |
+| chiptune sound effects played from browser code | [ZzFX](https://github.com/KilledByAPixel/ZzFX), a tiny JavaScript sound-effect system in which each effect is a short list of parameters (v1.3.0) | not in the catalog | MIT |
+| sound effects designed in a web page, then played from code | [jsfxr](https://github.com/chr15m/jsfxr), a JavaScript port of sfxr with a browser editor at sfxr.me | not in the catalog | Unlicense |
 | tiny browser arcade framework | [crisp-game-lib](https://github.com/abagames/crisp-game-lib); [111 one-button games](https://github.com/abagames/111-one-button-games-in-2021) are built on it | not in the catalog; the games repo is `copy` | MIT |
 | frame time overlay | [stats.js](https://github.com/mrdoob/stats.js) | `copy` | MIT |
 | debug and tuning UI | [Dear ImGui](https://github.com/ocornut/imgui) (C++) | `copy` | MIT |

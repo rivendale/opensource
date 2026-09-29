@@ -60,3 +60,14 @@ timeout 20m codex exec \
 `codex exec` runs code-writing tasks without interactive approval. Keep the job in a worktree with only the project files it needs, inspect the diff and build output afterward, and retain the timeout because a background agent loop can run away. The `workspace-write` sandbox limits writes to the working tree but is not a security boundary against code with access to that environment. Review the CLI and project before use.
 
 OpenAI's API prices checked 2026-09-22 were $0.10 per million input tokens, $0.01 per million cached input tokens and $0.50 per million output tokens for GPT-6 Luna. GPT-6 Sol was $2, $0.20 cached input and $10 output per million tokens. These are token rates, not a promised cost per task. ([OpenAI API pricing](https://openai.com/api/pricing/), [Codex plan pricing](https://developers.openai.com/codex/pricing/), checked 2026-09-24.)
+
+## Publishing AI-assisted video
+
+Not legal advice. YouTube's monetization and disclosure pages were re-read on 2026-09-29, and the name of the disclosure setting had changed since August 2026, so re-read the platform's current pages before you publish.
+
+- **Never publish a generated export as it is.** Split out its audio, slides and transcript. Add a human layer: a rewritten first-person narration, short synthetic segments with commentary between them, or at least a spoken intro and outro. Re-pace it by cutting dead air and repeated loops and adding B-roll and captions. Write your own title, description and thumbnail.
+- **"30 to 50 percent human value-add" is a creator heuristic, not a number in YouTube's policy.** The [monetization policies](https://support.google.com/youtube/answer/1311392) are qualitative: each video "materially varied", reused material changed by "significant original commentary, substantive modifications, or educational or entertainment value". Use the number as a target, never as a guarantee.
+- **C2PA Content Credentials are a provenance record, not a test for synthetic content.** A file without them proves nothing either way. YouTube reads them: its [disclosure page](https://support.google.com/youtube/answer/14328491) says content containing C2PA metadata can be labeled as AI automatically, and that such a label cannot be adjusted.
+- **Disclosure has two separate mechanisms:** the platform's setting (YouTube Studio's "AI use" setting, required for realistic generated or meaningfully altered content), and wording on screen or in the description. Do both.
+- **Most legal exposure comes from the inputs.** List your sources in the description, and flag any paid, proprietary or copyrighted input before rendering. A summary is not fair use because a model wrote it.
+- **Machine-generated narration may have thin copyright protection.** The defensible value is in selection, arrangement and editing.

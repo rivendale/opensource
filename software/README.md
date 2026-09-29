@@ -23,25 +23,27 @@ A `copy` row that carries a note reads `copy (see note)`: the note names a part 
 
 ## Categories
 
-Built 2026-09-27: 290 projects, 168 with a permissive code license.
+Built 2026-09-29: 338 projects, 206 with a permissive code license.
 
 | category | projects | copy | library use | study only | check first | covers |
 |---|---|---|---|---|---|---|
-| [Self-hosting](catalog/self-hosting.md) | 32 | 15 | 1 | 14 | 2 | servers, reverse proxies, remote access, monitoring and household apps you run yourself |
+| [Self-hosting](catalog/self-hosting.md) | 33 | 16 | 1 | 14 | 2 | servers, reverse proxies, remote access, monitoring and household apps you run yourself |
 | [Home automation](catalog/home-automation.md) | 6 | 4 | 0 | 1 | 1 | hubs, device bridges, cameras and automations that run locally |
-| [Local AI and agents](catalog/local-ai-agents.md) | 25 | 21 | 0 | 0 | 4 | model runners and servers, coding agents, agent frameworks and evaluation |
-| [MCP servers and SDKs](catalog/mcp.md) | 16 | 15 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
-| [Speech](catalog/speech.md) | 7 | 6 | 0 | 1 | 0 | speech-to-text and text-to-speech that run locally |
-| [Developer tools and security](catalog/dev-security.md) | 24 | 21 | 1 | 2 | 0 | package managers, linters, scanners, supply-chain checks and command-line tools |
+| [Local AI and agents](catalog/local-ai-agents.md) | 29 | 25 | 0 | 0 | 4 | model runners and servers, coding agents, agent frameworks and evaluation |
+| [Agent memory](catalog/agent-memory.md) | 9 | 8 | 0 | 1 | 0 | memory layers, knowledge graphs and context stores that keep what an agent learned across sessions |
+| [MCP servers and SDKs](catalog/mcp.md) | 17 | 16 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
+| [Agent skills and instruction files](catalog/agent-skills.md) | 5 | 4 | 0 | 0 | 1 | instruction files, skills and plugins that change how a coding agent works |
+| [Speech](catalog/speech.md) | 8 | 7 | 0 | 1 | 0 | speech-to-text and text-to-speech that run locally |
+| [Developer tools and security](catalog/dev-security.md) | 27 | 22 | 1 | 3 | 1 | package managers, linters, scanners, supply-chain checks and command-line tools |
 | [Photo libraries](catalog/media-photo.md) | 9 | 2 | 0 | 6 | 1 | photo backup and libraries, RAW development, duplicates and metadata |
-| [Video and audio](catalog/media-video-audio.md) | 16 | 7 | 1 | 7 | 1 | editing, encoding, recording, music, stem separation and video made from code |
+| [Video and audio](catalog/media-video-audio.md) | 20 | 10 | 1 | 7 | 2 | editing, encoding, recording, music, stem separation and video made from code |
 | [Images and diagrams](catalog/media-image.md) | 16 | 7 | 2 | 7 | 0 | image processing, generation, painting, design tools and diagrams |
 | [3D, CAD and printing](catalog/media-3d.md) | 10 | 4 | 1 | 4 | 1 | 3D creation, CAD, slicers, scans and 3D on the web |
-| [Documents and OCR](catalog/documents-ocr.md) | 20 | 13 | 1 | 4 | 2 | PDF tools, OCR, document conversion and typesetting |
-| [Notes, wikis and search](catalog/knowledge-search.md) | 23 | 7 | 0 | 12 | 4 | notes, wikis, bookmarks, web archiving, search engines and vector search |
+| [Documents and OCR](catalog/documents-ocr.md) | 28 | 20 | 1 | 5 | 2 | PDF tools, OCR, document conversion and typesetting |
+| [Notes, wikis and search](catalog/knowledge-search.md) | 25 | 9 | 0 | 12 | 4 | notes, wikis, bookmarks, web archiving, search engines and vector search |
 | [Reading](catalog/reading.md) | 7 | 2 | 0 | 5 | 0 | e-books, audiobooks, comics, feeds and read-it-later |
-| [Learning](catalog/learning.md) | 17 | 8 | 0 | 8 | 1 | flashcards, spaced repetition, learning platforms and offline reference |
-| [Personal finance](catalog/finance.md) | 14 | 4 | 1 | 7 | 2 | budgeting, plain-text accounting, invoicing and investment tracking |
+| [Learning](catalog/learning.md) | 18 | 9 | 0 | 8 | 1 | flashcards, spaced repetition, learning platforms and offline reference |
+| [Personal finance](catalog/finance.md) | 23 | 9 | 1 | 11 | 2 | budgeting, plain-text accounting, invoicing and investment tracking |
 | [Privacy, passwords and backups](catalog/privacy-backups.md) | 23 | 8 | 1 | 11 | 3 | backups, encryption, passwords, two-factor codes, messaging and file transfer |
 | [Web and app frameworks](catalog/web-frontend.md) | 25 | 24 | 0 | 0 | 1 | frameworks, UI libraries, static sites, testing and app wrappers |
 
@@ -68,6 +70,7 @@ This catalog's seeds were chosen by hand. Some candidates were found through fou
 | [mlabonne/llm-course](https://github.com/mlabonne/llm-course) | a course with notebooks on how language models work, fine-tuning, quantization and deployment | Apache-2.0 | parse, keep the notice |
 | [terkelg/awesome-creative-coding](https://github.com/terkelg/awesome-creative-coding) | creative coding, generative art and shaders | CC0 stated in the README; no LICENSE file | link only until confirmed |
 | [transitive-bullshit/awesome-ffmpeg](https://github.com/transitive-bullshit/awesome-ffmpeg) | FFmpeg guides, wrappers and tools | CC0 stated in the README; no LICENSE file | link only until confirmed |
+| [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) | skills, hooks, slash commands, plugins and workflows for Claude Code | CC-BY-NC-ND-4.0 (LICENSE file) | link only |
 
 ## How this list is built
 
@@ -77,7 +80,7 @@ Seeds live in [`tools/domains/software.json`](../tools/domains/software.json): n
 python3 tools/build_catalog.py --domain software --src sources --out .
 ```
 
-**Left out at build time:** 0 of 292 seeds.
+**Left out at build time:** 0 of 340 seeds.
 
 Nothing: every seed was found on GitHub and is not archived.
 

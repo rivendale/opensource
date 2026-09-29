@@ -817,5 +817,462 @@
    }
   ],
   "read": "2026-09-26"
+ },
+ "mem0ai/mem0": {
+  "why": "telemetry.py turns on PostHog usage events unless MEM0_TELEMETRY is false; the README makes OpenAI the default LLM and embedder; the migration guide moves graph memory to the hosted platform",
+  "note": "sends usage events (versions, operating system, provider names, memory IDs, hashed user IDs) to PostHog by default until `MEM0_TELEMETRY=false` is set; the default LLM and embedder are OpenAI, so set both to local ones to keep memory text on your machine; the default vector store path is under /tmp, so set a lasting one; graph memory, temporal search and decay are hosted-platform features, not in the open-source package",
+  "evidence": [
+   {
+    "file": "mem0/memory/telemetry.py",
+    "line": "MEM0_TELEMETRY = os.environ.get(\"MEM0_TELEMETRY\", \"True\")"
+   },
+   {
+    "file": "README.md",
+    "line": "Mem0 requires an LLM to function, with `gpt-5-mini` from OpenAI as the default."
+   },
+   {
+    "file": "README.md",
+    "line": "Mem0 uses `text-embedding-3-small` from OpenAI as the default embedding model."
+   },
+   {
+    "file": "mem0/configs/vector_stores/qdrant.py",
+    "line": "path: Optional[str] = Field(\"/tmp/qdrant\", description=\"Path for local Qdrant database\")"
+   },
+   {
+    "file": "docs/migration/oss-v2-to-v3.mdx",
+    "line": "- **Graph memory moved to Platform**: The external graph store integration is removed from OSS; graph memory is now a built-in, always-on [Mem0 Platform feature](/platform/features/graph-memory)"
+   },
+   {
+    "file": "mem0/memory/main.py",
+    "line": "timestamp (Any, optional): Platform-only temporal parameter. Not supported in OSS."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "vectorize-io/hindsight": {
+  "why": "defaults that send data to hosted services are in the source and README, not in GitHub's metadata",
+  "note": "the server's default model provider is OpenAI, and the coding-agents installer and most framework integrations default to the vendor's hosted API; the coding-agents installer also seeds memory from a repository's git history on first run by default; set a local model provider and a localhost server URL, and pin a release tag, before first use",
+  "evidence": [
+   {
+    "file": "hindsight-api-slim/hindsight_api/config.py",
+    "line": "DEFAULT_LLM_PROVIDER = \"openai\""
+   },
+   {
+    "file": "hindsight-integrations/coding-agents/src/core/config.ts",
+    "line": ": (raw.apiUrl ?? \"https://api.hindsight.vectorize.io\"),"
+   },
+   {
+    "file": "hindsight-integrations/coding-agents/src/core/config.ts",
+    "line": "autoSeed?: boolean; // SessionStart: auto-seed a cold repo's bank from git history (default true)"
+   },
+   {
+    "file": "README.md",
+    "line": "# Defaults to Hindsight Cloud; pass hindsight_api_url for a self-hosted server."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "getzep/graphiti": {
+  "why": "the README's Telemetry section says usage statistics are sent unless turned off, and its prerequisites say it defaults to OpenAI; the graph databases it needs carry their own licenses",
+  "note": "sends anonymous usage statistics to PostHog by default until `GRAPHITI_TELEMETRY_ENABLED=false` is set; defaults to OpenAI for extraction, embeddings and reranking, so point it at a local OpenAI-compatible server before adding private data; needs a Neo4j server (GPL-3.0), FalkorDB (SSPL-1.0, source-available) or Amazon Neptune, and its bundled MCP server defaults to FalkorDB; search does not drop facts marked invalid unless you pass a date filter",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "Graphiti collects anonymous usage statistics to help us understand how the framework is being used and improve it for"
+   },
+   {
+    "file": "README.md",
+    "line": "Telemetry is **opt-out** and can be disabled at any time. To disable telemetry collection:"
+   },
+   {
+    "file": "README.md",
+    "line": "- OpenAI API key (Graphiti defaults to OpenAI for LLM inference and embedding)"
+   },
+   {
+    "file": "mcp_server/README.md",
+    "line": "- **Database**: FalkorDB (combined in single container with MCP server)"
+   },
+   {
+    "repo": "FalkorDB/FalkorDB",
+    "file": "LICENSE",
+    "line": "Server Side Public License"
+   },
+   {
+    "file": "graphiti_core/search/search_filters.py",
+    "line": "invalid_at: list[list[DateFilter]] | None = Field(default=None)"
+   },
+   {
+    "file": "graphiti_core/graphiti.py",
+    "line": "search_filter if search_filter is not None else SearchFilters(),"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "topoteretes/cognee": {
+  "why": "the source sends telemetry by default with a machine ID that survives reinstalls, and the no-key path installs packages at runtime; neither is in the README",
+  "note": "sends usage events by default, including a machine ID kept in `~/.cognee` that survives reinstalls, until `TELEMETRY_DISABLED` is set; with an `LLM_API_KEY` it uses OpenAI for extraction and embeddings, and without one it extracts with a local model and installs PyTorch itself on first use unless `GLINER_AUTO_INSTALL=false` is set or the `gliner` extra was installed; the Postgres graph store is a demo, and its production version is a separate licensed product",
+  "evidence": [
+   {
+    "file": "cognee/shared/utils.py",
+    "line": "proxy_url = \"https://test.prometh.ai\""
+   },
+   {
+    "file": "cognee/shared/utils.py",
+    "line": "- **persistent_id**: Stable machine-level ID (~/.cognee/.persistent_id)."
+   },
+   {
+    "file": "cognee/shared/utils.py",
+    "line": "if os.getenv(\"TELEMETRY_DISABLED\"):"
+   },
+   {
+    "file": "README.md",
+    "line": "Once a key is set, Cognee uses OpenAI for language models and embeddings, and processing and generated answers make provider calls."
+   },
+   {
+    "file": "cognee/modules/cognify/config.py",
+    "line": "gliner_auto_install: bool = True"
+   },
+   {
+    "file": "README.md",
+    "line": "> **⚠️ Warning:** Using Postgres as a graph store is currently released as a demo feature. The production-ready version is available as a licensed product."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "volcengine/OpenViking": {
+  "why": "licensed per component and relicensed once, which GitHub's single license field does not show; the embedding default is a hosted service",
+  "note": "crates/ (ov_cli, ragfs) and examples/ are Apache-2.0; the whole repository was Apache-2.0 through v0.2.14 (2026-03-30) and is AGPL-3.0 from the v0.2.15 tag on; embeddings default to Volcengine's hosted service until another provider is configured; a paid edition is unlocked by a license key",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "- **crates/ov\\_cli**: Apache 2.0 - see the [LICENSE](./crates/LICENSE) for details"
+   },
+   {
+    "file": "README.md",
+    "line": "- **examples**: Apache 2.0 - see the [LICENSE](./examples/LICENSE) for details."
+   },
+   {
+    "file": "crates/ragfs/Cargo.toml",
+    "line": "license = \"Apache-2.0\""
+   },
+   {
+    "file": "LICENSE (at tag v0.2.14)",
+    "line": "Apache License"
+   },
+   {
+    "file": "LICENSE",
+    "line": "GNU AFFERO GENERAL PUBLIC LICENSE"
+   },
+   {
+    "file": "openviking_cli/utils/config/embedding_config.py",
+    "line": "default=\"volcengine\","
+   },
+   {
+    "file": "README.md",
+    "line": "This edition adds distributed deployment and official support, activated by a license key."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "letta-ai/letta-code": {
+  "why": "LICENSE appends a Brand Assets Exclusion that GitHub does not show; it removes the Letta names and artwork from the grant and adds no condition on the code, so the code stays Apache-2.0",
+  "note": "the Letta and Letta Code names, logo, wordmark, images and ASCII art are not covered by Apache-2.0; Letta Cloud is the default backend, and telemetry and auto-update stay on until `LETTA_CODE_TELEM=0` and `DISABLE_AUTOUPDATER=1` are set",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Brand Assets Exclusion"
+   },
+   {
+    "file": "LICENSE",
+    "line": "are not licensed under the Apache License, Version 2.0. These assets may"
+   },
+   {
+    "file": "README.md",
+    "line": "Letta Cloud is the default."
+   },
+   {
+    "file": "src/telemetry/index.ts",
+    "line": "const envValue = process.env.LETTA_CODE_TELEM;"
+   },
+   {
+    "file": "src/updater/auto-update.ts",
+    "line": "return process.env.DISABLE_AUTOUPDATER !== \"1\";"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "oblien/openship": {
+  "why": "LICENSE is Apache-2.0 for Openship-authored code, but the repository vendors a GPL-3.0 mail engine and mail client and server code with no license file, which GitHub's license field does not show",
+  "note": "apps/email/engine is vendored iRedMail under GPL-3.0-or-later and ships in the API image, CLI and desktop app; apps/email/client and apps/email/server are Zero Email code with no license file here; the Linux server install mounts the host Docker socket and takes ports 80 and 443, so give it a host of its own and read its security advisories first",
+  "evidence": [
+   {
+    "file": "docs/licensing.md",
+    "line": "| `apps/email/engine` | Vendored iRedMail, with its [GPL v3 license text](../apps/email/engine/LICENSE), [upstream README](../apps/email/engine/README.md), and file-level notices."
+   },
+   {
+    "file": "docs/licensing.md",
+    "line": "This checkout has no separate license file or `license` field for those subpackages."
+   },
+   {
+    "file": "README.md",
+    "line": "The `api` container mounts the host Docker socket so the control plane can build + run your apps as host containers"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "garrytan/gbrain": {
+  "why": "what an agent's saved memories expose by default is in the README, not in GitHub's metadata",
+  "note": "memories an agent saves are visible to every connected agent by default; pass `visibility: \"private\"` for local-only facts; API keys, automatic capture and paid enrichment are separate opt-ins",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "Heads-up: memories agents save default to brain-wide visibility (every connected agent can recall them)"
+   },
+   {
+    "file": "README.md",
+    "line": "API keys, automatic capture, paid enrichment, and the dream cycle are separate opt-in choices"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "DeusData/codebase-memory-mcp": {
+  "why": "the README's quick install runs a script from the default branch, which GitHub's metadata does not show",
+  "note": "install from a pinned release archive (v0.11.0 on 2026-09-29), not the README's `curl ... main/install.sh | bash`; the graph view listens on localhost:9749",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash"
+   },
+   {
+    "file": "README.md",
+    "line": "Open `http://localhost:9749` in your browser."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "tobi/qmd": {
+  "why": "model downloads and the weights license of the default embedder are in the README, not in GitHub's metadata",
+  "note": "downloads three GGUF models from Hugging Face on first use; the default embedder, embeddinggemma-300M, carries Google's Gemma license, and `QMD_EMBED_MODEL` swaps it (re-index after); its HTTP MCP server binds localhost unless `--host` is passed",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "Models are downloaded from HuggingFace and cached in `~/.cache/qmd/models/`."
+   },
+   {
+    "file": "README.md",
+    "line": "The server binds to `localhost` by default."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "thedotmack/claude-mem": {
+  "why": "the installer's hosted default is in the README, not in GitHub's metadata",
+  "note": "the installer asks you to sign in to the vendor's hosted memory; pass an explicit `--provider` or set `CLAUDE_MEM_ONLINE_OPTIN=false` to stay local; it stores what your agent reads and does, so keep private work out of it until you have read where that goes",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "then asks you to sign in to claude-mem in your browser"
+   },
+   {
+    "file": "README.md",
+    "line": "Pass an explicit `--provider` flag, set `CLAUDE_MEM_ONLINE_OPTIN=false`, or run in CI/non-interactive shells"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "gastownhall/beads": {
+  "why": "what `bd init` changes in a repository is in the README, not in GitHub's metadata",
+  "note": "`bd init` creates or updates AGENTS.md and installs Claude and Codex hooks unless you pass `--skip-agents` or `--stealth`; the quick install pipes a script from `main` to bash, so install a release instead",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "`bd init` creates or updates `AGENTS.md` by default so agents can discover the beads workflow, and also installs project Claude/Codex integrations unless you pass `--skip-agents` or `--stealth`."
+   },
+   {
+    "file": "README.md",
+    "line": "curl -fsSL https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh | bash"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "obra/superpowers": {
+  "why": "the plugin's session hook is in its hooks file, not in GitHub's metadata",
+  "note": "installs a SessionStart hook that runs at every start, `/clear` and compaction; install from a reviewed commit",
+  "evidence": [
+   {
+    "file": "hooks/hooks.json",
+    "line": "\"matcher\": \"startup|clear|compact\","
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "anthropics/skills": {
+  "license": "per skill: Apache-2.0, except the docx, pdf, pptx and xlsx skills (all rights reserved)",
+  "why": "no repository-wide LICENSE; each skill folder carries its own LICENSE.txt, and the four document skills are not open source",
+  "note": "read the LICENSE.txt inside each skill before copying it; the docx, pdf, pptx and xlsx skills may be used only under Anthropic's terms",
+  "evidence": [
+   {
+    "file": "skills/skill-creator/LICENSE.txt",
+    "line": "Apache License"
+   },
+   {
+    "file": "skills/docx/LICENSE.txt",
+    "line": "All rights reserved."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "mvanhorn/last30days-skill": {
+  "why": "which credentials it reaches for is in its source, not in GitHub's metadata",
+  "note": "its GitHub search falls back to `gh auth token`, so it acts as whatever account your shell is signed in to; first-run setup installs extra command-line tools; read what each source connector needs before enabling it",
+  "evidence": [
+   {
+    "file": "skills/last30days/scripts/lib/github.py",
+    "line": "`gh auth token` subprocess fallback."
+   },
+   {
+    "file": "README.md",
+    "line": "(first-run setup installs it)"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "NousResearch/hermes-agent": {
+  "why": "its default of writing skills and memory without review is in its source, not in GitHub's metadata",
+  "note": "writes skills and memory across sessions without approval unless `write_approval` is turned on per subsystem; the quick install pipes a script to bash, so install a release you have read",
+  "evidence": [
+   {
+    "file": "tools/write_approval.py",
+    "line": "any unset/invalid value means gate off."
+   },
+   {
+    "file": "README.md",
+    "line": "curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "Lightricks/LTX-2": {
+  "license": "LTX-2 Community License",
+  "why": "LICENSE points to two LTX community license agreements rather than an OSI license, so GitHub reads NOASSERTION",
+  "note": "the agreement requires a paid commercial license for entities with annual revenues of at least $10,000,000",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "LTX Community License Agreements"
+   },
+   {
+    "file": "LICENSE-2_x",
+    "line": "annual revenues of at least $10,000,000"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "mmacpherson/tenforty": {
+  "why": "the accuracy limits are in the README's Known Limitations, not in GitHub's metadata",
+  "note": "its README says Medicare and Net Investment Income Tax are not computed on capital gains (so tax can be understated), only California is tested against professionally prepared returns, and Windows is unsupported (WSL works); use it as a cross-check, not the return",
+  "evidence": [
+   {
+    "file": "README.md",
+    "line": "Medicare and Net Investment Income Tax are not automatically computed on"
+   },
+   {
+    "file": "README.md",
+    "line": "California has been tested against tax returns prepared independently by"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "IRS-Public/direct-file": {
+  "license": "CC0-1.0",
+  "why": "LICENSE is a public-domain statement plus the CC0 1.0 waiver, which GitHub's detector reads as NOASSERTION",
+  "reuse_ok": true,
+  "note": "its README says it is archived, no longer maintained and not for production; read it for the Fact Graph design",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Additionally, we waive copyright and related rights in the work worldwide through the CC0 1.0 Universal public domain dedication."
+   },
+   {
+    "file": "README.md",
+    "line": "**This repository has been archived and is no longer maintained.**"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "OpenBB-finance/OpenBB": {
+  "license": "Apache-2.0",
+  "why": "LICENSE opens with a copyright line and a scope sentence before the Apache-2.0 text, so GitHub's detector reads NOASSERTION",
+  "reuse_ok": true,
+  "note": "the data providers you configure see which symbols you query",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "All files in this repository are licensed under the Apache License, Version 2.0."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "csingley/ofxtools": {
+  "license": "GPL-3.0-or-later",
+  "why": "LICENSE is a GPL-3.0-or-later notice that GitHub's detector reads as NOASSERTION",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "it under the terms of the GNU General Public License as published by"
+   },
+   {
+    "file": "LICENSE",
+    "line": "(at your option) any later version."
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "nmap/nmap": {
+  "license": "Nmap Public Source License 0.95",
+  "why": "GitHub cannot classify the NPSL, a license based on GPLv2 with added terms",
+  "note": "free to run as it ships; the NPSL adds terms beyond GPLv2, including limits on bundling Nmap into commercial products without a license from its authors",
+  "evidence": [
+   {
+    "file": "LICENSE",
+    "line": "Nmap Public Source License Version 0.95"
+   }
+  ],
+  "read": "2026-09-29"
+ },
+ "thewh1teagle/kokoro-onnx": {
+  "why": "two of its dependencies are GPL-3.0 and ONNX Runtime sends telemetry by default; neither shows in GitHub's metadata for this repository",
+  "note": "ONNX Runtime's official builds turn telemetry on by default; set `ORT_DISABLE_TELEMETRY=1` before it loads (Linux and macOS); the Kokoro-82M weights are Apache-2.0 per their model card; two dependencies are GPL-3.0: phonemizer, and the espeak-ng library that espeakng-loader bundles",
+  "evidence": [
+   {
+    "repo": "microsoft/onnxruntime",
+    "file": "docs/Privacy.md",
+    "line": "Telemetry is turned **ON** by default in the official builds"
+   },
+   {
+    "file": "pyproject.toml",
+    "line": "\"phonemizer>=3.4.0\","
+   },
+   {
+    "repo": "bootphon/phonemizer",
+    "file": "LICENSE",
+    "line": "GNU GENERAL PUBLIC LICENSE"
+   },
+   {
+    "file": "pyproject.toml",
+    "line": "\"espeakng-loader>=0.2.4\","
+   },
+   {
+    "repo": "thewh1teagle/espeakng-loader",
+    "file": "README.md",
+    "line": "This package loads the espeak-ng shared library so it will be available for other libraries."
+   },
+   {
+    "repo": "espeak-ng/espeak-ng",
+    "file": "COPYING",
+    "line": "GNU GENERAL PUBLIC LICENSE"
+   }
+  ],
+  "read": "2026-09-29"
  }
 }

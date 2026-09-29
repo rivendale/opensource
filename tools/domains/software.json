@@ -24,10 +24,22 @@
    "note": "Agents run code and edit files with your access. Read the code, pin a version and give them the least access that works; the [safe setup checklist](../../ai/graphics.md#safe-setup-checklist) applies. A code license says nothing about model weights; read each model card."
   },
   {
+   "slug": "agent-memory",
+   "title": "Agent memory",
+   "scope": "memory layers, knowledge graphs and context stores that keep what an agent learned across sessions",
+   "note": "A memory layer stores what your agents read and say. Most send that text to a hosted model for extraction and embeddings by default, and several send usage telemetry; set local models and turn telemetry off before adding private data. The [safe setup checklist](../../ai/graphics.md#safe-setup-checklist) applies."
+  },
+  {
    "slug": "mcp",
    "title": "MCP servers and SDKs",
    "scope": "Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software",
    "note": "**Every MCP server runs code on your machine with the access you give it.** Read the code, pin a version, keep it local, and apply the [safe setup checklist](../../ai/graphics.md#safe-setup-checklist) before connecting one to an agent."
+  },
+  {
+   "slug": "agent-skills",
+   "title": "Agent skills and instruction files",
+   "scope": "instruction files, skills and plugins that change how a coding agent works",
+   "note": "A skill is instructions your agent follows with your access, and some plugins add hooks that run at every session start. Read it before installing, install from a reviewed commit rather than a branch, and check each skill's license: one repository can mix licenses. The [safe setup checklist](../../ai/graphics.md#safe-setup-checklist) applies."
   },
   {
    "slug": "speech",
@@ -203,6 +215,13 @@
    "covers": "FFmpeg guides, wrappers and tools",
    "license": "CC0 stated in the README; no LICENSE file",
    "use": "link only until confirmed"
+  },
+  {
+   "name": "hesreallyhim/awesome-claude-code",
+   "url": "https://github.com/hesreallyhim/awesome-claude-code",
+   "covers": "skills, hooks, slash commands, plugins and workflows for Claude Code",
+   "license": "CC-BY-NC-ND-4.0 (LICENSE file)",
+   "use": "link only"
   }
  ],
  "seeds": [
@@ -1959,6 +1978,294 @@
    "url": "https://github.com/portfolio-performance/portfolio",
    "category": "finance",
    "why": "Desktop investment tracker that computes time-weighted and money-weighted returns across accounts and imports broker statements."
+  },
+  {
+   "name": "mem0ai/mem0",
+   "url": "https://github.com/mem0ai/mem0",
+   "category": "agent-memory",
+   "why": "Memory layer that extracts facts from agent conversations into a vector store for later sessions; runs locally once the model and embedder are set."
+  },
+  {
+   "name": "vectorize-io/hindsight",
+   "url": "https://github.com/vectorize-io/hindsight",
+   "category": "agent-memory",
+   "why": "Self-hosted agent memory server that merges retained facts in the background into sourced observations; serves recall and reflect over REST and MCP."
+  },
+  {
+   "name": "getzep/graphiti",
+   "url": "https://github.com/getzep/graphiti",
+   "category": "agent-memory",
+   "why": "Builds a knowledge graph from agent conversations and keeps a validity window on each fact, so a replaced fact is marked instead of deleted."
+  },
+  {
+   "name": "topoteretes/cognee",
+   "url": "https://github.com/topoteretes/cognee",
+   "category": "agent-memory",
+   "why": "Turns documents and conversations into a knowledge graph plus a vector index; its default stores are embedded files, so it needs no database server."
+  },
+  {
+   "name": "volcengine/OpenViking",
+   "url": "https://github.com/volcengine/OpenViking",
+   "category": "agent-memory",
+   "why": "Context server that keeps agent memory, documents and skills as a virtual filesystem, with short summaries an agent reads before the source."
+  },
+  {
+   "name": "letta-ai/letta-code",
+   "url": "https://github.com/letta-ai/letta-code",
+   "category": "local-ai-agents",
+   "why": "Terminal coding agent whose memory is a git repo that a background agent rewrites from the transcript after each compaction."
+  },
+  {
+   "name": "oblien/openship",
+   "url": "https://github.com/oblien/openship",
+   "category": "self-hosting",
+   "why": "Self-hosted deployment platform that builds a repo, runs it in containers and routes it with automatic TLS, driven from a desktop app over SSH."
+  },
+  {
+   "name": "garrytan/gbrain",
+   "url": "https://github.com/garrytan/gbrain",
+   "category": "agent-memory",
+   "why": "Agent memory in which every fact keeps its source and can be corrected or withdrawn; starts as a keyless local brain with cloud embeddings opt-in."
+  },
+  {
+   "name": "DeusData/codebase-memory-mcp",
+   "url": "https://github.com/DeusData/codebase-memory-mcp",
+   "category": "mcp",
+   "why": "Indexes a codebase into a local tree-sitter code graph that agents query over MCP; it makes no model calls and serves a graph view on localhost."
+  },
+  {
+   "name": "tobi/qmd",
+   "url": "https://github.com/tobi/qmd",
+   "category": "knowledge-search",
+   "why": "Local search over Markdown notes, transcripts and docs: keyword search, vector search and a reranker on GGUF models through node-llama-cpp, no API key."
+  },
+  {
+   "name": "thedotmack/claude-mem",
+   "url": "https://github.com/thedotmack/claude-mem",
+   "category": "agent-memory",
+   "why": "Records what a coding agent does each session, compresses it with a model and injects the relevant parts into later sessions, for several agent CLIs."
+  },
+  {
+   "name": "Graphify-Labs/graphify",
+   "url": "https://github.com/Graphify-Labs/graphify",
+   "category": "agent-memory",
+   "why": "Turns a codebase with its docs, schemas and PDFs into a knowledge graph an agent queries; code is parsed locally, documents go to your model."
+  },
+  {
+   "name": "AgriciDaniel/claude-obsidian",
+   "url": "https://github.com/AgriciDaniel/claude-obsidian",
+   "category": "agent-memory",
+   "why": "Keeps an agent's knowledge as a plain Markdown Obsidian vault: drop in a source and the agent reads, links and files it in files you own."
+  },
+  {
+   "name": "gastownhall/beads",
+   "url": "https://github.com/gastownhall/beads",
+   "category": "local-ai-agents",
+   "why": "Issue tracker for coding agents: a dependency graph of tasks kept with the repo, so an agent can pick up claimable work across sessions."
+  },
+  {
+   "name": "jaz-lang/jaz",
+   "url": "https://github.com/jaz-lang/jaz",
+   "category": "local-ai-agents",
+   "why": "Minimal agent framework in which the model writes code that can call invoke recursively; memory and self-improvement are loops, not a separate store."
+  },
+  {
+   "name": "assafelovic/gpt-researcher",
+   "url": "https://github.com/assafelovic/gpt-researcher",
+   "category": "knowledge-search",
+   "why": "Research agent that searches the web or your own documents and writes a cited report with any model provider; its default writer is a hosted model."
+  },
+  {
+   "name": "agentsmd/agents.md",
+   "url": "https://github.com/agentsmd/agents.md",
+   "category": "agent-skills",
+   "why": "The AGENTS.md convention: one plain Markdown file of project instructions that many coding agents read, with the format's site and examples."
+  },
+  {
+   "name": "obra/superpowers",
+   "url": "https://github.com/obra/superpowers",
+   "category": "agent-skills",
+   "why": "A library of agent skills for planning, test-driven development, debugging and code review, installed as a plugin for several coding agents."
+  },
+  {
+   "name": "anthropics/skills",
+   "url": "https://github.com/anthropics/skills",
+   "category": "agent-skills",
+   "why": "Anthropic's example agent skills, from building MCP servers to editing documents; most carry Apache-2.0 per skill, the four document skills do not."
+  },
+  {
+   "name": "mattpocock/skills",
+   "url": "https://github.com/mattpocock/skills",
+   "category": "agent-skills",
+   "why": "One engineer's working set of agent skills, published from his own agents directory, for planning, reviewing, testing and writing code."
+  },
+  {
+   "name": "mvanhorn/last30days-skill",
+   "url": "https://github.com/mvanhorn/last30days-skill",
+   "category": "agent-skills",
+   "why": "Agent skill that researches a topic across Reddit, X, YouTube, Hacker News, GitHub and more over the last 30 days and summarizes what people say."
+  },
+  {
+   "name": "NousResearch/hermes-agent",
+   "url": "https://github.com/NousResearch/hermes-agent",
+   "category": "local-ai-agents",
+   "why": "Self-hosted agent that creates and refines its own skills from experience, with memory, session search and many chat and model backends."
+  },
+  {
+   "name": "WyattBlue/auto-editor",
+   "url": "https://github.com/WyattBlue/auto-editor",
+   "category": "media-video-audio",
+   "why": "Command-line editor that cuts silence and dead space from video and audio automatically, then renders the result or exports a timeline for an editor."
+  },
+  {
+   "name": "Breakthrough/PySceneDetect",
+   "url": "https://github.com/Breakthrough/PySceneDetect",
+   "category": "media-video-audio",
+   "why": "Finds scene cuts and transitions in video from the command line or Python, and can split the file at each cut with FFmpeg."
+  },
+  {
+   "name": "Wan-Video/Wan2.2",
+   "url": "https://github.com/Wan-Video/Wan2.2",
+   "category": "media-video-audio",
+   "why": "Open text-to-video and image-to-video models; its README runs the 5B model on a 24 GB GPU and the 14B models on 80 GB."
+  },
+  {
+   "name": "Lightricks/LTX-2",
+   "url": "https://github.com/Lightricks/LTX-2",
+   "category": "media-video-audio",
+   "why": "Inference and LoRA training code for LTX-2, which generates video with matching audio; weights under the LTX community license, not open source."
+  },
+  {
+   "name": "mmacpherson/tenforty",
+   "url": "https://github.com/mmacpherson/tenforty",
+   "category": "finance",
+   "why": "Python library that computes US federal and some state income tax for 2018 to 2025 on OpenTaxSolver, for what-if scenarios and cross-checks."
+  },
+  {
+   "name": "IRS-Public/direct-file",
+   "url": "https://github.com/IRS-Public/direct-file",
+   "category": "finance",
+   "why": "The IRS's free filing app, released into the public domain; archived and unmaintained, but its Fact Graph shows how to reason over a partial return."
+  },
+  {
+   "name": "beancount/beangulp",
+   "url": "https://github.com/beancount/beangulp",
+   "category": "finance",
+   "why": "Beancount's framework for importers that turn bank and card statement files into ledger entries, which balance assertions can then check."
+  },
+  {
+   "name": "beancount/smart_importer",
+   "url": "https://github.com/beancount/smart_importer",
+   "category": "finance",
+   "why": "Adds machine learning to Beancount importers: it predicts the missing account of each imported transaction from your existing entries."
+  },
+  {
+   "name": "csingley/ibflex",
+   "url": "https://github.com/csingley/ibflex",
+   "category": "finance",
+   "why": "Python parser for Interactive Brokers Flex XML statements that turns trades, cash and positions into typed Python objects."
+  },
+  {
+   "name": "rotki/rotki",
+   "url": "https://github.com/rotki/rotki",
+   "category": "finance",
+   "why": "Portfolio tracker and accounting app that keeps its database local and encrypted; it still queries chain and exchange APIs with your addresses and keys."
+  },
+  {
+   "name": "OpenBB-finance/OpenBB",
+   "url": "https://github.com/OpenBB-finance/OpenBB",
+   "category": "finance",
+   "why": "Open data platform that pulls market, economic and company data from many providers into Python, a CLI and AI agents; providers see what you query."
+  },
+  {
+   "name": "firefly-iii/data-importer",
+   "url": "https://github.com/firefly-iii/data-importer",
+   "category": "finance",
+   "why": "Imports CSV, CAMT.052 and CAMT.053 bank statements into Firefly III, with saved mapping rules for each bank's file layout."
+  },
+  {
+   "name": "csingley/ofxtools",
+   "url": "https://github.com/csingley/ofxtools",
+   "category": "finance",
+   "why": "Python library for OFX, the format banks and brokers use for statement downloads: parses files into objects and builds OFX requests."
+  },
+  {
+   "name": "danmolitor/forme",
+   "url": "https://github.com/danmolitor/forme",
+   "category": "documents-ocr",
+   "why": "Document engine in Rust compiled to WebAssembly that renders your HTML and print CSS, or React, Svelte and Vue components, to PDF without a browser."
+  },
+  {
+   "name": "kane50613/takumi",
+   "url": "https://github.com/kane50613/takumi",
+   "category": "documents-ocr",
+   "why": "Renders OG images and paged PDFs from JSX, HTML and CSS without a headless browser, on Node.js, Cloudflare Workers, browsers and Rust."
+  },
+  {
+   "name": "diegomura/react-pdf",
+   "url": "https://github.com/diegomura/react-pdf",
+   "category": "documents-ocr",
+   "why": "Builds PDF documents from React components in the browser or on a server, with its own layout engine instead of a headless browser."
+  },
+  {
+   "name": "Kozea/WeasyPrint",
+   "url": "https://github.com/Kozea/WeasyPrint",
+   "category": "documents-ocr",
+   "why": "Python library that turns HTML and CSS, including print CSS for page size, headers and page numbers, into PDF without a browser."
+  },
+  {
+   "name": "pdfme/pdfme",
+   "url": "https://github.com/pdfme/pdfme",
+   "category": "documents-ocr",
+   "why": "TypeScript library for template-based PDFs: design a template in a WYSIWYG editor, then fill it with data to generate documents."
+  },
+  {
+   "name": "pagedjs/pagedjs",
+   "url": "https://github.com/pagedjs/pagedjs",
+   "category": "documents-ocr",
+   "why": "Paginates HTML in the browser with CSS Paged Media (margins, running headers, page counters) so printing gives a finished book or report."
+  },
+  {
+   "name": "camelot-dev/camelot",
+   "url": "https://github.com/camelot-dev/camelot",
+   "category": "documents-ocr",
+   "why": "Python library that extracts tables from text-based PDFs into DataFrames or CSV, with separate modes for ruled and whitespace-separated tables."
+  },
+  {
+   "name": "alam00000/bentopdf",
+   "url": "https://github.com/alam00000/bentopdf",
+   "category": "documents-ocr",
+   "why": "Self-hostable PDF toolkit that merges, splits, compresses, converts and fills PDFs in the browser, so files are not uploaded to a server."
+  },
+  {
+   "name": "wireshark/wireshark",
+   "url": "https://github.com/wireshark/wireshark",
+   "category": "dev-security",
+   "why": "The standard network protocol analyzer: capture and inspect traffic to find bandwidth hogs, unknown devices and suspicious connections."
+  },
+  {
+   "name": "nmap/nmap",
+   "url": "https://github.com/nmap/nmap",
+   "category": "dev-security",
+   "why": "Scans a network for devices, open ports and running services; the standard way to audit what is actually listening on a home or office network."
+  },
+  {
+   "name": "vercel-labs/deepsec",
+   "url": "https://github.com/vercel-labs/deepsec",
+   "category": "dev-security",
+   "why": "Security scanner that points coding agents at a whole repository and revalidates each finding; it runs on your machines, but code goes to your model."
+  },
+  {
+   "name": "robocode-dev/tank-royale",
+   "url": "https://github.com/robocode-dev/tank-royale",
+   "category": "learning",
+   "why": "Programming game where you code a tank's movement, radar and firing, then battle other bots over the network; bot APIs in Java, .NET and Python."
+  },
+  {
+   "name": "thewh1teagle/kokoro-onnx",
+   "url": "https://github.com/thewh1teagle/kokoro-onnx",
+   "category": "speech",
+   "why": "Runs the Kokoro-82M text-to-speech model through ONNX Runtime on an ordinary CPU with a small Python API; model files download separately."
   }
  ]
 }

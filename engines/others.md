@@ -218,6 +218,11 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
   are CC-BY-4.0 ("Zooba, Jade" and "Zooba, Nix"): credit the author as the two `license.*.txt` files
   there say, or better, replace them. React users can build on
   [pmndrs/react-three-fiber](https://github.com/pmndrs/react-three-fiber) (MIT, 32,444 stars).
+- **GPU effects:** [dgreenheck/threejs-particle-fluids](https://github.com/dgreenheck/threejs-particle-fluids)
+  (MIT, 182 stars, created 2026-09-25, read 2026-09-29) simulates and renders liquids, soft bodies,
+  cloth and smoke with WebGPU. It needs three.js r184 (its npm peer range stops before r185) and a
+  browser with WebGPU, with no WebGL fallback. It is days old: pin the version you tested
+  (`threejs-particle-fluids@0.2.0` on 2026-09-29).
 - **Art pipeline:** the [manual](https://github.com/mrdoob/three.js/blob/dev/manual/pages/loading-3d-models.html)
   recommends glTF (`.glb` or `.gltf`) and names Blender among the tools that export it.
 - **AI tooling:** [threejs.org/docs/llms.txt](https://threejs.org/docs/llms.txt) gives models
@@ -228,6 +233,15 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
   its HTTP transport (9223) does too, with CORS `*` and a `run_js` tool**; it has no setting to bind
   localhost. If you try it anyway: stdio only, a host firewall blocking 9222 and 9223, and a pinned
   `threejs-devtools-mcp@0.4.1`.
+  [majidmanzarpour/threejs-game-skills](https://github.com/majidmanzarpour/threejs-game-skills) (MIT,
+  2,373 stars, read 2026-09-29) packs nine agent skills with a Vite, TypeScript and three.js
+  scaffold. Read it for its patterns: a seeded random generator, awaited state hooks, a Playwright
+  smoke test, visual and bot playtest templates, a canvas pixel inspector that records which GPU drew
+  the frames, and a run ID evidence manifest. With Tripo, Gemini or ElevenLabs keys set, three
+  optional skills send prompts and images to those services and use them by default for premium
+  assets; its key check sources (runs) your shell profiles; and its documented install is global at
+  `main`. Install per project from a reviewed commit (`8286774` on 2026-09-29) with those keys absent,
+  after the [safe setup checklist](../ai/graphics.md#safe-setup-checklist).
 - **Catalog:** 15 rows mention three.js, 10 `copy`.
 
 ### PixiJS
