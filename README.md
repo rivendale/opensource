@@ -8,7 +8,7 @@ GitHub and a plain rule for what you may reuse. Two domains so far: games, and s
 | domain | what it holds | start here |
 |---|---|---|
 | Games | a genre catalog of 2,718 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
-| Software | 290 hand-picked open-source applications, tools and libraries beyond games, in 17 categories from self-hosting and local AI to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
+| Software | 338 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
 
 Both follow the same [license rule](#the-license-rule). The games material sits at the top level of
 this repository; everything else lives under [`software/`](software/).

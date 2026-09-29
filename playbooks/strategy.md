@@ -119,6 +119,21 @@ mod-oriented Civilization III remake. Learn from:
 - Caution: its README says `ConvertCiv3Media` reads images and animations from Civilization III.
   The code is MIT; that art is not yours to ship.
 
+**[OpenTS](https://github.com/OpenTS-Developers/OpenTS)**: `check first`, C++. Not in the generated
+catalog. Its LICENSE.md is GPL-3.0-or-later (read 2026-09-29), but like the catalog's other
+reconstructions of commercial games it reads `check first`, because its legal status is unclear. A
+standalone reconstruction of *Command & Conquer: Tiberian Sun* 2.03 Firestorm, built, its README
+says, from Electronic Arts' GPL-released source for related Command & Conquer games plus reverse
+engineering of Tiberian Sun. LICENSE.md adds EA's GPL section 7 terms to the derived material.
+Cautions:
+- The Tiberian Sun-specific parts come from reverse engineering a commercial executable. Read it for
+  how a reconstruction is organized and checked against the original; copy nothing.
+- It ships no game assets, so playing it needs your own copy of the original game.
+- Its releases are Windows executables. Build from source, per the
+  [catalog's safety rule](../README.md#how-the-catalog-is-built).
+- A GamingOnLinux report (2026-08) says AI tools helped interpret the disassembly and every change was
+  reviewed against the original executable; that account is relayed, not checked.
+
 ## 4. Reusable permissive code
 
 | catalog project | reuse class, license | language | use it for |
