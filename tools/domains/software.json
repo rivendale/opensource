@@ -2034,6 +2034,12 @@
    "why": "Indexes a codebase into a local tree-sitter code graph that agents query over MCP; it makes no model calls and serves a graph view on localhost."
   },
   {
+   "name": "openai/mcp-extensions",
+   "url": "https://github.com/openai/mcp-extensions",
+   "category": "mcp",
+   "why": "OpenAI's extensions for making an MCP server appear inside ChatGPT (sidebar entries, file handlers, mentions, forms); ChatGPT-specific, not part of core MCP."
+  },
+  {
    "name": "tobi/qmd",
    "url": "https://github.com/tobi/qmd",
    "category": "knowledge-search",
@@ -2056,6 +2062,18 @@
    "url": "https://github.com/AgriciDaniel/claude-obsidian",
    "category": "agent-memory",
    "why": "Keeps an agent's knowledge as a plain Markdown Obsidian vault: drop in a source and the agent reads, links and files it in files you own."
+  },
+  {
+   "name": "breferrari/obsidian-mind",
+   "url": "https://github.com/breferrari/obsidian-mind",
+   "category": "agent-memory",
+   "why": "An Obsidian vault as agent memory, filled automatically by agent hooks at session start, prompt, tool use, compaction and stop, with local semantic search; read what its hooks do before adding them beside your own."
+  },
+  {
+   "name": "projectmentor/hive-mind",
+   "url": "https://github.com/projectmentor/hive-mind",
+   "category": "agent-memory",
+   "why": "Peer-to-peer, append-only memory shared by several agents over Tailscale, where a fact gains confidence only through independent corroboration; self-labeled alpha, and a memory every agent writes is also a path for injected text to spread."
   },
   {
    "name": "gastownhall/beads",
@@ -2304,6 +2322,12 @@
    "why": "Turns PDFs, web pages and videos into a Neo4j knowledge graph with a language model, then answers questions over the graph."
   },
   {
+   "name": "zvec-ai/zvec-grep",
+   "url": "https://github.com/zvec-ai/zvec-grep",
+   "category": "knowledge-search",
+   "why": "Local hybrid search (keywords, vectors and ripgrep) over code and documents, as a command line tool and MCP server, with a small embedding model that needs no GPU; it writes its index into the project root, and its installer edits agent configs."
+  },
+  {
    "name": "affaan-m/ECC",
    "url": "https://github.com/affaan-m/ECC",
    "category": "agent-skills",
@@ -2326,6 +2350,36 @@
    "url": "https://github.com/MadsLorentzen/ai-job-search",
    "category": "agent-skills",
    "why": "Job search workflow built from coding agent skills that runs from your own copy: evaluates postings, tailors a CV, drafts cover letters and preps interviews."
+  },
+  {
+   "name": "kunchenguid/backpass",
+   "url": "https://github.com/kunchenguid/backpass",
+   "category": "agent-skills",
+   "why": "Mines agent session transcripts for evidence and proposes edits to AGENTS.md and skills, each tied to a quoted line; it has no API keys of its own and sends distilled transcripts into whichever hosted agent you have logged in to, OpenAI first by default, so pin the backend and keep a behavioral check on every rule it touches."
+  },
+  {
+   "name": "EveryInc/compound-engineering-plugin",
+   "url": "https://github.com/EveryInc/compound-engineering-plugin",
+   "category": "agent-skills",
+   "why": "Workflow skills for brainstorming, planning, doing and reviewing work with a coding agent; Every's announcement reported cutting instructions newer models no longer need, while the v3.30 release notes list fixes against over-expanding a plan. Pin a commit rather than auto-updating."
+  },
+  {
+   "name": "humanlayer/skills",
+   "url": "https://github.com/humanlayer/skills",
+   "category": "agent-skills",
+   "why": "HumanLayer's agent skills, including show-me, which explains the current topic with the smallest fitting view (call tree, file tree, diagram, diff or a small HTML page) and runs only when you invoke it. Install from a clone at a reviewed commit, not `npx skills add humanlayer/skills`, which takes whatever is current."
+  },
+  {
+   "name": "kajisho5/ffmpeg-skill",
+   "url": "https://github.com/kajisho5/ffmpeg-skill",
+   "category": "agent-skills",
+   "why": "Agent skill for local video edits with FFmpeg (reframe, cut silence, subtitles, HDR to SDR, export presets) that checks the exported file's duration, size and format; install from a pinned clone rather than its npx command."
+  },
+  {
+   "name": "Unity-Technologies/unity-agent-plugin",
+   "url": "https://github.com/Unity-Technologies/unity-agent-plugin",
+   "category": "agent-skills",
+   "why": "Unity's official plugin for Claude Code and Codex, with guidance for building, monetizing and operating Unity games. Under the Unity Companion License, for Unity-dependent projects only; installing it from the marketplace tracks the latest version, so pin a reviewed commit."
   },
   {
    "name": "dgreenheck/tidewater",

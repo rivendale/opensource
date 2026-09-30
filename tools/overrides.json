@@ -1310,5 +1310,16 @@
  "MadsLorentzen/ai-job-search": {
   "note": "your CV and career history go to the model provider; its skills run pre-approved on your machine, so read their code first; its README warns that a fork is always public and that setup writes your name, contact details and salary expectations into tracked files, so use a private copy",
   "why": "its README says the skills are allowlisted to run without asking, and warns that a fork is public while setup writes personal details into tracked files"
+ },
+ "unity-technologies/unity-agent-plugin": {
+  "license": "Unity Companion License",
+  "why": "LICENSE.md states the Unity Companion License, which GitHub's detector does not recognize (reports NOASSERTION); it covers Unity-dependent projects only",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "line": "Licensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license)."
+   }
+  ],
+  "read": "2026-09-30"
  }
 }
