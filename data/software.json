@@ -1,8 +1,8 @@
 {
  "built": "2026-09-30",
  "domain": "software",
- "count": 359,
- "seeds": 361,
+ "count": 360,
+ "seeds": 362,
  "dropped": [
   {
    "name": "mrdoob/three.js",
@@ -1813,6 +1813,21 @@
    "license_from": "github",
    "reuse": "copy",
    "stars": 1327,
+   "pushed": "2026-09-30",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "rehan-remade/universal-modder",
+   "category": "agent-skills",
+   "repo": "https://github.com/rehan-remade/universal-modder",
+   "homepage": null,
+   "why": "Claude Code plugin (also usable through AGENTS.md with Codex or Cursor) for modding games: recon, engine detection, reverse engineering, building the mod, generated art, 3D and audio, in-game testing and showcase videos. Needs a paid fal API key (assets are generated in the cloud), Python 3.10+, ffmpeg and Blender. Created 2026-09-30, so pin a reviewed commit rather than tracking main with `/plugin marketplace add`, and mod only single-player games you own: online games' anti-cheat and terms of service can ban accounts.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 742,
    "pushed": "2026-09-30",
    "active": true,
    "note": null

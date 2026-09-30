@@ -2382,6 +2382,12 @@
    "why": "Unity's official plugin for Claude Code and Codex, with guidance for building, monetizing and operating Unity games. Under the Unity Companion License, for Unity-dependent projects only; installing it from the marketplace tracks the latest version, so pin a reviewed commit."
   },
   {
+   "name": "rehan-remade/universal-modder",
+   "url": "https://github.com/rehan-remade/universal-modder",
+   "category": "agent-skills",
+   "why": "Claude Code plugin (also usable through AGENTS.md with Codex or Cursor) for modding games: recon, engine detection, reverse engineering, building the mod, generated art, 3D and audio, in-game testing and showcase videos. Needs a paid fal API key (assets are generated in the cloud), Python 3.10+, ffmpeg and Blender. Created 2026-09-30, so pin a reviewed commit rather than tracking main with `/plugin marketplace add`, and mod only single-player games you own: online games' anti-cheat and terms of service can ban accounts."
+  },
+  {
    "name": "dgreenheck/tidewater",
    "url": "https://github.com/dgreenheck/tidewater",
    "category": "media-3d",
