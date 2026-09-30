@@ -1,6 +1,6 @@
 # 3D, CAD and printing
 
-3D creation, CAD, slicers, scans and 3D on the web. 10 projects; 4 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
+3D creation, CAD, slicers, scans and 3D on the web. 11 projects; 5 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
 
 A code license says nothing about model weights; read each model card.
 
@@ -10,6 +10,7 @@ A code license says nothing about model weights; read each model card.
 | [playcanvas/supersplat](https://github.com/playcanvas/supersplat) | copy | MIT | TypeScript | 10282 | 2026-09-29 | Browser editor for cleaning, cropping and compressing Gaussian splat captures before publishing them. |
 | [google/model-viewer](https://github.com/google/model-viewer) | copy | Apache-2.0 | TypeScript | 8260 | 2026-09-29 | Web component for displaying 3D models, including AR. |
 | [gumyr/build123d](https://github.com/gumyr/build123d) | copy | Apache-2.0 | Python | 3232 | 2026-09-29 | Python CAD library on OpenCascade for parametric parts defined in code, exported to STEP or STL for printing. |
+| [dgreenheck/tidewater](https://github.com/dgreenheck/tidewater) | copy | MIT | JavaScript | 990 | 2026-09-25 | Browser coastal scene built with Three.js and WebGPU: FFT ocean, shoreline waves, caustics and a dynamic sky; a readable example of agent-assisted real-time graphics. |
 | [FreeCAD/FreeCAD](https://github.com/FreeCAD/FreeCAD) | library use | LGPL-2.1 | C++ | 33845 | 2026-09-29 | Parametric 3D CAD modeler. |
 | [blender/blender](https://github.com/blender/blender) | study only | GPL-2.0-or-later (per license file) | C++ | 20601 | 2026-09-29 | Full 3D creation suite (mirror of the official repo). |
 | [OrcaSlicer/OrcaSlicer](https://github.com/OrcaSlicer/OrcaSlicer) | study only | AGPL-3.0 | C++ | 15802 | 2026-09-29 | Multi-brand 3D printer slicer. |

@@ -1,6 +1,6 @@
 # Notes, wikis and search
 
-Notes, wikis, bookmarks, web archiving, search engines and vector search. 25 projects; 9 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
+Notes, wikis, bookmarks, web archiving, search engines and vector search. 26 projects; 10 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
 
 | project | reuse | license | language | stars | last push | why |
 |---|---|---|---|---|---|---|
@@ -13,6 +13,7 @@ Notes, wikis, bookmarks, web archiving, search engines and vector search. 25 pro
 | [quickwit-oss/tantivy](https://github.com/quickwit-oss/tantivy) | copy | MIT | Rust | 16154 | 2026-09-29 | Full-text search engine library in Rust. |
 | [asg017/sqlite-vec](https://github.com/asg017/sqlite-vec) | copy | Apache-2.0 | C | 8152 | 2026-05-18 | Vector search as a SQLite extension, for small local semantic search with no server at all. |
 | [silverbulletmd/silverbullet](https://github.com/silverbulletmd/silverbullet) | copy | MIT | TypeScript | 6178 | 2026-09-29 | Markdown notebook that is programmable with queries. |
+| [neo4j-labs/llm-graph-builder](https://github.com/neo4j-labs/llm-graph-builder) | copy | Apache-2.0 | Jupyter Notebook | 5273 | 2026-09-16 | Turns PDFs, web pages and videos into a Neo4j knowledge graph with a language model, then answers questions over the graph. |
 | [AppFlowy-IO/AppFlowy](https://github.com/AppFlowy-IO/AppFlowy) | study only | AGPL-3.0 | Dart | 76992 | 2026-09-22 | Open alternative to Notion with local data. |
 | [siyuan-note/siyuan](https://github.com/siyuan-note/siyuan) | study only | AGPL-3.0 | TypeScript | 46560 | 2026-09-29 | Local-first block-based personal knowledge base. |
 | [logseq/logseq](https://github.com/logseq/logseq) | study only | AGPL-3.0 | Clojure | 45085 | 2026-09-29 | Local-first outliner and knowledge graph on plain files. |

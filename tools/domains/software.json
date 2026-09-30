@@ -2278,6 +2278,66 @@
    "url": "https://github.com/remotion-dev/skills",
    "category": "agent-skills",
    "why": "Remotion's own agent skills for creating, previewing and rendering videos made from React code, mirrored from the Remotion repository."
+  },
+  {
+   "name": "kunchenguid/firstmate",
+   "url": "https://github.com/kunchenguid/firstmate",
+   "category": "local-ai-agents",
+   "why": "Talk to one lead agent that plans the work and runs a crew of worker agents in separate git worktrees; the repository itself is the setup, read by whichever terminal coding agent you launch."
+  },
+  {
+   "name": "HarnessRouter/harnessrouter",
+   "url": "https://github.com/HarnessRouter/harnessrouter",
+   "category": "local-ai-agents",
+   "why": "Self-hosted server that runs several coding agent CLIs behind one API with sessions, streaming, files and cancellation; it runs them on the provider API keys you give it."
+  },
+  {
+   "name": "victordibia/designing-multiagent-systems",
+   "url": "https://github.com/victordibia/designing-multiagent-systems",
+   "category": "local-ai-agents",
+   "why": "Code for a book on building multi-agent applications from scratch: agents, tools, orchestration patterns and evaluation."
+  },
+  {
+   "name": "neo4j-labs/llm-graph-builder",
+   "url": "https://github.com/neo4j-labs/llm-graph-builder",
+   "category": "knowledge-search",
+   "why": "Turns PDFs, web pages and videos into a Neo4j knowledge graph with a language model, then answers questions over the graph."
+  },
+  {
+   "name": "affaan-m/ECC",
+   "url": "https://github.com/affaan-m/ECC",
+   "category": "agent-skills",
+   "why": "A very large collection of agents, skills, rules and hooks for several coding agents, with an installer; better mined for ideas than installed whole."
+  },
+  {
+   "name": "petergyang/no-ai-slop",
+   "url": "https://github.com/petergyang/no-ai-slop",
+   "category": "agent-skills",
+   "why": "Writing skill that removes more than twenty common patterns of machine-sounding prose while keeping the specific facts."
+  },
+  {
+   "name": "ayghri/i-have-adhd",
+   "url": "https://github.com/ayghri/i-have-adhd",
+   "category": "agent-skills",
+   "why": "Skill that makes a coding agent put the answer or next command first and keep replies short and scannable."
+  },
+  {
+   "name": "MadsLorentzen/ai-job-search",
+   "url": "https://github.com/MadsLorentzen/ai-job-search",
+   "category": "agent-skills",
+   "why": "Job search workflow built from coding agent skills that runs from your own copy: evaluates postings, tailors a CV, drafts cover letters and preps interviews."
+  },
+  {
+   "name": "dgreenheck/tidewater",
+   "url": "https://github.com/dgreenheck/tidewater",
+   "category": "media-3d",
+   "why": "Browser coastal scene built with Three.js and WebGPU: FFT ocean, shoreline waves, caustics and a dynamic sky; a readable example of agent-assisted real-time graphics."
+  },
+  {
+   "name": "RaidOwl/homelab-hub",
+   "url": "https://github.com/RaidOwl/homelab-hub",
+   "category": "self-hosting",
+   "why": "Self-hosted inventory for a home lab: hardware, virtual machines, services, storage and networks, with a relationship map and markdown docs."
   }
  ]
 }
