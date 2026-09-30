@@ -50,23 +50,28 @@ The examples use Fly.io; each lesson has an equivalent on other hosts.
 3. **A 200 is not a working page.** A page can return 200 and still be blank: without a trailing
    slash on the path, relative asset URLs resolve one level up and 404. Check the served bytes per
    hostname; two hosts answering 200 would also be true if one file were served to both.
-4. **Hosts ignore config they do not recognize.** In `fly.toml`, `restart` is an array of tables,
+4. **Assert what the response contains.** `curl -f` fails only on status 400 and above, and without
+   `-L` it does not follow a redirect, so a 301 exits 0. A probe built on that exit status calls a
+   redirect to a broken page, a loop or a parked domain healthy. Follow a bounded chain
+   (`-L --max-redirs 5`) and require the final code, or better, check the body for a field only a
+   healthy page carries: a health endpoint can answer 200 with `"status":"degraded"`.
+5. **Hosts ignore config they do not recognize.** In `fly.toml`, `restart` is an array of tables,
    `[[restart]]`. Written as `[restart]` it parses, deploys and is ignored. Walk the parsed config
    in a test, and prove the test by breaking that stanza.
-5. **Key rate limits on the identity your ingress guarantees.** Behind a proxy or tunnel the socket
+6. **Key rate limits on the identity your ingress guarantees.** Behind a proxy or tunnel the socket
    peer is the proxy, so a limit keyed on it puts every visitor in one bucket and one client can
    lock out everyone. Trust a forwarded client header only where your ingress guarantees it.
-6. **In-memory state resets on every deploy.** Rate limiters held in memory hand every client a
+7. **In-memory state resets on every deploy.** Rate limiters held in memory hand every client a
    fresh budget on each deploy. If you persist them and the keys are client IPs, hash the keys
    first, or the fix writes visitor addresses to disk.
-7. **Check that the image holds real files.** Without Git LFS on the build host, tracked files are
+8. **Check that the image holds real files.** Without Git LFS on the build host, tracked files are
    pointer stubs, and the image serves pointer text as PNG and reports success. Fail the build on
    the LFS pointer signature, and make `.dockerignore` an allowlist.
-8. **Game servers bring their own networking rules.** Read your host's UDP documentation: some
+9. **Game servers bring their own networking rules.** Read your host's UDP documentation: some
    require a special bind address (Fly.io documents `fly-global-services`). Pin any protocol bridge
    or proxy to one checksum-verified build; a component that upgrades early can advertise a newer
    protocol than your clients speak.
-9. **Restarts interrupt players, so schedule them.** A deploy takes a persistent world offline
+10. **Restarts interrupt players, so schedule them.** A deploy takes a persistent world offline
    briefly. Pick a low-traffic window and announce restarts in game.
 
 ## Secrets and paid resources
@@ -104,6 +109,19 @@ The examples use Fly.io; each lesson has an equivalent on other hosts.
    alone, and serve real 404s in an install test. Handle `contextlost` on every canvas, too.
 7. **Make invariants computable.** Hash the costs a balance test was measured against, and fail a
    pre-commit hook when they change unmeasured. The first time, it blocked its own author's commit.
+8. **A denial proves only what it can tell apart.** An unauthenticated request to a deny-by-default
+   service returns the same 403 for correct rules, for a blanket deny-all, and even for a project name
+   that does not exist. Only the positive path separates them: sign in as a caller who should be
+   allowed, make the one write the rules permit, and make one they must refuse. Re-check hand-pasted
+   rules after any restore; they can come back at the default.
+9. **Compare against a shared ref, not the checkout.** A drift check that read the working tree
+   reported on whichever branch was checked out: parked on a feature branch it said "in sync" while
+   main had drifted. Compare against `origin/main` with `git show` or `git ls-tree`, list the files
+   from that ref too, and report a stale fetch separately. Before calling a commit merged, run
+   `git merge-base --is-ancestor <sha> origin/main`.
+10. **Guard immutability where you publish, not where you archive.** An append-only archive faithfully
+   records a file that was edited in place under an unchanged version label. Fail the build on any
+   change to a published file without a version bump, and prove the guard with an unbumped edit.
 
 ## Chat filters and player input
 
@@ -129,6 +147,20 @@ The examples use Fly.io; each lesson has an equivalent on other hosts.
 9. **Treat text other models will read as hostile.** Scan agent-submitted text that other agents
    read for prompt hijack phrasing, narrowly enough to allow strategy prose like "override prior
    orders". Never let a submission change gameplay automatically.
+
+## Monitoring and alerts
+
+1. **Identical alerts destroy the signal.** One stuck service on a 15-minute timer sent the same
+   high-priority push four times an hour all night: 140 pushes in two days, a third of them one cause.
+   Key alerts on the failure shape (service, result, exit code), so a new way of failing is news
+   again. Send the first alert at once, suppress identical repeats for a cooldown, and have the next
+   one carry the count ("plus 46 identical suppressed in the last hour"). Never just drop repeats:
+   suppression must stay distinguishable from silence.
+2. **An alert whose wait outlasts the outage never fires.** A liveness rule with `for: 30m` sat
+   pending through a 27-minute outage, then resolved, and a pending alert notifies nobody. Set each
+   `for:` below the shortest outage that must page, from measured outage lengths rather than a sense
+   of what avoids flapping, and query past `ALERTS{alertstate="pending"}` for rules that go pending
+   and never fire.
 
 ## Building with AI agents in the loop
 

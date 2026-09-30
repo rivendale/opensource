@@ -1,11 +1,12 @@
 # Video and audio
 
-Editing, encoding, recording, music, stem separation and video made from code. 20 projects; 10 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
+Editing, encoding, recording, music, stem separation and video made from code. 21 projects; 11 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
 
 | project | reuse | license | language | stars | last push | why |
 |---|---|---|---|---|---|---|
 | [yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp) | copy | Unlicense | Python | 194346 | 2026-09-27 | Downloader for online video and audio, for content you have rights to. |
 | [ManimCommunity/manim](https://github.com/ManimCommunity/manim) | copy | MIT | Python | 41134 | 2026-09-27 | Python engine for precise mathematical and explanatory animations. |
+| [browser-use/video-use](https://github.com/browser-use/video-use) | copy (see note) | MIT | Python | 27749 | 2026-09-24 | Agent skill that edits raw footage into a finished cut by reading word-level transcripts and on-demand filmstrip images instead of watching the video: cuts filler words and dead space, adds subtitles, then renders with FFmpeg. **transcription uploads each source's audio to ElevenLabs and needs an ElevenLabs API key, so keep private footage away from it** |
 | [motion-canvas/motion-canvas](https://github.com/motion-canvas/motion-canvas) | copy | MIT | TypeScript | 19207 | 2026-07-02 | Animations written in TypeScript with a live preview editor, aimed at explainer and diagram videos made from code. |
 | [Wan-Video/Wan2.2](https://github.com/Wan-Video/Wan2.2) | copy | Apache-2.0 | Python | 17665 | 2026-09-21 | Open text-to-video and image-to-video models; its README runs the 5B model on a 24 GB GPU and the 14B models on 80 GB. |
 | [beetbox/beets](https://github.com/beetbox/beets) | copy | MIT | Python | 15726 | 2026-09-29 | Music library organizer with metadata auto-tagging. |

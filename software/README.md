@@ -23,7 +23,7 @@ A `copy` row that carries a note reads `copy (see note)`: the note names a part 
 
 ## Categories
 
-Built 2026-09-29: 338 projects, 206 with a permissive code license.
+Built 2026-09-30: 340 projects, 207 with a permissive code license.
 
 | category | projects | copy | library use | study only | check first | covers |
 |---|---|---|---|---|---|---|
@@ -32,11 +32,11 @@ Built 2026-09-29: 338 projects, 206 with a permissive code license.
 | [Local AI and agents](catalog/local-ai-agents.md) | 29 | 25 | 0 | 0 | 4 | model runners and servers, coding agents, agent frameworks and evaluation |
 | [Agent memory](catalog/agent-memory.md) | 9 | 8 | 0 | 1 | 0 | memory layers, knowledge graphs and context stores that keep what an agent learned across sessions |
 | [MCP servers and SDKs](catalog/mcp.md) | 17 | 16 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
-| [Agent skills and instruction files](catalog/agent-skills.md) | 5 | 4 | 0 | 0 | 1 | instruction files, skills and plugins that change how a coding agent works |
+| [Agent skills and instruction files](catalog/agent-skills.md) | 6 | 4 | 0 | 0 | 2 | instruction files, skills and plugins that change how a coding agent works |
 | [Speech](catalog/speech.md) | 8 | 7 | 0 | 1 | 0 | speech-to-text and text-to-speech that run locally |
 | [Developer tools and security](catalog/dev-security.md) | 27 | 22 | 1 | 3 | 1 | package managers, linters, scanners, supply-chain checks and command-line tools |
 | [Photo libraries](catalog/media-photo.md) | 9 | 2 | 0 | 6 | 1 | photo backup and libraries, RAW development, duplicates and metadata |
-| [Video and audio](catalog/media-video-audio.md) | 20 | 10 | 1 | 7 | 2 | editing, encoding, recording, music, stem separation and video made from code |
+| [Video and audio](catalog/media-video-audio.md) | 21 | 11 | 1 | 7 | 2 | editing, encoding, recording, music, stem separation and video made from code |
 | [Images and diagrams](catalog/media-image.md) | 16 | 7 | 2 | 7 | 0 | image processing, generation, painting, design tools and diagrams |
 | [3D, CAD and printing](catalog/media-3d.md) | 10 | 4 | 1 | 4 | 1 | 3D creation, CAD, slicers, scans and 3D on the web |
 | [Documents and OCR](catalog/documents-ocr.md) | 28 | 20 | 1 | 5 | 2 | PDF tools, OCR, document conversion and typesetting |
@@ -80,7 +80,7 @@ Seeds live in [`tools/domains/software.json`](../tools/domains/software.json): n
 python3 tools/build_catalog.py --domain software --src sources --out .
 ```
 
-**Left out at build time:** 0 of 340 seeds.
+**Left out at build time:** 0 of 342 seeds.
 
 Nothing: every seed was found on GitHub and is not archived.
 

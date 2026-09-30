@@ -1,8 +1,8 @@
 {
- "built": "2026-09-29",
+ "built": "2026-09-30",
  "domain": "software",
- "count": 338,
- "seeds": 340,
+ "count": 340,
+ "seeds": 342,
  "dropped": [
   {
    "name": "mrdoob/three.js",
@@ -1608,6 +1608,21 @@
    "note": "read the LICENSE.txt inside each skill before copying it; the docx, pdf, pptx and xlsx skills may be used only under Anthropic's terms"
   },
   {
+   "name": "remotion-dev/skills",
+   "category": "agent-skills",
+   "repo": "https://github.com/remotion-dev/skills",
+   "homepage": null,
+   "why": "Remotion's own agent skills for creating, previewing and rendering videos made from React code, mirrored from the Remotion repository.",
+   "language": "TypeScript",
+   "license": "Remotion License (custom), from its source repository",
+   "license_from": "corrected: no license file in this repository; its package.json names its source as packages/skills in remotion-dev/remotion, whose LICENSE.md is the custom source-available Remotion License: free for individuals, non-profits and companies with up to 3 employees, a paid company license above that",
+   "reuse": "check",
+   "stars": 4777,
+   "pushed": "2026-09-29",
+   "active": true,
+   "note": "not open source; larger companies need Remotion's paid license"
+  },
+  {
    "name": "ggml-org/whisper.cpp",
    "category": "speech",
    "repo": "https://github.com/ggml-org/whisper.cpp",
@@ -2296,6 +2311,21 @@
    "pushed": "2026-09-27",
    "active": true,
    "note": null
+  },
+  {
+   "name": "browser-use/video-use",
+   "category": "media-video-audio",
+   "repo": "https://github.com/browser-use/video-use",
+   "homepage": null,
+   "why": "Agent skill that edits raw footage into a finished cut by reading word-level transcripts and on-demand filmstrip images instead of watching the video: cuts filler words and dead space, adds subtitles, then renders with FFmpeg.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 27749,
+   "pushed": "2026-09-24",
+   "active": true,
+   "note": "transcription uploads each source's audio to ElevenLabs and needs an ElevenLabs API key, so keep private footage away from it"
   },
   {
    "name": "motion-canvas/motion-canvas",
