@@ -23,16 +23,16 @@ A `copy` row that carries a note reads `copy (see note)`: the note names a part 
 
 ## Categories
 
-Built 2026-09-30: 350 projects, 217 with a permissive code license.
+Built 2026-09-30: 359 projects, 224 with a permissive code license.
 
 | category | projects | copy | library use | study only | check first | covers |
 |---|---|---|---|---|---|---|
 | [Self-hosting](catalog/self-hosting.md) | 34 | 17 | 1 | 14 | 2 | servers, reverse proxies, remote access, monitoring and household apps you run yourself |
 | [Home automation](catalog/home-automation.md) | 6 | 4 | 0 | 1 | 1 | hubs, device bridges, cameras and automations that run locally |
 | [Local AI and agents](catalog/local-ai-agents.md) | 32 | 28 | 0 | 0 | 4 | model runners and servers, coding agents, agent frameworks and evaluation |
-| [Agent memory](catalog/agent-memory.md) | 9 | 8 | 0 | 1 | 0 | memory layers, knowledge graphs and context stores that keep what an agent learned across sessions |
-| [MCP servers and SDKs](catalog/mcp.md) | 17 | 16 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
-| [Agent skills and instruction files](catalog/agent-skills.md) | 10 | 8 | 0 | 0 | 2 | instruction files, skills and plugins that change how a coding agent works |
+| [Agent memory](catalog/agent-memory.md) | 11 | 9 | 0 | 2 | 0 | memory layers, knowledge graphs and context stores that keep what an agent learned across sessions |
+| [MCP servers and SDKs](catalog/mcp.md) | 18 | 17 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
+| [Agent skills and instruction files](catalog/agent-skills.md) | 15 | 12 | 0 | 0 | 3 | instruction files, skills and plugins that change how a coding agent works |
 | [Speech](catalog/speech.md) | 8 | 7 | 0 | 1 | 0 | speech-to-text and text-to-speech that run locally |
 | [Developer tools and security](catalog/dev-security.md) | 27 | 22 | 1 | 3 | 1 | package managers, linters, scanners, supply-chain checks and command-line tools |
 | [Photo libraries](catalog/media-photo.md) | 9 | 2 | 0 | 6 | 1 | photo backup and libraries, RAW development, duplicates and metadata |
@@ -40,7 +40,7 @@ Built 2026-09-30: 350 projects, 217 with a permissive code license.
 | [Images and diagrams](catalog/media-image.md) | 16 | 7 | 2 | 7 | 0 | image processing, generation, painting, design tools and diagrams |
 | [3D, CAD and printing](catalog/media-3d.md) | 11 | 5 | 1 | 4 | 1 | 3D creation, CAD, slicers, scans and 3D on the web |
 | [Documents and OCR](catalog/documents-ocr.md) | 28 | 20 | 1 | 5 | 2 | PDF tools, OCR, document conversion and typesetting |
-| [Notes, wikis and search](catalog/knowledge-search.md) | 26 | 10 | 0 | 12 | 4 | notes, wikis, bookmarks, web archiving, search engines and vector search |
+| [Notes, wikis and search](catalog/knowledge-search.md) | 27 | 11 | 0 | 12 | 4 | notes, wikis, bookmarks, web archiving, search engines and vector search |
 | [Reading](catalog/reading.md) | 7 | 2 | 0 | 5 | 0 | e-books, audiobooks, comics, feeds and read-it-later |
 | [Learning](catalog/learning.md) | 18 | 9 | 0 | 8 | 1 | flashcards, spaced repetition, learning platforms and offline reference |
 | [Personal finance](catalog/finance.md) | 23 | 9 | 1 | 11 | 2 | budgeting, plain-text accounting, invoicing and investment tracking |
@@ -80,7 +80,7 @@ Seeds live in [`tools/domains/software.json`](../tools/domains/software.json): n
 python3 tools/build_catalog.py --domain software --src sources --out .
 ```
 
-**Left out at build time:** 0 of 352 seeds.
+**Left out at build time:** 0 of 361 seeds.
 
 Nothing: every seed was found on GitHub and is not archived.
 
