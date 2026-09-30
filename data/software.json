@@ -2325,7 +2325,7 @@
    "stars": 27749,
    "pushed": "2026-09-24",
    "active": true,
-   "note": "transcription uploads each source's audio to ElevenLabs and needs an ElevenLabs API key, so keep private footage away from it"
+   "note": "transcription uploads each source's audio to ElevenLabs and needs an ElevenLabs API key, so keep private footage away from it; put the key in .env yourself and do not paste it into the agent chat, where it lands in the transcript"
   },
   {
    "name": "motion-canvas/motion-canvas",

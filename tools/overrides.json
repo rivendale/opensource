@@ -1276,7 +1276,7 @@
   "read": "2026-09-29"
  },
  "browser-use/video-use": {
-  "note": "transcription uploads each source's audio to ElevenLabs and needs an ElevenLabs API key, so keep private footage away from it",
+  "note": "transcription uploads each source's audio to ElevenLabs and needs an ElevenLabs API key, so keep private footage away from it; put the key in .env yourself and do not paste it into the agent chat, where it lands in the transcript",
   "why": "third-party upload stated in its README"
  },
  "remotion-dev/skills": {
