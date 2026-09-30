@@ -1274,5 +1274,25 @@
    }
   ],
   "read": "2026-09-29"
+ },
+ "browser-use/video-use": {
+  "note": "transcription uploads each source's audio to ElevenLabs and needs an ElevenLabs API key, so keep private footage away from it; put the key in .env yourself and do not paste it into the agent chat, where it lands in the transcript",
+  "why": "third-party upload stated in its README"
+ },
+ "remotion-dev/skills": {
+  "license": "Remotion License (custom), from its source repository",
+  "why": "no license file in this repository; its package.json names its source as packages/skills in remotion-dev/remotion, whose LICENSE.md is the custom source-available Remotion License: free for individuals, non-profits and companies with up to 3 employees, a paid company license above that",
+  "evidence": [
+   {
+    "file": "package.json",
+    "line": "\"url\": \"https://github.com/remotion-dev/remotion/tree/main/packages/skills\""
+   },
+   {
+    "file": "LICENSE.md (remotion-dev/remotion)",
+    "line": "- a for-profit organization with up to 3 employees"
+   }
+  ],
+  "read": "2026-09-30",
+  "note": "not open source; larger companies need Remotion's paid license"
  }
 }

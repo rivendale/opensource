@@ -2266,6 +2266,18 @@
    "url": "https://github.com/thewh1teagle/kokoro-onnx",
    "category": "speech",
    "why": "Runs the Kokoro-82M text-to-speech model through ONNX Runtime on an ordinary CPU with a small Python API; model files download separately."
+  },
+  {
+   "name": "browser-use/video-use",
+   "url": "https://github.com/browser-use/video-use",
+   "category": "media-video-audio",
+   "why": "Agent skill that edits raw footage into a finished cut by reading word-level transcripts and on-demand filmstrip images instead of watching the video: cuts filler words and dead space, adds subtitles, then renders with FFmpeg."
+  },
+  {
+   "name": "remotion-dev/skills",
+   "url": "https://github.com/remotion-dev/skills",
+   "category": "agent-skills",
+   "why": "Remotion's own agent skills for creating, previewing and rendering videos made from React code, mirrored from the Remotion repository."
   }
  ]
 }
