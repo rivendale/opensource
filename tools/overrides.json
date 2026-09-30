@@ -1294,5 +1294,21 @@
   ],
   "read": "2026-09-30",
   "note": "not open source; larger companies need Remotion's paid license"
+ },
+ "ayghri/i-have-adhd": {
+  "note": "its README install line asks an agent to follow the repository's own AGENTS.md; read the files and copy the skill yourself rather than letting an agent act on instructions from a repository",
+  "why": "install method stated in its README"
+ },
+ "affaan-m/ECC": {
+  "note": "installs hooks that run commands automatically in your agent sessions; review them, pin a version and install only the parts you need",
+  "why": "hooks and installer described in its README"
+ },
+ "HarnessRouter/harnessrouter": {
+  "note": "holds your provider API keys and bills agent runs per token through them; keep it off the open internet",
+  "why": "bring-your-own-key setup stated in its README"
+ },
+ "MadsLorentzen/ai-job-search": {
+  "note": "your CV and career history go to the model provider; its skills run pre-approved on your machine, so read their code first",
+  "why": "its README says the skills are allowlisted to run without asking"
  }
 }

@@ -1,6 +1,6 @@
 # Self-hosting
 
-Servers, reverse proxies, remote access, monitoring and household apps you run yourself. 33 projects; 16 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
+Servers, reverse proxies, remote access, monitoring and household apps you run yourself. 34 projects; 17 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
 
 | project | reuse | license | language | stars | last push | why |
 |---|---|---|---|---|---|---|
@@ -20,6 +20,7 @@ Servers, reverse proxies, remote access, monitoring and household apps you run y
 | [authelia/authelia](https://github.com/authelia/authelia) | copy | Apache-2.0 | Go | 29132 | 2026-09-29 | Single sign-on and two-factor gateway in front of self-hosted apps. |
 | [oblien/openship](https://github.com/oblien/openship) | copy (see note) | Apache-2.0 | TypeScript | 13738 | 2026-09-29 | Self-hosted deployment platform that builds a repo, runs it in containers and routes it with automatic TLS, driven from a desktop app over SSH. **apps/email/engine is vendored iRedMail under GPL-3.0-or-later and ships in the API image, CLI and desktop app; apps/email/client and apps/email/server are Zero Email code with no license file here; the Linux server install mounts the host Docker socket and takes ports 80 and 443, so give it a host of its own and read its security advisories first** |
 | [grocy/grocy](https://github.com/grocy/grocy) | copy | MIT | Blade | 9541 | 2026-09-16 | Household groceries, stock and chores tracker. |
+| [RaidOwl/homelab-hub](https://github.com/RaidOwl/homelab-hub) | copy | MIT | Svelte | 906 | 2026-03-14 | Self-hosted inventory for a home lab: hardware, virtual machines, services, storage and networks, with a relationship map and markdown docs. |
 | [syncthing/syncthing](https://github.com/syncthing/syncthing) | library use | MPL-2.0 | Go | 89023 | 2026-09-29 | Peer-to-peer continuous file sync between your own devices, no central server. |
 | [rustdesk/rustdesk](https://github.com/rustdesk/rustdesk) | study only | AGPL-3.0 | Rust | 124786 | 2026-09-29 | Remote desktop for helping someone at their own computer, with a relay server you run yourself instead of a vendor account. |
 | [netdata/netdata](https://github.com/netdata/netdata) | study only | GPL-3.0 | Go | 80730 | 2026-09-29 | Per-second system and container metrics with zero-config dashboards. |

@@ -1,8 +1,8 @@
 {
  "built": "2026-09-30",
  "domain": "software",
- "count": 340,
- "seeds": 342,
+ "count": 350,
+ "seeds": 352,
  "dropped": [
   {
    "name": "mrdoob/three.js",
@@ -359,6 +359,21 @@
    "reuse": "copy",
    "stars": 9541,
    "pushed": "2026-09-16",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "RaidOwl/homelab-hub",
+   "category": "self-hosting",
+   "repo": "https://github.com/RaidOwl/homelab-hub",
+   "homepage": null,
+   "why": "Self-hosted inventory for a home lab: hardware, virtual machines, services, storage and networks, with a relationship map and markdown docs.",
+   "language": "Svelte",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 906,
+   "pushed": "2026-03-14",
    "active": true,
    "note": null
   },
@@ -1038,6 +1053,21 @@
    "note": null
   },
   {
+   "name": "kunchenguid/firstmate",
+   "category": "local-ai-agents",
+   "repo": "https://github.com/kunchenguid/firstmate",
+   "homepage": null,
+   "why": "Talk to one lead agent that plans the work and runs a crew of worker agents in separate git worktrees; the repository itself is the setup, read by whichever terminal coding agent you launch.",
+   "language": "Shell",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 7356,
+   "pushed": "2026-09-30",
+   "active": true,
+   "note": null
+  },
+  {
    "name": "mostlygeek/llama-swap",
    "category": "local-ai-agents",
    "repo": "https://github.com/mostlygeek/llama-swap",
@@ -1066,6 +1096,36 @@
    "pushed": "2026-09-29",
    "active": true,
    "note": "the Letta and Letta Code names, logo, wordmark, images and ASCII art are not covered by Apache-2.0; Letta Cloud is the default backend, and telemetry and auto-update stay on until `LETTA_CODE_TELEM=0` and `DISABLE_AUTOUPDATER=1` are set"
+  },
+  {
+   "name": "HarnessRouter/harnessrouter",
+   "category": "local-ai-agents",
+   "repo": "https://github.com/HarnessRouter/harnessrouter",
+   "homepage": "https://harnessrouter.ai/",
+   "why": "Self-hosted server that runs several coding agent CLIs behind one API with sessions, streaming, files and cancellation; it runs them on the provider API keys you give it.",
+   "language": "Python",
+   "license": "Apache-2.0",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 2792,
+   "pushed": "2026-09-30",
+   "active": true,
+   "note": "holds your provider API keys and bills agent runs per token through them; keep it off the open internet"
+  },
+  {
+   "name": "victordibia/designing-multiagent-systems",
+   "category": "local-ai-agents",
+   "repo": "https://github.com/victordibia/designing-multiagent-systems",
+   "homepage": "https://buy.multiagentbook.com/",
+   "why": "Code for a book on building multi-agent applications from scratch: agents, tools, orchestration patterns and evaluation.",
+   "language": "Python",
+   "license": "Apache-2.0",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 1333,
+   "pushed": "2026-08-24",
+   "active": true,
+   "note": null
   },
   {
    "name": "jaz-lang/jaz",
@@ -1259,6 +1319,21 @@
    "reuse": "copy",
    "stars": 15296,
    "pushed": "2026-09-10",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "neo4j-labs/llm-graph-builder",
+   "category": "agent-memory",
+   "repo": "https://github.com/neo4j-labs/llm-graph-builder",
+   "homepage": "https://llm-graph-builder.neo4jlabs.com/",
+   "why": "Turns PDFs, web pages and videos into a Neo4j knowledge graph with a language model, then answers questions over the graph.",
+   "language": "Jupyter Notebook",
+   "license": "Apache-2.0",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 5273,
+   "pushed": "2026-09-16",
    "active": true,
    "note": null
   },
@@ -1563,6 +1638,21 @@
    "note": null
   },
   {
+   "name": "affaan-m/ECC",
+   "category": "agent-skills",
+   "repo": "https://github.com/affaan-m/ECC",
+   "homepage": "https://ecc.tools",
+   "why": "A very large collection of agents, skills, rules and hooks for several coding agents, with an installer; better mined for ideas than installed whole.",
+   "language": "JavaScript",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 269967,
+   "pushed": "2026-09-30",
+   "active": true,
+   "note": "installs hooks that run commands automatically in your agent sessions; review them, pin a version and install only the parts you need"
+  },
+  {
    "name": "mvanhorn/last30days-skill",
    "category": "agent-skills",
    "repo": "https://github.com/mvanhorn/last30days-skill",
@@ -1578,6 +1668,36 @@
    "note": "its GitHub search falls back to `gh auth token`, so it acts as whatever account your shell is signed in to; first-run setup installs extra command-line tools; read what each source connector needs before enabling it"
   },
   {
+   "name": "ayghri/i-have-adhd",
+   "category": "agent-skills",
+   "repo": "https://github.com/ayghri/i-have-adhd",
+   "homepage": null,
+   "why": "Skill that makes a coding agent put the answer or next command first and keep replies short and scannable.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 52302,
+   "pushed": "2026-09-19",
+   "active": true,
+   "note": "its README install line asks an agent to follow the repository's own AGENTS.md; read the files and copy the skill yourself rather than letting an agent act on instructions from a repository"
+  },
+  {
+   "name": "MadsLorentzen/ai-job-search",
+   "category": "agent-skills",
+   "repo": "https://github.com/MadsLorentzen/ai-job-search",
+   "homepage": null,
+   "why": "Job search workflow built from coding agent skills that runs from your own copy: evaluates postings, tailors a CV, drafts cover letters and preps interviews.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 44562,
+   "pushed": "2026-09-29",
+   "active": true,
+   "note": "your CV and career history go to the model provider; its skills run pre-approved on your machine, so read their code first"
+  },
+  {
    "name": "agentsmd/agents.md",
    "category": "agent-skills",
    "repo": "https://github.com/agentsmd/agents.md",
@@ -1589,6 +1709,21 @@
    "reuse": "copy",
    "stars": 24683,
    "pushed": "2026-09-10",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "petergyang/no-ai-slop",
+   "category": "agent-skills",
+   "repo": "https://github.com/petergyang/no-ai-slop",
+   "homepage": "https://creatoreconomy.so/p/use-my-no-ai-slop-skill-to-remove-20-ai-slop-patterns",
+   "why": "Writing skill that removes more than twenty common patterns of machine-sounding prose while keeping the specific facts.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 11571,
+   "pushed": "2026-09-02",
    "active": true,
    "note": null
   },
@@ -2894,6 +3029,21 @@
    "reuse": "copy",
    "stars": 3232,
    "pushed": "2026-09-29",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "dgreenheck/tidewater",
+   "category": "media-3d",
+   "repo": "https://github.com/dgreenheck/tidewater",
+   "homepage": "https://dgreenheck.github.io/tidewater/",
+   "why": "Browser coastal scene built with Three.js and WebGPU: FFT ocean, shoreline waves, caustics and a dynamic sky; a readable example of agent-assisted real-time graphics.",
+   "language": "JavaScript",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 990,
+   "pushed": "2026-09-25",
    "active": true,
    "note": null
   },
