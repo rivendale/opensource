@@ -1732,7 +1732,7 @@
    "category": "agent-skills",
    "repo": "https://github.com/EveryInc/compound-engineering-plugin",
    "homepage": "https://every.to/guides/compound-engineering",
-   "why": "Workflow skills for brainstorming, planning, doing and reviewing work with a coding agent; Every's announcement reported cutting instructions newer models no longer need, while the v3.30 release notes list fixes against over-expanding a plan. Pin a commit rather than auto-updating.",
+   "why": "Workflow skills for brainstorming, planning, doing and reviewing work with a coding agent; the v3.30 release notes list fixes against over-expanding a plan. Pin a commit rather than auto-updating.",
    "language": "TypeScript",
    "license": "MIT",
    "license_from": "github",
