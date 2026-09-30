@@ -1323,21 +1323,6 @@
    "note": null
   },
   {
-   "name": "neo4j-labs/llm-graph-builder",
-   "category": "agent-memory",
-   "repo": "https://github.com/neo4j-labs/llm-graph-builder",
-   "homepage": "https://llm-graph-builder.neo4jlabs.com/",
-   "why": "Turns PDFs, web pages and videos into a Neo4j knowledge graph with a language model, then answers questions over the graph.",
-   "language": "Jupyter Notebook",
-   "license": "Apache-2.0",
-   "license_from": "github",
-   "reuse": "copy",
-   "stars": 5273,
-   "pushed": "2026-09-16",
-   "active": true,
-   "note": null
-  },
-  {
    "name": "volcengine/OpenViking",
    "category": "agent-memory",
    "repo": "https://github.com/volcengine/OpenViking",
@@ -1695,7 +1680,7 @@
    "stars": 44562,
    "pushed": "2026-09-29",
    "active": true,
-   "note": "your CV and career history go to the model provider; its skills run pre-approved on your machine, so read their code first"
+   "note": "your CV and career history go to the model provider; its skills run pre-approved on your machine, so read their code first; its README warns that a fork is always public and that setup writes your name, contact details and salary expectations into tracked files, so use a private copy"
   },
   {
    "name": "agentsmd/agents.md",
@@ -3689,6 +3674,21 @@
    "reuse": "copy",
    "stars": 6178,
    "pushed": "2026-09-29",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "neo4j-labs/llm-graph-builder",
+   "category": "knowledge-search",
+   "repo": "https://github.com/neo4j-labs/llm-graph-builder",
+   "homepage": "https://llm-graph-builder.neo4jlabs.com/",
+   "why": "Turns PDFs, web pages and videos into a Neo4j knowledge graph with a language model, then answers questions over the graph.",
+   "language": "Jupyter Notebook",
+   "license": "Apache-2.0",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 5273,
+   "pushed": "2026-09-16",
    "active": true,
    "note": null
   },

@@ -2300,7 +2300,7 @@
   {
    "name": "neo4j-labs/llm-graph-builder",
    "url": "https://github.com/neo4j-labs/llm-graph-builder",
-   "category": "agent-memory",
+   "category": "knowledge-search",
    "why": "Turns PDFs, web pages and videos into a Neo4j knowledge graph with a language model, then answers questions over the graph."
   },
   {
