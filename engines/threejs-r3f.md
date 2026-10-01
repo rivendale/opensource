@@ -26,7 +26,7 @@ and dates are a snapshot.
 
 | package | version, checked 2026-10-01 | license | notes |
 |---|---|---|---|
-| [three](https://github.com/mrdoob/three.js) | r186 (`three@0.186.1`, 2026-09-24; r186 itself 2026-09-08) | MIT | the renderer. Its npm versions are `0.<release>.<patch>` |
+| [three](https://github.com/mrdoob/three.js) | r186: npm `three@0.186.0` on 2026-09-08 and `0.186.1` on 2026-09-24; the GitHub release and tag `r186` are dated 2026-09-24 and point at the 0.186.1 commit | MIT | the renderer. Its npm versions are `0.<release>.<patch>` |
 | [@react-three/fiber](https://github.com/pmndrs/react-three-fiber) | 9.8.1 (2026-09-24) | MIT | React renderer for three.js; v9 pairs with React 19. A 10.0 canary exists: do not use it in a game you ship |
 | [@react-three/drei](https://github.com/pmndrs/drei) | 10.7.9 (2026-09-25) | MIT | helpers: cameras, controls, loaders, text, environment maps |
 | [@react-three/rapier](https://github.com/pmndrs/react-three-rapier) | 2.2.0 (2025-11-03) | MIT | Rapier physics for R3F. **No release since 2025-11-03** (1,436 stars, last push the same day): check that it still works with the R3F and three versions you pin before you depend on it |
@@ -43,8 +43,9 @@ An exact version pins each package, not its dependencies; `npm ci` from the comm
 ## WebGL and WebGPU
 
 - **WebGL 2 is the default** (`WebGLRenderer`) and runs in every current browser.
-- **WebGPU** is available through `WebGPURenderer`, imported from `three/webgpu`, since r171
-  (2024-11-29). It falls back to a WebGL 2 backend when the browser has no WebGPU, and new materials
+- **WebGPU** is available through `WebGPURenderer`, imported from `three/webgpu`. That entry point
+  first appeared in the npm package at r167 (2024-07-25); r171 (2024-11-29) split the WebGL and WebGPU
+  builds into separate entry points, the setup current docs describe. It falls back to a WebGL 2 backend when the browser has no WebGPU, and new materials
   are written in TSL (three.js shading language), which compiles to either backend. See the
   [WebGPURenderer manual page](https://threejs.org/manual/#en/webgpurenderer).
 - **"Production-ready" is a claim, not a fact we verified.** That wording comes from blog posts, not
@@ -79,8 +80,9 @@ An exact version pins each package, not its dependencies; `npm ci` from the comm
 
 ## Risks
 
-1. **API churn:** three.js ships a numbered release about monthly and does not follow semver; read
-   the migration notes before moving the pin.
+1. **API churn:** three.js does not follow semver, and each numbered release can rename or remove
+   APIs; read the migration notes before moving the pin. Releases were monthly through r180
+   (2025-09-03) and have come every 6 to 11 weeks since (npm `0.x.0` dates, checked 2026-10-01).
 2. **Stale physics bindings:** `@react-three/rapier` has had no release since 2025-11-03.
 3. **WebGPU differences:** a scene can look or perform differently on the WebGPU and WebGL backends;
    test both.

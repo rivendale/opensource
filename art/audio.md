@@ -18,8 +18,8 @@ and tiles: [2d.md](2d.md). Music and sound made from code inside a video or anim
 **What the licenses mean for your sounds.** The GPL covers Audacity's and LMMS's code, not the audio
 you record or compose with them (see [../ai/graphics.md](../ai/graphics.md#the-tools-and-their-licenses)
 for the general rule). Bundled presets, samples and sound banks can carry their own licenses: check
-any sample you keep in a shipped track. jsfxr's Unlicense lets you copy its player code into a game
-(`copy`); list it in `THIRD_PARTY.md`.
+any sample you keep in a shipped track. jsfxr's Unlicense puts it in the `copy` class: you may copy
+its player code into a game, and list it in `THIRD_PARTY.md`.
 
 ## Sound effects
 
@@ -57,25 +57,33 @@ One script turns every master into engine-ready files, so an agent or a person c
 set -euo pipefail
 mkdir -p assets/audio
 for f in audio-src/*.wav; do
-  ffmpeg -nostdin -y -i "$f" -af loudnorm=I=-16:TP=-1.5:LRA=11 -c:a libvorbis -q:a 5 \
+  ffmpeg -nostdin -y -i "$f" -af loudnorm=I=-16:TP=-1.5:LRA=11 -ar 44100 -c:a libvorbis -q:a 5 \
     "assets/audio/$(basename "${f%.wav}").ogg"
 done
-ls audio-src/*.wav | wc -l; ls assets/audio/*.ogg | wc -l   # the two counts must match
+masters=$(find audio-src -maxdepth 1 -name '*.wav' | wc -l)
+exports=$(find assets/audio -maxdepth 1 -name '*.ogg' | wc -l)
+if [ "$masters" -ne "$exports" ]; then echo "masters: $masters, exports: $exports" >&2; exit 1; fi
 ```
 
 `loudnorm` evens out loudness across effects so no sound jumps out; pick one target for the whole
-game. Compare the count of masters with the count of exports after every run. We ran this script on
-FFmpeg 6.1.1 with two test tones: two Ogg files out, exit 0.
+game. **Keep `-ar 44100`** (or 48000): `loudnorm` resamples to 192 kHz internally and, without `-ar`,
+writes 192 kHz files. The last lines fail the run when the count of exports differs from the count of
+masters, which also catches a stale export whose master was deleted. We ran it on FFmpeg 6.1.1 with
+two 44.1 kHz test tones 20 dB apart: two Ogg files out at 44,100 Hz, both measuring -15.9 LUFS, exit 0;
+with a stale extra export in the folder it exited 1; and without `-ar` the same command wrote 192,000 Hz.
+(Corrected 2026-10-01 after review: the first version had no `-ar` and wrote 192 kHz files.)
 
 ## AI assistance
 
 - **No audio tool here has an MCP server this chassis recommends.** Agents work best on audio through
   files and scripts: jsfxr parameter strings, the export script above, and FFmpeg commands they can
   run and check (duration, sample rate and loudness read back with `ffprobe`).
-- **Audacity 4 may break Audacity 3 automation.** An author of an Audacity MCP server reports that
-  Audacity 4.0.1 removed `mod-script-pipe`, the scripting pipe that Audacity 3 automation and its MCP
-  servers use. We did not find this in Audacity's 4.0.1 release notes, so it is unverified: check
-  before you rely on any Audacity automation, and pin the Audacity version that works.
+- **Audacity 4 has no scripting pipe yet.** The
+  [Audacity 4.0.0 release notes](https://github.com/audacity/audacity/releases/tag/Audacity-4.0.0)
+  list "Macro Manager and the scripting pipe" among the Audacity 3 features "not available in
+  Audacity 4.0, but we're working on adding them in future releases" (checked 2026-10-01). Audacity 3
+  automation and the Audacity MCP servers built on that pipe (`mod-script-pipe`) do not work with
+  Audacity 4.0 or 4.0.1: stay on Audacity 3 for automation until the pipe returns.
 - **Anything that runs code on your machine,** a model, an add-on or an MCP server, gets the
   [safe setup checklist](../ai/graphics.md#safe-setup-checklist) first.
 

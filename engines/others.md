@@ -113,7 +113,9 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
   models rendered to sprites, see [`art/blender.md`](../art/blender.md).
 - **AI tooling:** [phaser.io/llms.txt](https://phaser.io/llms.txt) indexes the examples. Phaser
   Editor v5 is a paid, proprietary desktop app; its [MCP server](https://github.com/phaserjs/editor-mcp-server)
-  works only with a running Phaser Editor and its repository shows no license file. Its README runs it
+  works only with a running Phaser Editor; its repository shows no license file, though the npm package
+  declares ISC. Phaser also publishes a separate, hosted Phaser Game Agent MCP that does not need the
+  editor; see [`phaser.md`](phaser.md#ai-tooling) for what it sends to Phaser's servers. Its README runs it
   unpinned (`npx @phaserjs/editor-mcp-server`) and does not say how it reaches the editor, so it is not
   recommended here; if you use it, pin `@1.0.6` and read that part of its code first. No community Phaser MCP server met this chassis's bar.
 - **Catalog:** 16 rows mention Phaser, 7 `copy`.
@@ -215,7 +217,8 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
 
 ### three.js
 
-- **License:** MIT. Latest release r186 (2026-09-08; npm `three@0.186.1`, 2026-09-24). A 3D library for
+- **License:** MIT. Latest release r186 (npm `0.186.0` on 2026-09-08; the GitHub release and npm
+  `0.186.1` on 2026-09-24). A 3D library for
   browsers using WebGL and WebGPU, not a game engine: you supply the game loop, physics and input. Full
   guide, with React Three Fiber, pinned versions and WebGPU status: [`threejs-r3f.md`](threejs-r3f.md).
 - **Starters:** [SahilK-027/threejs-gamedev-template](https://github.com/SahilK-027/threejs-gamedev-template)
@@ -283,16 +286,27 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
 ## Babylon.js, PlayCanvas and Kaplay (web)
 
 Checked 2026-10-01 against npm and GitHub. These are alternatives to the routes this chassis suggests
-first (three.js with React Three Fiber, Phaser, Godot); none has an MCP server reviewed here, and each
-is code an agent edits directly. Install exact versions and commit the lockfile.
+first (three.js with React Three Fiber, Phaser, Godot). Each is code an agent edits directly; only
+PlayCanvas has an official MCP server, for its editor. Install exact versions and commit the lockfile.
 
 - **[Babylon.js](https://github.com/BabylonJS/Babylon.js)** (Apache-2.0, `@babylonjs/core@9.29.0`,
   2026-10-01): a full 3D engine for the web with physics, audio, GUI and an in-browser inspector, on WebGL
   and WebGPU. More engine than three.js, less to assemble yourself. In the
   [engines catalog](../catalog/engines.md).
 - **[PlayCanvas](https://github.com/playcanvas/engine)** (MIT, `playcanvas@2.23.0`, 2026-10-01): a web
-  3D runtime on WebGL and WebGPU. The engine is MIT; the PlayCanvas Editor is a hosted service with its
-  own terms, so check them before you build on the editor. In the [engines catalog](../catalog/engines.md).
+  3D runtime on WebGL and WebGPU. The engine is MIT, and so is the PlayCanvas Editor's front end
+  ([playcanvas/editor](https://github.com/playcanvas/editor)); in practice you use the editor on
+  playcanvas.com with an account, under that service's terms. In the [engines catalog](../catalog/engines.md).
+  **Official MCP server:** [playcanvas/editor-mcp-server](https://github.com/playcanvas/editor-mcp-server)
+  (MIT, 137 stars, read at v0.7.1, commit `4244ab3`, on 2026-10-01). Your AI client runs it over stdio;
+  it opens a WebSocket on `127.0.0.1:52000` that the Editor in your browser connects to. It rejects
+  browser origins other than playcanvas.com and localhost, but has no token, so any local program
+  (which sends no `Origin`) can connect while it runs. Its tools create, edit and delete assets
+  (including the scripts your game runs), import from the PlayCanvas Store and Sketchfab, launch the
+  game and inject input, and start builds. It ships as a bundle with no dependencies, so the version
+  pin covers everything: `claude mcp add playcanvas -- npx -y @playcanvas/editor-mcp-server@0.7.1`
+  (its README omits the version). Commit or back up the project first, and apply the
+  [safe setup checklist](../ai/graphics.md#safe-setup-checklist).
 - **[Kaplay](https://github.com/kaplayjs/kaplay)** (MIT, 1,805 stars): a small JavaScript and TypeScript
   2D game library, the community continuation of Kaboom.js; quick for jams and teaching. Its latest
   stable release on npm is `kaplay@3001.0.19` (2025-06-15); the 4000 line is in alpha.
@@ -311,5 +325,5 @@ is code an agent edits directly. Install exact versions and commit the lockfile.
 | PixiJS | MIT | TypeScript, JavaScript | fast 2D rendering on the web | `npm create pixi.js@1.4.0` |
 | Excalibur | BSD-2-Clause | TypeScript | 2D web games in TypeScript | [template-ts-vite](https://github.com/excaliburjs/template-ts-vite) |
 | Babylon.js | Apache-2.0 | TypeScript | a full 3D engine for the web | `npm install --save-exact @babylonjs/core@9.29.0` |
-| PlayCanvas | MIT (engine) | JavaScript | web 3D runtime; hosted editor optional | `npm install --save-exact playcanvas@2.23.0` |
+| PlayCanvas | MIT (engine and editor front end) | JavaScript | web 3D runtime; hosted editor with an official MCP server | `npm install --save-exact playcanvas@2.23.0` |
 | Kaplay | MIT | JavaScript, TypeScript | small 2D games and jams | `npm install --save-exact kaplay@3001.0.19` |

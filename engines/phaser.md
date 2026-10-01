@@ -53,14 +53,26 @@ default `dev` and `build` scripts send a usage ping: see
 
 ## AI tooling
 
-- **The only official Phaser MCP server works inside Phaser Editor v5**, a paid, proprietary desktop
-  app ([phaser.io/editor](https://phaser.io/editor); listed at $12 a month on 2026-10-01). Its
-  server repository shows no license file; see [others.md](others.md#phaser-javascript-and-typescript)
-  for its pin and why it is not recommended here.
+- **Phaser publishes two official MCP servers, checked 2026-10-01:**
+  - **Phaser Game Agent MCP** ([phaser.io/agent/mcp](https://phaser.io/agent/mcp);
+    [phaserjs/phaser-game-agent](https://github.com/phaserjs/phaser-game-agent), MIT; npm
+    `@phaserjs/game-agent` 1.0.0, published 2026-07-01). It does not need the editor: it connects your
+    coding agent to a hosted service that builds the game in a Phaser cloud sandbox, billed in credits
+    per minute and per generated image or sound. Its setup command signs you in to a Phaser account and
+    writes the MCP configuration of every AI client it detects. **Your prompts go to Phaser's service,
+    and its page says your projects live in that cloud sandbox**, not in your local repository. If you
+    try it, pin
+    `npx -y @phaserjs/game-agent@1.0.0`, use its `manual` command to print a config you add yourself,
+    and read its terms first.
+  - **Phaser Editor MCP**, which works only with a running Phaser Editor v5, a paid, proprietary
+    desktop app ([phaser.io/editor](https://phaser.io/editor); listed at $12 a month on 2026-10-01).
+    See [others.md](others.md#phaser-javascript-and-typescript) for its pin and why it is not
+    recommended here.
 - **You do not need an MCP server to build a Phaser game.** The game is TypeScript an agent edits
-  directly; give it [phaser.io/llms.txt](https://phaser.io/llms.txt) and the pinned version in the
-  game's `AGENTS.md`, and say "Phaser 4": models trained mostly on Phaser 3 code produce APIs that
-  changed.
+  directly. Name the pinned version in the game's `AGENTS.md` and say "Phaser 4": models trained
+  mostly on Phaser 3 code produce APIs that changed. [phaser.io/llms.txt](https://phaser.io/llms.txt)
+  is an index of the examples, not usage rules or Phaser 3 to 4 migration notes, so pair it with the
+  [Phaser 4 release notes](https://github.com/phaserjs/phaser/releases/tag/v4.0.0).
 - **Check the game in a browser, not from source.** A Playwright test that loads the page, plays a
   scripted input sequence and saves screenshots gives the agent something to verify against.
 - Anything that runs code on your machine goes through the

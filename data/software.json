@@ -3127,7 +3127,7 @@
    "category": "media-image",
    "repo": "https://github.com/LibreSprite/LibreSprite",
    "homepage": "https://libresprite.github.io/",
-   "why": "Pixel-art and sprite-animation editor forked from the last GPL version of Aseprite; its latest release is v1.1 (2023).",
+   "why": "Pixel-art and sprite-animation editor forked from the last GPL version of Aseprite; its latest stable release is v1.1 (2023), with v1.2 in pre-release since 2025-03-02.",
    "language": "C++",
    "license": "GPL-2.0",
    "license_from": "github",

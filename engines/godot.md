@@ -8,6 +8,7 @@ Checked on 2026-09-23 against Godot 4.7.2-stable (latest stable, 2026-08-18), th
 describe 4.7) and every repository named here. We ran the commands on a probe project with the official
 Linux build: headless import, `--check-only`, the script checker below, GUT 9.7.1, and Web and Linux
 exports; where a sentence says what a command did, it did that there. Stars and dates are a snapshot.
+The web section and the MCP recheck below were checked on 2026-10-01, and say so where they appear.
 
 ## Why Godot, and when not to
 
@@ -54,11 +55,12 @@ What the web costs you in Godot 4, checked 2026-10-01 against the
 - **Threads.** The single-threaded export is the default and needs no special headers. A multi-threaded
   export needs `SharedArrayBuffer`, which needs `Cross-Origin-Opener-Policy: same-origin` and
   `Cross-Origin-Embedder-Policy: require-corp`; many game portals cannot send those.
-- **Phones.** The docs warn of a significant performance penalty in mobile browsers. Test on a mid-range
-  phone before you commit to Godot for a mobile web game.
+- **Phones.** The docs say the web export runs on mobile "with some caveats", and that native Android
+  and iOS exports "will always perform better by a significant margin". Test on a mid-range phone
+  before you commit to Godot for a mobile web game.
 - **C#.** Web export of C# projects is not supported in Godot 4; the work to add it
-  ([godotengine/godot#106125](https://github.com/godotengine/godot/pull/106125)) was still an open pull
-  request on 2026-10-01. Write a web game in GDScript.
+  ([godotengine/godot#106125](https://github.com/godotengine/godot/pull/106125)) was a draft pull
+  request on 2026-10-01, last updated 2026-09-14. Write a web game in GDScript.
 - **AI tooling.** There is no official Godot MCP server (the godotengine organization had no MCP
   repository on 2026-10-01); community servers and their risks are under [AI tooling](#ai-tooling).
 
@@ -323,14 +325,20 @@ what the server listens on, what it runs and what leaves your machine; go throug
 | [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp) | MIT | 5,802, 2026-04-16 | stdio npx server calling Godot's CLI and a bundled `godot_operations.gd`; opens no port | launch the editor, run the project, capture debug output, create scenes, add nodes; the most starred | **no pushes since 2026-04-16, and open issue #118 (2026-06-17, unanswered) reports published CVEs in its exact-pinned MCP SDK 0.6.0 and in axios.** Prefer the servers above. Its README runs it unpinned; if you use it, `npx -y @coding-solo/godot-mcp@0.1.1` |
 
 **Rechecked 2026-10-01.** Coding-Solo/godot-mcp has 5.9k stars and still no push since 2026-04-16;
-hi-godot/godot-ai has 2.7k stars, is active, and its latest release is v4.2.3. Three more servers we
+hi-godot/godot-ai has 2.7k stars, is active, and its latest release is v4.2.3. **The pins in the table
+above are the versions we read on 2026-09-23, kept on purpose; newer releases exist** (godot-ai v4.2.3,
+IvanMurzak/Godot-MCP v0.25.1 since 2026-09-27, godot-mcp-runtime 3.8.1 since 2026-09-25). Read each
+diff before you move a pin. Three more servers we
 have **not** read for this guide, so treat them as unreviewed code: apply the
 [safe setup checklist](../ai/graphics.md#safe-setup-checklist) and pin the commit you read.
 [yurineko73/Godot-MCP-Native](https://github.com/yurineko73/Godot-MCP-Native) (MIT, 819 stars, an MCP
 server written in GDScript inside the editor; tag v1.0.8), [tomyud1/godot-mcp](https://github.com/tomyud1/godot-mcp)
-(MIT, 434 stars; tag v0.6.0) and [youichi-uda/godot-mcp-pro](https://github.com/youichi-uda/godot-mcp-pro)
-(616 stars; its license file is not one GitHub can identify, so `check first`, and its description sells
-the full tool set for a one-time fee). **Not official:** [bebabinlarsson-blip/Godot-MCP](https://github.com/bebabinlarsson-blip/Godot-MCP)
+(MIT, 434 stars; tag v0.6.0). [youichi-uda/godot-mcp-pro](https://github.com/youichi-uda/godot-mcp-pro)
+(616 stars) is different: **its MCP server is closed source and is not in the repository.** The
+repository holds only the free editor add-on (MIT, per a note in its LICENSE); its README says the
+Node.js server comes only in a paid package, and the LICENSE says that server is under "a proprietary
+license". You cannot read or pin the part that talks to your AI client, so this chassis does not
+recommend it. **Not official:** [bebabinlarsson-blip/Godot-MCP](https://github.com/bebabinlarsson-blip/Godot-MCP)
 describes itself as an "Official Plugin for the Godot Engine", but it is a personal account's repository,
 created 2026-09-17, under this chassis's 60-day age bar for MCP servers.
 

@@ -13,7 +13,7 @@ product pages. This is practical guidance, not legal advice.
 
 | stage | tool | version, checked 2026-10-01 | license | agent or MCP hook |
 |---|---|---|---|---|
-| video from code | [Remotion](https://github.com/remotion-dev/remotion) | 4.0.532 (npm, 2026-10-01) | Remotion License: source-available, not open source | [Remotion Agent Skills](https://www.remotion.dev/docs/ai/skills); its docs MCP server is [deprecated](https://www.remotion.dev/docs/ai/mcp) in their favor |
+| video from code | [Remotion](https://github.com/remotion-dev/remotion) | 4.0.532 (npm, 2026-10-01) | Remotion License: source-available, not open source | [Remotion Agent Skills](https://www.remotion.dev/docs/ai/skills); its docs MCP server is [deprecated](https://www.remotion.dev/docs/ai/mcp) in their favor, with the hosted server announced to shut down from 2026-08-31 |
 | video from code | [Motion Canvas](https://github.com/motion-canvas/motion-canvas) | 3.17.2 (npm, 2024-12-14) | MIT | none; plain TypeScript an agent edits |
 | assembly | [FFmpeg](https://github.com/FFmpeg/FFmpeg) | your distribution's build | LGPL-2.1-or-later, or GPL when built with `--enable-gpl` | the command line; an agent writes and runs scripts |
 | capture | [OBS Studio](https://github.com/obsproject/obs-studio) | [32.2.2](https://github.com/obsproject/obs-studio/releases/tag/32.2.2) (2026-08-14) | GPL-2.0 | its built-in WebSocket remote-control server (off until you enable it) |
@@ -26,15 +26,20 @@ product pages. This is practical guidance, not legal advice.
 `npm install --save-exact remotion@4.0.532` (and the same version for every `@remotion/*` package;
 they must match).
 
-- **License, checked 2026-10-01 ([license page](https://www.remotion.dev/docs/license)):** free for
-  individuals, non-profits and for-profit companies with up to 3 employees; a larger company needs a
-  paid company license. Reuse class `check first`: do not copy its code into your own product.
-  **Watch the next major version:** a pull request for Remotion 5
-  ([remotion-dev/remotion#3750](https://github.com/remotion-dev/remotion/pull/3750)) would count
-  contractors toward the limit, which can move a small studio over it. Recheck the terms before you
-  upgrade. Current prices are in [animation.md](animation.md#choose-a-rendering-approach).
+- **License, checked 2026-10-01** ([pricing](https://www.remotion.dev/docs/license/pricing),
+  [license FAQ](https://www.remotion.dev/docs/license/faq),
+  [LICENSE.md](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md)): free for individuals,
+  non-profits and organizations of up to 3 people; 4 or more need a paid Company License.
+  **Contractors count now:** the FAQ says that if you bring in freelancers, another studio or a
+  consulting agency to work on the same project, "their headcount aggregates with yours for the
+  4-person threshold". So a 3-person studio that hires one contractor needs a Company License. (The
+  LICENSE.md file itself still says "up to 3 employees"; the FAQ is the vendor's reading of it.) Reuse
+  class `check first`: do not copy its code into your own product. Current prices are in
+  [animation.md](animation.md#choose-a-rendering-approach).
 - **Agent hook:** Remotion's own Agent Skills teach an agent to create, preview and render
-  compositions; the older docs MCP server is deprecated in their favor. The skills are listed, with
+  compositions. The older docs MCP server is [deprecated](https://www.remotion.dev/docs/ai/mcp) in
+  their favor, and its hosted server was announced to shut down no earlier than 2026-08-31, a date
+  that has passed: do not set it up. The skills are listed, with
   their license, in [../software/catalog/agent-skills.md](../software/catalog/agent-skills.md).
   Skills are instructions that change what an agent does: install from a reviewed commit, not a branch.
 - **Rendering runs code:** project JavaScript, a headless browser and an encoder on your machine.
@@ -86,7 +91,7 @@ agent skill that checks its own exports is listed in
 
 ## Risks
 
-1. **Source-available is not open source.** Remotion's license limits company size and forbids
+1. **Source-available is not open source.** Remotion's license limits headcount, contractors included, and forbids
    reselling it; it can change at a major version.
 2. **Everything here runs code or opens a port:** renderers, skills, OBS's WebSocket server. Apply the
    [safe setup checklist](graphics.md#safe-setup-checklist), pin versions, and keep servers local.
