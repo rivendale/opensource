@@ -32,6 +32,36 @@ direct glTF 2.0 and `.blend` import; export to Windows, macOS, Linux, Web, Andro
 For a proprietary engine see [unity.md](unity.md) (Unity is not open source; even its C# reference source
 is under a reference-only license); for code-first engines, [others.md](others.md).
 
+## Godot on the web: when to choose it
+
+**Choose by game type.** For a browser game this chassis suggests three routes: three.js with React
+Three Fiber for 3D you build in-house in TypeScript ([threejs-r3f.md](threejs-r3f.md)), Phaser for 2D,
+sprite and isometric games ([phaser.md](phaser.md)), and Godot 4 for a bigger 3D game that still ships
+to the browser, where an editor for levels, animation, navigation and physics earns its download size.
+
+What the web costs you in Godot 4, checked 2026-10-01 against the
+[web export docs](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html):
+
+- **Version.** 4.7.2-stable (2026-08-18) is current; 4.8 dev 7 (2026-09-29) is a development snapshot,
+  not for a game you ship. MIT, as above.
+- **Renderer.** The Compatibility renderer (WebGL 2) only: Forward+ and Mobile do not run on the web, and
+  there is no WebGPU on the web. Build and light every scene in Compatibility from the start; switching
+  renderers late changes how the game looks.
+- **Download size.** The official
+  [4.3 web export report](https://godotengine.org/article/progress-report-web-export-in-4-3/) gives about
+  40 MB of raw WebAssembly, about 5 MB with Brotli; our 4.7.2 export was 39.5 MB raw (see
+  [Exporting](#exporting)). Serve it compressed, and expect a slow first load on mobile networks.
+- **Threads.** The single-threaded export is the default and needs no special headers. A multi-threaded
+  export needs `SharedArrayBuffer`, which needs `Cross-Origin-Opener-Policy: same-origin` and
+  `Cross-Origin-Embedder-Policy: require-corp`; many game portals cannot send those.
+- **Phones.** The docs warn of a significant performance penalty in mobile browsers. Test on a mid-range
+  phone before you commit to Godot for a mobile web game.
+- **C#.** Web export of C# projects is not supported in Godot 4; the work to add it
+  ([godotengine/godot#106125](https://github.com/godotengine/godot/pull/106125)) was still an open pull
+  request on 2026-10-01. Write a web game in GDScript.
+- **AI tooling.** There is no official Godot MCP server (the godotengine organization had no MCP
+  repository on 2026-10-01); community servers and their risks are under [AI tooling](#ai-tooling).
+
 ## Project structure and conventions
 
 ```text
@@ -223,8 +253,9 @@ runs without a window, and `--export-release`, `--export-debug` and `--export-pa
 read 2026-09-24). A developer reported building a complete game in one seven-hour autonomous loop this
 way and credited skipping MCP with fewer tool calls, a faster loop and a cleaner result (a relayed
 post, not verified). The most-starred Godot MCP server, listed below, has had no push since April
-2026. Godot 4.7.2 is the current stable release; 4.8 is in development snapshots (dev 6 on
-2026-09-15), per godotengine.org on 2026-09-24.
+2026. Godot 4.7.2 is the current stable release; 4.8 is in development snapshots (dev 7 on
+2026-09-29), checked 2026-10-01. **There is no official Godot MCP server**: every server below is a
+community project.
 
 **Point Claude Code or Codex at the project.** Copy [../templates/AGENTS.md](../templates/AGENTS.md) into
 the game repository and add the block below; [../ai/README.md](../ai/README.md) covers one instruction file
@@ -290,6 +321,18 @@ what the server listens on, what it runs and what leaves your machine; go throug
 | [Erodenn/godot-mcp-runtime](https://github.com/Erodenn/godot-mcp-runtime) | MIT | 77, 2026-09-20 | npx server, no add-on: headless edits, and while the game runs an injected `McpBridge` autoload listening on 127.0.0.1 | screenshots, input, UI discovery, live GDScript, profiling | the bridge checks a per-session token, but the profiling channel has none, and its docs call the script scanner "not a sandbox". Leave `GODOT_MCP_DISABLE_SECURITY` unset, and commit before a run, since it injects an autoload into your project. `npx -y godot-mcp-runtime@3.8.0` |
 | [IvanMurzak/Godot-MCP](https://github.com/IvanMurzak/Godot-MCP) | Apache-2.0 | 253, 2026-09-23 | C# editor add-on, **through a hosted relay at ai-game.dev by default**; signing in stores a credential in `~/.ai-game-dev/credentials.json` | 42 tools, including calling any C# method by reflection | set `GODOT_MCP_CONNECTION_MODE=Custom` and a loopback `GODOT_MCP_HOST`. In that mode the dock's Start Server downloads a pinned server build from GitHub; it binds loopback and checks `Origin`, but has no authentication unless you configure OAuth. Install a tagged release (v0.24.0 on 2026-09-23), not the README's `releases/latest` link |
 | [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp) | MIT | 5,802, 2026-04-16 | stdio npx server calling Godot's CLI and a bundled `godot_operations.gd`; opens no port | launch the editor, run the project, capture debug output, create scenes, add nodes; the most starred | **no pushes since 2026-04-16, and open issue #118 (2026-06-17, unanswered) reports published CVEs in its exact-pinned MCP SDK 0.6.0 and in axios.** Prefer the servers above. Its README runs it unpinned; if you use it, `npx -y @coding-solo/godot-mcp@0.1.1` |
+
+**Rechecked 2026-10-01.** Coding-Solo/godot-mcp has 5.9k stars and still no push since 2026-04-16;
+hi-godot/godot-ai has 2.7k stars, is active, and its latest release is v4.2.3. Three more servers we
+have **not** read for this guide, so treat them as unreviewed code: apply the
+[safe setup checklist](../ai/graphics.md#safe-setup-checklist) and pin the commit you read.
+[yurineko73/Godot-MCP-Native](https://github.com/yurineko73/Godot-MCP-Native) (MIT, 819 stars, an MCP
+server written in GDScript inside the editor; tag v1.0.8), [tomyud1/godot-mcp](https://github.com/tomyud1/godot-mcp)
+(MIT, 434 stars; tag v0.6.0) and [youichi-uda/godot-mcp-pro](https://github.com/youichi-uda/godot-mcp-pro)
+(616 stars; its license file is not one GitHub can identify, so `check first`, and its description sells
+the full tool set for a one-time fee). **Not official:** [bebabinlarsson-blip/Godot-MCP](https://github.com/bebabinlarsson-blip/Godot-MCP)
+describes itself as an "Official Plugin for the Godot Engine", but it is a personal account's repository,
+created 2026-09-17, under this chassis's 60-day age bar for MCP servers.
 
 Add one pinned; Claude Code's `--scope project` writes `.mcp.json`, approved on your next `claude` run:
 

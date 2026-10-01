@@ -1,7 +1,9 @@
 # Other engines and frameworks
 
-Bevy, Phaser, LÖVE, raylib, MonoGame, Defold, and three.js, PixiJS and Excalibur for the web. For
-Godot see [`godot.md`](godot.md); for Unreal, which is source-available under Epic's EULA, see
+Bevy, Phaser, LÖVE, raylib, MonoGame, Defold, and three.js, PixiJS, Excalibur, Babylon.js, PlayCanvas
+and Kaplay for the web. Full guides: [`threejs-r3f.md`](threejs-r3f.md) for browser 3D with three.js
+and React Three Fiber, [`phaser.md`](phaser.md) for 2D, sprite and isometric games. For
+Godot see [`godot.md`](godot.md), including [Godot on the web](godot.md#godot-on-the-web-when-to-choose-it); for Unreal, which is source-available under Epic's EULA, see
 [`unreal.md`](unreal.md). For Unity, which is not open source, see [`unity.md`](unity.md).
 For Rust browser games using WebGPU and WebGL2, see [`rust-wasm-webgpu.md`](rust-wasm-webgpu.md).
 
@@ -87,8 +89,9 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
 
 ## Phaser (JavaScript and TypeScript)
 
-- **License:** MIT. Latest release v4.2.1 (2026-07-09). Developed by Phaser Studio Inc with its
-  community.
+- **License:** MIT. Latest release v4.2.1 (2026-07-09); Phaser 4 has been the stable line since 4.0.0
+  (2026-04-10), rechecked 2026-10-01. Developed by Phaser Studio Inc with its community. Full guide,
+  including isometric and hex maps: [`phaser.md`](phaser.md).
 - **Suits:** 2D browser games with WebGL and Canvas rendering; the README also names YouTube
   Playables, Discord Activities, Reddit games and Twitch overlays, and native apps through
   third-party tools.
@@ -192,7 +195,8 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
   Derivative Works as a Game Engine Product." Defold's own `llms.txt` calls it "free,
   source-available." Your games can be commercial and carry your own license: the summary says "You
   are free to commercialise any software created using original or modified (derivative) versions of
-  Defold." GitHub's detector cannot identify the license. Latest release 1.13.1 (2026-08-17).
+  Defold." GitHub's detector cannot identify the license. Latest release 1.13.2 (2026-09-29, rechecked
+  2026-10-01).
 - **Suits:** 2D and 3D games for mobile, desktop, web and consoles, with an editor, Lua scripting
   and native extensions in C++.
 - **Starters:** the editor's launch screen offers official templates (empty, mobile, desktop, basic
@@ -211,8 +215,9 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
 
 ### three.js
 
-- **License:** MIT. Latest release r186 (2026-09-08). A 3D library for browsers using WebGL and
-  WebGPU, not a game engine: you supply the game loop, physics and input.
+- **License:** MIT. Latest release r186 (2026-09-08; npm `three@0.186.1`, 2026-09-24). A 3D library for
+  browsers using WebGL and WebGPU, not a game engine: you supply the game loop, physics and input. Full
+  guide, with React Three Fiber, pinned versions and WebGPU status: [`threejs-r3f.md`](threejs-r3f.md).
 - **Starters:** [SahilK-027/threejs-gamedev-template](https://github.com/SahilK-027/threejs-gamedev-template)
   (Apache-2.0 code, 49 stars, pushed 2026-02-09). Its two character models in `public/assets/models/`
   are CC-BY-4.0 ("Zooba, Jade" and "Zooba, Nix"): credit the author as the two `license.*.txt` files
@@ -275,6 +280,23 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
   [safe setup checklist](../ai/graphics.md#safe-setup-checklist).
 - **Catalog:** 1 row (Excalibur itself, `copy`).
 
+## Babylon.js, PlayCanvas and Kaplay (web)
+
+Checked 2026-10-01 against npm and GitHub. These are alternatives to the routes this chassis suggests
+first (three.js with React Three Fiber, Phaser, Godot); none has an MCP server reviewed here, and each
+is code an agent edits directly. Install exact versions and commit the lockfile.
+
+- **[Babylon.js](https://github.com/BabylonJS/Babylon.js)** (Apache-2.0, `@babylonjs/core@9.29.0`,
+  2026-10-01): a full 3D engine for the web with physics, audio, GUI and an in-browser inspector, on WebGL
+  and WebGPU. More engine than three.js, less to assemble yourself. In the
+  [engines catalog](../catalog/engines.md).
+- **[PlayCanvas](https://github.com/playcanvas/engine)** (MIT, `playcanvas@2.23.0`, 2026-10-01): a web
+  3D runtime on WebGL and WebGPU. The engine is MIT; the PlayCanvas Editor is a hosted service with its
+  own terms, so check them before you build on the editor. In the [engines catalog](../catalog/engines.md).
+- **[Kaplay](https://github.com/kaplayjs/kaplay)** (MIT, 1,805 stars): a small JavaScript and TypeScript
+  2D game library, the community continuation of Kaboom.js; quick for jams and teaching. Its latest
+  stable release on npm is `kaplay@3001.0.19` (2025-06-15); the 4000 line is in alpha.
+
 ## Summary
 
 | engine | license | language | best for | starter template |
@@ -288,3 +310,6 @@ EULA, not open source. See [`art/blender.md`](../art/blender.md) and [`art/2d.md
 | three.js | MIT | JavaScript | 3D in the browser | [threejs-gamedev-template](https://github.com/SahilK-027/threejs-gamedev-template) (replace its CC-BY models) |
 | PixiJS | MIT | TypeScript, JavaScript | fast 2D rendering on the web | `npm create pixi.js@1.4.0` |
 | Excalibur | BSD-2-Clause | TypeScript | 2D web games in TypeScript | [template-ts-vite](https://github.com/excaliburjs/template-ts-vite) |
+| Babylon.js | Apache-2.0 | TypeScript | a full 3D engine for the web | `npm install --save-exact @babylonjs/core@9.29.0` |
+| PlayCanvas | MIT (engine) | JavaScript | web 3D runtime; hosted editor optional | `npm install --save-exact playcanvas@2.23.0` |
+| Kaplay | MIT | JavaScript, TypeScript | small 2D games and jams | `npm install --save-exact kaplay@3001.0.19` |
