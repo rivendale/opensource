@@ -1,5 +1,9 @@
 # opensource
 
+> Part of a set of public repos maintained separately. Start at
+> [hsi-operator](https://github.com/rivendale/hsi-operator): it says what each one is for and
+> when to read it.
+
 Open-source projects to build on instead of starting from scratch, each with its license read from
 GitHub and a plain rule for what you may reuse. Two domains so far: games, and software beyond games.
 
