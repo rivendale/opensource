@@ -1,14 +1,16 @@
 # 3D, CAD and printing
 
-3D creation, CAD, slicers, scans and 3D on the web. 11 projects; 5 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
+3D creation, CAD, slicers, scans and 3D on the web. 13 projects; 7 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
 
 A code license says nothing about model weights; read each model card.
 
 | project | reuse | license | language | stars | last push | why |
 |---|---|---|---|---|---|---|
+| [microsoft/TRELLIS](https://github.com/microsoft/TRELLIS) | copy | MIT | Python | 13747 | 2026-06-26 | Image-to-3D and text-to-3D generation that outputs meshes, Gaussian splats or radiance fields; MIT code, but read the license of each model checkpoint and of the components it downloads. |
 | [nerfstudio-project/nerfstudio](https://github.com/nerfstudio-project/nerfstudio) | copy | Apache-2.0 | Python | 12042 | 2025-07-29 | Framework for NeRF and Gaussian-splat scene capture from photos. |
 | [playcanvas/supersplat](https://github.com/playcanvas/supersplat) | copy | MIT | TypeScript | 10287 | 2026-09-29 | Browser editor for cleaning, cropping and compressing Gaussian splat captures before publishing them. |
 | [google/model-viewer](https://github.com/google/model-viewer) | copy | Apache-2.0 | TypeScript | 8261 | 2026-09-29 | Web component for displaying 3D models, including AR. |
+| [Mesh2Motion/mesh2motion-app](https://github.com/Mesh2Motion/mesh2motion-app) | copy (see note) | MIT (per license file) | TypeScript | 3340 | 2026-09-28 | Browser tool that fits a template skeleton to a glTF model and applies a library of ready animations, then exports glTF for a game engine. **code MIT; its bundled models, rigs and animations are CC0 per the README; GitHub reports no license (NOASSERTION), so re-read both files before copying** |
 | [gumyr/build123d](https://github.com/gumyr/build123d) | copy | Apache-2.0 | Python | 3241 | 2026-09-29 | Python CAD library on OpenCascade for parametric parts defined in code, exported to STEP or STL for printing. |
 | [dgreenheck/tidewater](https://github.com/dgreenheck/tidewater) | copy | MIT | JavaScript | 1004 | 2026-09-25 | Browser coastal scene built with Three.js and WebGPU: FFT ocean, shoreline waves, caustics and a dynamic sky; a readable example of agent-assisted real-time graphics. |
 | [FreeCAD/FreeCAD](https://github.com/FreeCAD/FreeCAD) | library use | LGPL-2.1 | C++ | 33866 | 2026-09-30 | Parametric 3D CAD modeler. |

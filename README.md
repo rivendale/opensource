@@ -8,7 +8,7 @@ GitHub and a plain rule for what you may reuse. Two domains so far: games, and s
 | domain | what it holds | start here |
 |---|---|---|
 | Games | a genre catalog of 2,718 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
-| Software | 360 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
+| Software | 366 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
 
 Both follow the same [license rule](#the-license-rule). The games material sits at the top level of
 this repository; everything else lives under [`software/`](software/).
@@ -27,6 +27,10 @@ engineering lessons from small games we built.
 2. **Choose what to learn from and what to reuse.** Every project in [`catalog/`](catalog/) carries a
    reuse class (below). Reuse code only from `copy` projects, with attribution.
 3. **Pick an engine.** The chassis is engine-neutral; each playbook lists engines that fit the genre.
+   For a browser game, choose by game type: [three.js and React Three Fiber](engines/threejs-r3f.md) for
+   3D you build in-house, [Phaser](engines/phaser.md) for 2D, sprite and isometric games, and
+   [Godot 4](engines/godot.md#godot-on-the-web-when-to-choose-it) for a bigger 3D game still shipped to
+   the browser.
 4. **Build with AI tools** following [`ai/README.md`](ai/README.md): which tool for which stage,
    prompt templates, and how to use a second model as a reviewer. See also [AI game agents](ai/game-agents.md)
    and [code-only animation](ai/animation.md).
@@ -39,14 +43,21 @@ engineering lessons from small games we built.
   3D-to-2D sprite rendering, Python automation, and letting AI tools drive Blender.
 - [`art/2d.md`](art/2d.md): 2D art with GIMP, Krita, Inkscape and pixel-art tools, tile maps,
   texture atlases and batch automation.
-- [`engines/`](engines/): [Godot](engines/godot.md), [Unreal](engines/unreal.md) (source-available
+- [`art/audio.md`](art/audio.md): sound effects, music and loudness with jsfxr, Audacity, LMMS,
+  local music generation and a rerunnable FFmpeg export script.
+- [`engines/`](engines/): [Godot](engines/godot.md) (with [Godot on the web](engines/godot.md#godot-on-the-web-when-to-choose-it)),
+  [three.js and React Three Fiber](engines/threejs-r3f.md) for browser 3D, [Phaser](engines/phaser.md)
+  for 2D, sprite and isometric games, [Unreal](engines/unreal.md) (source-available
   under Epic's EULA), [Unity](engines/unity.md) (not open source; its terms are summarized), and
-  [others](engines/others.md): Bevy, Phaser, LOVE, raylib, MonoGame, Defold and web libraries.
-  See the [Rust, WebAssembly and WebGPU guide](engines/rust-wasm-webgpu.md) for browser games.
+  [others](engines/others.md): Bevy, LOVE, raylib, MonoGame, Defold, Babylon.js, PlayCanvas, Kaplay and
+  other web libraries. See the [Rust, WebAssembly and WebGPU guide](engines/rust-wasm-webgpu.md) for
+  browser games.
 - [`scaffolds/`](scaffolds/README.md): the best-maintained open-source starter templates per engine,
   plus [MCP servers](scaffolds/mcps.md) that let AI tools operate art tools and engines. Rebuilt by
   `tools/find_scaffolds.py`.
 - [`ai/graphics.md`](ai/graphics.md): AI and game graphics, safely.
+- [`ai/media-studio.md`](ai/media-studio.md): trailers and devlogs: video from code, capture,
+  assembly by script and hand editing, with which tools an agent can drive.
 
 **MCP servers and add-ons run code on your machine.** Read the code, pin a version, keep them
 local, and give them the least access that works.

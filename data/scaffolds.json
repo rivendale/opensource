@@ -1,16 +1,90 @@
 {
- "built": "2026-09-23",
- "count": 153,
+ "built": "2026-10-01",
+ "count": 161,
  "dropped": {
-  "no license GitHub can identify": 44,
-  "no push in 3 years": 49,
-  "under 25 stars": 344,
-  "no code": 35,
+  "no license GitHub can identify": 42,
+  "no push in 3 years": 50,
+  "under 25 stars": 391,
+  "no code": 38,
+  "MCP repo or owner under 60 days old": 6,
   "not an MCP server": 1,
-  "MCP repo or owner under 60 days old": 4,
   "off-topic (not a game or art tool)": 3
  },
  "entries": [
+  {
+   "name": "diivi/aseprite-mcp",
+   "repo": "https://github.com/diivi/aseprite-mcp",
+   "kind": "mcp",
+   "group": "Aseprite",
+   "description": "MCP server for interacting with the Aseprite API",
+   "language": "Python",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 616,
+   "pushed": "2026-07-29",
+   "archived": false,
+   "topics": []
+  },
+  {
+   "name": "willibrandon/pixel-mcp",
+   "repo": "https://github.com/willibrandon/pixel-mcp",
+   "kind": "mcp",
+   "group": "Aseprite",
+   "description": "MCP server for creating pixel art with Aseprite through AI assistants. Supports animation, retro palettes, dithering, shading, and spritesheet export.",
+   "language": "Go",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 147,
+   "pushed": "2025-10-18",
+   "archived": false,
+   "topics": [
+    "animation",
+    "aseprite",
+    "draw",
+    "golang",
+    "graphics",
+    "lua-scripting",
+    "mcp",
+    "pixel-art"
+   ]
+  },
+  {
+   "name": "Gamezxz/pixel-art-studio",
+   "repo": "https://github.com/Gamezxz/pixel-art-studio",
+   "kind": "mcp",
+   "group": "Aseprite",
+   "description": "Agent Skill that makes Claude a pixel artist - no Aseprite, no MCP, no diffusion. Every pixel is a decision.",
+   "language": "Python",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 68,
+   "pushed": "2026-07-11",
+   "archived": false,
+   "topics": []
+  },
+  {
+   "name": "youichi-uda/aseprite-mcp-pro",
+   "repo": "https://github.com/youichi-uda/aseprite-mcp-pro",
+   "kind": "mcp",
+   "group": "Aseprite",
+   "description": "Aseprite MCP Pro - AI-powered pixel art creation for Aseprite via Model Context Protocol. 121 tools for sprites, drawing, animation, palettes, export, and Godot integration.",
+   "language": "Lua",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 32,
+   "pushed": "2026-07-20",
+   "archived": false,
+   "topics": [
+    "ai",
+    "animation",
+    "aseprite",
+    "claude",
+    "gamedev",
+    "godot",
+    "mcp",
+    "model-context-protocol"
+   ]
+  },
   {
    "name": "ahujasid/mcp-for-blender",
    "repo": "https://github.com/ahujasid/mcp-for-blender",
@@ -20,8 +94,8 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 29253,
-   "pushed": "2026-09-21",
+   "stars": 29810,
+   "pushed": "2026-09-30",
    "archived": false,
    "topics": [
     "3d-modeling",
@@ -43,7 +117,7 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 301,
+   "stars": 300,
    "pushed": "2025-03-21",
    "archived": false,
    "topics": []
@@ -57,7 +131,7 @@
    "language": "TypeScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 211,
+   "stars": 256,
    "pushed": "2026-07-10",
    "archived": false,
    "topics": [
@@ -72,16 +146,39 @@
    ]
   },
   {
-   "name": "HoldMyBeer-gg/blend-ai",
-   "repo": "https://github.com/HoldMyBeer-gg/blend-ai",
+   "name": "DMontgomery40/bambu-printer-mcp",
+   "repo": "https://github.com/DMontgomery40/bambu-printer-mcp",
    "kind": "mcp",
    "group": "Blender",
-   "description": "MCP server for Blender. 175 tools for modelling, materials, rendering and more, driven by Claude or any MCP client.",
+   "description": "MCP server for Bambu Lab 3D printers - STL manipulation, BambuStudio  or FULU/orca slicing, Blender MCP integration, and direct printer control",
+   "language": "TypeScript",
+   "license": "GPL-2.0",
+   "reuse": "study",
+   "stars": 168,
+   "pushed": "2026-09-30",
+   "archived": false,
+   "topics": [
+    "3d-printing",
+    "3js",
+    "3mf",
+    "bambu-cli",
+    "bambu-js",
+    "bambu-lab-cli",
+    "bambu-node",
+    "bambu-studio"
+   ]
+  },
+  {
+   "name": "HoldMyBeer-gg/blenderwright",
+   "repo": "https://github.com/HoldMyBeer-gg/blenderwright",
+   "kind": "mcp",
+   "group": "Blender",
+   "description": "MCP server for Blender. 186 tools for modelling, materials, rendering and more, driven by Claude, Cursor, Codex, Ollama, llama.cpp, or any MCP client.",
    "language": "Python",
    "license": "AGPL-3.0",
    "reuse": "study",
-   "stars": 145,
-   "pushed": "2026-09-21",
+   "stars": 151,
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": [
     "3d",
@@ -99,11 +196,11 @@
    "repo": "https://github.com/dhakalnirajan/blender-open-mcp",
    "kind": "mcp",
    "group": "Blender",
-   "description": "Open Models MCP for Blender Using Ollama",
+   "description": "MCP for Blender Using Open Weights Models",
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 118,
+   "stars": 120,
    "pushed": "2026-09-04",
    "archived": false,
    "topics": [
@@ -139,7 +236,7 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 58,
+   "stars": 64,
    "pushed": "2026-09-13",
    "archived": false,
    "topics": [
@@ -162,7 +259,7 @@
    "language": "Python",
    "license": "Apache-2.0",
    "reuse": "copy",
-   "stars": 57,
+   "stars": 62,
    "pushed": "2026-06-27",
    "archived": false,
    "topics": [
@@ -177,6 +274,28 @@
    ]
   },
   {
+   "name": "ifBars/blender-agent-studio",
+   "repo": "https://github.com/ifBars/blender-agent-studio",
+   "kind": "mcp",
+   "group": "Blender",
+   "description": "Codex plugin for reproducible Blender modeling, validation, animation, MCP tooling, and agent benchmarking",
+   "language": "TypeScript",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 58,
+   "pushed": "2026-09-29",
+   "archived": false,
+   "topics": [
+    "3d",
+    "agent-skills",
+    "benchmarking",
+    "blender",
+    "codex",
+    "mcp",
+    "procedural-modeling"
+   ]
+  },
+  {
    "name": "sandraschi/blender-mcp",
    "repo": "https://github.com/sandraschi/blender-mcp",
    "kind": "mcp",
@@ -185,8 +304,8 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 48,
-   "pushed": "2026-09-18",
+   "stars": 52,
+   "pushed": "2026-09-28",
    "archived": false,
    "topics": [
     "3d-modeling",
@@ -200,28 +319,6 @@
    ]
   },
   {
-   "name": "ifBars/blender-agent-studio",
-   "repo": "https://github.com/ifBars/blender-agent-studio",
-   "kind": "mcp",
-   "group": "Blender",
-   "description": "Codex plugin for reproducible Blender modeling, validation, animation, MCP tooling, and agent benchmarking",
-   "language": "TypeScript",
-   "license": "MIT",
-   "reuse": "copy",
-   "stars": 44,
-   "pushed": "2026-09-23",
-   "archived": false,
-   "topics": [
-    "3d",
-    "agent-skills",
-    "benchmarking",
-    "blender",
-    "codex",
-    "mcp",
-    "procedural-modeling"
-   ]
-  },
-  {
    "name": "dcc-mcp/dcc-mcp-blender",
    "repo": "https://github.com/dcc-mcp/dcc-mcp-blender",
    "kind": "mcp",
@@ -230,8 +327,8 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 37,
-   "pushed": "2026-09-23",
+   "stars": 43,
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": [
     "3d",
@@ -242,6 +339,29 @@
     "dcc",
     "dcc-mcp",
     "llm"
+   ]
+  },
+  {
+   "name": "ig-shadow-walker/BlenderXAlpha-3DGenSkill",
+   "repo": "https://github.com/ig-shadow-walker/BlenderXAlpha-3DGenSkill",
+   "kind": "mcp",
+   "group": "Blender",
+   "description": "Agent Skill that turns plain-English scene descriptions into AI-generated 3D models built live in Blender, via Alpha3D + Blender MCP. Works with Claude Code, Cursor, and OpenAI Codex.",
+   "language": "JavaScript",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 30,
+   "pushed": "2026-07-21",
+   "archived": false,
+   "topics": [
+    "3d-generation",
+    "agent-skills",
+    "ai-agent",
+    "alpha3d",
+    "blender",
+    "blender-addon",
+    "blender-mcp",
+    "bpy"
    ]
   },
   {
@@ -257,29 +377,6 @@
    "pushed": "2026-09-23",
    "archived": false,
    "topics": []
-  },
-  {
-   "name": "ig-shadow-walker/BlenderXAlpha-3DGenSkill",
-   "repo": "https://github.com/ig-shadow-walker/BlenderXAlpha-3DGenSkill",
-   "kind": "mcp",
-   "group": "Blender",
-   "description": "Agent Skill that turns plain-English scene descriptions into AI-generated 3D models built live in Blender, via Alpha3D + Blender MCP. Works with Claude Code, Cursor, and OpenAI Codex.",
-   "language": "JavaScript",
-   "license": "MIT",
-   "reuse": "copy",
-   "stars": 28,
-   "pushed": "2026-07-21",
-   "archived": false,
-   "topics": [
-    "3d-generation",
-    "agent-skills",
-    "ai-agent",
-    "alpha3d",
-    "blender",
-    "blender-addon",
-    "blender-mcp",
-    "bpy"
-   ]
   },
   {
    "name": "Yuan-ManX/BlenderMCP",
@@ -304,7 +401,7 @@
    "language": "Python",
    "license": "GPL-3.0",
    "reuse": "study",
-   "stars": 228,
+   "stars": 245,
    "pushed": "2026-05-29",
    "archived": false,
    "topics": [
@@ -326,7 +423,7 @@
    "language": "Python",
    "license": "GPL-3.0",
    "reuse": "study",
-   "stars": 121,
+   "stars": 122,
    "pushed": "2025-03-18",
    "archived": false,
    "topics": []
@@ -340,7 +437,7 @@
    "language": "JavaScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 5802,
+   "stars": 5902,
    "pushed": "2026-04-16",
    "archived": false,
    "topics": [
@@ -358,8 +455,8 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 2570,
-   "pushed": "2026-09-23",
+   "stars": 2728,
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": [
     "ai",
@@ -378,7 +475,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 801,
+   "stars": 819,
    "pushed": "2026-08-03",
    "archived": false,
    "topics": []
@@ -411,7 +508,7 @@
    "language": "JavaScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 466,
+   "stars": 472,
    "pushed": "2026-07-13",
    "archived": false,
    "topics": [
@@ -448,8 +545,8 @@
    "language": "Rust",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 294,
-   "pushed": "2026-09-23",
+   "stars": 298,
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": [
     "ai-agent",
@@ -463,6 +560,29 @@
    ]
   },
   {
+   "name": "IvanMurzak/Godot-MCP",
+   "repo": "https://github.com/IvanMurzak/Godot-MCP",
+   "kind": "mcp",
+   "group": "Godot",
+   "description": "Godot-MCP - Model Context Protocol (MCP) integration for the Godot Engine. AI tools for the Godot Editor in C#, with cloud connection to ai-game.dev. Apache-2.0.",
+   "language": "C#",
+   "license": "Apache-2.0",
+   "reuse": "copy",
+   "stars": 262,
+   "pushed": "2026-09-27",
+   "archived": false,
+   "topics": [
+    "ai",
+    "ai-integration",
+    "ai-tools",
+    "anthropic",
+    "claude",
+    "claude-code",
+    "claude-desktop",
+    "cli"
+   ]
+  },
+  {
    "name": "HaD0Yun/Doyunha-Gopeak",
    "repo": "https://github.com/HaD0Yun/Doyunha-Gopeak",
    "kind": "mcp",
@@ -471,7 +591,7 @@
    "language": "TypeScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 260,
+   "stars": 262,
    "pushed": "2026-09-12",
    "archived": false,
    "topics": [
@@ -486,29 +606,6 @@
    ]
   },
   {
-   "name": "IvanMurzak/Godot-MCP",
-   "repo": "https://github.com/IvanMurzak/Godot-MCP",
-   "kind": "mcp",
-   "group": "Godot",
-   "description": "Godot-MCP - Model Context Protocol (MCP) integration for the Godot Engine. AI tools for the Godot Editor in C#, with cloud connection to ai-game.dev. Apache-2.0.",
-   "language": "C#",
-   "license": "Apache-2.0",
-   "reuse": "copy",
-   "stars": 253,
-   "pushed": "2026-09-24",
-   "archived": false,
-   "topics": [
-    "ai",
-    "ai-integration",
-    "ai-tools",
-    "anthropic",
-    "claude",
-    "claude-code",
-    "claude-desktop",
-    "cli"
-   ]
-  },
-  {
    "name": "Glade-tool/glade-mcp",
    "repo": "https://github.com/Glade-tool/glade-mcp",
    "kind": "mcp",
@@ -517,7 +614,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 222,
+   "stars": 225,
    "pushed": "2026-09-02",
    "archived": false,
    "topics": [
@@ -540,8 +637,8 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 169,
-   "pushed": "2026-09-18",
+   "stars": 171,
+   "pushed": "2026-09-25",
    "archived": false,
    "topics": [
     "ai-agents",
@@ -553,6 +650,20 @@
     "godot-engine",
     "mcp"
    ]
+  },
+  {
+   "name": "bradypp/godot-mcp",
+   "repo": "https://github.com/bradypp/godot-mcp",
+   "kind": "mcp",
+   "group": "Godot",
+   "description": "A Model Context Protocol (MCP) server for interacting with the Godot game engine.",
+   "language": "TypeScript",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 90,
+   "pushed": "2025-05-31",
+   "archived": false,
+   "topics": []
   },
   {
    "name": "wangdiandao/godot-devtool",
@@ -578,20 +689,6 @@
    ]
   },
   {
-   "name": "bradypp/godot-mcp",
-   "repo": "https://github.com/bradypp/godot-mcp",
-   "kind": "mcp",
-   "group": "Godot",
-   "description": "A Model Context Protocol (MCP) server for interacting with the Godot game engine.",
-   "language": "TypeScript",
-   "license": "MIT",
-   "reuse": "copy",
-   "stars": 89,
-   "pushed": "2025-05-31",
-   "archived": false,
-   "topics": []
-  },
-  {
    "name": "Erodenn/godot-mcp-runtime",
    "repo": "https://github.com/Erodenn/godot-mcp-runtime",
    "kind": "mcp",
@@ -600,8 +697,8 @@
    "language": "TypeScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 77,
-   "pushed": "2026-09-20",
+   "stars": 82,
+   "pushed": "2026-09-30",
    "archived": false,
    "topics": []
   },
@@ -630,11 +727,11 @@
    "kind": "mcp",
    "group": "Godot",
    "description": "Build, inspect, test, and debug Godot games from your terminal. Automate repetitive work with scripts, or let an agent use the same commands. No agent, model, or AI account is required. MCP is an opti",
-   "language": "GDScript",
+   "language": "HTML",
    "license": "MIT",
    "reuse": "copy",
    "stars": 65,
-   "pushed": "2026-09-18",
+   "pushed": "2026-09-26",
    "archived": false,
    "topics": [
     "ai-agents",
@@ -685,7 +782,7 @@
    "license": "MIT",
    "reuse": "copy",
    "stars": 47,
-   "pushed": "2026-09-01",
+   "pushed": "2026-09-27",
    "archived": false,
    "topics": []
   },
@@ -698,7 +795,7 @@
    "language": "TypeScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 42,
+   "stars": 43,
    "pushed": "2025-11-15",
    "archived": false,
    "topics": []
@@ -712,8 +809,8 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 41,
-   "pushed": "2026-09-22",
+   "stars": 43,
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": [
     "agent-skill",
@@ -735,7 +832,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 40,
+   "stars": 41,
    "pushed": "2026-07-31",
    "archived": false,
    "topics": [
@@ -764,27 +861,83 @@
    "topics": []
   },
   {
-   "name": "n24q02m/better-godot-mcp",
-   "repo": "https://github.com/n24q02m/better-godot-mcp",
+   "name": "yanhuifair/Godot-MCP",
+   "repo": "https://github.com/yanhuifair/Godot-MCP",
    "kind": "mcp",
    "group": "Godot",
-   "description": "Composite MCP server for Godot Engine -- 17 composite tools for AI-assisted game development.",
+   "description": "",
    "language": "TypeScript",
-   "license": "Apache-2.0",
+   "license": "AGPL-3.0",
+   "reuse": "study",
+   "stars": 38,
+   "pushed": "2026-09-28",
+   "archived": false,
+   "topics": []
+  },
+  {
+   "name": "sandraschi/inkscape-mcp",
+   "repo": "https://github.com/sandraschi/inkscape-mcp",
+   "kind": "mcp",
+   "group": "Inkscape",
+   "description": "Headless Inkscape SVG automation via FastMCP - 60+ ops: create, boolean, LPE, export, text, fleet pipeline. Batch without GUI tour. For Cursor / Claude Desktop. Webapp + Tauri.",
+   "language": "Python",
+   "license": "MIT",
    "reuse": "copy",
-   "stars": 37,
-   "pushed": "2026-09-13",
-   "archived": true,
+   "stars": 79,
+   "pushed": "2026-09-28",
+   "archived": false,
    "topics": [
-    "ai-agents",
-    "ai-coding",
-    "claude",
-    "claude-code",
-    "cursor",
-    "docker",
-    "gdscript",
-    "godot"
+    "batch-processing",
+    "fastmcp",
+    "framer-motion",
+    "headless",
+    "inkscape",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol"
    ]
+  },
+  {
+   "name": "aravindev/inkscape_mcp",
+   "repo": "https://github.com/aravindev/inkscape_mcp",
+   "kind": "mcp",
+   "group": "Inkscape",
+   "description": "MCP server that lets AI agents drive Inkscape - interactively alongside the GUI or headlessly from the CLI",
+   "language": "Python",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 72,
+   "pushed": "2026-09-14",
+   "archived": false,
+   "topics": []
+  },
+  {
+   "name": "Shriinivas/inkmcp",
+   "repo": "https://github.com/Shriinivas/inkmcp",
+   "kind": "mcp",
+   "group": "Inkscape",
+   "description": "Inkscape MCP Server - Control Inkscape through AI assistants via Model Context Protocol",
+   "language": "Python",
+   "license": "AGPL-3.0",
+   "reuse": "study",
+   "stars": 72,
+   "pushed": "2026-01-14",
+   "archived": false,
+   "topics": []
+  },
+  {
+   "name": "grumpydevorg/inkscape-mcps",
+   "repo": "https://github.com/grumpydevorg/inkscape-mcps",
+   "kind": "mcp",
+   "group": "Inkscape",
+   "description": "Inkscape MCP Server - FastMCP-based server for Inkscape CLI and DOM operations with security boundaries and automatic parameter flattening",
+   "language": "Python",
+   "license": "MIT",
+   "reuse": "copy",
+   "stars": 55,
+   "pushed": "2025-10-22",
+   "archived": false,
+   "topics": []
   },
   {
    "name": "nanayax3/krita-mcp",
@@ -809,8 +962,8 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 14441,
-   "pushed": "2026-09-22",
+   "stars": 14635,
+   "pushed": "2026-09-30",
    "archived": false,
    "topics": [
     "ai",
@@ -832,8 +985,8 @@
    "language": "C#",
    "license": "Apache-2.0",
    "reuse": "copy",
-   "stars": 4328,
-   "pushed": "2026-09-24",
+   "stars": 4370,
+   "pushed": "2026-09-28",
    "archived": false,
    "topics": [
     "ai",
@@ -855,7 +1008,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 1910,
+   "stars": 1918,
    "pushed": "2026-09-03",
    "archived": false,
    "topics": [
@@ -878,7 +1031,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 325,
+   "stars": 329,
    "pushed": "2026-09-17",
    "archived": false,
    "topics": [
@@ -901,7 +1054,7 @@
    "language": "Go",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 313,
+   "stars": 315,
    "pushed": "2026-08-28",
    "archived": false,
    "topics": [
@@ -923,7 +1076,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 251,
+   "stars": 255,
    "pushed": "2026-09-17",
    "archived": false,
    "topics": [
@@ -980,8 +1133,8 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 116,
-   "pushed": "2026-08-21",
+   "stars": 115,
+   "pushed": "2026-09-28",
    "archived": false,
    "topics": [
     "ai",
@@ -1038,7 +1191,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 80,
+   "stars": 81,
    "pushed": "2026-07-21",
    "archived": false,
    "topics": [
@@ -1099,7 +1252,7 @@
    "license": "Apache-2.0",
    "reuse": "copy",
    "stars": 55,
-   "pushed": "2026-08-24",
+   "pushed": "2026-09-28",
    "archived": false,
    "topics": [
     "3d",
@@ -1120,7 +1273,7 @@
    "license": "MIT",
    "reuse": "copy",
    "stars": 54,
-   "pushed": "2026-08-21",
+   "pushed": "2026-09-28",
    "archived": false,
    "topics": [
     "ai",
@@ -1171,30 +1324,16 @@
    "topics": []
   },
   {
-   "name": "akiojin/unity-mcp-server",
-   "repo": "https://github.com/akiojin/unity-mcp-server",
-   "kind": "mcp",
-   "group": "Unity",
-   "description": "[DEPRECATED] Unity MCP server - successor: akiojin/unity-cli",
-   "language": "JavaScript",
-   "license": "MIT",
-   "reuse": "copy",
-   "stars": 34,
-   "pushed": "2026-09-21",
-   "archived": false,
-   "topics": []
-  },
-  {
    "name": "ChiR24/Unreal_mcp",
    "repo": "https://github.com/ChiR24/Unreal_mcp",
    "kind": "mcp",
    "group": "Unreal",
    "description": "A comprehensive Model Context Protocol (MCP) server that enables AI assistants to control Unreal Engine through the native C++ Automation Bridge plugin. Built with TypeScript and C++.",
-   "language": "TypeScript",
+   "language": "C++",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 883,
-   "pushed": "2026-09-23",
+   "stars": 902,
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": [
     "mcp",
@@ -1212,7 +1351,7 @@
    "language": "C++",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 649,
+   "stars": 652,
    "pushed": "2026-04-28",
    "archived": false,
    "topics": [
@@ -1235,8 +1374,8 @@
    "language": "C++",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 352,
-   "pushed": "2026-09-23",
+   "stars": 377,
+   "pushed": "2026-09-29",
    "archived": false,
    "topics": [
     "ai",
@@ -1258,7 +1397,7 @@
    "language": "C++",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 312,
+   "stars": 321,
    "pushed": "2026-09-09",
    "archived": false,
    "topics": [
@@ -1281,7 +1420,7 @@
    "language": "C++",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 203,
+   "stars": 204,
    "pushed": "2026-08-02",
    "archived": false,
    "topics": [
@@ -1318,7 +1457,7 @@
    "language": "Python",
    "license": "Apache-2.0",
    "reuse": "copy",
-   "stars": 143,
+   "stars": 144,
    "pushed": "2026-07-07",
    "archived": false,
    "topics": [
@@ -1341,7 +1480,7 @@
    "language": "C++",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 138,
+   "stars": 139,
    "pushed": "2026-09-15",
    "archived": false,
    "topics": []
@@ -1355,7 +1494,7 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 115,
+   "stars": 116,
    "pushed": "2025-06-06",
    "archived": false,
    "topics": [
@@ -1376,7 +1515,7 @@
    "language": "Python",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 96,
+   "stars": 97,
    "pushed": "2026-07-19",
    "archived": false,
    "topics": [
@@ -1436,7 +1575,7 @@
    "language": "Go",
    "license": "Apache-2.0",
    "reuse": "copy",
-   "stars": 71,
+   "stars": 74,
    "pushed": "2026-02-20",
    "archived": false,
    "topics": [
@@ -1455,7 +1594,7 @@
    "license": "MIT",
    "reuse": "copy",
    "stars": 69,
-   "pushed": "2026-03-20",
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": []
   },
@@ -1507,6 +1646,29 @@
    "topics": []
   },
   {
+   "name": "IvanMurzak/Unreal-MCP",
+   "repo": "https://github.com/IvanMurzak/Unreal-MCP",
+   "kind": "mcp",
+   "group": "Unreal",
+   "description": "AI Game Developer for Unreal Engine - MCP plugin (C++ editor plugin + .NET bridge), unreal-cli, connects Unreal Editor to AI agents via ai-game.dev or a local MCP server",
+   "language": "C++",
+   "license": "Apache-2.0",
+   "reuse": "copy",
+   "stars": 40,
+   "pushed": "2026-09-27",
+   "archived": false,
+   "topics": [
+    "ai",
+    "ai-integration",
+    "ai-tools",
+    "anthropic",
+    "claude",
+    "claude-code",
+    "claude-desktop",
+    "cli"
+   ]
+  },
+  {
    "name": "aadeshrao123/Unreal-MCP",
    "repo": "https://github.com/aadeshrao123/Unreal-MCP",
    "kind": "mcp",
@@ -1515,7 +1677,7 @@
    "language": "C++",
    "license": "MPL-2.0",
    "reuse": "library",
-   "stars": 38,
+   "stars": 39,
    "pushed": "2026-08-06",
    "archived": false,
    "topics": [
@@ -1530,29 +1692,6 @@
    ]
   },
   {
-   "name": "IvanMurzak/Unreal-MCP",
-   "repo": "https://github.com/IvanMurzak/Unreal-MCP",
-   "kind": "mcp",
-   "group": "Unreal",
-   "description": "AI Game Developer for Unreal Engine - MCP plugin (C++ editor plugin + .NET bridge), unreal-cli, connects Unreal Editor to AI agents via ai-game.dev or a local MCP server",
-   "language": "C++",
-   "license": "Apache-2.0",
-   "reuse": "copy",
-   "stars": 38,
-   "pushed": "2026-09-24",
-   "archived": false,
-   "topics": [
-    "ai",
-    "ai-integration",
-    "ai-tools",
-    "anthropic",
-    "claude",
-    "claude-code",
-    "claude-desktop",
-    "cli"
-   ]
-  },
-  {
    "name": "GuilhermeGSousa/game-base-2D",
    "repo": "https://github.com/GuilhermeGSousa/game-base-2D",
    "kind": "scaffold",
@@ -1561,7 +1700,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 130,
+   "stars": 129,
    "pushed": "2024-07-21",
    "archived": false,
    "topics": [
@@ -1584,7 +1723,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 31,
+   "stars": 36,
    "pushed": "2026-07-26",
    "archived": false,
    "topics": [
@@ -1630,7 +1769,7 @@
    "language": "Rust",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 484,
+   "stars": 486,
    "pushed": "2026-08-06",
    "archived": false,
    "topics": [
@@ -1648,7 +1787,7 @@
    "language": "JavaScript",
    "license": "Apache-2.0",
    "reuse": "copy",
-   "stars": 264,
+   "stars": 261,
    "pushed": "2026-02-05",
    "archived": false,
    "topics": []
@@ -1663,7 +1802,7 @@
    "license": "BSD-2-Clause",
    "reuse": "copy",
    "stars": 39,
-   "pushed": "2026-09-23",
+   "pushed": "2026-10-01",
    "archived": false,
    "topics": [
     "excalibur",
@@ -1681,8 +1820,8 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 9560,
-   "pushed": "2026-09-08",
+   "stars": 9598,
+   "pushed": "2026-09-28",
    "archived": false,
    "topics": []
   },
@@ -1695,7 +1834,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 1658,
+   "stars": 1679,
    "pushed": "2026-09-10",
    "archived": false,
    "topics": [
@@ -1717,7 +1856,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 1651,
+   "stars": 1657,
    "pushed": "2026-06-18",
    "archived": false,
    "topics": [
@@ -1740,7 +1879,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 1235,
+   "stars": 1236,
    "pushed": "2026-03-12",
    "archived": false,
    "topics": []
@@ -1754,7 +1893,7 @@
    "language": "Dockerfile",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 1128,
+   "stars": 1134,
    "pushed": "2026-08-18",
    "archived": false,
    "topics": [
@@ -1777,7 +1916,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 1015,
+   "stars": 1019,
    "pushed": "2024-05-05",
    "archived": false,
    "topics": [
@@ -1798,7 +1937,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 980,
+   "stars": 987,
    "pushed": "2026-06-21",
    "archived": false,
    "topics": [
@@ -1836,7 +1975,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 611,
+   "stars": 612,
    "pushed": "2024-10-03",
    "archived": false,
    "topics": [
@@ -1859,7 +1998,7 @@
    "language": "Roff",
    "license": "CC0-1.0",
    "reuse": "copy",
-   "stars": 537,
+   "stars": 539,
    "pushed": "2026-08-27",
    "archived": false,
    "topics": []
@@ -1873,7 +2012,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 534,
+   "stars": 538,
    "pushed": "2026-09-17",
    "archived": false,
    "topics": [
@@ -1896,7 +2035,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 494,
+   "stars": 496,
    "pushed": "2025-10-06",
    "archived": false,
    "topics": [
@@ -1919,7 +2058,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 482,
+   "stars": 483,
    "pushed": "2026-09-10",
    "archived": false,
    "topics": [
@@ -1941,7 +2080,7 @@
    "language": "Python",
    "license": "Unlicense",
    "reuse": "copy",
-   "stars": 470,
+   "stars": 474,
    "pushed": "2026-09-17",
    "archived": false,
    "topics": [
@@ -1960,8 +2099,8 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 451,
-   "pushed": "2026-02-13",
+   "stars": 452,
+   "pushed": "2026-09-30",
    "archived": false,
    "topics": []
   },
@@ -1974,7 +2113,7 @@
    "language": "GDScript",
    "license": "Unlicense",
    "reuse": "copy",
-   "stars": 428,
+   "stars": 429,
    "pushed": "2025-12-21",
    "archived": false,
    "topics": [
@@ -1992,7 +2131,7 @@
    "license": "MIT",
    "reuse": "copy",
    "stars": 420,
-   "pushed": "2026-09-10",
+   "pushed": "2026-09-25",
    "archived": false,
    "topics": [
     "csharp",
@@ -2011,7 +2150,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 409,
+   "stars": 410,
    "pushed": "2025-08-13",
    "archived": true,
    "topics": [
@@ -2031,7 +2170,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 360,
+   "stars": 361,
    "pushed": "2026-04-23",
    "archived": false,
    "topics": []
@@ -2045,7 +2184,7 @@
    "language": "C++",
    "license": "Unlicense",
    "reuse": "copy",
-   "stars": 300,
+   "stars": 302,
    "pushed": "2025-06-29",
    "archived": false,
    "topics": [
@@ -2065,7 +2204,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 280,
+   "stars": 281,
    "pushed": "2024-08-04",
    "archived": false,
    "topics": []
@@ -2137,7 +2276,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 214,
+   "stars": 216,
    "pushed": "2026-03-09",
    "archived": false,
    "topics": []
@@ -2151,7 +2290,7 @@
    "language": "CSS",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 193,
+   "stars": 196,
    "pushed": "2026-08-16",
    "archived": false,
    "topics": [
@@ -2174,7 +2313,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 190,
+   "stars": 192,
    "pushed": "2026-09-07",
    "archived": false,
    "topics": [
@@ -2192,7 +2331,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 176,
+   "stars": 178,
    "pushed": "2026-06-28",
    "archived": false,
    "topics": [
@@ -2215,7 +2354,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 168,
+   "stars": 169,
    "pushed": "2026-09-02",
    "archived": false,
    "topics": [
@@ -2253,7 +2392,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 127,
+   "stars": 125,
    "pushed": "2024-03-29",
    "archived": false,
    "topics": []
@@ -2267,7 +2406,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 124,
+   "stars": 125,
    "pushed": "2026-09-11",
    "archived": false,
    "topics": [
@@ -2290,7 +2429,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 104,
+   "stars": 103,
    "pushed": "2026-04-27",
    "archived": false,
    "topics": [
@@ -2347,7 +2486,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 67,
+   "stars": 69,
    "pushed": "2026-07-20",
    "archived": false,
    "topics": [
@@ -2388,7 +2527,7 @@
    "language": "GDScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 41,
+   "stars": 42,
    "pushed": "2026-09-09",
    "archived": false,
    "topics": [
@@ -2471,7 +2610,7 @@
    "language": "JavaScript",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 1173,
+   "stars": 1172,
    "pushed": "2026-04-10",
    "archived": false,
    "topics": [
@@ -2571,7 +2710,7 @@
    "language": "JavaScript",
    "license": "Apache-2.0",
    "reuse": "copy",
-   "stars": 49,
+   "stars": 51,
    "pushed": "2026-02-09",
    "archived": false,
    "topics": [
@@ -2589,7 +2728,7 @@
    "language": "C#",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 143,
+   "stars": 144,
    "pushed": "2025-09-28",
    "archived": false,
    "topics": [
@@ -2785,7 +2924,7 @@
    "language": "C++",
    "license": "MIT",
    "reuse": "copy",
-   "stars": 795,
+   "stars": 796,
    "pushed": "2026-04-25",
    "archived": false,
    "topics": [
@@ -2808,7 +2947,7 @@
    "language": "C",
    "license": "Zlib",
    "reuse": "copy",
-   "stars": 705,
+   "stars": 708,
    "pushed": "2026-08-13",
    "archived": false,
    "topics": []
@@ -2822,7 +2961,7 @@
    "language": "Odin",
    "license": "Zlib",
    "reuse": "copy",
-   "stars": 622,
+   "stars": 626,
    "pushed": "2026-08-08",
    "archived": false,
    "topics": [
@@ -2841,7 +2980,7 @@
    "language": "CMake",
    "license": "Zlib",
    "reuse": "copy",
-   "stars": 218,
+   "stars": 219,
    "pushed": "2026-07-19",
    "archived": false,
    "topics": []

@@ -1,6 +1,6 @@
 # Images and diagrams
 
-Image processing, generation, painting, design tools and diagrams. 16 projects; 7 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
+Image processing, generation, painting, design tools and diagrams. 17 projects; 7 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
 
 A code license says nothing about model weights; read each model card before using generated images.
 
@@ -21,4 +21,5 @@ A code license says nothing about model weights; read each model card before usi
 | [upscayl/upscayl](https://github.com/upscayl/upscayl) | study only | AGPL-3.0 | TypeScript | 50033 | 2026-09-28 | Desktop AI image upscaler. |
 | [Acly/krita-ai-diffusion](https://github.com/Acly/krita-ai-diffusion) | study only | GPL-3.0 | Python | 10655 | 2026-09-27 | Generative image tools inside Krita (inpainting, sketch to image, regional prompts) driven by a local ComfyUI backend. |
 | [KDE/krita](https://github.com/KDE/krita) | study only | GPL-3.0 | C++ | 10457 | 2026-09-30 | Full digital painting application with brush engines, layers and animation; GitHub copy of the KDE repository. |
+| [LibreSprite/LibreSprite](https://github.com/LibreSprite/LibreSprite) | study only | GPL-2.0 | C++ | 8473 | 2026-09-18 | Pixel-art and sprite-animation editor forked from the last GPL version of Aseprite; its latest stable release is v1.1 (2023), with v1.2 in pre-release since 2025-03-02. |
 | [RawTherapee/RawTherapee](https://github.com/RawTherapee/RawTherapee) | study only | GPL-3.0 | C++ | 4188 | 2026-09-28 | RAW photo processing with advanced demosaicing. |

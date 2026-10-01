@@ -1,8 +1,8 @@
 {
- "built": "2026-09-30",
+ "built": "2026-10-01",
  "domain": "software",
- "count": 360,
- "seeds": 362,
+ "count": 366,
+ "seeds": 368,
  "dropped": [
   {
    "name": "mrdoob/three.js",
@@ -2658,6 +2658,21 @@
    "note": null
   },
   {
+   "name": "ace-step/ACE-Step-1.5",
+   "category": "media-video-audio",
+   "repo": "https://github.com/ace-step/ACE-Step-1.5",
+   "homepage": "https://acemusic.ai/",
+   "why": "Local music generation from a text prompt and optional lyrics, with MIT code; the newer line after ACE-Step 1.0, which is Apache-2.0 in its own repository.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 12979,
+   "pushed": "2026-10-01",
+   "active": true,
+   "note": null
+  },
+  {
    "name": "WyattBlue/auto-editor",
    "category": "media-video-audio",
    "repo": "https://github.com/WyattBlue/auto-editor",
@@ -2699,6 +2714,21 @@
    "reuse": "copy",
    "stars": 1391,
    "pushed": "2026-08-27",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "chr15m/jsfxr",
+   "category": "media-video-audio",
+   "repo": "https://github.com/chr15m/jsfxr",
+   "homepage": "http://sfxr.me",
+   "why": "JavaScript port of the sfxr retro sound-effect generator, with a browser editor and a small library that plays the same sounds from code.",
+   "language": "JavaScript",
+   "license": "Unlicense",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 452,
+   "pushed": "2026-05-05",
    "active": true,
    "note": null
   },
@@ -2806,6 +2836,21 @@
    "pushed": "2026-09-30",
    "active": true,
    "note": "bundled fonts carry their own terms"
+  },
+  {
+   "name": "LMMS/lmms",
+   "category": "media-video-audio",
+   "repo": "https://github.com/LMMS/lmms",
+   "homepage": "https://lmms.io",
+   "why": "Music sequencer with built-in synthesizers and samplers for game music; the last stable release is 1.2.2 (2020) and 1.3 is in alpha, so expect to use a pre-release.",
+   "language": "C++",
+   "license": "GPL-2.0",
+   "license_from": "github",
+   "reuse": "study",
+   "stars": 10419,
+   "pushed": "2026-09-27",
+   "active": true,
+   "note": null
   },
   {
    "name": "KDE/kdenlive",
@@ -3078,6 +3123,21 @@
    "note": null
   },
   {
+   "name": "LibreSprite/LibreSprite",
+   "category": "media-image",
+   "repo": "https://github.com/LibreSprite/LibreSprite",
+   "homepage": "https://libresprite.github.io/",
+   "why": "Pixel-art and sprite-animation editor forked from the last GPL version of Aseprite; its latest stable release is v1.1 (2023), with v1.2 in pre-release since 2025-03-02.",
+   "language": "C++",
+   "license": "GPL-2.0",
+   "license_from": "github",
+   "reuse": "study",
+   "stars": 8473,
+   "pushed": "2026-09-18",
+   "active": true,
+   "note": null
+  },
+  {
    "name": "RawTherapee/RawTherapee",
    "category": "media-image",
    "repo": "https://github.com/RawTherapee/RawTherapee",
@@ -3089,6 +3149,21 @@
    "reuse": "study",
    "stars": 4188,
    "pushed": "2026-09-28",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "microsoft/TRELLIS",
+   "category": "media-3d",
+   "repo": "https://github.com/microsoft/TRELLIS",
+   "homepage": "https://trellis3d.github.io",
+   "why": "Image-to-3D and text-to-3D generation that outputs meshes, Gaussian splats or radiance fields; MIT code, but read the license of each model checkpoint and of the components it downloads.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 13747,
+   "pushed": "2026-06-26",
    "active": true,
    "note": null
   },
@@ -3136,6 +3211,21 @@
    "pushed": "2026-09-29",
    "active": true,
    "note": null
+  },
+  {
+   "name": "Mesh2Motion/mesh2motion-app",
+   "category": "media-3d",
+   "repo": "https://github.com/Mesh2Motion/mesh2motion-app",
+   "homepage": null,
+   "why": "Browser tool that fits a template skeleton to a glTF model and applies a library of ready animations, then exports glTF for a game engine.",
+   "language": "TypeScript",
+   "license": "MIT",
+   "license_from": "corrected: two license files defeat GitHub's detector (NOASSERTION): LICENSE-MIT.MD covers all code and software, LICENSE-CC0.MD the art assets",
+   "reuse": "copy",
+   "stars": 3340,
+   "pushed": "2026-09-28",
+   "active": true,
+   "note": "code MIT; its bundled models, rigs and animations are CC0 per the README; GitHub reports no license (NOASSERTION), so re-read both files before copying"
   },
   {
    "name": "gumyr/build123d",

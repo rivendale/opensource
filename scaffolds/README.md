@@ -13,8 +13,8 @@ snapshot from that day.
 | file | what it lists |
 |---|---|
 | [`scaffolds.md`](scaffolds.md) | starter templates per engine: Godot, Unity, Bevy, Phaser, raylib, LÖVE, MonoGame, Excalibur, three.js |
-| [`mcps.md`](mcps.md) | MCP servers that let an AI tool operate Blender, GIMP, Krita, Godot, Unity and Unreal Engine. Each one runs code on your machine, and some listen on every network interface by default: read its risk row in [`../ai/graphics.md`](../ai/graphics.md#maintained-servers-per-tool) and apply the [safe setup checklist](../ai/graphics.md#safe-setup-checklist) before installing one. |
-| [`../data/scaffolds.json`](../data/scaffolds.json) | the same 153 repositories as data |
+| [`mcps.md`](mcps.md) | MCP servers that let an AI tool operate Blender, GIMP, Krita, Inkscape, Aseprite, Godot, Unity and Unreal Engine (Blender's own server is hosted off GitHub and noted there; Godot has no official server). Each one runs code on your machine, and some listen on every network interface by default: read its risk row in [`../ai/graphics.md`](../ai/graphics.md#maintained-servers-per-tool) and apply the [safe setup checklist](../ai/graphics.md#safe-setup-checklist) before installing one. |
+| [`../data/scaffolds.json`](../data/scaffolds.json) | the same 161 repositories as data |
 
 Art-tool add-ons are not generated: search found too few, some off-topic. The hand-checked add-on
 tables are in [`../art/blender.md`](../art/blender.md) and [`../art/2d.md`](../art/2d.md).

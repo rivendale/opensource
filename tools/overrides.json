@@ -805,7 +805,7 @@
  },
  "ahujasid/mcp-for-blender": {
   "why": "the README's Telemetry Control section says an anonymous usage record is sent unless telemetry is turned off",
-  "note": "sends an anonymous usage record by default (install and session IDs, tool name, versions, operating system) until `DISABLE_TELEMETRY=true` is set; a pinned setup with telemetry off is in [ai/graphics.md](../../ai/graphics.md#safe-setup-checklist)",
+  "note": "not the first choice: Blender's own [Blender Lab MCP](../../art/blender.md#driving-blender-with-ai-tools) is. Its add-on socket on `localhost:9876` has no authentication, and it sends an anonymous usage record by default (install and session IDs, tool name, versions, operating system) until `DISABLE_TELEMETRY=true` is set; a pinned setup with telemetry off is in [ai/graphics.md](../../ai/graphics.md#safe-setup-checklist)",
   "evidence": [
    {
     "file": "README.md",
@@ -1321,5 +1321,22 @@
    }
   ],
   "read": "2026-09-30"
+ },
+ "Mesh2Motion/mesh2motion-app": {
+  "license": "MIT",
+  "why": "two license files defeat GitHub's detector (NOASSERTION): LICENSE-MIT.MD covers all code and software, LICENSE-CC0.MD the art assets",
+  "reuse_ok": true,
+  "note": "code MIT; its bundled models, rigs and animations are CC0 per the README; GitHub reports no license (NOASSERTION), so re-read both files before copying",
+  "evidence": [
+   {
+    "file": "LICENSE-MIT.MD",
+    "line": "All the code and software is licensed under MIT"
+   },
+   {
+    "file": "README.md",
+    "line": "The code and platform are all licensed under the very permissive MIT license. The art assets (3d models, rigs, animations) are all licensed under CC0."
+   }
+  ],
+  "read": "2026-10-01"
  }
 }

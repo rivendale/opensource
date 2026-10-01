@@ -23,7 +23,7 @@ A `copy` row that carries a note reads `copy (see note)`: the note names a part 
 
 ## Categories
 
-Built 2026-09-30: 360 projects, 225 with a permissive code license.
+Built 2026-10-01: 366 projects, 229 with a permissive code license.
 
 | category | projects | copy | library use | study only | check first | covers |
 |---|---|---|---|---|---|---|
@@ -36,9 +36,9 @@ Built 2026-09-30: 360 projects, 225 with a permissive code license.
 | [Speech](catalog/speech.md) | 8 | 7 | 0 | 1 | 0 | speech-to-text and text-to-speech that run locally |
 | [Developer tools and security](catalog/dev-security.md) | 27 | 22 | 1 | 3 | 1 | package managers, linters, scanners, supply-chain checks and command-line tools |
 | [Photo libraries](catalog/media-photo.md) | 9 | 2 | 0 | 6 | 1 | photo backup and libraries, RAW development, duplicates and metadata |
-| [Video and audio](catalog/media-video-audio.md) | 21 | 11 | 1 | 7 | 2 | editing, encoding, recording, music, stem separation and video made from code |
-| [Images and diagrams](catalog/media-image.md) | 16 | 7 | 2 | 7 | 0 | image processing, generation, painting, design tools and diagrams |
-| [3D, CAD and printing](catalog/media-3d.md) | 11 | 5 | 1 | 4 | 1 | 3D creation, CAD, slicers, scans and 3D on the web |
+| [Video and audio](catalog/media-video-audio.md) | 24 | 13 | 1 | 8 | 2 | editing, encoding, recording, music, stem separation and video made from code |
+| [Images and diagrams](catalog/media-image.md) | 17 | 7 | 2 | 8 | 0 | image processing, generation, painting, design tools and diagrams |
+| [3D, CAD and printing](catalog/media-3d.md) | 13 | 7 | 1 | 4 | 1 | 3D creation, CAD, slicers, scans and 3D on the web |
 | [Documents and OCR](catalog/documents-ocr.md) | 28 | 20 | 1 | 5 | 2 | PDF tools, OCR, document conversion and typesetting |
 | [Notes, wikis and search](catalog/knowledge-search.md) | 27 | 11 | 0 | 12 | 4 | notes, wikis, bookmarks, web archiving, search engines and vector search |
 | [Reading](catalog/reading.md) | 7 | 2 | 0 | 5 | 0 | e-books, audiobooks, comics, feeds and read-it-later |
@@ -80,7 +80,7 @@ Seeds live in [`tools/domains/software.json`](../tools/domains/software.json): n
 python3 tools/build_catalog.py --domain software --src sources --out .
 ```
 
-**Left out at build time:** 0 of 362 seeds.
+**Left out at build time:** 0 of 368 seeds.
 
 Nothing: every seed was found on GitHub and is not archived.
 

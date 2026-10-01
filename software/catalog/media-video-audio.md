@@ -1,6 +1,6 @@
 # Video and audio
 
-Editing, encoding, recording, music, stem separation and video made from code. 21 projects; 11 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
+Editing, encoding, recording, music, stem separation and video made from code. 24 projects; 13 with a permissive code license. Sorted by reuse, then stars. Part of the [software list](../README.md), which explains the reuse classes.
 
 | project | reuse | license | language | stars | last push | why |
 |---|---|---|---|---|---|---|
@@ -12,9 +12,11 @@ Editing, encoding, recording, music, stem separation and video made from code. 2
 | [beetbox/beets](https://github.com/beetbox/beets) | copy | MIT | Python | 15731 | 2026-09-30 | Music library organizer with metadata auto-tagging. |
 | [Zulko/moviepy](https://github.com/Zulko/moviepy) | copy | MIT | Python | 14937 | 2026-08-26 | Python library for cutting, compositing, titling and exporting video from a script. |
 | [Tonejs/Tone.js](https://github.com/Tonejs/Tone.js) | copy | MIT | TypeScript | 14749 | 2026-09-29 | Web Audio framework for synths, effects and sample-accurate sequencing in the browser. |
+| [ace-step/ACE-Step-1.5](https://github.com/ace-step/ACE-Step-1.5) | copy | MIT | Python | 12979 | 2026-10-01 | Local music generation from a text prompt and optional lyrics, with MIT code; the newer line after ACE-Step 1.0, which is Apache-2.0 in its own repository. |
 | [WyattBlue/auto-editor](https://github.com/WyattBlue/auto-editor) | copy | Unlicense | Nim | 5398 | 2026-09-19 | Command-line editor that cuts silence and dead space from video and audio automatically, then renders the result or exports a timeline for an editor. |
 | [Breakthrough/PySceneDetect](https://github.com/Breakthrough/PySceneDetect) | copy | BSD-3-Clause | Python | 5212 | 2026-09-21 | Finds scene cuts and transitions in video from the command line or Python, and can split the file at each cut with FFmpeg. |
 | [nomadkaraoke/python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator) | copy | MIT | Python | 1391 | 2026-08-27 | Command-line and Python stem separation (vocals, drums, bass and more) using the UVR and Demucs model families. |
+| [chr15m/jsfxr](https://github.com/chr15m/jsfxr) | copy | Unlicense | JavaScript | 452 | 2026-05-05 | JavaScript port of the sfxr retro sound-effect generator, with a browser editor and a small library that plays the same sounds from code. |
 | [FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg) | library use | LGPL-2.1-or-later (per license file) | C | 64670 | 2026-09-30 | The underlying toolkit for converting, cutting and encoding audio and video. **a build configured with --enable-gpl is GPL-2.0-or-later** |
 | [obsproject/obs-studio](https://github.com/obsproject/obs-studio) | study only | GPL-2.0 | C | 76821 | 2026-09-30 | Screen recording and live streaming. |
 | [mifi/lossless-cut](https://github.com/mifi/lossless-cut) | study only | GPL-2.0 | TypeScript | 44176 | 2026-09-30 | Fast lossless trimming and cutting of video without re-encoding. |
@@ -22,6 +24,7 @@ Editing, encoding, recording, music, stem separation and video made from code. 2
 | [navidrome/navidrome](https://github.com/navidrome/navidrome) | study only | GPL-3.0 | Go | 23911 | 2026-09-30 | Self-hosted music streaming server compatible with Subsonic apps. |
 | [audacity/audacity](https://github.com/audacity/audacity) | study only | GPL-3.0 (per license file) | C++ | 18609 | 2026-09-30 | Multi-track audio editor and recorder. |
 | [musescore/MuseScore](https://github.com/musescore/MuseScore) | study only | GPL-3.0 (per license file) | C++ | 15163 | 2026-09-30 | Music notation editor with playback, parts and MusicXML import and export. **bundled fonts carry their own terms** |
+| [LMMS/lmms](https://github.com/LMMS/lmms) | study only | GPL-2.0 | C++ | 10419 | 2026-09-27 | Music sequencer with built-in synthesizers and samplers for game music; the last stable release is 1.2.2 (2020) and 1.3 is in alpha, so expect to use a pre-release. |
 | [KDE/kdenlive](https://github.com/KDE/kdenlive) | study only | GPL-3.0 | C++ | 5770 | 2026-09-30 | Non-linear video editor. |
 | [remotion-dev/remotion](https://github.com/remotion-dev/remotion) | check first | Remotion License (custom) (per license file) | TypeScript | 61278 | 2026-09-30 | Builds videos from React components rendered frame by frame. |
 | [Lightricks/LTX-2](https://github.com/Lightricks/LTX-2) | check first | LTX-2 Community License (per license file) | Python | 9560 | 2026-09-30 | Inference and LoRA training code for LTX-2, which generates video with matching audio; weights under the LTX community license, not open source. **the agreement requires a paid commercial license for entities with annual revenues of at least $10,000,000** |

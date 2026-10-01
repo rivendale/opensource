@@ -36,6 +36,7 @@ QUERIES = [
     ("mcp", "Blender", "blender mcp in:name,description"), ("mcp", "Godot", "godot mcp in:name,description"),
     ("mcp", "Unity", "unity mcp in:name,description"), ("mcp", "GIMP", "gimp mcp in:name,description"),
     ("mcp", "Krita", "krita mcp in:name,description"), ("mcp", "Unreal", "unreal mcp in:name,description"),
+    ("mcp", "Inkscape", "inkscape mcp in:name,description"), ("mcp", "Aseprite", "aseprite mcp in:name,description"),
 ]
 KIND_TITLE = {"scaffold": "Starter templates (scaffolds)", "mcp": "AI bridges (MCP servers) for game and art tools"}
 # Official templates that keyword search misses; the hand-written guides recommend them first.
@@ -50,6 +51,18 @@ HEADER = {
     "mcp": "**Metadata checked, not security-reviewed.** Every entry can run code on your machine, and some listen "
            "on every network interface by default. Read the [safe setup checklist](../ai/graphics.md#safe-setup-checklist) "
            "and the [maintained servers per tool](../ai/graphics.md#maintained-servers-per-tool) first.",
+}
+
+
+# A note under one group's heading, for what search cannot show: a server hosted off GitHub, or the
+# absence of an official one. Checked by hand; recheck when the list is rebuilt.
+GROUP_NOTE = {
+    ("mcp", "Blender"): "Blender's own server, [Blender Lab MCP](https://www.blender.org/lab/mcp-server/), is hosted on "
+                        "projects.blender.org, so GitHub search cannot list it. It is the recommended first choice; its risk "
+                        "row is in [art/blender.md](../art/blender.md#driving-blender-with-ai-tools).",
+    ("mcp", "Godot"): "There is no official Godot MCP server: the godotengine organization has no MCP repository (checked "
+                      "2026-10-01). A repository calling itself an \"Official Plugin\" is a personal account's. Risk notes "
+                      "for the maintained servers are in [engines/godot.md](../engines/godot.md#ai-tooling).",
 }
 
 
@@ -133,8 +146,10 @@ def main():
               "endorsement: read a repository before you build on it. Reuse classes as in the main catalog.", "",
               HEADER[kind], ""]
         for grp in sorted({r["group"] for r in rows}):
-            md += [f"## {grp}", "", "| repository | reuse | license | language | stars | last push | about |",
-                   "|---|---|---|---|---|---|---|"]
+            md += [f"## {grp}", ""]
+            if (kind, grp) in GROUP_NOTE:
+                md += [GROUP_NOTE[(kind, grp)], ""]
+            md += ["| repository | reuse | license | language | stars | last push | about |", "|---|---|---|---|---|---|---|"]
             for r in [x for x in rows if x["group"] == grp]:
                 md.append(f"| [{esc(r['name'])}]({r['repo']}) | {REUSE[r['reuse']]} | {r['license']} | {esc(r['language'])} | "
                           f"{r['stars']} | {r['pushed']}{' archived' if r['archived'] else ''} | {esc(r['description'])[:110]} |")
