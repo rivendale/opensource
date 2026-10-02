@@ -1,5 +1,9 @@
 # AGENTS.md
 
+> Part of a set of public repos maintained separately. Start at
+> [hsi-operator](https://github.com/rivendale/hsi-operator): it says what each one is for and
+> when to read it.
+
 For any AI coding tool (Claude Code, Codex, Grok, others) working in this repository or in a
 game or project started from it.
 
