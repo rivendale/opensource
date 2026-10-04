@@ -7,6 +7,13 @@
 Open-source projects to build on instead of starting from scratch, each with its license read from
 GitHub and a plain rule for what you may reuse. Two domains so far: games, and software beyond games.
 
+## Continuing work with an agent
+
+Read [AGENTS.md](AGENTS.md) for this repository's working rules. Use the current
+checkout and the linked source dates, rather than a summary from an older session.
+Keep project-specific state and tool readiness in the project that uses this
+guidance; this repository does not certify an installation or a deployed service.
+
 ## Domains
 
 | domain | what it holds | start here |
