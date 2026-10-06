@@ -1,0 +1,29 @@
+{
+ "id": "14-gh-missing",
+ "spec_item": 14,
+ "tag": "spec",
+ "title": "no gh on PATH and no test override: 'CANNOT READ (gh)', exit 2, never a guess",
+ "tool": "glean-resolve",
+ "servers": {},
+ "env": {},
+ "args": [
+  "o/r",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unresolved"
+   },
+   {
+    "path": "error",
+    "regex": "CANNOT READ \\(gh\\)"
+   }
+  ]
+ }
+}

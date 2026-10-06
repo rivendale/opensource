@@ -1,0 +1,40 @@
+{
+ "id": "01n-malformed-json",
+ "spec_item": 1,
+ "tag": "principle",
+ "title": "a 200 answer that is not JSON is unresolved, not a crash",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/repos/o/r": {
+    "body": "<html>oops</html>"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_GH_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "o/r",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unresolved"
+   }
+  ],
+  "stderr_not_contains": [
+   "Traceback"
+  ]
+ },
+ "fake_gh": {
+  "auth": true,
+  "api": {}
+ }
+}

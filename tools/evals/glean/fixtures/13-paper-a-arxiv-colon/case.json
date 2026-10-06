@@ -1,0 +1,63 @@
+{
+ "id": "13-paper-a-arxiv-colon",
+ "spec_item": 13,
+ "tag": "spec",
+ "title": "arxiv:2301.00001v2 resolves as a paper with its arXiv id and version, kind 'paper'",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": "<?xml version='1.0'?><feed xmlns='http://www.w3.org/2005/Atom'><entry><id>http://arxiv.org/abs/2301.00001v2</id><title>A Method for Things</title><summary>We show a thing.</summary><published>2023-01-01T00:00:00Z</published></entry></feed>"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "resolved"
+   },
+   {
+    "path": "identity.kind",
+    "equals": "paper"
+   },
+   {
+    "path": "identity.arxiv_id",
+    "regex": "2301\\.00001"
+   },
+   {
+    "path": "identity.version",
+    "regex": "2"
+   },
+   {
+    "path": "identity.sha",
+    "equals": null
+   },
+   {
+    "path": "code_available",
+    "in": [
+     false,
+     null
+    ]
+   },
+   {
+    "path": "license.classification",
+    "equals": "none"
+   }
+  ]
+ }
+}

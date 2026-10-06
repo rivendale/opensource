@@ -1,0 +1,56 @@
+{
+ "id": "13-doi-b-doi-url",
+ "spec_item": 13,
+ "tag": "spec",
+ "title": "doi.org/10.1000/xyz123 resolves through Crossref as a paper pinned by its DOI",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/works/10.1000%2Fxyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\", \"message\": {\"DOI\": \"10.1000/xyz123\", \"URL\": \"https://doi.org/10.1000/xyz123\", \"title\": [\"A Crossref Paper\"], \"license\": []}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/works/10.1000/xyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\", \"message\": {\"DOI\": \"10.1000/xyz123\", \"URL\": \"https://doi.org/10.1000/xyz123\", \"title\": [\"A Crossref Paper\"], \"license\": []}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_CROSSREF_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "doi.org/10.1000/xyz123",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "resolved"
+   },
+   {
+    "path": "identity.kind",
+    "equals": "paper"
+   },
+   {
+    "path": "identity.doi",
+    "equals": "10.1000/xyz123"
+   },
+   {
+    "path": "license.classification",
+    "equals": "none"
+   }
+  ]
+ }
+}

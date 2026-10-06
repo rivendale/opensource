@@ -1,0 +1,39 @@
+{
+ "id": "15k-no-credentials-to-the-stub-for-papers",
+ "spec_item": null,
+ "tag": "spec",
+ "title": "papers over the override send no credential headers either",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": "<?xml version='1.0'?><feed xmlns='http://www.w3.org/2005/Atom'><entry><id>http://arxiv.org/abs/2301.00001v2</id><title>A Method for Things</title><summary>We show a thing.</summary><published>2023-01-01T00:00:00Z</published></entry></feed>"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}",
+  "GH_TOKEN": "ghp_fixture_not_real"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "requests": {
+   "A": {
+    "no_headers": [
+     "authorization",
+     "cookie"
+    ]
+   }
+  }
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "id": "13e-arxiv-without-version",
+ "spec_item": 13,
+ "tag": "spec",
+ "title": "an arXiv id with no version (v1, v2...) is not a pin: refused",
+ "tool": "glean-check",
+ "files": {
+  "cards.jsonl": "{\"id\": \"c1\", \"idea\": \"stream the file in chunks instead of reading it whole\", \"where\": {\"doi_or_arxiv\": \"arxiv:2301.00001\", \"section\": \"3\"}, \"solves\": \"memory use on large inputs\", \"decision\": \"take\", \"reason\": \"\", \"target\": \"Ship the docs site\", \"done_when\": \"the site answers 200 at the production URL\", \"license\": {\"spdx\": null, \"evidence_url\": null, \"classification\": \"none\"}, \"adds\": [], \"credit\": {\"author\": \"Jane Roe\", \"author_url\": \"https://example.test/jane\", \"source_url\": \"https://example.test/o/r\", \"text\": \"adapted from Jane Roe's parser design\"}}\n"
+ },
+ "args": [
+  "cards.jsonl",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ]
+ }
+}
