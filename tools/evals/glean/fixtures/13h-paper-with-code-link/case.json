@@ -29,7 +29,7 @@
   "json": [
    {
     "path": "license.classification",
-    "equals": "none"
+    "equals": "check first"
    }
   ]
  }
