@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import unicodedata
 from urllib.parse import urlsplit
 
 CAP = 1048576
@@ -20,7 +21,7 @@ EFFECT = re.compile(r'\b(?:install|daemon|hosted service|third[- ]party relay|ne
 def clean(text):
     text = re.sub(r'\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)', '', text)
     text = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', text)
-    return ''.join(c for c in text if (ord(c) >= 32 and ord(c) != 127 and c not in '\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069') or c in '\n\t')
+    return ''.join(c for c in text if (ord(c) >= 32 and ord(c) != 127 and unicodedata.category(c) != 'Cf') or c in '\n\t')
 
 
 def sanitize(value):
