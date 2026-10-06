@@ -183,7 +183,7 @@ def required_string(obj, key):
 
 
 def source_form(source):
-    if re.match(r'^(?:github\.com|gitlab\.com)/', source, re.I):
+    if re.match(r'^(?:github\.com|gitlab\.com|(?:dx\.)?doi\.org|(?:www\.)?arxiv\.org)/', source, re.I):
         source = 'https://' + source
     if source.startswith('doi:'):
         return 'doi', source[4:], None, None
