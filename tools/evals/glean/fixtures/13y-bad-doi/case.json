@@ -1,0 +1,28 @@
+{
+ "id": "13y-bad-doi",
+ "spec_item": 13,
+ "tag": "spec",
+ "title": "a DOI that is not of the form 10.xxxx/yyyy is refused with no request",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {}
+ },
+ "env": {
+  "GLEAN_CROSSREF_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "doi:notadoi",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "requests": {
+   "A": {
+    "count": 0
+   }
+  }
+ }
+}

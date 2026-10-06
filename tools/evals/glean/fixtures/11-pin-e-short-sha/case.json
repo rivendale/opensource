@@ -21,6 +21,9 @@
     "path": "status",
     "equals": "unreadable"
    }
+  ],
+  "finding_includes": [
+   "WHERE"
   ]
  }
 }

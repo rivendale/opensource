@@ -66,6 +66,12 @@ if a[:2] == ["auth", "status"]:
 if a and a[0] == "api":
     path = next((x for x in a[1:] if x.lstrip("/").startswith(("repos/", "projects/", "search/"))), "")
     path = path.split("?")[0].lstrip("/")
+    if path in cfg.get("hang", []):
+        import time
+        time.sleep(40)
+    if path in cfg.get("huge", []):
+        sys.stdout.write("[" + ",".join(["1"] * 700000) + "]")
+        sys.exit(0)
     if path in cfg.get("api", {}):
         print(json.dumps(cfg["api"][path]))
         sys.exit(0)
@@ -280,6 +286,25 @@ def check(res):
             doc = json.loads(out)
         except ValueError:
             problems.append("stdout is not exactly one JSON document")
+    if doc is not None and not e.get("allow_control_in_json"):
+        bad_strings = []
+
+        def walk(v, path=""):
+            if isinstance(v, str):
+                if re.search("[\u0000-\u0008\u000b-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]", v):
+                    bad_strings.append(path or "(root)")
+            elif isinstance(v, list):
+                for i, x in enumerate(v):
+                    walk(x, f"{path}.{i}")
+            elif isinstance(v, dict):
+                for k, x in v.items():
+                    walk(k, f"{path}.<key {k!r}>")
+                    walk(x, f"{path}.{k}")
+        walk(doc)
+        if bad_strings:
+            problems.append(f"control or invisible characters survive inside JSON strings (escaped in the output, so a raw-byte check misses them): {bad_strings[:3]}")
+    if not e.get("allow_traceback") and "Traceback" in err:
+        problems.append("a Python traceback reached stderr")
     for j in e.get("json", []):
         if doc is None:
             break
@@ -319,6 +344,11 @@ def check(res):
     for rx in e.get("stderr_not_contains", []):
         if re.search(rx, err, re.M):
             problems.append(f"stderr must not contain /{rx}/")
+    if "max_finding_chars" in e and doc is not None:
+        for f in (doc.get("findings") or []):
+            n = len(f) if isinstance(f, str) else len(json.dumps(f))
+            if n > e["max_finding_chars"]:
+                problems.append(f"a finding is {n} characters long, limit {e['max_finding_chars']}")
     if e.get("no_control_chars"):
         bad = re.findall(rb"[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]|\x1b|\r", res["out"])
         if bad:
@@ -383,12 +413,19 @@ def main():
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--tags", default="")
     ap.add_argument("--tools", default=str(HERE.parent))
+    ap.add_argument("--skip", default="", help="comma-separated fixture ids to leave out (known failures of the unmutated tool)")
+    ap.add_argument("--first-fail", action="store_true", help="stop at the first failing fixture (used by the break-it pass)")
+    ap.add_argument("--tool", default="", help="only fixtures for this tool (glean-check, glean-resolve, harvest-check, harvest-fetch)")
     a = ap.parse_args()
     fx = HERE / a.skill / "fixtures"
     cases = [json.loads(p.read_text()) for p in sorted(fx.glob("*/case.json"))]
     if a.only:
         pre = tuple(x.strip() for x in a.only.split(","))
         cases = [c for c in cases if c["id"].startswith(pre)]
+    if a.tool:
+        cases = [c for c in cases if c["tool"] == a.tool]
+    if a.skip:
+        cases = [c for c in cases if c["id"] not in set(a.skip.split(","))]
     if a.tags:
         want = set(a.tags.split(","))
         cases = [c for c in cases if c["tag"] in want]
@@ -409,6 +446,10 @@ def main():
         t[1] += 1
         if problems:
             failed.append(c["id"])
+            if a.first_fail:
+                print(f"  FAIL {c['id']} [{c['tag']}]")
+                print("FIRST-FAIL " + c["id"])
+                return 1
             print(f"  FAIL {c['id']:44} [{c['tag']}] {c['title']}")
             for p in problems:
                 print(f"         - {p}")

@@ -1,0 +1,44 @@
+{
+ "id": "13z-crossref-malformed",
+ "spec_item": 13,
+ "tag": "principle",
+ "title": "a Crossref answer without a message object is unresolved",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/works/10.1000%2Fxyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\"}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/works/10.1000/xyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\"}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_CROSSREF_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "doi:10.1000/xyz123",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unresolved"
+   }
+  ]
+ }
+}

@@ -15,6 +15,9 @@
  "expect": {
   "exit": [
    2
+  ],
+  "finding_includes": [
+   "WHERE"
   ]
  }
 }

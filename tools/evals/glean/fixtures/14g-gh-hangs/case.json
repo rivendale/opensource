@@ -1,0 +1,77 @@
+{
+ "id": "14g-gh-hangs",
+ "spec_item": 14,
+ "tag": "spec",
+ "title": "gh that does not answer within its deadline is 'CANNOT READ (gh timeout)' (exit 2) in bounded time",
+ "tool": "glean-resolve",
+ "servers": {},
+ "env": {},
+ "args": [
+  "o/r",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "error",
+    "regex": "CANNOT READ \\(gh"
+   }
+  ],
+  "max_seconds": 25
+ },
+ "fake_gh": {
+  "auth": true,
+  "api": {
+   "repos/o/r": {
+    "full_name": "o/r",
+    "html_url": "https://github.com/o/r",
+    "default_branch": "main",
+    "stargazers_count": 1234,
+    "pushed_at": "2026-09-30T10:00:00Z",
+    "archived": false,
+    "license": {
+     "spdx_id": "MIT",
+     "key": "mit"
+    }
+   },
+   "repos/o/r/commits/main": {
+    "sha": "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
+   },
+   "repos/o/r/commits/a1b2c3d4e5f60718293a4b5c6d7e8f9012345678": {
+    "sha": "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
+   },
+   "repos/o/r/commits/a1b2c3d": {
+    "sha": "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
+   },
+   "repos/o/r/security-advisories": [],
+   "repos/o/r/license": {
+    "name": "LICENSE",
+    "path": "LICENSE",
+    "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "size": 1070,
+    "type": "file",
+    "encoding": "base64",
+    "content": "TGljZW5zZSB0ZXh0Cg==",
+    "url": "https://api.github.com/repos/o/r/contents/LICENSE?ref=a1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+    "html_url": "https://github.com/o/r/blob/a1b2c3d4e5f60718293a4b5c6d7e8f9012345678/LICENSE",
+    "git_url": "https://api.github.com/repos/o/r/git/blobs/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "download_url": "https://raw.githubusercontent.com/o/r/a1b2c3d4e5f60718293a4b5c6d7e8f9012345678/LICENSE",
+    "license": {
+     "key": "mit",
+     "name": "MIT",
+     "spdx_id": "MIT",
+     "url": null,
+     "node_id": "x"
+    }
+   }
+  },
+  "hang": [
+   "repos/o/r"
+  ]
+ },
+ "timeout": 40
+}
