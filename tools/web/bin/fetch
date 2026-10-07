@@ -85,16 +85,27 @@ _REAL_GETADDRINFO = socket.getaddrinfo
 
 
 NAT64 = ipaddress.ip_network("64:ff9b::/96")
+COMPAT = ipaddress.ip_network("::/96")           # deprecated IPv4-compatible form, e.g. ::127.0.0.1
 
 
 def _is_public_ip(addr):
     ip = ipaddress.ip_address(addr.split("%")[0])
     # An IPv4 address inside IPv6 is judged as the IPv4 it carries: '::ffff:100.64.0.1' passed the tailnet check,
     # which only runs for version 4 (second read of rivendale/opensource#20, P1, 2026-10-07). Same for NAT64.
-    if ip.version == 6 and ip.ipv4_mapped:
-        ip = ip.ipv4_mapped
-    elif ip.version == 6 and ip in NAT64:
-        ip = ipaddress.ip_address(int(ip) & 0xFFFFFFFF)
+    # Every IPv6 form that embeds an IPv4 address is judged by that IPv4, explicitly, so the answer does not depend
+    # on how a given Python version classifies the wrapper (3.12 and 3.13 disagree on '::ffff:100.64.0.1').
+    if ip.version == 6:
+        embedded = []
+        if ip.ipv4_mapped:
+            embedded.append(ip.ipv4_mapped)
+        if ip in NAT64 or ip in COMPAT:
+            embedded.append(ipaddress.ip_address(int(ip) & 0xFFFFFFFF))
+        if ip.sixtofour:
+            embedded.append(ip.sixtofour)
+        if ip.teredo:
+            embedded.extend(ip.teredo)
+        if embedded:
+            return all(_is_public_ip(str(e)) for e in embedded)
     return not (ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
                 or ip.is_multicast or ip.is_unspecified or (ip.version == 4 and ip in TAILNET))
 
