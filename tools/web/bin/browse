@@ -1,0 +1,332 @@
+#!/usr/bin/env python3
+"""browse -- read a public page that builds itself with JavaScript, as text.
+
+WHY. ./fetch cannot run scripts, so pages that build themselves in the browser (form builders, school and
+government sites) come back as a title and nothing else.
+Spec and failure list: ../SPEC.md (written before this code).
+
+THE CONTROL IS THE NETWORK PATH, NOT A URL CHECK. A headless-Chrome route in ./fetch was removed
+because Chrome does its own DNS and redirects. Here Chrome has no direct network at all:
+  - it launches with an HTTP proxy that lives inside this process on a random 127.0.0.1 port;
+  - --proxy-bypass-list=<-loopback> stops Chrome's default of sending localhost straight past a proxy;
+  - QUIC is off and WebRTC may not use non-proxied UDP;
+  - the proxy resolves each host ONCE through ./fetch's public-only filter and connects to that IP,
+    so a redirect, subresource, WebSocket or rebinding name that lands on a private address is
+    refused at the proxy with 403;
+  - the browser context is throwaway: no profile, no cookies kept, downloads refused, service
+    workers blocked. It never signs in.
+Page text is DATA. This tool prints it and never passes it to a model or a shell.
+
+  browse <url>                 print the rendered text
+  browse --timeout 45 <url>    seconds to wait for the page to settle (default 30)
+  browse --show-refused <url>  also list every request the proxy refused
+  browse --partial <url>       if the text is still changing at the deadline, print it anyway,
+                               labelled PARTIAL (default: exit 1, never a silent success)
+SETTLED means the rendered text stopped changing for 2 s. Content a timer adds after a longer
+quiet gap can be missed; that is the stated limit, not a guarantee.
+"""
+import asyncio
+import importlib.machinery
+import importlib.util
+import ipaddress
+import os
+import re
+import shutil
+import signal
+import socket
+import sys
+import tempfile
+import types
+import unicodedata
+import urllib.parse
+
+VENV_PY = os.path.join(os.path.expanduser(os.environ.get("BROWSE_VENV", "~/.venvs/browse")), "bin", "python")
+try:
+    from playwright.async_api import async_playwright, TimeoutError as PWTimeout
+except ImportError:
+    if os.path.exists(VENV_PY) and os.path.realpath(sys.prefix) != os.path.realpath(
+            os.path.dirname(os.path.dirname(VENV_PY))):
+        os.execv(VENV_PY, [VENV_PY] + sys.argv)
+    print("browse: playwright is not installed ($BROWSE_VENV, default ~/.venvs/browse)", file=sys.stderr)
+    sys.exit(1)
+
+# Reuse ./fetch's address rules (one home for them). fetch re-executes itself under its own venv
+# when trafilatura is missing; a stub module keeps that from hijacking this process.
+sys.modules.setdefault("trafilatura", types.ModuleType("trafilatura"))
+_here = os.path.dirname(os.path.realpath(__file__))
+_loader = importlib.machinery.SourceFileLoader("fetch_guard", os.path.join(_here, "fetch"))
+_spec = importlib.util.spec_from_loader("fetch_guard", _loader)
+fetch = importlib.util.module_from_spec(_spec)
+_loader.exec_module(fetch)
+
+MAX_TEXT = 2 * 1024 * 1024
+STABLE_S = 2.0          # text unchanged this long = settled (ruling 1 in the spec)
+BLOCK_HEAD = 300        # a block phrase counts only in the title or the first 300 characters
+CHROME_ARGS = [
+    "--proxy-bypass-list=<-loopback>",
+    "--disable-quic",
+    "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
+    "--webrtc-ip-handling-policy=disable_non_proxied_udp",
+    "--disable-background-networking",
+    "--disable-sync",
+    "--no-first-run",
+    "--disable-features=DnsOverHttps,AsyncDns",
+]
+
+
+def strip_invisible(t):
+    """fetch.clean drops C0/C1 controls; also drop format characters (bidi overrides, zero-width)
+    and turn line/paragraph separators into newlines (independent test finding)."""
+    out = []
+    for ch in t:
+        cat = unicodedata.category(ch)
+        if cat == "Cf":
+            continue
+        out.append("\n" if cat in ("Zl", "Zp") else ch)
+    return "".join(out)
+
+
+def looks_blocked(title, text):
+    """A challenge page names itself up front and says little else. An article that merely
+    mentions "Access Denied" further down is content (independent test finding)."""
+    head = f"{title}\n{text[:BLOCK_HEAD]}"
+    if fetch.BLOCKED.search(head) and len(text) < 3000:
+        return "a block or challenge page, not the content"
+    if len(text) < fetch.MIN_TEXT:
+        return f"only {len(text)} characters of text"
+    return None
+
+
+def die(msg, code=1):
+    print(f"browse: {fetch.clean(msg)}", file=sys.stderr)
+    sys.exit(code)
+
+
+class GuardProxy:
+    """HTTP proxy: CONNECT for https and wss, absolute-URI requests for plain http.
+    Every destination is resolved here, filtered to public addresses, and dialled by IP."""
+
+    def __init__(self):
+        self.refused = []
+        self.server = None
+        self.port = None
+
+    async def start(self):
+        self.server = await asyncio.start_server(self.handle, "127.0.0.1", 0)
+        self.port = self.server.sockets[0].getsockname()[1]
+
+    async def close(self):
+        if self.server:
+            self.server.close()
+            await self.server.wait_closed()
+
+    async def resolve(self, host, port):
+        try:
+            ip = ipaddress.ip_address(host.strip("[]"))
+            addrs = [str(ip)]
+        except ValueError:
+            loop = asyncio.get_running_loop()
+            try:
+                # fetch has replaced socket.getaddrinfo with its public-only filter.
+                infos = await loop.run_in_executor(None, socket.getaddrinfo, host, port,
+                                                   0, socket.SOCK_STREAM)
+            except (socket.gaierror, OSError):
+                return None
+            addrs = [i[4][0] for i in infos]
+        addrs = [a for a in addrs if fetch._is_public_ip(a)]
+        return addrs[0] if addrs else None
+
+    async def refuse(self, writer, target):
+        self.refused.append(target)
+        try:
+            writer.write(b"HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+            await writer.drain()
+        finally:
+            writer.close()
+
+    async def pipe(self, r, w):
+        try:
+            while data := await r.read(65536):
+                w.write(data)
+                await w.drain()
+        except (ConnectionError, asyncio.CancelledError):
+            pass
+        finally:
+            try:
+                w.close()
+            except Exception:
+                pass
+
+    async def handle(self, reader, writer):
+        try:
+            head = await asyncio.wait_for(reader.readuntil(b"\r\n\r\n"), 30)
+        except Exception:
+            writer.close()
+            return
+        line, _, rest = head.partition(b"\r\n")
+        try:
+            method, target, version = line.decode("latin-1").split(" ", 2)
+        except ValueError:
+            writer.close()
+            return
+        if method.upper() == "CONNECT":
+            host, _, port = target.rpartition(":")
+            port = int(port or 443)
+            ip = await self.resolve(host, port)
+            if not ip:
+                return await self.refuse(writer, target)
+            try:
+                ur, uw = await asyncio.wait_for(asyncio.open_connection(ip, port), 20)
+            except Exception:
+                return await self.refuse(writer, target)
+            writer.write(b"HTTP/1.1 200 Connection Established\r\n\r\n")
+            await writer.drain()
+        else:
+            u = urllib.parse.urlsplit(target)
+            if u.scheme != "http" or not u.hostname:
+                return await self.refuse(writer, target)
+            port = u.port or 80
+            ip = await self.resolve(u.hostname, port)
+            if not ip:
+                return await self.refuse(writer, target)
+            try:
+                ur, uw = await asyncio.wait_for(asyncio.open_connection(ip, port), 20)
+            except Exception:
+                return await self.refuse(writer, target)
+            path = urllib.parse.urlunsplit(("", "", u.path or "/", u.query, ""))
+            uw.write(f"{method} {path} {version}\r\n".encode("latin-1") + rest)
+            await uw.drain()
+        await asyncio.gather(self.pipe(reader, uw), self.pipe(ur, writer))
+
+
+async def settle(page, deadline):
+    """Wait until the rendered text stops changing for STABLE_S. Network quiet is NOT required:
+    analytics beacons keep many real pages busy forever. Returns False if the text was still
+    changing at the deadline."""
+    loop = asyncio.get_running_loop()
+    last, since = None, loop.time()
+    while loop.time() < deadline:
+        cur = await page.evaluate("() => document.body ? document.body.innerText : ''")
+        if cur != last:
+            last, since = cur, loop.time()
+        elif loop.time() - since >= STABLE_S:
+            return True
+        await asyncio.sleep(0.25)
+    return False
+
+
+async def render(url, timeout, show_refused, partial):
+    proxy = GuardProxy()
+    await proxy.start()
+    browser = None
+    # Chrome and Playwright's driver write temp files; give them a private dir removed on exit
+    # (an independent test found a .org.chromium.Chromium.* entry left in 2 of 24 runs).
+    tmp = tempfile.mkdtemp(prefix="browse-")
+    os.environ["TMPDIR"] = tmp
+    try:
+        async with async_playwright() as pw:
+            browser = await pw.chromium.launch(
+                headless=True, args=CHROME_ARGS, chromium_sandbox=True,
+                env={**os.environ, "TMPDIR": tmp},
+                proxy={"server": f"http://127.0.0.1:{proxy.port}", "bypass": "<-loopback>"})
+            ctx = await browser.new_context(accept_downloads=False, service_workers="block",
+                                            user_agent=fetch.UA, java_script_enabled=True)
+
+            async def only_web(route):
+                if urllib.parse.urlsplit(route.request.url).scheme in ("http", "https", "data",
+                                                                       "blob"):
+                    await route.continue_()
+                else:
+                    proxy.refused.append(route.request.url)
+                    await route.abort()
+
+            await ctx.route("**/*", only_web)
+            page = await ctx.new_page()
+            deadline = asyncio.get_running_loop().time() + timeout
+            try:
+                resp = await page.goto(url, wait_until="domcontentloaded", timeout=timeout * 1000)
+                left = max(0.5, deadline - asyncio.get_running_loop().time())
+                try:
+                    await page.wait_for_load_state("networkidle", timeout=min(left, 8) * 1000)
+                except PWTimeout:
+                    pass
+                settled = await settle(page, deadline)
+            except PWTimeout:
+                die(f"timed out after {timeout}s before the page loaded ({url})")
+            except Exception as e:
+                die(f"could not load {url}: {str(e).splitlines()[0]}")
+            final = page.url
+            if not final.startswith(("http://", "https://")):
+                die(f"the page ended on a non-web address ({final}); refused", 2)
+            text = await page.evaluate("() => document.body ? document.body.innerText : ''")
+            title = await page.title()
+            status = resp.status if resp else 0
+            await browser.close()
+            browser = None
+    finally:
+        if browser:
+            await browser.close()
+        await proxy.close()
+        shutil.rmtree(tmp, ignore_errors=True)
+    if show_refused or proxy.refused:
+        print(f"[browse: proxy refused {len(proxy.refused)} request(s)]", file=sys.stderr)
+        if show_refused:
+            for t in proxy.refused:
+                print(f"  refused {fetch.clean(t)}", file=sys.stderr)
+    text = strip_invisible(fetch.clean(text)).strip()
+    title = strip_invisible(fetch.clean(title)).strip()
+    if status >= 400:
+        die(f"HTTP {status} from {final}")
+    if len(text.encode()) > MAX_TEXT:
+        die(f"{len(text.encode())} bytes of text is over the {MAX_TEXT}-byte limit; refused")
+    why = looks_blocked(title, text)
+    if why:
+        die(f"blocked or empty: {why} ({final})")
+    if not settled and not partial:
+        die(f"the page was still changing after {timeout}s; not printed as a result "
+            f"(--partial prints what had rendered, labelled) ({final})")
+    note = "" if settled else f" PARTIAL: still changing at {timeout}s"
+    print(f"[browse: rendered {fetch.clean(final)}{note}]")
+    print(text)
+
+
+def main(argv):
+    timeout, show, partial = 30, False, False
+    rest = []
+    it = iter(argv)
+    for a in it:
+        if a == "--timeout":
+            try:
+                timeout = int(next(it))
+            except (StopIteration, ValueError):
+                die("--timeout needs whole seconds", 2)
+        elif a == "--show-refused":
+            show = True
+        elif a == "--partial":
+            partial = True
+        elif a in ("-h", "--help"):
+            print(__doc__)
+            return
+        elif a.startswith("-"):
+            die(f"unknown option {a}", 2)
+        else:
+            rest.append(a)
+    if len(rest) != 1:
+        die("usage: browse [--timeout S] [--show-refused] [--partial] <url>", 2)
+    url = rest[0].strip()
+    u = urllib.parse.urlsplit(url)
+    if u.scheme not in ("http", "https"):
+        die(f"refused: only http(s) URLs ({url})", 2)
+    if not fetch.public_host(u.hostname):
+        die(f"refused: {u.hostname} is not a public address (or does not resolve)", 2)
+    if re.search(r"(^|\.)(x|twitter)\.com$", u.hostname or ""):
+        die("X posts: use bin/xread, which reads them properly", 2)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(1))
+    asyncio.run(render(url, timeout, show, partial))
+
+
+if __name__ == "__main__":
+    try:
+        main(sys.argv[1:])
+    except KeyboardInterrupt:
+        sys.exit(130)
