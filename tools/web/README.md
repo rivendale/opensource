@@ -11,6 +11,8 @@ Both print text and never pass page text to a model or a shell. Treat their outp
 
 ## Install
 
+Needs Python 3.10+ with the `venv` module (on Debian and Ubuntu: `sudo apt install python3-venv`).
+
 ```sh
 python3 -m venv ~/.venvs/fetch && ~/.venvs/fetch/bin/pip install trafilatura      # optional; a stdlib fallback exists
 python3 -m venv ~/.venvs/browse && ~/.venvs/browse/bin/pip install 'playwright==1.63.0'

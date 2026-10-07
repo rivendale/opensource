@@ -13,7 +13,7 @@ ROUTES, in order (each is tried only if the one before failed):
                  with trafilatura (pinned in $FETCH_VENV, default ~/.venvs/fetch) or a stdlib fallback. PDFs go
                  through pdftotext.
   3. archive     the Wayback Machine's newest snapshot, labelled as archived with its date.
-X posts are refused with a pointer to bin/xread, which reads them properly.
+X posts are refused: x.com answers plain clients with an error page.
 
 FAILURE LIST, written before the code:
   1. a scheme other than http(s): file://, ftp://, data: -> exit 2, nothing fetched
@@ -84,8 +84,17 @@ TAILNET = ipaddress.ip_network("100.64.0.0/10")
 _REAL_GETADDRINFO = socket.getaddrinfo
 
 
+NAT64 = ipaddress.ip_network("64:ff9b::/96")
+
+
 def _is_public_ip(addr):
     ip = ipaddress.ip_address(addr.split("%")[0])
+    # An IPv4 address inside IPv6 is judged as the IPv4 it carries: '::ffff:100.64.0.1' passed the tailnet check,
+    # which only runs for version 4 (second read of rivendale/opensource#20, P1, 2026-10-07). Same for NAT64.
+    if ip.version == 6 and ip.ipv4_mapped:
+        ip = ip.ipv4_mapped
+    elif ip.version == 6 and ip in NAT64:
+        ip = ipaddress.ip_address(int(ip) & 0xFFFFFFFF)
     return not (ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
                 or ip.is_multicast or ip.is_unspecified or (ip.version == 4 and ip in TAILNET))
 
@@ -309,7 +318,7 @@ def main(argv):
         check_url(url)
         host = urllib.parse.urlsplit(url).hostname or ""
         if re.search(r"(^|\.)(x|twitter)\.com$", host):
-            die("X posts: use bin/xread, which reads them properly", 2)
+            die("X posts are not supported: x.com refuses plain clients; use the X API or a dedicated reader", 2)
     order = [only] if only else (["scholarly"] if scholarly else []) + (
         ["direct", "archive"] if url else [])
     if not order:

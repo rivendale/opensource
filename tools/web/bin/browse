@@ -320,7 +320,7 @@ def main(argv):
     if not fetch.public_host(u.hostname):
         die(f"refused: {u.hostname} is not a public address (or does not resolve)", 2)
     if re.search(r"(^|\.)(x|twitter)\.com$", u.hostname or ""):
-        die("X posts: use bin/xread, which reads them properly", 2)
+        die("X posts are not supported: x.com refuses plain clients; use the X API or a dedicated reader", 2)
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(1))
     asyncio.run(render(url, timeout, show, partial))
 
