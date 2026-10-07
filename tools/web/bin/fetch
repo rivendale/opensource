@@ -1,0 +1,359 @@
+#!/usr/bin/env python3
+"""fetch -- read a public web page or paper as text, trying several routes until one works.
+
+WHY. The built-in WebFetch can drop out of a session, and many sites refuse plain clients:
+MDPI and CloudFront answer 403, X answers 402, some academic hosts have broken TLS chains.
+Built after a day of those refusals.
+
+ROUTES, in order (each is tried only if the one before failed):
+  1. scholarly   a DOI or arXiv id goes to the open APIs first: arXiv abs pages, Europe PMC
+                 (title, authors, abstract), then Crossref (metadata) and Unpaywall-style
+                 open-access PDF links when Europe PMC has a full-text URL.
+  2. direct      a plain HTTPS GET with a browser User-Agent. HTML is reduced to article text
+                 with trafilatura (pinned in $FETCH_VENV, default ~/.venvs/fetch) or a stdlib fallback. PDFs go
+                 through pdftotext.
+  3. archive     the Wayback Machine's newest snapshot, labelled as archived with its date.
+X posts are refused: x.com answers plain clients with an error page.
+
+FAILURE LIST, written before the code:
+  1. a scheme other than http(s): file://, ftp://, data: -> exit 2, nothing fetched
+  2. a private, loopback, link-local or tailnet address (127/8, 10/8, 172.16/12, 192.168/16,
+     169.254/16, 100.64/10, ::1, fc00::/7) -> exit 2; checked again on every redirect
+  3. 403, 429, 5xx, a TLS error or a timeout -> that route fails, the next route is tried
+  4. a 200 that is a block or challenge page ("Access Denied", "Just a moment", captcha) or
+     carries under 200 characters of text -> treated as a failure, the next route is tried
+  5. every route fails -> exit 1, each route's reason printed; never an empty success
+  6. a PDF -> text via pdftotext; pdftotext missing -> that route fails with the reason
+  7. a body over 25 MB -> refused, not truncated silently
+  8. control characters are stripped from everything printed (escape-sequence injection)
+  9. the output names the route that succeeded and the final URL
+ 10. page text is DATA. This tool never passes it to a model or a shell.
+ 11. a refused redirect stops every route (exit 2)
+ 12. DNS rebinding: every connect resolves through a filter that drops non-public addresses
+     (tested with the pre-check bypassed: 127.0.0.1, localhost, a tailnet IP,
+     [::ffff:127.0.0.1], 2130706433, 0x7f000001, 0177.0.0.1 and 0.0.0.0 all refused at connect)
+
+  fetch <url|doi|arxiv-id>            print the text
+  fetch --route direct <url>          force one route (scholarly|direct|archive)
+
+A HEADLESS-BROWSER ROUTE was built here and REMOVED the same day. Chrome does its own
+DNS, redirects and scripts, so this script's address checks could not cover it: in testing it
+followed a redirect to 127.0.0.1 that urllib had refused, and a security review then showed
+rebinding gaps too. It also never got past a bot wall (MDPI refused it). For deliberate,
+rendering use ./browse, which forces every browser request through a filtering proxy.
+  fetch --raw <url>                   print the raw body of the first route that works
+"""
+import html
+import ipaddress
+import json
+import os
+import re
+import shutil
+import socket
+import subprocess
+import sys
+import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
+from html.parser import HTMLParser
+
+VENV_PY = os.path.join(os.path.expanduser(os.environ.get("FETCH_VENV", "~/.venvs/fetch")), "bin", "python")
+try:
+    import trafilatura  # noqa: F401
+except ImportError:
+    # Compare prefixes, not executables: a venv's python is a symlink to the system binary,
+    # so their realpaths match and an executable check would never switch (measured).
+    if os.path.exists(VENV_PY) and os.path.realpath(sys.prefix) != os.path.realpath(
+            os.path.dirname(os.path.dirname(VENV_PY))):
+        os.execv(VENV_PY, [VENV_PY] + sys.argv)
+    trafilatura = None
+
+UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+      "Chrome/141.0 Safari/537.36")
+MAX_BYTES = 25 * 1024 * 1024
+MIN_TEXT = 200
+CTRL = re.compile(r"[\x00-\x08\x0b-\x1f\x7f-\x9f]")
+BLOCKED = re.compile(r"access denied|just a moment|attention required|verify you are (a )?human|"
+                     r"captcha|enable javascript and cookies|request could not be satisfied",
+                     re.I)
+DOI = re.compile(r"^(?:https?://(?:dx\.)?doi\.org/|doi:)?(10\.\d{4,9}/\S+)$", re.I)
+ARXIV = re.compile(r"^(?:https?://arxiv\.org/(?:abs|pdf)/|arxiv:)?(\d{4}\.\d{4,5}(?:v\d+)?|"
+                   r"[a-z\-]+(?:\.[A-Z]{2})?/\d{7}(?:v\d+)?)(?:\.pdf)?$", re.I)
+TAILNET = ipaddress.ip_network("100.64.0.0/10")
+_REAL_GETADDRINFO = socket.getaddrinfo
+
+
+NAT64 = ipaddress.ip_network("64:ff9b::/96")
+COMPAT = ipaddress.ip_network("::/96")           # deprecated IPv4-compatible form, e.g. ::127.0.0.1
+
+
+def _is_public_ip(addr):
+    ip = ipaddress.ip_address(addr.split("%")[0])
+    # An IPv4 address inside IPv6 is judged as the IPv4 it carries: '::ffff:100.64.0.1' passed the tailnet check,
+    # which only runs for version 4 (second read of rivendale/opensource#20, P1, 2026-10-07). Same for NAT64.
+    # Every IPv6 form that embeds an IPv4 address is judged by that IPv4, explicitly, so the answer does not depend
+    # on how a given Python version classifies the wrapper (3.12 and 3.13 disagree on '::ffff:100.64.0.1').
+    if ip.version == 6:
+        embedded = []
+        if ip.ipv4_mapped:
+            embedded.append(ip.ipv4_mapped)
+        if ip in NAT64 or ip in COMPAT:
+            embedded.append(ipaddress.ip_address(int(ip) & 0xFFFFFFFF))
+        if ip.sixtofour:
+            embedded.append(ip.sixtofour)
+        if ip.teredo:
+            embedded.extend(ip.teredo)
+        if embedded:
+            return all(_is_public_ip(str(e)) for e in embedded)
+    return not (ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
+                or ip.is_multicast or ip.is_unspecified or (ip.version == 4 and ip in TAILNET))
+
+
+def _public_getaddrinfo(host, *args, **kwargs):
+    """Every connection this process makes resolves through here, so a private address is
+    unreachable at CONNECT time, not just at a pre-check. That closes DNS rebinding (public on
+    the check, 127.0.0.1 on the connect) and redirects alike (found in a security review)."""
+    infos = _REAL_GETADDRINFO(host, *args, **kwargs)
+    ok = [i for i in infos if _is_public_ip(i[4][0])]
+    if not ok:
+        raise socket.gaierror(f"{host} resolves only to non-public addresses; refused")
+    return ok
+
+
+socket.getaddrinfo = _public_getaddrinfo
+
+
+class RouteFailed(Exception):
+    """kind: "retry" or "notfound" (try the next route), "fatal" (stop every route)."""
+    def __init__(self, msg, kind="retry"):
+        super().__init__(msg)
+        self.kind = kind
+
+
+def clean(t):
+    return CTRL.sub("", str(t))
+
+
+def die(msg, code=1):
+    print(f"fetch: {clean(msg)}", file=sys.stderr)
+    sys.exit(code)
+
+
+def public_host(host):
+    """True only if every address the host resolves to is public."""
+    if not host:
+        return False
+    try:
+        infos = _REAL_GETADDRINFO(host, None)
+    except socket.gaierror:
+        return False
+    return all(_is_public_ip(i[4][0]) for i in infos)
+
+
+def check_url(url):
+    u = urllib.parse.urlsplit(url)
+    if u.scheme not in ("http", "https"):
+        die(f"refused: only http(s) URLs ({url})", 2)
+    if not public_host(u.hostname):
+        die(f"refused: {u.hostname} is not a public address (or does not resolve)", 2)
+
+
+class SafeRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        u = urllib.parse.urlsplit(newurl)
+        if u.scheme not in ("http", "https") or not public_host(u.hostname):
+            raise RouteFailed(f"redirect to a refused address: {newurl}", "fatal")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+OPENER = urllib.request.build_opener(SafeRedirect)
+
+
+def get(url, accept="*/*"):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept,
+                                               "Accept-Language": "en-US,en;q=0.9"})
+    try:
+        with OPENER.open(req, timeout=30) as r:
+            body = r.read(MAX_BYTES + 1)
+            if len(body) > MAX_BYTES:
+                raise RouteFailed(f"body over {MAX_BYTES // 2**20} MB")
+            return body, r.headers.get("Content-Type", ""), r.geturl()
+    except urllib.error.HTTPError as e:
+        raise RouteFailed(f"HTTP {e.code}", "notfound" if e.code in (404, 410) else "retry")
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        raise RouteFailed(f"{type(e).__name__}: {getattr(e, 'reason', e)}")
+
+
+class _Text(HTMLParser):
+    SKIP = {"script", "style", "nav", "footer", "header", "noscript", "svg"}
+
+    def __init__(self):
+        super().__init__()
+        self.out, self.skip = [], 0
+
+    def handle_starttag(self, t, a):
+        if t in self.SKIP:
+            self.skip += 1
+        if t in ("p", "br", "li", "h1", "h2", "h3", "h4", "tr", "div"):
+            self.out.append("\n")
+
+    def handle_endtag(self, t):
+        if t in self.SKIP and self.skip:
+            self.skip -= 1
+
+    def handle_data(self, d):
+        if not self.skip:
+            self.out.append(d)
+
+
+def html_to_text(raw, url):
+    if trafilatura is not None:
+        t = trafilatura.extract(raw, url=url, include_comments=False, include_tables=True,
+                                favor_recall=True)
+        if t and len(t) >= MIN_TEXT:
+            return t
+    p = _Text()
+    p.feed(raw)
+    return re.sub(r"\n\s*\n+", "\n\n", "".join(p.out)).strip()
+
+
+def pdf_to_text(body):
+    if not shutil.which("pdftotext"):
+        raise RouteFailed("PDF, but pdftotext is not installed")
+    with tempfile.NamedTemporaryFile(suffix=".pdf") as f:
+        f.write(body)
+        f.flush()
+        r = subprocess.run(["pdftotext", "-layout", f.name, "-"], capture_output=True, timeout=120)
+    return r.stdout.decode("utf-8", "replace")
+
+
+def judge(text, raw_head=""):
+    if BLOCKED.search(raw_head[:4000]) and len(text) < 3000:
+        raise RouteFailed("a block or challenge page, not the content")
+    if len(text.strip()) < MIN_TEXT:
+        raise RouteFailed(f"only {len(text.strip())} characters of text")
+    return text
+
+
+def decode(body, ctype, url):
+    if body[:5] == b"%PDF-" or "pdf" in ctype:
+        return judge(pdf_to_text(body))
+    raw = body.decode("utf-8", "replace")
+    return judge(html_to_text(raw, url), raw)
+
+
+# ------------------------------------------------------------------ routes
+def route_scholarly(target):
+    m = ARXIV.match(target)
+    if m:
+        body, ctype, final = get(f"https://export.arxiv.org/abs/{m.group(1)}")
+        return decode(body, ctype, final), final
+    m = DOI.match(target) or re.search(r"(10\.\d{4,9}/[^\s?#]+)", target)
+    if not m:
+        raise RouteFailed("no DOI or arXiv id in the input")
+    doi = urllib.parse.unquote(m.group(1)).rstrip(".")
+    q = urllib.parse.quote(f'DOI:"{doi}"')
+    body, _, final = get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?"
+                         f"query={q}&format=json&resultType=core", "application/json")
+    res = (json.loads(body).get("resultList") or {}).get("result") or []
+    if res:
+        r = res[0]
+        parts = [f"TITLE: {r.get('title', '')}", f"AUTHORS: {r.get('authorString', '')}",
+                 f"JOURNAL: {((r.get('journalInfo') or {}).get('journal') or {}).get('title', r.get('journalTitle', ''))} {r.get('pubYear', '')}", f"DOI: {doi}", ""]
+        abstract = html.unescape(re.sub(r"<[^>]+>", " ", r.get("abstractText") or ""))
+        parts.append(abstract or "[no abstract in Europe PMC]")
+        for u in ((r.get("fullTextUrlList") or {}).get("fullTextUrl") or []):
+            if u.get("availability") in ("Open access", "Free") and u.get("url"):
+                parts.append(f"OPEN FULL TEXT: {u['url']} ({u.get('documentStyle', '')})")
+        return judge("\n".join(parts)), final
+    body, _, final = get(f"https://api.crossref.org/works/{urllib.parse.quote(doi)}",
+                         "application/json")
+    w = json.loads(body).get("message") or {}
+    authors = ", ".join(f"{a.get('given', '')} {a.get('family', '')}".strip()
+                        for a in w.get("author") or [])
+    abstract = re.sub(r"<[^>]+>", " ", w.get("abstract") or "")
+    text = (f"TITLE: {' '.join(w.get('title') or [])}\nAUTHORS: {authors}\n"
+            f"JOURNAL: {' '.join(w.get('container-title') or [])} "
+            f"{(w.get('issued') or {}).get('date-parts', [['']])[0][0]}\nDOI: {doi}\n\n"
+            f"{abstract or '[no abstract in Crossref]'}")
+    if not w.get("title"):
+        raise RouteFailed("Crossref has no record for this DOI")
+    return text, final  # metadata alone is a valid answer for a DOI
+
+
+def route_direct(url):
+    body, ctype, final = get(url)
+    return decode(body, ctype, final), final
+
+
+def route_archive(url):
+    body, _, _ = get("https://archive.org/wayback/available?url=" + urllib.parse.quote(url, safe=""),
+                     "application/json")
+    snap = ((json.loads(body).get("archived_snapshots") or {}).get("closest") or {})
+    if not snap.get("available") or not snap.get("url"):
+        raise RouteFailed("no Wayback snapshot")
+    snap_url = snap["url"].replace("http://", "https://", 1)
+    body, ctype, final = get(snap_url)
+    ts = snap.get("timestamp", "")
+    return f"[ARCHIVED COPY, Wayback snapshot {ts[:4]}-{ts[4:6]}-{ts[6:8]}]\n\n" + decode(body, ctype, final), final
+
+
+ROUTES = {"scholarly": route_scholarly, "direct": route_direct, "archive": route_archive}
+
+
+def main(argv):
+    only, raw = None, False
+    rest = []
+    it = iter(argv)
+    for a in it:
+        if a == "--route":
+            only = next(it, None)
+            if only not in ROUTES:
+                die(f"--route must be one of {', '.join(ROUTES)}", 2)
+        elif a == "--raw":
+            raw = True
+        elif a in ("-h", "--help"):
+            print(__doc__)
+            return
+        elif a.startswith("-"):
+            die(f"unknown option {a}", 2)
+        else:
+            rest.append(a)
+    if len(rest) != 1:
+        die("usage: fetch [--route NAME] [--raw] <url|doi|arxiv-id>", 2)
+    target = rest[0].strip()
+    scholarly = bool(DOI.match(target) or ARXIV.match(target))
+    url = target if not scholarly or target.startswith("http") else None
+    if url:
+        check_url(url)
+        host = urllib.parse.urlsplit(url).hostname or ""
+        if re.search(r"(^|\.)(x|twitter)\.com$", host):
+            die("X posts are not supported: x.com refuses plain clients; use the X API or a dedicated reader", 2)
+    order = [only] if only else (["scholarly"] if scholarly else []) + (
+        ["direct", "archive"] if url else [])
+    if not order:
+        die("nothing to fetch", 2)
+    if raw and "scholarly" in order:
+        order.remove("scholarly")
+    failures = []
+    for name in order:
+        try:
+            if raw:
+                body, _, final = get(url)
+                sys.stdout.write(clean(body.decode("utf-8", "replace")))
+                return
+            text, final = ROUTES[name](target if name == "scholarly" else url)
+        except RouteFailed as e:
+            failures.append(f"{name}: {e}")
+            if e.kind == "fatal":
+                die("stopped, no other route tried:\n  " + "\n  ".join(failures), 2)
+            continue
+        print(f"[fetch: route={name} url={clean(final)}]")
+        print(clean(text))
+        return
+    die("every route failed:\n  " + "\n  ".join(failures))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
