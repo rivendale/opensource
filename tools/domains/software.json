@@ -2434,6 +2434,36 @@
    "url": "https://github.com/LibreSprite/LibreSprite",
    "category": "media-image",
    "why": "Pixel-art and sprite-animation editor forked from the last GPL version of Aseprite; its latest stable release is v1.1 (2023), with v1.2 in pre-release since 2025-03-02."
+  },
+  {
+   "name": "pingdotgg/t3code",
+   "url": "https://github.com/pingdotgg/t3code",
+   "category": "local-ai-agents",
+   "why": "Desktop, web and mobile control surface for the coding agents already signed in on your machine (Claude Code, Codex, Cursor, Grok Build, OpenCode, Antigravity), with git worktrees per thread and buttons to commit, push and open a pull request. Worth a trial for interactive work; keep a second reviewer before merge, since one-click push skips one. Its server sends usage events to PostHog by default; set T3CODE_TELEMETRY_ENABLED=false."
+  },
+  {
+   "name": "FeiZhuLulu/Agent-Bridge",
+   "url": "https://github.com/FeiZhuLulu/Agent-Bridge",
+   "category": "mcp",
+   "why": "MCP server that lets one coordinating coding agent drive about ten others (Claude Code, Codex CLI, Grok Build, OpenCode and more) as workers. Not adopted: each handoff passes one agent's output to the next as instructions, so injected text can travel down the chain; independent reviewers that each read the original work are the safer pattern."
+  },
+  {
+   "name": "Osmantic/ODS",
+   "url": "https://github.com/Osmantic/ODS",
+   "category": "local-ai-agents",
+   "why": "One-command installer for a private AI server: local inference, a chat UI, a dashboard, and optional voice, workflows, search, RAG and image tools, wired together. Not adopted: pre-release, and its curl-to-bash installer installs the unsigned main branch; if you already run Ollama, it duplicates that."
+  },
+  {
+   "name": "cloudflare/security-audit-skill",
+   "url": "https://github.com/cloudflare/security-audit-skill",
+   "category": "agent-skills",
+   "why": "Coding-agent skill for multi-phase security audits whose findings are verified independently and written in a machine-readable form. Useful as a reference when checking your own review skill for gaps; adapt the ideas, not the text."
+  },
+  {
+   "name": "garrytan/gstack",
+   "url": "https://github.com/garrytan/gstack",
+   "category": "agent-skills",
+   "why": "A large set of opinionated Claude Code skills; its cso skill is a security audit. Useful as a reference when checking your own review skill for gaps; adapt the ideas, not the text, and pin a commit if you install it."
   }
  ]
 }

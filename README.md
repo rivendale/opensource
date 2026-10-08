@@ -19,7 +19,7 @@ guidance; this repository does not certify an installation or a deployed service
 | domain | what it holds | start here |
 |---|---|---|
 | Games | a genre catalog of 2,718 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
-| Software | 366 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
+| Software | 371 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
 
 | Tools | `tools/web/`: two readers that turn a public web page into text for an agent without trusting the page. `fetch` tries scholarly APIs, a direct read and the Wayback Machine; `browse` renders JavaScript pages in a headless browser whose every request goes through a public-only proxy. 212 independent tests. | [`tools/web/`](tools/web/README.md) |
 
