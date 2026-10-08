@@ -23,16 +23,16 @@ A `copy` row that carries a note reads `copy (see note)`: the note names a part 
 
 ## Categories
 
-Built 2026-10-01: 366 projects, 229 with a permissive code license.
+Built 2026-10-07: 371 projects, 234 with a permissive code license.
 
 | category | projects | copy | library use | study only | check first | covers |
 |---|---|---|---|---|---|---|
 | [Self-hosting](catalog/self-hosting.md) | 34 | 17 | 1 | 14 | 2 | servers, reverse proxies, remote access, monitoring and household apps you run yourself |
 | [Home automation](catalog/home-automation.md) | 6 | 4 | 0 | 1 | 1 | hubs, device bridges, cameras and automations that run locally |
-| [Local AI and agents](catalog/local-ai-agents.md) | 32 | 28 | 0 | 0 | 4 | model runners and servers, coding agents, agent frameworks and evaluation |
+| [Local AI and agents](catalog/local-ai-agents.md) | 34 | 30 | 0 | 0 | 4 | model runners and servers, coding agents, agent frameworks and evaluation |
 | [Agent memory](catalog/agent-memory.md) | 11 | 9 | 0 | 2 | 0 | memory layers, knowledge graphs and context stores that keep what an agent learned across sessions |
-| [MCP servers and SDKs](catalog/mcp.md) | 18 | 17 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
-| [Agent skills and instruction files](catalog/agent-skills.md) | 16 | 13 | 0 | 0 | 3 | instruction files, skills and plugins that change how a coding agent works |
+| [MCP servers and SDKs](catalog/mcp.md) | 19 | 18 | 0 | 1 | 0 | Model Context Protocol servers, SDKs, gateways and debuggers that connect AI tools to other software |
+| [Agent skills and instruction files](catalog/agent-skills.md) | 18 | 15 | 0 | 0 | 3 | instruction files, skills and plugins that change how a coding agent works |
 | [Speech](catalog/speech.md) | 8 | 7 | 0 | 1 | 0 | speech-to-text and text-to-speech that run locally |
 | [Developer tools and security](catalog/dev-security.md) | 27 | 22 | 1 | 3 | 1 | package managers, linters, scanners, supply-chain checks and command-line tools |
 | [Photo libraries](catalog/media-photo.md) | 9 | 2 | 0 | 6 | 1 | photo backup and libraries, RAW development, duplicates and metadata |
@@ -80,7 +80,7 @@ Seeds live in [`tools/domains/software.json`](../tools/domains/software.json): n
 python3 tools/build_catalog.py --domain software --src sources --out .
 ```
 
-**Left out at build time:** 0 of 368 seeds.
+**Left out at build time:** 0 of 373 seeds.
 
 Nothing: every seed was found on GitHub and is not archived.
 

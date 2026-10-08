@@ -228,6 +228,15 @@ infringing content," and Valve reviews AI output the same way as other content.
 reference sheet; keep the same model version and settings for a whole set; then finish every asset
 by hand in GIMP, Krita or Blender (palette remap, cleanup, consistent outlines or texel density).
 
+**A hosted asset service: Scenario, not adopted yet.** [Scenario](https://www.scenario.com) runs a
+remote MCP server (`mcp.scenario.com`) that generates images, video, audio and 3D from an agent, and
+publishes MIT-licensed agent skills for it ([scenario-labs/skills](https://github.com/scenario-labs/skills)).
+Its [pricing page](https://www.scenario.com/pricing), read 2026-10-07, puts custom model training,
+the feature that keeps a set in one style, on the Pro plan and above, and limits the free tier to
+"personal and evaluation use only." Paid plans grant commercial use. Prompts and reference images go
+to Scenario's servers. Try it only when the paid tier fits the budget, and keep the output terms
+with the asset's [provenance record](#record-provenance-in-third_partymd).
+
 **A CC0 base plus AI touch-up is safer than a fully generated asset.** Start from a known-clean
 base such as [Kenney](https://kenney.nl/support), [Poly Haven](https://polyhaven.com/license) or
 [ambientCG](https://docs.ambientcg.com/license/), all CC0 by their own license pages. Kenney's page
