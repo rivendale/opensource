@@ -1,0 +1,80 @@
+{
+ "id": "11k-schemeless-github-tree-sha",
+ "spec_item": 11,
+ "tag": "spec",
+ "title": "the contract lists the form github.com/o/r/tree/a1b2c3d4e5f60718293a (no https://): it resolves like the https form",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/repos/o/r": {
+    "status": 200,
+    "body": "{\"full_name\": \"o/r\", \"html_url\": \"https://github.com/o/r\", \"default_branch\": \"main\", \"stargazers_count\": 1234, \"pushed_at\": \"2026-09-30T10:00:00Z\", \"archived\": false, \"license\": {\"spdx_id\": \"MIT\", \"key\": \"mit\"}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/repos/o/r/commits/main": {
+    "status": 200,
+    "body": "{\"sha\": \"a1b2c3d4e5f60718293a4b5c6d7e8f9012345678\"}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/repos/o/r/commits/a1b2c3d4e5f60718293a4b5c6d7e8f9012345678": {
+    "status": 200,
+    "body": "{\"sha\": \"a1b2c3d4e5f60718293a4b5c6d7e8f9012345678\"}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/repos/o/r/commits/a1b2c3d": {
+    "status": 200,
+    "body": "{\"sha\": \"a1b2c3d4e5f60718293a4b5c6d7e8f9012345678\"}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/repos/o/r/security-advisories": {
+    "status": 200,
+    "body": "[]",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/repos/o/r/license": {
+    "status": 200,
+    "body": "{\"name\": \"LICENSE\", \"path\": \"LICENSE\", \"sha\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"size\": 1070, \"type\": \"file\", \"encoding\": \"base64\", \"content\": \"TGljZW5zZSB0ZXh0Cg==\", \"url\": \"https://api.github.com/repos/o/r/contents/LICENSE?ref=a1b2c3d4e5f60718293a4b5c6d7e8f9012345678\", \"html_url\": \"https://github.com/o/r/blob/a1b2c3d4e5f60718293a4b5c6d7e8f9012345678/LICENSE\", \"git_url\": \"https://api.github.com/repos/o/r/git/blobs/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"download_url\": \"https://raw.githubusercontent.com/o/r/a1b2c3d4e5f60718293a4b5c6d7e8f9012345678/LICENSE\", \"license\": {\"key\": \"mit\", \"name\": \"MIT\", \"spdx_id\": \"MIT\", \"url\": null, \"node_id\": \"x\"}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_GH_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "github.com/o/r/tree/a1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "resolved"
+   },
+   {
+    "path": "identity.sha",
+    "equals": "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
+   }
+  ]
+ },
+ "fake_gh": {
+  "auth": true,
+  "api": {}
+ }
+}

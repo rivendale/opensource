@@ -1,0 +1,48 @@
+{
+ "id": "10c-renamed-repo-redirect-not-followed-to-another-owner",
+ "spec_item": 10,
+ "tag": "assumption",
+ "title": "a 301 from the API pointing at another repo is not followed silently into a different identity",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/repos/old/r": {
+    "redirect": "/repos/new/r",
+    "redirect_status": 301
+   },
+   "/repos/new/r": {
+    "status": 200,
+    "body": "{\"full_name\": \"new/r\", \"html_url\": \"https://github.com/new/r\", \"default_branch\": \"main\", \"stargazers_count\": 1, \"pushed_at\": \"2026-09-30T10:00:00Z\", \"archived\": false, \"license\": {\"spdx_id\": \"MIT\"}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_GH_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "old/r",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0,
+   2
+  ],
+  "not_contains": [
+   "\"canonical_url\": \"https://github\\.com/old/r\""
+  ],
+  "requests": {
+   "A": {
+    "max_count": 3
+   }
+  }
+ },
+ "fake_gh": {
+  "auth": true,
+  "api": {}
+ }
+}

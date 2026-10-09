@@ -1,0 +1,41 @@
+{
+ "id": "14e-paper-needs-no-gh",
+ "spec_item": 14,
+ "tag": "spec",
+ "title": "gh missing does not matter for a paper: it resolves through the arXiv endpoint",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": "<?xml version='1.0'?><feed xmlns='http://www.w3.org/2005/Atom'><entry><id>http://arxiv.org/abs/2301.00001v2</id><title>A Method</title><summary>We show a thing.</summary><published>2023-01-01T00:00:00Z</published></entry></feed>"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "resolved"
+   },
+   {
+    "path": "identity.kind",
+    "equals": "paper"
+   }
+  ],
+  "no_control_chars": true
+ }
+}

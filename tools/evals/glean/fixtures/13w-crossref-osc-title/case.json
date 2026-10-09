@@ -1,0 +1,42 @@
+{
+ "id": "13w-crossref-osc-title",
+ "spec_item": 7,
+ "tag": "spec",
+ "title": "an OSC title sequence in a Crossref title never reaches the output",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/works/10.1000%2Fxyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\", \"message\": {\"DOI\": \"10.1000/xyz123\", \"URL\": \"https://doi.org/10.1000/xyz123\", \"title\": [\"Before \\u001b]0;pwnedtitle\\u0007 after\"], \"license\": []}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/works/10.1000/xyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\", \"message\": {\"DOI\": \"10.1000/xyz123\", \"URL\": \"https://doi.org/10.1000/xyz123\", \"title\": [\"Before \\u001b]0;pwnedtitle\\u0007 after\"], \"license\": []}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_CROSSREF_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "doi:10.1000/xyz123",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "no_control_chars": true,
+  "not_contains": [
+   "pwnedtitle"
+  ]
+ }
+}

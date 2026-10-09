@@ -1,0 +1,52 @@
+{
+ "id": "10b-no-search",
+ "spec_item": 10,
+ "tag": "spec",
+ "title": "an unresolved repo does not trigger a search for a similar name",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/repos/guess/r": {
+    "status": 404,
+    "body": "{\"message\": \"Not Found\"}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/search/repositories": {
+    "status": 200,
+    "body": "{\"items\": [{\"full_name\": \"real/r\"}]}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_GH_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "guess/r",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "requests": {
+   "A": {
+    "paths_exclude": [
+     "/search/repositories"
+    ]
+   }
+  },
+  "not_contains": [
+   "real/r"
+  ]
+ },
+ "fake_gh": {
+  "auth": true,
+  "api": {}
+ }
+}

@@ -14,6 +14,31 @@ checkout and the linked source dates, rather than a summary from an older sessio
 Keep project-specific state and tool readiness in the project that uses this
 guidance; this repository does not certify an installation or a deployed service.
 
+## Borrow ideas with glean
+
+[`glean`](skills/glean/SKILL.md) resolves public repository and paper metadata, pins
+source identities, and checks idea cards for license, fit and credit. Its commands
+are [`tools/glean-resolve`](tools/glean-resolve) and [`tools/glean-check`](tools/glean-check).
+They read data; they never run source code or install a dependency. The commands
+require Python 3.10 or newer; GitHub also needs an already signed-in GitHub CLI.
+
+**Instructions and commands run on your machine.** Review their code, pin a reviewed
+full commit SHA, and read the [tool safety checklist](ai/graphics.md). A skill install
+copies instructions, not the commands or a service. Use a separate reviewed clone
+for the tools. Example install procedure, with your reviewed SHA substituted first:
+
+```sh
+git clone https://github.com/rivendale/opensource.git
+git -C opensource checkout REVIEWED_FULL_COMMIT_SHA
+cd opensource
+npx --package=skills@1.7.0 skills add . --skill glean --agent codex --yes --copy
+```
+
+The installer runs third-party code. Its version is pinned above; review that package
+too. Never substitute a moving branch for the reviewed SHA. The
+[skill instructions](skills/glean/SKILL.md) explain inputs, receipts, refusals and
+what remains unfinished. Harvest for pages is a separate planned skill.
+
 ## Domains
 
 | domain | what it holds | start here |

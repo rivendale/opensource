@@ -1,0 +1,30 @@
+{
+ "id": "I05-empty-file",
+ "spec_item": null,
+ "tag": "principle",
+ "title": "a zero-byte cards file is never an empty success: exit 1 or 2",
+ "tool": "glean-check",
+ "files": {
+  "cards.jsonl": ""
+ },
+ "args": [
+  "cards.jsonl",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   1,
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "in": [
+     "unfinished",
+     "unreadable"
+    ]
+   }
+  ]
+ }
+}

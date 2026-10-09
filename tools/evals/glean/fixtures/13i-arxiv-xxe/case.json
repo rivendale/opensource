@@ -1,0 +1,37 @@
+{
+ "id": "13i-arxiv-xxe",
+ "spec_item": 13,
+ "tag": "principle",
+ "title": "an XML answer with an external entity is not expanded",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": "<?xml version='1.0'?><!DOCTYPE f [<!ENTITY x SYSTEM 'file:///etc/passwd'>]><feed xmlns='http://www.w3.org/2005/Atom'><entry><id>http://arxiv.org/abs/2301.00001v2</id><title>&x;</title><summary>s</summary></entry></feed>"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0,
+   2
+  ],
+  "not_contains": [
+   "root:"
+  ],
+  "stderr_not_contains": [
+   "Traceback"
+  ]
+ }
+}

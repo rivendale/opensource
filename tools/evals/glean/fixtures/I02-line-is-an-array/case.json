@@ -1,0 +1,23 @@
+{
+ "id": "I02-line-is-an-array",
+ "spec_item": null,
+ "tag": "principle",
+ "title": "a line that is a JSON array, not an object: exit 2",
+ "tool": "glean-check",
+ "files": {
+  "cards.jsonl": "[1, 2, 3]\n"
+ },
+ "args": [
+  "cards.jsonl",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "stderr_not_contains": [
+   "Traceback"
+  ]
+ }
+}

@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+"""Validate idea cards; print a receipt for deliberate caller storage, never write it."""
+import argparse
+from build_catalog import license_class as catalog_license_class
+from datetime import datetime, timezone
+import json
+from pathlib import Path
+import re
+import sys
+import unicodedata
+from urllib.parse import urlsplit
+
+CAP = 1048576
+SHA = re.compile(r'[0-9a-fA-F]{40}')
+ARXIV = re.compile(r'(?:arxiv:|https://arxiv.org/abs/)?(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?/\d{7})v[1-9]\d*')
+DOI = re.compile(r'(?:doi:|https://doi.org/)?10\.\d{4,9}/\S+', re.I)
+INJECTION = re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|run this|execute this|system prompt|disable (?:the )?safety|^\s*(?:SYSTEM|ASSISTANT|DEVELOPER):|you are now|disable (?:the )?checks|new instructions', re.I | re.M)
+EFFECT = re.compile(r'\b(?:install|daemon|hosted service|third[- ]party relay|new account)\b', re.I)
+
+
+def clean(text):
+    text = re.sub(r'\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)', '', text)
+    text = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', text)
+    return ''.join(c for c in text if (ord(c) >= 32 and ord(c) != 127 and unicodedata.category(c) != 'Cf') or c in '\n\t')
+
+
+def sanitize(value):
+    if isinstance(value, str):
+        return clean(value)
+    if isinstance(value, list):
+        return [sanitize(v) for v in value]
+    if isinstance(value, dict):
+        result = {}
+        for k, v in value.items():
+            key = clean(k)
+            if key in result:
+                raise ValueError('sanitized JSON keys collide')
+            result[key] = sanitize(v)
+        return result
+    return value
+
+
+def pairs(items):
+    result = {}
+    for key, value in items:
+        if key in result:
+            raise ValueError('duplicate JSON key')
+        result[key] = value
+    return result
+
+
+def reject_constant(value):
+    raise ValueError('nonfinite JSON number')
+
+
+def text(value):
+    return isinstance(value, str) and bool(value.strip())
+
+
+def url(value):
+    if not text(value):
+        return False
+    try:
+        u = urlsplit(value)
+        return u.scheme in ('https', 'http') and bool(u.hostname) and not u.username and not u.password
+    except ValueError:
+        return False
+
+
+def license_class(spdx):
+    # Use the existing catalog classifier; do not maintain a second license table.
+    return {'copy': 'copy', 'library': 'library use', 'study': 'study only',
+            'check': 'check first'}[catalog_license_class(spdx)]
+
+
+def stamp(value):
+    at = datetime.fromisoformat(value.replace('Z', '+00:00')) if value else datetime.now(timezone.utc)
+    if at.tzinfo is None or at.utcoffset() is None:
+        raise ValueError('--now requires a UTC offset')
+    return at.isoformat()
+
+
+class JsonParser(argparse.ArgumentParser):
+    def error(self, message):
+        print(json.dumps({'schemaVersion': 1, 'status': 'unreadable',
+                          'checked_at': None, 'error': clean('invalid arguments: ' + message)},
+                         ensure_ascii=True))
+        raise SystemExit(2)
+
+
+def main():
+    parser = JsonParser(description=__doc__)
+    parser.add_argument('cards')
+    parser.add_argument('--now')
+    args = parser.parse_args()
+    result = {'schemaVersion': 1, 'checked_at': None, 'status': 'unreadable', 'cards': [], 'findings': [], 'undecided_count': 0, 'unplaced_count': 0, 'missing_credit_count': 0}
+    fatal = False
+    pending = False
+    def finding(card_id, code, message):
+        result['findings'].append({'card_id': card_id, 'code': code, 'message': message})
+    try:
+        result['checked_at'] = stamp(args.now)
+        with Path(args.cards).open('rb') as stream:
+            raw = stream.read(CAP + 1)
+        if len(raw) > CAP:
+            raise ValueError('cards over 1 MiB')
+        lines = [line for line in raw.decode('utf-8').splitlines() if line.strip()]
+        if not lines:
+            raise ValueError('empty card input')
+        if len(lines) > 1000:
+            raise ValueError('more than 1000 cards')
+        seen = set()
+        for line in lines:
+            card = json.loads(line, object_pairs_hook=pairs, parse_constant=reject_constant)
+            if not isinstance(card, dict):
+                raise ValueError('card must be an object')
+            card = sanitize(card)
+            card_id = card.get('id')
+            if not text(card_id) or card_id in seen:
+                raise ValueError('card ID missing or duplicated')
+            seen.add(card_id)
+            for key in ('idea', 'solves'):
+                if not text(card.get(key)):
+                    finding(card_id, 'invalid card', key + ' must be nonempty text')
+                    fatal = True
+            where = card.get('where')
+            paper = False
+            if not isinstance(where, dict):
+                finding(card_id, 'card has no WHERE', 'Supply a pinned code or paper location')
+                fatal = True
+                where = {}
+            elif 'doi_or_arxiv' in where:
+                paper = True
+                pin = where.get('doi_or_arxiv')
+                if not text(pin) or not (ARXIV.fullmatch(pin) or DOI.fullmatch(pin)) or not text(where.get('section')):
+                    finding(card_id, 'card has no WHERE', 'Paper requires a DOI or versioned arXiv identity and section')
+                    fatal = True
+            else:
+                if not text(where.get('file')) or type(where.get('line')) is not int or where['line'] < 1:
+                    finding(card_id, 'card has no WHERE', 'Code requires file and positive line number')
+                    fatal = True
+                if not isinstance(where.get('sha'), str) or not SHA.fullmatch(where['sha']):
+                    finding(card_id, 'card has no WHERE', 'Code requires a full commit SHA; branch names are refused')
+                    fatal = True
+            decision = card.get('decision')
+            if decision is not None and decision not in ('take', 'port', 'skip', 'needs-decision'):
+                finding(card_id, 'invalid decision', 'Unknown decision')
+                fatal = True
+            adds = card.get('adds', [])
+            if not isinstance(adds, list) or any(not text(v) for v in adds):
+                finding(card_id, 'invalid adds', 'adds must be a list of nonempty strings')
+                fatal = True
+                adds = []
+            if adds or any(EFFECT.search(card.get(key, '')) for key in ('idea', 'solves', 'target') if isinstance(card.get(key), str)):
+                decision = card['decision'] = 'needs-decision'
+                finding(card_id, 'needs-decision', 'Proposed side effect requires an operator decision')
+            license_info = card.get('license')
+            bare_license = isinstance(license_info, str)
+            if bare_license:
+                license_info = {'spdx': license_info, 'classification': 'check first'}
+            elif not isinstance(license_info, dict):
+                finding(card_id, 'invalid license', 'Copy the license object from glean-resolve')
+                fatal = True
+                license_info = {'spdx': None, 'classification': 'check first'}
+            spdx = license_info.get('spdx')
+            if spdx is not None and not isinstance(spdx, str):
+                finding(card_id, 'invalid license', 'spdx must be text or null')
+                fatal = True
+                spdx = None
+            classification = license_info.get('classification')
+            if classification not in ('copy', 'library use', 'study only', 'check first'):
+                finding(card_id, 'invalid license', 'Resolver classification missing or unknown')
+                fatal = True
+                classification = 'check first'
+            derived = license_class(spdx)
+            if classification == 'copy' and (derived != 'copy' or not url(license_info.get('evidence_url'))):
+                classification = derived if derived != 'copy' else 'check first'
+                finding(card_id, 'license restricted', 'Copy class requires identified permissive license and pinned file evidence')
+            # Treat caller metadata conservatively, never elevate a stricter resolver class.
+            if derived in ('study only', 'library use', 'check first'):
+                classification = derived
+            code = where.get('code_available', False)
+            if type(code) is not bool:
+                finding(card_id, 'invalid code availability', 'code_available must be boolean')
+                fatal = True
+                code = False
+            code_location = text(where.get('file')) and type(where.get('line')) is int and where.get('line', 0) > 0 and isinstance(where.get('sha'), str) and bool(SHA.fullmatch(where['sha']))
+            if decision == 'port' and (classification != 'copy' or (paper and not (code and code_location))):
+                decision = card['decision'] = 'take'
+                finding(card_id, 'port refused', 'license is a bare string; copy the license object from glean-resolve' if bare_license else 'Use the idea only; copying is not permitted by the license or paper code evidence (class: ' + classification + ')')
+            card['license'] = {**license_info, 'classification': classification}
+            if decision is None or decision == 'needs-decision':
+                result['undecided_count'] += 1
+                pending = True
+            if decision == 'skip' and not text(card.get('reason')):
+                finding(card_id, 'invalid card', 'skip requires a reason')
+                fatal = True
+            if decision in ('take', 'port') and not (text(card.get('target')) and text(card.get('done_when'))):
+                result['unplaced_count'] += 1
+                finding(card_id, 'UNPLACED', 'Supply target objective and done_when')
+                pending = True
+            credit = card.get('credit')
+            valid_credit = isinstance(credit, dict) and text(credit.get('author')) and url(credit.get('author_url')) and url(credit.get('source_url')) and text(credit.get('text')) and re.search(r'\badapted from\b', credit['text'], re.I)
+            if decision != 'skip' and not valid_credit:
+                result['missing_credit_count'] += 1
+                finding(card_id, 'missing credit', 'Supply linked author, source and authorship wording: adapted from')
+                pending = True
+            for key in ('idea', 'solves', 'target', 'reason'):
+                value = card.get(key)
+                if isinstance(value, str) and INJECTION.search(value):
+                    finding(card_id, 'INJECTED-INSTRUCTION', 'Quoted data in ' + key + ': ' + value[:500])
+            result['cards'].append(card)
+        if result['undecided_count']:
+            count = result['undecided_count']
+            finding(None, 'UNFINISHED: ' + str(count) + ' cards undecided', 'Pending operator decisions remain')
+        result['status'] = 'unreadable' if fatal else 'unfinished' if pending else 'done'
+        result['receipt'] = {'source': [c.get('where') for c in result['cards']], 'resolved_identity': [c.get('where') for c in result['cards']], 'license': [c.get('license') for c in result['cards']], 'date': result['checked_at'], 'cards': result['cards'], 'decisions': [c.get('decision') for c in result['cards']]}
+        result['durable_log_written'] = False
+    except (ValueError, OSError, UnicodeError, RecursionError) as e:
+        finding(None, 'CANNOT READ', str(e)[:500])
+        result['status'] = 'unreadable'
+    print(json.dumps(sanitize(result), ensure_ascii=True, allow_nan=False))
+    return {'done': 0, 'unfinished': 1, 'unreadable': 2}[result['status']]
+
+
+if __name__ == '__main__':
+    sys.exit(main())
