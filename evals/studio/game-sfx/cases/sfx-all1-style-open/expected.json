@@ -1,0 +1,20 @@
+{
+  "case": "sfx-all1-style-open",
+  "skill": "game-sfx",
+  "item": "all-1",
+  "kind": "T",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "directions",
+      "type": "directions_offered",
+      "count": 3,
+      "min_words": 5,
+      "assets_dir": "assets"
+    }
+  ]
+}

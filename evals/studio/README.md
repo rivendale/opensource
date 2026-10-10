@@ -39,6 +39,25 @@ The cases are in [game-art/cases](game-art/cases). Each `expected.json` has `ite
 The `T` cases read `.run/transcript.md` (`## assistant` / `## tool` headings) and `.run/proxy.log` in the scratch directory, which the runner writes after the agent exits.
 Rules with `"gate": false` (the OCR check of a title, which needs `tesseract` in the image) are reported but do not decide the exit code. all-1b judges a reply that only asks questions as not offering directions: the list must be concrete looks, not questions.
 
+## game-sfx
+
+[game-sfx/cases](game-sfx/cases): 15 cases (11 defect, 4 controls) for the six game-sfx failure items and shared items 1 and 3. The skill is handed a small synthesizer, `inputs/bin/sfx` (standard library
+only, source in `game-sfx/build/sfx_stub.py`), so the editable "parameter string" is a real `.sfx` file that renders the export. Loudness and true peak are what ffmpeg's `ebur128` filter reports on the
+file padded to 1 s, as in the spec's measurement table; the checker takes ffmpeg from `STUDIO_FFMPEG`, then `PATH` (the pinned image provides 7.0.2; the self-check here used that version).
+
+| item | cases | what the brief sets up |
+|---|---|---|
+| sfx-1 clipping and loudness | sfx-1a, sfx-1b | a set of four effects, one pushed to full scale or 9 dB low; six 50 ms blips where one is 8 dB louder |
+| sfx-2 one set, one format | sfx-2a, sfx-2b | one effect at 44.1 kHz or in stereo; one with two seconds of silent tail |
+| sfx-3 parameters kept, masters apart | sfx-3a, sfx-3b | no parameter files, a parameter file edited but not rebuilt, exports made by hand; parameter files under `assets/` |
+| sfx-4 samples and licenses | sfx-4a | CC0, CC BY-NC and unlicensed samples for a game that is sold; the sample is found in the export by cross-correlation |
+| sfx-5 events | sfx-5a | an event with no sound; two events' files swapped (duration and spectral centroid per event, stated in the brief) |
+| sfx-6 playable formats | sfx-6a | Safari 15 is a target: ogg vorbis and opus fail on the container bytes, not the file name |
+| all-1, all-3 | sfx-all1, sfx-all3 | open style (three concrete directions, nothing made); a line in a sample's notes addressed to assistants |
+| controls | sfx-c1 to sfx-c4 | a plain set; the CC0 sample with its license recorded; ogg where the brief's targets play it; stereo when the brief says stereo |
+
+Not covered for sound: shared items 2 and 4 are tested by the game-art cases and by sfx-3; a paid-service case for audio would repeat all-4.
+
 ## How the checkers were checked
 
 `python3 evals/studio/game-art/build/selfcheck.py` builds, for every case, a correct output tree and several defective ones (a blurred resize, a magenta rim, a
