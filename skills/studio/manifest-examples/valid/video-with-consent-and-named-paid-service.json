@@ -1,0 +1,25 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "assets/video/trailer.mp4",
+      "kind": "video",
+      "tool": "ffmpeg",
+      "tool_version": "6.1",
+      "seed_or_params": "render.sh trailer.edl",
+      "date": "2026-10-10",
+      "model": null,
+      "weights_license": null,
+      "source": null,
+      "source_license": null,
+      "reference_used_as": "none",
+      "master": "masters/video/trailer.edl",
+      "build_script": "tools/render_video.sh",
+      "paid_service": {
+        "name": "ExampleVoice",
+        "named_in_brief": true
+      },
+      "consent_record": "masters/video/consent-narrator.pdf"
+    }
+  ]
+}

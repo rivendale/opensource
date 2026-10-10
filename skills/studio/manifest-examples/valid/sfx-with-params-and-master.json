@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "assets/sfx/coin.ogg",
+      "kind": "sfx",
+      "tool": "jsfxr",
+      "tool_version": "1.0.0",
+      "seed_or_params": "{\"wave_type\":1,\"p_base_freq\":0.35,\"p_env_decay\":0.28}",
+      "date": "2026-10-10",
+      "model": null,
+      "weights_license": null,
+      "source": null,
+      "source_license": null,
+      "reference_used_as": "none",
+      "master": "masters/sfx/coin.json",
+      "build_script": "tools/export_sfx.sh",
+      "paid_service": null
+    }
+  ]
+}

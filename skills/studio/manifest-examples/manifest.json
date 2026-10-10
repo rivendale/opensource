@@ -1,0 +1,73 @@
+{
+  "valid": [
+    "hand-drawn-sprite.json",
+    "generated-image-with-model.json",
+    "reused-sample.json",
+    "sfx-with-params-and-master.json",
+    "music-with-midi-master.json",
+    "video-with-consent-and-named-paid-service.json",
+    "title-with-text-from-a-font.json"
+  ],
+  "invalid": {
+    "missing-tool-version.json": {
+      "expect": "assets[0].tool_version",
+      "layer": "schema"
+    },
+    "model-without-weights-license.json": {
+      "expect": "assets[0].weights_license",
+      "layer": "schema"
+    },
+    "source-without-license.json": {
+      "expect": "assets[0].source_license",
+      "layer": "schema"
+    },
+    "bad-date.json": {
+      "expect": "assets[0].date",
+      "layer": "schema"
+    },
+    "parent-segment-path.json": {
+      "expect": "assets[0].file",
+      "layer": "schema"
+    },
+    "absolute-path.json": {
+      "expect": "assets[0].file",
+      "layer": "schema"
+    },
+    "reference-not-in-enum.json": {
+      "expect": "assets[0].reference_used_as",
+      "layer": "schema"
+    },
+    "unknown-kind.json": {
+      "expect": "assets[0].kind",
+      "layer": "schema"
+    },
+    "extra-field.json": {
+      "expect": "assets[0].colour",
+      "layer": "schema"
+    },
+    "wrong-version.json": {
+      "expect": "manifest_version",
+      "layer": "schema"
+    },
+    "empty-seed-object.json": {
+      "expect": "assets[0].seed_or_params",
+      "layer": "schema"
+    },
+    "text-without-font.json": {
+      "expect": "assets[0].text",
+      "layer": "schema"
+    },
+    "master-key-missing.json": {
+      "expect": "assets[0].master",
+      "layer": "schema"
+    },
+    "duplicate-file.json": {
+      "expect": "assets[1].file",
+      "layer": "cross"
+    },
+    "paid-service-not-named.json": {
+      "expect": "assets[0].paid_service",
+      "layer": "cross"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "assets/ui/title.png",
+      "kind": "title",
+      "tool": "ImageMagick",
+      "tool_version": "7.1.1",
+      "seed_or_params": "convert -font Example-Bold.ttf -pointsize 64",
+      "date": "2026-10-10",
+      "model": null,
+      "weights_license": null,
+      "source": null,
+      "source_license": null,
+      "reference_used_as": "none",
+      "master": "masters/ui/title.xcf",
+      "build_script": "tools/make_title.sh",
+      "paid_service": null,
+      "text": [
+        {
+          "string": "Lantern Run",
+          "font": "fonts/Example-Bold.ttf"
+        }
+      ]
+    }
+  ]
+}

@@ -94,6 +94,31 @@ person that did not build it, and measured on cases written by someone other tha
 5. The prototype phones home, adds analytics or loads remote assets the brief did not ask for.
 6. Assets enter the build without manifest rows.
 
+## The asset manifest
+
+`assets/MANIFEST.json` is checked by `skills/studio/validate_manifest.py` against
+[skills/studio/manifest.schema.json](studio/manifest.schema.json). It is `{"manifest_version": 1, "assets": [...]}`,
+with one row per file in the exports folder. Every row has these fields, and a field that does not apply is `null`,
+never left out:
+
+| field | meaning |
+|---|---|
+| `file` | the export, relative to the project root |
+| `kind` | sprite, tile, ui, background, key-art, title, icon, sfx, music, voice, video, model3d, build or other |
+| `tool`, `tool_version` | what made it |
+| `seed_or_params` | the seed, or whatever makes the file again (a jsfxr string, a command line, `hand-drawn`) |
+| `date` | `YYYY-MM-DD` |
+| `model`, `weights_license` | the model and version when one made the file; the weights' terms as read from the model card. A model without a license is invalid |
+| `source`, `source_license` | where reused material came from and its license. A source without a license is invalid |
+| `reference_used_as` | `none`, `layout`, `style` or `character`: how a reference image entered the process |
+| `master` | the editable source, outside the engine's import path |
+| `build_script` | the rerunnable script that makes the export from the master |
+| `paid_service` | `null`, or `{name, named_in_brief}`. `named_in_brief: false` is a failure of shared item 4 |
+| `text`, `consent_record` | optional: each `{string, font}` drawn into an image; the written consent for a real person's likeness or voice |
+
+The validator also checks, given the project root, that every file, master and build script exists, that nothing in
+the exports folder lacks a row, and that no master or build script sits in the engine's import path.
+
 ## Measurement defaults
 
 Every check uses these values unless the brief states its own. A brief may override any row; the skill
@@ -104,16 +129,24 @@ reports the value it used.
 | image size, frame count, tile grid | exact |
 | palette (when one is given) | every opaque pixel is a palette color |
 | transparency matte | no pixel of the background color left with alpha above 0; partial alpha only on the outer 1-pixel edge |
-| sprite-sheet frames | equal cell size; content anchor within 1 px of the same point in every frame; frame order as listed |
-| style consistency across a set | every set member uses the set's declared palette or swatch list |
+| sprite-sheet frames | equal cell size; frame order as listed; the anchor (the bottom-center of the frame's opaque bounding box, unless the brief names another point) within 1 px of the same position in every frame |
+| style consistency across a set | every set member uses the set's declared palette or swatch list. A set that declares neither is not gated on style; the case records an operator-run comparison instead |
+| text drawn into an image | the exact string is drawn from a font file named in the manifest's `text` entry, and the pinned OCR engine, run on a clean render of that image at 2x, returns the string exactly after lower-casing and collapsing whitespace |
+| revision round | outside the mask the case supplies, every pixel of the revised asset is identical to the previous version; the skill's report names the one change it made |
 | audio format | one sample rate and one channel count across a set (48 kHz, stereo for music, mono for effects unless stated) |
 | true peak | at most -1.0 dBTP |
-| effects loudness spread | every effect within 3 LU of the set's median short-term peak loudness |
+| effects loudness spread | every effect's integrated loudness within 3 LU of the set's median. Integrated loudness is ITU-R BS.1770-4 as reported by ffmpeg's `ebur128` filter on the file padded with silence to at least 1 s (`apad`), so a very short effect still has a measurable block; the pinned ffmpeg version is part of the case |
 | music loudness | -16 LUFS integrated per cue, within 1 LU |
 | loop seam | no step at the seam larger than 3 times the median sample-to-sample step in the 50 ms either side |
+| loop tempo at the seam | play the loop twice; the interval between the last onset before the seam and the first onset after it, as found by the case's pinned onset detector, equals the median beat interval of the loop within 1 BPM (60 / interval). A cue with no onsets is not tested for this |
 | tempo, length | within 1 BPM; within 0.5 s or 2%, whichever is larger |
+| key | read from the kept score or MIDI, never estimated from audio: at least 90% of note duration lies on the scale of the key the brief names (major or natural minor unless the brief names a mode) |
 | video loudness | -14 LUFS integrated, within 1 LU; true peak at most -1.0 dBTP |
 | narration accuracy | word error rate at most 5% between a local transcript and the script |
+| narration normalization | both the script and the transcript are lower-cased, punctuation is removed except apostrophes inside words, and numbers are compared as the script spells them; the transcript comes from the narration track alone, with the case's pinned transcription model |
+| prototype first interactive frame | the checker starts the build with the command the brief states, inside the sandbox; it passes when the build prints a line `FIRST_INTERACTIVE_FRAME` (the scaffold prints it after the first frame that accepts input) within the time limit. For an engine that cannot print, a screenshot taken 5 s after start in which more than 1% of pixels differ from the most common color |
+| engine import path | the folder the engine reads assets from, named in the brief (for example `res://` for Godot, `Assets/` for Unity, `Content/` for Unreal, the served directory for a web build). Masters and rebuild scripts are kept outside it, under `masters/` and `tools/` by default |
+| export rebuilt by the kept script | byte-identical for a deterministic tool; for model output with the stated seed, the same size and format and within every tolerance in this table for that asset type |
 | video format | resolution, frame rate and aspect ratio exact; duration within 0.5 s |
 | prototype | starts and reaches its first interactive frame within 30 s on the stated target |
 
@@ -134,9 +167,6 @@ skill. Every control is read cold, before the first run, by someone who has not 
 in at least five of six runs; at least 90% of all case-runs pass. A skill that passes on its development
 cases is then run once on a fresh held-out set before it is called done, and that result is published as it
 stands.
-
-Checks that need a GPU or a long render run outside CI. The case states what the operator must run and what
-the skill must report.
 
 ## Build order
 

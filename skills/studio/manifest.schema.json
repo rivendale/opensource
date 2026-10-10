@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rivendale/opensource/skills/studio/manifest.schema.json",
+  "title": "studio asset manifest (assets/MANIFEST.json)",
+  "description": "One row per asset file a studio skill produces or reuses. Written for skills/SPEC-studio.md, shared contract item 5. Cross-field rules that a schema cannot state (no duplicate files, a paid service must have been named in the brief, files exist, masters stay out of the import path) are in validate_manifest.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_version", "assets"],
+  "properties": {
+    "manifest_version": { "const": 1 },
+    "assets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/row" }
+    }
+  },
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\][^\\\\]*$",
+      "not": { "pattern": "(^|/)\\.\\.(/|$)" },
+      "description": "relative to the project root, forward slashes, no leading slash, no .. segment"
+    },
+    "nonEmpty": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "kind", "tool", "tool_version", "seed_or_params", "date", "model", "weights_license", "source", "source_license", "reference_used_as", "master", "build_script", "paid_service"],
+      "properties": {
+        "file": { "$ref": "#/$defs/path" },
+        "kind": { "enum": ["sprite", "tile", "ui", "background", "key-art", "title", "icon", "sfx", "music", "voice", "video", "model3d", "build", "other"] },
+        "tool": { "$ref": "#/$defs/nonEmpty" },
+        "tool_version": { "$ref": "#/$defs/nonEmpty" },
+        "seed_or_params": {
+          "description": "the seed, or the parameters that make the file again (a jsfxr string, a command line, 'hand-drawn')",
+          "oneOf": [ { "$ref": "#/$defs/nonEmpty" }, { "type": "integer" }, { "type": "object", "minProperties": 1 } ]
+        },
+        "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "model": { "oneOf": [ { "$ref": "#/$defs/nonEmpty" }, { "type": "null" } ], "description": "the model and version when one made the file, else null" },
+        "weights_license": { "oneOf": [ { "$ref": "#/$defs/nonEmpty" }, { "type": "null" } ], "description": "the license or terms of the weights, as read from the model card; required when model is set" },
+        "source": { "oneOf": [ { "$ref": "#/$defs/nonEmpty" }, { "type": "null" } ], "description": "where reused material came from (a URL or a catalog row), else null" },
+        "source_license": { "oneOf": [ { "$ref": "#/$defs/nonEmpty" }, { "type": "null" } ], "description": "the license of the reused material; required when source is set" },
+        "reference_used_as": { "enum": ["none", "layout", "style", "character"], "description": "how a reference image entered the process; none when there was no reference" },
+        "master": { "oneOf": [ { "$ref": "#/$defs/path" }, { "type": "null" } ], "description": "the editable source, kept outside the engine's import path" },
+        "build_script": { "oneOf": [ { "$ref": "#/$defs/path" }, { "type": "null" } ], "description": "the script that makes this export from its master, rerunnable" },
+        "paid_service": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "object", "additionalProperties": false, "required": ["name", "named_in_brief"],
+              "properties": { "name": { "$ref": "#/$defs/nonEmpty" }, "named_in_brief": { "type": "boolean" } } }
+          ]
+        },
+        "text": {
+          "type": "array",
+          "description": "text drawn into an image: each exact string and the font file it was drawn from",
+          "items": { "type": "object", "additionalProperties": false, "required": ["string", "font"],
+                     "properties": { "string": { "$ref": "#/$defs/nonEmpty" }, "font": { "$ref": "#/$defs/nonEmpty" } } }
+        },
+        "consent_record": { "oneOf": [ { "$ref": "#/$defs/path" }, { "type": "null" } ], "description": "the written consent for a real person's likeness or voice, when one appears" }
+      },
+      "allOf": [
+        { "if": { "properties": { "model": { "type": "string" } }, "required": ["model"] },
+          "then": { "properties": { "weights_license": { "type": "string", "minLength": 1, "pattern": "\\S" } } } },
+        { "if": { "properties": { "source": { "type": "string" } }, "required": ["source"] },
+          "then": { "properties": { "source_license": { "type": "string", "minLength": 1, "pattern": "\\S" } } } }
+      ]
+    }
+  }
+}
