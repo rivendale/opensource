@@ -179,6 +179,9 @@ must report.
    `brief.md` and `inputs/` into a fresh scratch directory and nothing else.
 4. **What is captured.** The final scratch tree, the agent's transcript, token usage, wall time, the proxy log and
    the image digest. The scratch tree is kept as the result; the run's own claims are not trusted over it.
+   After the agent exits and before the checker runs, the runner writes the transcript to `.run/transcript.md` and
+   the proxy log to `.run/proxy.log` inside the scratch tree, so checkers that judge process (a restated brief,
+   offered directions, a flagged instruction, an unrequested paid service) read them from there.
 5. **Limits.** 20 minutes wall time, 4 CPUs, 8 GB memory and 2 GB of scratch disk per case unless the case states
    otherwise. A run that hits a limit is a failure, recorded with the limit it hit.
 6. **The checker runs in the same sandbox, after the agent exits.** It reads only the scratch tree and
