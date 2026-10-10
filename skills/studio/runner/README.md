@@ -164,6 +164,13 @@ The self-test found and corrected tmpfs option compatibility, missing entrypoint
 the early-answer probe's handling of a protected directory. A successful self-test does not
 establish model adapter behavior, paid-service behavior, or studio skill scores.
 
+The same receipt also records an actual-container agent flow with a mocked host upstream:
+two model responses, one shell-produced marker, assistant/tool transcript turns, proxy records,
+token usage and three checker rules passed. The host case identifier was absent from model
+messages. A mocked response containing the synthetic authorization marker correctly failed as
+an incident, skipped the checker and kept no scratch tree. Neither run used a real credential
+or contacted a model service. Provider TLS, real model behavior and paid services remain unproved.
+
 Independent Claude review and real evaluation-lane acceptance remain pending.
 GPU device admission is not implemented; GPU cases
 must currently fail rather than silently use a weaker sandbox. The exact tool image and model

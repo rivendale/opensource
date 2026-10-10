@@ -106,5 +106,29 @@
     "passed": 37,
     "total": 37
   },
-  "no_models_or_credentials": true
+  "no_models_or_credentials": true,
+  "synthetic_agent_flow": {
+    "status": "passed",
+    "upstream": "mocked on host; actual container agent and Unix relay",
+    "model_calls": 2,
+    "shell_artifact_verified": true,
+    "assistant_turns": 2,
+    "tool_turns": 1,
+    "reported_tokens": {
+      "prompt_tokens": 4,
+      "completion_tokens": 2,
+      "total_tokens": 6
+    },
+    "checker_rules_passed": 3,
+    "host_case_identifier_absent_from_model_messages": true
+  },
+  "synthetic_key_response_refusal": {
+    "expected_status": "failed",
+    "observed_status": "failed",
+    "incident": true,
+    "scratch_kept": false,
+    "checker_not_run": true,
+    "upstream_calls": 1,
+    "real_credential_used": false
+  }
 }
