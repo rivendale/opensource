@@ -1338,5 +1338,77 @@
    }
   ],
   "read": "2026-10-01"
+ },
+ "electronicarts/CnC_Tiberian_Dawn": {
+  "license": "GPL-3.0 WITH additional terms",
+  "why": "LICENSE.md explicitly releases this source under GPL V3 with additional terms under Section 7.",
+  "note": "Game data is not included. No trademark or publicity rights granted; read LICENSE.md additional terms before use.",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "url": "https://github.com/electronicarts/CnC_Tiberian_Dawn/blob/e0d372dc582c053a699114942b984dad0457f9b3/LICENSE.md",
+    "line": "## ADDITIONAL TERMS per GNU GPL Section 7"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "No trademark or publicity rights are granted. This license does NOT give you",
+    "url": "https://github.com/electronicarts/CnC_Tiberian_Dawn/blob/e0d372dc582c053a699114942b984dad0457f9b3/LICENSE.md"
+   }
+  ],
+  "read": "2026-10-06"
+ },
+ "electronicarts/CnC_Red_Alert": {
+  "license": "GPL-3.0 WITH additional terms",
+  "why": "LICENSE.md explicitly releases this source under GPL V3 with additional terms under Section 7.",
+  "note": "Game data is not included. No trademark or publicity rights granted; read LICENSE.md additional terms before use.",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "url": "https://github.com/electronicarts/CnC_Red_Alert/blob/0dc09bb1d6188d1ec79ab4765b22a48b75ffee32/LICENSE.md",
+    "line": "## ADDITIONAL TERMS per GNU GPL Section 7"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "No trademark or publicity rights are granted. This license does NOT give you",
+    "url": "https://github.com/electronicarts/CnC_Red_Alert/blob/0dc09bb1d6188d1ec79ab4765b22a48b75ffee32/LICENSE.md"
+   }
+  ],
+  "read": "2026-10-06"
+ },
+ "electronicarts/CnC_Renegade": {
+  "license": "GPL-3.0 WITH additional terms",
+  "why": "LICENSE.md explicitly releases this source under GPL V3 with additional terms under Section 7.",
+  "note": "Game data is not included. No trademark or publicity rights granted; read LICENSE.md additional terms before use.",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "url": "https://github.com/electronicarts/CnC_Renegade/blob/3e00c3a1b97381bb28be89a35b856375e0629a08/LICENSE.md",
+    "line": "## ADDITIONAL TERMS per GNU GPL Section 7"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "No trademark or publicity rights are granted. This license does NOT give you",
+    "url": "https://github.com/electronicarts/CnC_Renegade/blob/3e00c3a1b97381bb28be89a35b856375e0629a08/LICENSE.md"
+   }
+  ],
+  "read": "2026-10-06"
+ },
+ "electronicarts/CnC_Generals_Zero_Hour": {
+  "license": "GPL-3.0 WITH additional terms",
+  "why": "LICENSE.md explicitly releases this source under GPL V3 with additional terms under Section 7.",
+  "note": "Game data is not included. No trademark or publicity rights granted; read LICENSE.md additional terms before use.",
+  "evidence": [
+   {
+    "file": "LICENSE.md",
+    "url": "https://github.com/electronicarts/CnC_Generals_Zero_Hour/blob/0a05454d8574207440a5fb15241b98ad0b435590/LICENSE.md",
+    "line": "## ADDITIONAL TERMS per GNU GPL Section 7"
+   },
+   {
+    "file": "LICENSE.md",
+    "line": "No trademark or publicity rights are granted. This license does NOT give you",
+    "url": "https://github.com/electronicarts/CnC_Generals_Zero_Hour/blob/0a05454d8574207440a5fb15241b98ad0b435590/LICENSE.md"
+   }
+  ],
+  "read": "2026-10-06"
  }
 }

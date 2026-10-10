@@ -4,47 +4,47 @@ role-playing, action RPG, MMORPG. 234 projects; 37 with a permissive code licens
 
 | project | reuse | license | language | stars | last push | about |
 |---|---|---|---|---|---|---|
-| [RuneLite](https://github.com/runelite/runelite) | copy | BSD-2-Clause | Java | 5461 | 2026-09-23 | Open source Old School RuneScape client |
-| [Daggerfall Unity](https://github.com/Interkarma/daggerfall-unity) | copy | MIT | C# | 3501 | 2026-09-14 | Open source recreation of Daggerfall in the Unity engine |
-| [OpenGothic](https://github.com/Try/OpenGothic) | copy | MIT | C++ | 1602 | 2026-09-21 | Reimplementation of Gothic 2 Notr |
-| [Diablo JavaScript](https://github.com/mitallast/diablo-js) | copy | MIT | Java | 1006 | 2022-10-11 | Isometric minimal-code style game at html5 canvas and javascript |
-| [ClassicUO](https://github.com/ClassicUO/ClassicUO) | copy | BSD-2-Clause | C# | 726 | 2026-09-23 | ClassicUO - an open source implementation of the Ultima Online Classic Client. |
+| [RuneLite](https://github.com/runelite/runelite) | copy | BSD-2-Clause | Java | 5475 | 2026-10-04 | Open source Old School RuneScape client |
+| [Daggerfall Unity](https://github.com/Interkarma/daggerfall-unity) | copy | MIT | C# | 3513 | 2026-09-14 | Open source recreation of Daggerfall in the Unity engine |
+| [OpenGothic](https://github.com/Try/OpenGothic) | copy | MIT | C++ | 1614 | 2026-10-05 | Reimplementation of Gothic 2 Notr |
+| [Diablo JavaScript](https://github.com/mitallast/diablo-js) | copy | MIT | Java | 1005 | 2022-10-11 | Isometric minimal-code style game at html5 canvas and javascript |
+| [ClassicUO](https://github.com/ClassicUO/ClassicUO) | copy | BSD-2-Clause | C# | 729 | 2026-09-29 | ClassicUO - an open source implementation of the Ultima Online Classic Client. |
 | [OpenVIII](https://github.com/MaKiPL/OpenVIII-monogame) | copy | MIT | C# | 674 | 2024-10-15 archived | Open source Final Fantasy VIII engine implementation in C# working on Windows and Linux (Android and iOS planned too!) [ |
-| [TetraForce](https://github.com/loudsmilestudios/TetraForce) | copy | MIT | GDScript | 668 | 2026-09-05 | GBC Zelda-inspired game with online multiplayer. Built with Godot Engine |
-| [Reldens](https://github.com/damian-pastorini/reldens) | copy | MIT | JavaScript | 582 | 2026-09-23 | Reldens - You can make it - Open Source MMORPG Platform |
-| [REGoth](https://github.com/REGoth-project/REGoth-bs) | copy | MIT | C++ | 503 | 2020-05-29 | Reimplementation of Gothic I and II using modern technologies. |
-| [Vange-rs](https://github.com/kvark/vange-rs) | copy | Apache-2.0 | Rust | 485 | 2026-09-15 | Rusty Vangers clone |
+| [TetraForce](https://github.com/loudsmilestudios/TetraForce) | copy | MIT | GDScript | 667 | 2026-09-05 | GBC Zelda-inspired game with online multiplayer. Built with Godot Engine |
+| [Reldens](https://github.com/damian-pastorini/reldens) | copy | MIT | JavaScript | 588 | 2026-10-06 | Reldens - You can make it - Open Source MMORPG Platform |
+| [REGoth](https://github.com/REGoth-project/REGoth-bs) | copy | MIT | C++ | 504 | 2020-05-29 | Reimplementation of Gothic I and II using modern technologies. |
+| [Vange-rs](https://github.com/kvark/vange-rs) | copy | Apache-2.0 | Rust | 489 | 2026-10-06 | Rusty Vangers clone |
 | [2004scape](https://github.com/2004Scape/Server) | copy | MIT | TypeScript | 386 | 2025-10-14 archived | Moving to https://github.com/LostCityRS/Server |
-| [Open-Ko](https://github.com/Open-KO/KnightOnline) | copy | MIT | C++ | 364 | 2026-08-07 | OpenKO is an open source version of the old school Knight Online MMORPG. Specifically designed for version 1.298. |
+| [Open-Ko](https://github.com/Open-KO/KnightOnline) | copy | MIT | C++ | 366 | 2026-08-07 | OpenKO is an open source version of the old school Knight Online MMORPG. Specifically designed for version 1.298. |
+| [PokeMMO Online Realtime Multiplayer Game](https://github.com/aaron5670/PokeMMO-Online-Realtime-Multiplayer-Game) | copy | WTFPL | JavaScript | 340 | 2026-03-22 | 🕹️ A simple realtime Pokémon MMO game build with Phaser 3, Colyseus.io & Webpack 4 |
 | [UnderworldExporter](https://github.com/hankmorgan/UnderworldExporter) | copy | MIT | C# | 340 | 2024-02-14 archived | Updated Release 27th Oct 2018 Unity based port of Ultima Underworld I and II. Download under releases |
-| [PokeMMO Online Realtime Multiplayer Game](https://github.com/aaron5670/PokeMMO-Online-Realtime-Multiplayer-Game) | copy | WTFPL | JavaScript | 339 | 2026-03-22 | 🕹️ A simple realtime Pokémon MMO game build with Phaser 3, Colyseus.io & Webpack 4 |
-| [Harvest Moon 2.0](https://github.com/Kenny-Haworth/Harvest-Moon-2.0) | copy | MIT | GDScript | 293 | 2020-07-15 | This is a harvest moon game created in Godot. The core aspects of this game are farming, shopping, time, and exploration |
+| [Harvest Moon 2.0](https://github.com/Kenny-Haworth/Harvest-Moon-2.0) | copy | MIT | GDScript | 295 | 2020-07-15 | This is a harvest moon game created in Godot. The core aspects of this game are farming, shopping, time, and exploration |
 | [Magical Life](https://github.com/TBye101/MagicalLife) | copy | MIT | C# | 256 | 2022-12-08 | A 2d game that aspires to be similar to Rimworld, with more depth, magic, and RPG concepts. |
-| [Project-Uranium-Godot](https://github.com/acedogblast/Project-Uranium-Godot) | copy | MIT | GDScript | 238 | 2025-03-14 | A work in progress re-implementation of the game Pokemon Uranium in the Godot Engine. |
+| [Project-Uranium-Godot](https://github.com/acedogblast/Project-Uranium-Godot) | copy | MIT | GDScript | 236 | 2025-03-14 | A work in progress re-implementation of the game Pokemon Uranium in the Godot Engine. |
 | [UAlbion](https://github.com/csinkers/ualbion) | copy | MIT | C# | 168 | 2026-05-10 | A remake of the 1995 RPG Albion (requires data from an install of the original game) |
-| [OpenNefia](https://github.com/OpenNefia/OpenNefia) | copy | MIT | C# | 154 | 2024-06-27 | Moddable engine reimplementation of the Japanese roguelike Elona. |
+| [OpenNefia](https://github.com/OpenNefia/OpenNefia) | copy | MIT | C# | 156 | 2024-06-27 | Moddable engine reimplementation of the Japanese roguelike Elona. |
 | [ArchaicQuest II](https://github.com/ArchaicQuest/ArchaicQuest-II) | copy | MIT | C# | 153 | 2023-04-20 | ArchaicQuest II :dragon: is a multiplayer text based RPG known as a Multi User Dungeon (MUD) that is playable from your  |
 | [Dungeon](https://github.com/bernardosulzbach/dungeon) | copy | BSD-3-Clause | Java | 152 | 2025-07-12 | Text-based open-world RPG made with Java |
+| [Legend of Elya](https://github.com/Scottcjn/legend-of-elya-n64) | copy | MIT | C | 147 | 2026-08-30 | Legend of Elya - N64 game with a real 6.36M-parameter ternary transformer on the VR4300 MIPS III CPU. Zelda-style dungeo |
 | [Room for Change](https://github.com/antionio/game-off-2013) | copy | Apache-2.0 | Java | 145 | 2017-04-09 | Room for Change - Randomly generated action RPG |
-| [Legend of Elya](https://github.com/Scottcjn/legend-of-elya-n64) | copy | MIT | C | 144 | 2026-08-30 | Legend of Elya - N64 game with a real 6.36M-parameter ternary transformer on the VR4300 MIPS III CPU. Zelda-style dungeo |
 | [Griefly](https://github.com/griefly/griefly) | copy | MIT | C++ | 126 | 2019-07-11 | Griefly: Yet Another Space Station Remake |
 | [lttp-phaser](https://github.com/englercj/lttp) | copy | MIT | TypeScript | 126 | 2019-03-02 | An incomplete remake of The Legend of Zelda - A Link to the Past using WebGL and the browser. |
 | [Ultima 5 Redux](https://github.com/bradhannah/Ultima5Redux) | copy | MIT | C# | 79 | 2024-01-09 | A mostly true to the original Ultima 5 remake in C# using the original U5 data files. |
 | [OpenFNaF](https://github.com/MotoLegacy/OpenFNaF) | copy | MIT | C | 72 | 2021-07-07 | An Open Source Re-implementation of Scott Cawthon's Five Nights at Freddy's. Written in C. Licensed under MIT. (WiP) |
-| [JSkat](https://github.com/b0n541/jskat) | copy | Apache-2.0 | Java | 43 | 2026-09-18 | JSkat is a free software implementation of the game Skat in Java. |
+| [JSkat](https://github.com/b0n541/jskat) | copy | Apache-2.0 | Java | 43 | 2026-09-30 | JSkat is a free software implementation of the game Skat in Java. |
 | [Crafterra](https://github.com/AsPJT/Crafterra) | copy | CC0-1.0 | C++ | 37 | 2024-02-10 | ⛰️: Sandbox game support. |
-| [Atrinik](https://github.com/atrinik/atrinik) | copy | MIT | Python | 30 | 2026-09-23 | Atrinik multi-repository development workspace and component coordinator |
-| [LOZ](https://github.com/aldonunez/Loz) | copy | Apache-2.0 | C++ | 19 | 2021-03-17 | A remake of The Legend of Zelda |
-| [Civic Nightmare](https://github.com/Daniele-Cangi/civic-nightmare) | copy | MIT | GDScript | 18 | 2026-08-30 | A surreal 16-bit political satire RPG built with Godot. |
+| [Atrinik](https://github.com/atrinik/atrinik) | copy | MIT | Python | 30 | 2026-10-06 | Atrinik multi-repository development workspace and component coordinator |
+| [Civic Nightmare](https://github.com/Daniele-Cangi/civic-nightmare) | copy | MIT | GDScript | 20 | 2026-10-06 | A surreal 16-bit political satire RPG built with Godot. |
+| [LOZ](https://github.com/aldonunez/Loz) | copy | Apache-2.0 | C++ | 20 | 2021-03-17 | A remake of The Legend of Zelda |
 | [Castle of the Winds](https://github.com/mordrax/cotwmtor) | copy | MIT | JavaScript | 17 | 2018-02-03 | Castle of the Winds remake in Meteor using React / Redux. |
-| [Secret-Republic-Hacking-Browser-Game-V3](https://github.com/nenuadrian/Secret-Republic-Hacking-Browser-Game-V3) | copy | MIT | PHP | 11 | 2026-04-14 | Secret Republic Hacker browser based simulation game - open-source |
+| [Secret-Republic-Hacking-Browser-Game-V3](https://github.com/nenuadrian/Secret-Republic-Hacking-Browser-Game-V3) | copy | MIT | PHP | 12 | 2026-10-05 | Secret Republic Hacker browser based simulation game - open-source |
 | [Battleround](https://github.com/Leejjon/Battleround) | copy | Apache-2.0 | Java | 4 | 2018-07-03 | Round based RPG. |
 | [Dungeon Hero](https://github.com/guillaume-gouchon/dungeonhero) | copy | MIT | Java | 3 | 2018-07-04 | Android RPG |
 | [Dungeon Quest](https://github.com/guillaume-gouchon/dungeonquest) | copy | MIT | Java | 1 | 2015-03-02 | Android RPG |
-| [OpenEnroth](https://github.com/OpenEnroth/OpenEnroth) | library use | LGPL-3.0 | C++ | 862 | 2026-09-23 | Open reimplementation of Might and Magic 6 7 8 game engine |
-| [Kaetram](https://github.com/Kaetram/Kaetram-Open) | library use | MPL-2.0 | TypeScript | 734 | 2026-09-10 | Kaetram is an open-source 2D HTML5 MMORPG. It is an extended version of BrowserQuest (BQ). |
-| [BrowserQuest](https://github.com/browserquest/BrowserQuest) | library use | MPL-2.0 (per list, GitHub could not read the license file) | JavaScript | 466 | 2018-05-21 | Continuing the development of Mozilla BrowserQuest |
-| [TinTin++](https://github.com/scandum/tintin) | library use | LGPL-2.1 | C | 260 | 2026-09-21 | TinTin++, aka tt++, is an extensible console MUD client. |
+| [OpenEnroth](https://github.com/OpenEnroth/OpenEnroth) | library use | LGPL-3.0 | C++ | 867 | 2026-10-05 | Open reimplementation of Might and Magic 6 7 8 game engine |
+| [Kaetram](https://github.com/Kaetram/Kaetram-Open) | library use | MPL-2.0 | TypeScript | 739 | 2026-10-03 | Kaetram is an open-source 2D HTML5 MMORPG. It is an extended version of BrowserQuest (BQ). |
+| [BrowserQuest](https://github.com/browserquest/BrowserQuest) | library use | MPL-2.0 (per list, GitHub could not read the license file) | JavaScript | 467 | 2018-05-21 | Continuing the development of Mozilla BrowserQuest |
+| [TinTin++](https://github.com/scandum/tintin) | library use | LGPL-2.1 | C | 263 | 2026-09-21 | TinTin++, aka tt++, is an extensible console MUD client. |
 | [NetMauMau](https://github.com/velnias75/NetMauMau) | library use | LGPL-3.0 | C++ | 15 | 2020-04-14 archived | Server for the popular card game Mau Mau (similar to UNO®) |
 | [Dungeon Monkey Unlimited](https://codeberg.org/osgames/dm-unlimited.git) | library use | LGPL-2.1 (per list, unverified) | Pascal |  |  |  |
 | [jClassicRPG](https://svn.code.sf.net/p/javacrpg/code) | library use | LGPL-3.0 (per list, unverified) | Java |  |  |  |
@@ -52,56 +52,56 @@ role-playing, action RPG, MMORPG. 234 projects; 37 with a permissive code licens
 | [Labyrinth of Worlds](https://codeberg.org/osgames/low.git) | library use | LGPL-3.0 (per list, unverified) | C++ |  |  |  |
 | [Spice Trade](https://codeberg.org/osgames/spicetrade.git) | library use | LGPL-2.1 (per list, unverified) | Java |  |  |  |
 | [Turbu](http://turbu-rpg.com/) | library use | MPL-1.1 (per list, unverified) | Pascal |  |  |  |
-| [OpenDiablo2](https://github.com/OpenDiablo2/OpenDiablo2) | study only | GPL-3.0 | Go | 11094 | 2021-10-21 archived | An open source re-implementation of Diablo 2 |
-| [TrinityCore](https://github.com/TrinityCore/TrinityCore) | study only | GPL-2.0 | C++ | 10785 | 2026-09-23 | TrinityCore Open Source MMO Framework (master = 12.1.0.69933, 3.3.5 = 3.3.5a.12340, cata classic = 4.4.2.60895) |
-| [Endless Sky](https://github.com/endless-sky/endless-sky) | study only | GPL-3.0 | C++ | 7583 | 2026-09-23 | Space exploration, trading, and combat game. |
-| [Veloren](https://github.com/veloren/veloren) | study only | GPL-3.0 | Rust | 7583 | 2026-09-23 | [mirror of https://gitlab.com/veloren/veloren] An open world, open source voxel RPG inspired by Dwarf Fortress and Cube  |
-| [OpenMW](https://github.com/OpenMW/openmw) | study only | GPL-3.0 | C++ | 6582 | 2026-09-22 | OpenMW is an open-source open-world RPG game engine that supports playing Morrowind. Main repo and issue tracker can be  |
-| [Freeablo](https://github.com/wheybags/freeablo) | study only | GPL-3.0 | C++ | 2170 | 2023-04-13 | [ARCHIVED] Modern reimplementation of the Diablo 1 game engine |
-| [GemRB](https://github.com/gemrb/gemrb) | study only | GPL-2.0 | C++ | 1250 | 2026-09-19 | GemRB is a portable open-source implementation of Bioware’s Infinity Engine. |
-| [EasyRPG Player](https://github.com/EasyRPG/Player) | study only | GPL-3.0 | C++ | 1228 | 2026-09-20 | RPG Maker 2000/2003 and EasyRPG games interpreter |
-| [Tuxemon](https://github.com/Tuxemon/Tuxemon) | study only | GPL-3.0 | Python | 1139 | 2026-08-06 | Open source monster-fighting RPG. |
-| [Arx Fatalis](https://github.com/arx/ArxLibertatis) | study only | GPL-3.0 | C++ | 1091 | 2024-08-22 | Cross-platform port of Arx Fatalis, a first-person role-playing game |
-| [Reia](https://github.com/Quaint-Studios/Reia) | study only | AGPL-3.0 | GDScript | 954 | 2026-09-11 | RPG game action-adventure MMO built with Godot and Rust. |
-| [Naev](https://github.com/naev/naev) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C | 940 | 2026-09-23 | Naev has moved to codeberg! This is just a mirror. |
-| [Storm Engine](https://github.com/storm-devs/storm-engine) | study only | GPL-3.0 | C++ | 898 | 2023-11-25 archived | Game engine behind Sea Dogs, Pirates of the Caribbean and Age of Pirates games. |
-| [Falltergeist](https://github.com/falltergeist/falltergeist) | study only | GPL-3.0 | C++ | 890 | 2023-01-05 | Opensource crossplatform Fallout 2™ game engine writen in C++ and SDL. |
-| [Darkflame Universe](https://github.com/DarkflameUniverse/DarkflameServer) | study only | AGPL-3.0 | C++ | 755 | 2026-09-18 | The main repository for the Darkflame Universe Server Emulator project. |
-| [Vangers](https://github.com/KranX/Vangers) | study only | GPL-3.0 | C++ | 737 | 2026-08-17 | The video game that combines elements of the racing and role-playing genres. |
-| [Stendhal](https://github.com/arianne/stendhal) | study only | GPL-2.0 | Java | 704 | 2026-07-12 | Stendhal is a fun friendly and free multiplayer online adventure game with an old school feel. |
-| [Exult](https://github.com/exult/exult) | study only | GPL-2.0 | C++ | 688 | 2026-09-16 | Exult is a project to recreate Ultima 7 for modern operating systems, using the game's original plot, data, and graphics |
+| [OpenDiablo2](https://github.com/OpenDiablo2/OpenDiablo2) | study only | GPL-3.0 | Go | 11103 | 2021-10-21 archived | An open source re-implementation of Diablo 2 |
+| [TrinityCore](https://github.com/TrinityCore/TrinityCore) | study only | GPL-2.0 | C++ | 10807 | 2026-10-06 | TrinityCore Open Source MMO Framework (master = 12.1.0.69933, 3.3.5 = 3.3.5a.12340, cata classic = 4.4.2.60895) |
+| [Endless Sky](https://github.com/endless-sky/endless-sky) | study only | GPL-3.0 | C++ | 7612 | 2026-10-06 | Space exploration, trading, and combat game. |
+| [Veloren](https://github.com/veloren/veloren) | study only | GPL-3.0 | Rust | 7605 | 2026-10-04 | [mirror of https://gitlab.com/veloren/veloren] An open world, open source voxel RPG inspired by Dwarf Fortress and Cube  |
+| [OpenMW](https://github.com/OpenMW/openmw) | study only | GPL-3.0 | C++ | 6601 | 2026-10-05 | OpenMW is an open-source open-world RPG game engine that supports playing Morrowind. Main repo and issue tracker can be  |
+| [Freeablo](https://github.com/wheybags/freeablo) | study only | GPL-3.0 | C++ | 2171 | 2023-04-13 | [ARCHIVED] Modern reimplementation of the Diablo 1 game engine |
+| [GemRB](https://github.com/gemrb/gemrb) | study only | GPL-2.0 | C++ | 1255 | 2026-10-06 | GemRB is a portable open-source implementation of Bioware’s Infinity Engine. |
+| [EasyRPG Player](https://github.com/EasyRPG/Player) | study only | GPL-3.0 | C++ | 1231 | 2026-10-03 | RPG Maker 2000/2003 and EasyRPG games interpreter |
+| [Tuxemon](https://github.com/Tuxemon/Tuxemon) | study only | GPL-3.0 | Python | 1144 | 2026-09-29 | Open source monster-fighting RPG. |
+| [Arx Fatalis](https://github.com/arx/ArxLibertatis) | study only | GPL-3.0 | C++ | 1096 | 2024-08-22 | Cross-platform port of Arx Fatalis, a first-person role-playing game |
+| [Reia](https://github.com/Quaint-Studios/Reia) | study only | AGPL-3.0 | GDScript | 964 | 2026-10-04 | RPG game action-adventure MMO built with Godot and Rust. |
+| [Naev](https://github.com/naev/naev) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C | 940 | 2026-10-04 | Naev has moved to codeberg! This is just a mirror. |
+| [Storm Engine](https://github.com/storm-devs/storm-engine) | study only | GPL-3.0 | C++ | 897 | 2023-11-25 archived | Game engine behind Sea Dogs, Pirates of the Caribbean and Age of Pirates games. |
+| [Falltergeist](https://github.com/falltergeist/falltergeist) | study only | GPL-3.0 | C++ | 888 | 2023-01-05 | Opensource crossplatform Fallout 2™ game engine writen in C++ and SDL. |
+| [Darkflame Universe](https://github.com/DarkflameUniverse/DarkflameServer) | study only | AGPL-3.0 | C++ | 758 | 2026-10-05 | The main repository for the Darkflame Universe Server Emulator project. |
+| [Vangers](https://github.com/KranX/Vangers) | study only | GPL-3.0 | C++ | 737 | 2026-10-06 | The video game that combines elements of the racing and role-playing genres. |
+| [Stendhal](https://github.com/arianne/stendhal) | study only | GPL-2.0 | Java | 703 | 2026-07-12 | Stendhal is a fun friendly and free multiplayer online adventure game with an old school feel. |
+| [Exult](https://github.com/exult/exult) | study only | GPL-2.0 | C++ | 690 | 2026-10-04 | Exult is a project to recreate Ultima 7 for modern operating systems, using the game's original plot, data, and graphics |
 | [Candy Box 2](https://github.com/candybox2/candybox2.github.io) | study only | GPL-3.0 (per list, GitHub could not read the license file) | TypeScript | 611 | 2026-06-04 | Candy Box 2 |
-| [mkxp](https://github.com/Ancurio/mkxp) | study only | GPL-2.0 | C++ | 589 | 2026-01-18 | Free Software implementation of the Ruby Game Scripting System (RGSS) |
+| [mkxp](https://github.com/Ancurio/mkxp) | study only | GPL-2.0 | C++ | 590 | 2026-01-18 | Free Software implementation of the Ruby Game Scripting System (RGSS) |
 | [Minicraft+](https://github.com/MinicraftPlus/minicraft-plus-revived) | study only | GPL-3.0 | Java | 583 | 2026-08-07 | Minicraft+, an extension of Notch's original minicraft project, with tons more features. |
-| [Zelda Classic](https://github.com/ZQuestClassic/ZQuestClassic) | study only | GPL-3.0 | C++ | 554 | 2026-09-22 | ZQuest Classic is a game engine for creating games similar to the original NES Zelda |
-| [Ambermoon.net](https://github.com/Pyrdacor/Ambermoon.net) | study only | GPL-3.0 | C# | 536 | 2026-08-19 | Ambermoon rewrite in C# |
-| [RPG Tactical Fantasy Game](https://github.com/Grimmys/rpg_tactical_fantasy_game) | study only | GPL-3.0 | Python | 521 | 2026-08-28 | A tactical turn-based game project in pygame, open to support |
-| [Meridian 59](https://github.com/Meridian59/Meridian59) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 514 | 2026-09-22 | The MMORPG Meridian 59 |
-| [Ryzom Core](https://github.com/ryzom/ryzomcore) | study only | AGPL-3.0 | C++ | 460 | 2026-09-23 | Ryzom Core is the open-source project related to the Ryzom game. This community repository is synchronized with the Ryzo |
+| [Zelda Classic](https://github.com/ZQuestClassic/ZQuestClassic) | study only | GPL-3.0 | C++ | 559 | 2026-10-06 | ZQuest Classic is a game engine for creating games similar to the original NES Zelda |
+| [Ambermoon.net](https://github.com/Pyrdacor/Ambermoon.net) | study only | GPL-3.0 | C# | 538 | 2026-10-06 | Ambermoon rewrite in C# |
+| [RPG Tactical Fantasy Game](https://github.com/Grimmys/rpg_tactical_fantasy_game) | study only | GPL-3.0 | Python | 523 | 2026-08-28 | A tactical turn-based game project in pygame, open to support |
+| [Meridian 59](https://github.com/Meridian59/Meridian59) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 517 | 2026-10-06 | The MMORPG Meridian 59 |
+| [Ryzom Core](https://github.com/ryzom/ryzomcore) | study only | AGPL-3.0 | C++ | 465 | 2026-10-03 | Ryzom Core is the open-source project related to the Ryzom game. This community repository is synchronized with the Ryzo |
 | [Open Tibia](https://github.com/opentibia/server) | study only | GPL-2.0 | C++ | 451 | 2018-04-18 archived | An open source server for the MMORPG Tibia. |
-| [Magarena](https://github.com/magarena/magarena) | study only | GPL-3.0 | Java | 446 | 2023-04-24 | Magarena is a single-player fantasy card game played against a computer opponent. |
-| [EasyRPG Editor](https://github.com/EasyRPG/Editor) | study only | GPL-3.0 | C++ | 428 | 2026-07-06 | Game editor similar to RPG Maker |
-| [BStone](https://github.com/bibendovsky/bstone) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C | 367 | 2026-08-08 | Unofficial source port for Blake Stone series |
+| [Magarena](https://github.com/magarena/magarena) | study only | GPL-3.0 | Java | 445 | 2023-04-24 | Magarena is a single-player fantasy card game played against a computer opponent. |
+| [EasyRPG Editor](https://github.com/EasyRPG/Editor) | study only | GPL-3.0 | C++ | 430 | 2026-07-06 | Game editor similar to RPG Maker |
+| [BStone](https://github.com/bibendovsky/bstone) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C | 369 | 2026-08-08 | Unofficial source port for Blake Stone series |
 | [rpgboss](https://github.com/rpgboss/rpgboss) | study only | AGPL-3.0 (per list, GitHub could not read the license file) | Scala | 327 | 2021-06-08 | point and click rpg game editor and engine |
-| [reone](https://github.com/seedhartha/reone) | study only | GPL-3.0 | C++ | 312 | 2025-04-06 | Game engine capable of running KotOR and TSL |
-| [Valyria Tear](https://github.com/ValyriaTear/ValyriaTear) | study only | GPL-2.0 (per list, GitHub could not read the license file) | Lua | 257 | 2022-01-02 | Open Source J-RPG (Based on the Hero of Allacrost engine) |
-| [2006scape](https://github.com/2006-Scape/2006Scape) | study only | GPL-3.0 | Java | 241 | 2025-06-24 | A 2006 Runescape Emulation Server |
+| [reone](https://github.com/seedhartha/reone) | study only | GPL-3.0 | C++ | 314 | 2025-04-06 | Game engine capable of running KotOR and TSL |
+| [Valyria Tear](https://github.com/ValyriaTear/ValyriaTear) | study only | GPL-2.0 (per list, GitHub could not read the license file) | Lua | 255 | 2022-01-02 | Open Source J-RPG (Based on the Hero of Allacrost engine) |
+| [2006scape](https://github.com/2006-Scape/2006Scape) | study only | GPL-3.0 | Java | 242 | 2025-06-24 | A 2006 Runescape Emulation Server |
 | [Classic Blades of Exile](https://github.com/calref/cboe) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 205 | 2026-06-25 archived | Classic Blades of Exile |
 | [CrossUO](https://github.com/crossuo/crossuo) | study only | AGPL-3.0 | C++ | 177 | 2026-09-08 | CrossUO - Open Source Ultima Online Client |
 | [Open Meridian](https://github.com/OpenMeridian/Meridian59) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C | 151 | 2017-02-26 | The MMORPG Meridian 59 - Server 103 |
 | [Q-Gears](https://github.com/q-gears/q-gears) | study only | GPL-2.0 | C++ | 141 | 2017-01-15 | Q-Gears is an RPG engine for games like Squaresoft's Final Fantasy 7, 8, 9, or Xenogears. It is designed to be cross-pla |
+| [rsc-c](https://github.com/2003scape/rsc-c) | study only | AGPL-3.0 | C | 133 | 2026-07-16 | 🍫 runescape classic client ported to C |
 | [Heroine Dusk](https://github.com/clintbellanger/heroine-dusk) | study only | GPL-3.0 (per list, GitHub could not read the license file) | JavaScript | 127 | 2017-07-12 | April OneGameAMonth WIP dungeon crawl game |
-| [rsc-c](https://github.com/2003scape/rsc-c) | study only | AGPL-3.0 | C | 127 | 2026-07-16 | 🍫 runescape classic client ported to C |
 | [Mana](https://github.com/mana/manaserv) | study only | GPL-2.0 | C++ | 109 | 2018-09-14 archived | A flexible 2D MMORPG server, Moved to: https://gitlab.com/manasource/manaserv |
-| [Minima](https://github.com/Feneric/Minima) | study only | GPL-3.0 | Lua | 101 | 2022-02-19 | Minima is an homage to the 8-bit Ultima games (especially Ultima II - Ultima V) written in the PICO-8 environment. |
-| [OpenMW Web](https://github.com/Virtastic/openmw-web) | study only | GPL-3.0 | C++ | 97 | 2026-09-23 | Play Morrowind in your browser - the OpenMW engine compiled to WebAssembly, now with multiplayer and a cloud locker for  |
+| [Minima](https://github.com/Feneric/Minima) | study only | GPL-3.0 | Lua | 102 | 2022-02-19 | Minima is an homage to the 8-bit Ultima games (especially Ultima II - Ultima V) written in the PICO-8 environment. |
+| [OpenMW Web](https://github.com/Virtastic/openmw-web) | study only | GPL-3.0 | C++ | 102 | 2026-09-30 | Play Morrowind in your browser - the OpenMW engine compiled to WebAssembly, now with multiplayer and a cloud locker for  |
 | [WorldForge](https://github.com/worldforge/cyphesis) | study only | GPL-2.0 | C++ | 93 | 2023-12-03 archived | The main server for the Worldforge MMORPG system. |
 | [JiGS](https://github.com/Techbot/JiGS-RPG-engine) | study only | GPL-3.0 | TypeScript | 87 | 2026-05-24 | Open Source Php/NodeJs Online RPG and Trading Game Engine |
 | [opendf](https://github.com/kcat/opendf) | study only | GPL-3.0 | C++ | 78 | 2026-09-02 | An open source engine for the game Daggerfall |
-| [Underworld Adventures](https://github.com/vividos/UnderworldAdventures) | study only | GPL-2.0 | C++ | 74 | 2026-07-30 | Underworld Adventures is a project to recreate Ultima Underworld 1 on modern operating systems, using the original game  |
+| [Underworld Adventures](https://github.com/vividos/UnderworldAdventures) | study only | GPL-2.0 | C++ | 75 | 2026-07-30 | Underworld Adventures is a project to recreate Ultima Underworld 1 on modern operating systems, using the original game  |
 | [BaKGL](https://github.com/xavieran/BaKGL) | study only | GPL-3.0 | C++ | 73 | 2026-09-16 | Remake of Betrayal at Krondor using OpenGL |
-| [The Mana World](https://github.com/themanaworld/tmwa) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 71 | 2026-09-23 | The server currently running The Mana World (mirrored from https://git.themanaworld.org/tmw/tmwa) |
-| [Pentobi](https://github.com/enz/pentobi) | study only | GPL-3.0 | C++ | 67 | 2026-09-18 | Computer opponent for Blokus |
+| [The Mana World](https://github.com/themanaworld/tmwa) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 72 | 2026-10-06 | The server currently running The Mana World (mirrored from https://git.themanaworld.org/tmw/tmwa) |
+| [Pentobi](https://github.com/enz/pentobi) | study only | GPL-3.0 | C++ | 67 | 2026-10-05 | Computer opponent for Blokus |
 | [Dungeon Monkey Eternal](https://github.com/jwvhewitt/dmeternal) | study only | GPL-2.0 (per list, GitHub could not read the license file) | Python | 61 | 2021-06-28 | Dungeon Monkey Eternal- Third game in the dungeon monkey series, first written in Python. |
 | [Catch Challenger](https://github.com/alphaonex86/CatchChallenger) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C | 57 | 2026-08-27 | CatchChallenger is a MMORPG. JRPG + crafting + TvT + management game |
 | [Argentum Online](https://github.com/ao-libre/ao-server) | study only | AGPL-3.0 | Visual Basic 6.0 | 52 | 2024-05-07 | Server for Argentum Online |
@@ -111,7 +111,7 @@ role-playing, action RPG, MMORPG. 234 projects; 37 with a permissive code licens
 | [Flare](https://github.com/clintbellanger/flare-engine) | study only | GPL-3.0 | C++ | 41 | 2018-09-17 | Free/Libre Action Roleplaying Engine (engine only) |
 | [Ardentryst](https://github.com/ardentryst/ardentryst) | study only | GPL-3.0 | Python | 35 | 2023-06-14 | A free RPG platformer |
 | [Illarion](https://github.com/Illarion-eV/Illarion-Server) | study only | AGPL-3.0 | C++ | 35 | 2026-05-14 | Server for the online RPG Illarion |
-| [Dungeon Craft](https://github.com/grannypron/uaf) | study only | GPL-2.0 | C++ | 30 | 2026-01-24 |  |
+| [Dungeon Craft](https://github.com/grannypron/uaf) | study only | GPL-2.0 | C++ | 31 | 2026-01-24 |  |
 | [Deathlord Relorded](https://github.com/hasseily/Deathlord-Relorded) | study only | AGPL-3.0 | C | 29 | 2026-09-23 | The greatly misunderstood RPG Deathlord reskinned, upgraded, updated for Win10+ |
 | [Anteform](https://github.com/Feneric/Anteform) | study only | GPL-3.0 | Lua | 26 | 2021-08-01 | Anteform is a retro weird detective game written using the Minima Engine for PICO-8. |
 | [Iris2](https://github.com/kblaschke/Iris2) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C | 25 | 2022-07-22 | An Open-Source 3D Ultima Online(tm) Client. No active development, mostly for archival purposes as the original project  |
@@ -180,22 +180,22 @@ role-playing, action RPG, MMORPG. 234 projects; 37 with a permissive code licens
 | [xBaK](https://svn.code.sf.net/p/xbak/code) | study only | GPL-3.0 (per list, unverified) | C++ |  |  |  |
 | [xu4](https://svn.code.sf.net/p/xu4/code) | study only | GPL-2.0 (per list, unverified) | C++ |  |  |  |
 | [Zelda: Mystery of Solarus DX](https://gitlab.com/solarus-games/games/zsdx.git) | study only | GPL-3.0 (per list, unverified) | Lua |  |  |  |
-| [BrowserQuest](https://github.com/mozilla/BrowserQuest) | check first | NOASSERTION | JavaScript | 9370 | 2023-07-14 archived | DEPRECATED - A HTML5/JavaScript multiplayer game experiment |
-| [Fallout Community Edition](https://github.com/alexbatalov/fallout1-ce) | check first | CUSTOM (per list, GitHub could not read the license file) | C++ | 2924 | 2025-01-15 | Fallout for modern operating systems |
-| [Fallout 2 Community Edition](https://github.com/alexbatalov/fallout2-ce) | check first | CUSTOM (per list, GitHub could not read the license file) | C++ | 2434 | 2025-02-17 | Fallout 2 for modern operating systems |
+| [BrowserQuest](https://github.com/mozilla/BrowserQuest) | check first | NOASSERTION | JavaScript | 9372 | 2023-07-14 archived | DEPRECATED - A HTML5/JavaScript multiplayer game experiment |
+| [Fallout Community Edition](https://github.com/alexbatalov/fallout1-ce) | check first | CUSTOM (per list, GitHub could not read the license file) | C++ | 2935 | 2025-01-15 | Fallout for modern operating systems |
+| [Fallout 2 Community Edition](https://github.com/alexbatalov/fallout2-ce) | check first | CUSTOM (per list, GitHub could not read the license file) | C++ | 2445 | 2025-02-17 | Fallout 2 for modern operating systems |
 | [Cendric](https://github.com/tizian/Cendric2) | check first | none | C | 309 | 2026-03-30 | 2D Game |
-| [Intersect](https://github.com/AscensionGameDev/Intersect-Engine) | check first | MIT + GPL-2.0 (per list, GitHub could not read the license file) | C# | 282 | 2026-07-16 | Intersect provides a complete game development suite for creating 2d mmorpgs with no programming experience required! |
-| [The Legend of Zelda: Mystery of Solarus DX](https://github.com/solarus-games/zsdx) | check first | NOASSERTION | Lua | 196 | 2018-04-07 archived | This repository was moved to GitLab: https://gitlab.com/solarus-games/zsdx |
+| [Intersect](https://github.com/AscensionGameDev/Intersect-Engine) | check first | MIT + GPL-2.0 (per list, GitHub could not read the license file) | C# | 284 | 2026-07-16 | Intersect provides a complete game development suite for creating 2d mmorpgs with no programming experience required! |
+| [The Legend of Zelda: Mystery of Solarus DX](https://github.com/solarus-games/zsdx) | check first | NOASSERTION | Lua | 197 | 2018-04-07 archived | This repository was moved to GitLab: https://gitlab.com/solarus-games/zsdx |
 | [Eternal Lands](https://github.com/raduprv/Eternal-Lands) | check first | CUSTOM (MODIFIED QTPL: HTTPS://RAW.GITHUBUSERCONTENT.COM/RADUPRV/ETERNAL-LANDS/MASTER/ETERNAL_LANDS_LICENSE.TXT) (per list, GitHub could not read the license file) | C | 188 | 2026-09-03 |  |
-| [WTF?! Adventure](https://github.com/design1online/WTF-Adventure) | check first | WTFPL (per list, GitHub could not read the license file) | HTML | 115 | 2026-03-12 | WTF?! Adventure is a massively online 2D MMORPG with WTF?! twists. |
+| [WTF?! Adventure](https://github.com/design1online/WTF-Adventure) | check first | WTFPL (per list, GitHub could not read the license file) | HTML | 116 | 2026-03-12 | WTF?! Adventure is a massively online 2D MMORPG with WTF?! twists. |
 | [Castle of the Winds in Elm](https://github.com/mordrax/cotwelm) | check first | MIT (per list, GitHub could not read the license file) | Elm | 109 | 2026-02-25 | Castle of the Winds (A Remake in Elm) |
-| [Open Legend RPG](https://github.com/openlegend/core-rules) | check first | CUSTOM (OPEN LEGEND COMMUNITY LICENSE: HTTPS://GITHUB.COM/OPENLEGEND/CORE-RULES/BLOB/MASTER/LICENSE.MDX) (per list, GitHub could not read the license file) | MDX | 96 | 2024-11-19 | Source text / code for Open Legend RPG |
-| [Flare RPG](https://github.com/clintbellanger/flare-game) | check first | NOASSERTION | Python | 90 | 2018-09-17 | Fantasy action RPG using the FLARE engine |
-| [Dink Smallwood HD](https://github.com/SethRobinson/RTDink) | check first | CUSTOM (per list, GitHub could not read the license file) | C++ | 84 | 2026-08-31 | Dink Smallwood HD is an old school zelda-like adventure/RPG that has been ported to many platforms. C++/OpenGL |
-| [aisandboxgame](https://github.com/hayowei/aisandboxgame) | check first | NOASSERTION | JavaScript | 77 | 2026-06-30 | AI Sandbox Game: A highly customizable, local-first text RPG driven by LLMs. Create world cards, configure multi-step AI |
+| [Open Legend RPG](https://github.com/openlegend/core-rules) | check first | CUSTOM (OPEN LEGEND COMMUNITY LICENSE: HTTPS://GITHUB.COM/OPENLEGEND/CORE-RULES/BLOB/MASTER/LICENSE.MDX) (per list, GitHub could not read the license file) | MDX | 97 | 2024-11-19 | Source text / code for Open Legend RPG |
+| [Flare RPG](https://github.com/clintbellanger/flare-game) | check first | NOASSERTION | Python | 91 | 2018-09-17 | Fantasy action RPG using the FLARE engine |
+| [Dink Smallwood HD](https://github.com/SethRobinson/RTDink) | check first | CUSTOM (per list, GitHub could not read the license file) | C++ | 85 | 2026-08-31 | Dink Smallwood HD is an old school zelda-like adventure/RPG that has been ported to many platforms. C++/OpenGL |
+| [aisandboxgame](https://github.com/hayowei/aisandboxgame) | check first | NOASSERTION | JavaScript | 78 | 2026-06-30 | AI Sandbox Game: A highly customizable, local-first text RPG driven by LLMs. Create world cards, configure multi-step AI |
 | [jsFO](https://github.com/ajxs/jsFO) | check first | Apache-2.0 (per list, GitHub could not read the license file) | JavaScript | 47 | 2026-04-02 | Fallout 2 Javascript port |
 | [Sleep Is Death](https://github.com/jasonrohrer/SleepIsDeath) | check first | ? (per list, GitHub could not read the license file) | C++ | 18 | 2022-07-05 | a storytelling game for two players |
-| [allacrost](https://github.com/rootslinux/allacrost) | check first | none | Lua | 15 | 2018-06-23 | Hero of Allacrost: an open source role-playing game built with a custom game engine |
+| [allacrost](https://github.com/rootslinux/allacrost) | check first | none | Lua | 14 | 2018-06-23 | Hero of Allacrost: an open source role-playing game built with a custom game engine |
 | [open-world-builder](https://github.com/open-world-builder/open-world-builder) | check first | none | JavaScript | 10 | 2025-12-04 | A 3D RPG Maker. The client of a 3D MORPG Builder. |
 | [Other-Life](https://github.com/jp8900308/other-life) | check first | CUSTOM (ETERNAL LANDS LICENSE + MODIFIED QTPL) (per list, GitHub could not read the license file) | C | 2 | 2017-05-11 | other-life client build |
 | [Ambermoon.net](https://pyrdacor.itch.io/ambermoon) | check first | none |  |  |  | A full C# rewrite of . |

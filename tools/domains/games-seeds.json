@@ -1,0 +1,80 @@
+{
+ "_comment": "Curated games references. Each seed is reconciled to a catalog row or a listed drop. repo is a repository URL, genre is a catalog genre, why is a one-line reason. Unsupported metadata hosts are listed as drops, never assigned guessed metadata.",
+ "seeds": [
+  {
+   "repo": "https://github.com/electronicarts/CnC_Tiberian_Dawn",
+   "genre": "strategy",
+   "why": "Released Tiberian Dawn source; commercial game data is not included."
+  },
+  {
+   "repo": "https://github.com/electronicarts/CnC_Red_Alert",
+   "genre": "strategy",
+   "why": "Released Red Alert source; commercial game data is not included."
+  },
+  {
+   "repo": "https://github.com/electronicarts/CnC_Renegade",
+   "genre": "shooter",
+   "why": "Released Renegade source; commercial game data is not included."
+  },
+  {
+   "repo": "https://github.com/electronicarts/CnC_Generals_Zero_Hour",
+   "genre": "strategy",
+   "why": "Released Generals and Zero Hour source; commercial game data is not included."
+  },
+  {
+   "repo": "https://github.com/electronicarts/CnC_Modding_Support",
+   "genre": "engines",
+   "why": "Official Command & Conquer modding tools and support."
+  },
+  {
+   "repo": "https://github.com/electronicarts/CNC_TS_and_RA2_Mission_Editor",
+   "genre": "engines",
+   "why": "Mission editor source for Tiberian Sun and Red Alert 2."
+  },
+  {
+   "repo": "https://github.com/OpenBW/openbw",
+   "genre": "strategy",
+   "why": "An open implementation of Brood War; check required game data separately."
+  },
+  {
+   "repo": "https://github.com/OpenSC4-org/OpenSC4",
+   "genre": "simulation",
+   "why": "An open SimCity 4 engine project; check required game data separately."
+  },
+  {
+   "repo": "https://github.com/nsgomez/scion",
+   "genre": "simulation",
+   "why": "City simulation engine reference."
+  },
+  {
+   "repo": "https://github.com/phulin/tower-together",
+   "genre": "simulation",
+   "why": "Cooperative tower-building simulation reference."
+  },
+  {
+   "repo": "https://github.com/tobymao/18xx",
+   "genre": "board-card",
+   "why": "Online implementations of 18xx railway board games."
+  },
+  {
+   "repo": "https://github.com/FunkyFr3sh/cnc-ddraw",
+   "genre": "engines",
+   "why": "Compatibility layer for legacy DirectDraw games, not a standalone game."
+  },
+  {
+   "repo": "https://github.com/dosbox-staging/dosbox-staging",
+   "genre": "engines",
+   "why": "DOS emulator and compatibility layer, not a game or game-data license."
+  },
+  {
+   "repo": "https://github.com/joncampbell123/dosbox-x",
+   "genre": "engines",
+   "why": "DOS emulator and compatibility layer with debugging tools, not a game."
+  },
+  {
+   "repo": "https://codeberg.org/OpenBoE/oboe",
+   "genre": "rpg",
+   "why": "Open Blades of Exile; inspect its README objection to Copilot use before any AI use."
+  }
+ ]
+}

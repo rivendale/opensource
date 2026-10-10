@@ -4,11 +4,11 @@ action, beat 'em up, hack and slash, third-person. 137 projects; 22 with a permi
 
 | project | reuse | license | language | stars | last push | about |
 |---|---|---|---|---|---|---|
-| [Overgrowth](https://github.com/WolfireGames/overgrowth) | copy | Apache-2.0 | C++ | 2906 | 2026-09-01 | Open Source codebase of the game Overgrowth by Wolfire Games LLC |
-| [Carnage3D](https://github.com/codenamecpp/carnage3d) | copy | MIT | C++ | 563 | 2026-08-09 | Reimplementation of Grand Theft Auto 1 [GTA1] |
-| [OpenLiberty](https://github.com/openfw-game/OpenLiberty) | copy | MIT | GDScript | 456 | 2026-09-13 | Open-world game implemented in Godot Engine that can load GTA 3D-era models and textures |
+| [Overgrowth](https://github.com/WolfireGames/overgrowth) | copy | Apache-2.0 | C++ | 2911 | 2026-09-24 | Open Source codebase of the game Overgrowth by Wolfire Games LLC |
+| [Carnage3D](https://github.com/codenamecpp/carnage3d) | copy | MIT | C++ | 564 | 2026-08-09 | Reimplementation of Grand Theft Auto 1 [GTA1] |
+| [OpenLiberty](https://github.com/openfw-game/OpenLiberty) | copy | MIT | GDScript | 463 | 2026-09-13 | Open-world game implemented in Godot Engine that can load GTA 3D-era models and textures |
 | [MafiaUnity](https://github.com/MafiaHub/MafiaUnity) | copy | Apache-2.0 | C# | 294 | 2020-06-11 archived | 🕹 Open-source Mafia game framework |
-| [OpenBiohazard2](https://github.com/OpenBiohazard2/OpenBiohazard2) | copy | MIT | Go | 289 | 2026-08-17 | Open source re-implementation of the original Resident Evil 2 / Biohazard 2 |
+| [OpenBiohazard2](https://github.com/OpenBiohazard2/OpenBiohazard2) | copy | MIT | Go | 290 | 2026-08-17 | Open source re-implementation of the original Resident Evil 2 / Biohazard 2 |
 | [Mr.Boom](https://github.com/Javanaise/mrboom-libretro) | copy | MIT | C | 227 | 2026-03-31 | Mr.Boom is an 8 player Bomberman clone for RetroArch/Libretro |
 | [GDHexGrid](https://github.com/romlok/godot-gdhexgrid) | copy | MIT | GDScript | 216 | 2022-10-07 | A GDScript hexagonal grid implementation for Godot. |
 | [XL Engine](https://github.com/Mindwerks/XLEngine) | copy | MIT | C++ | 193 | 2020-03-28 | XLEngine allows you to play Dark Forces, Daggerfall and soon Outlaws and Blood with modern technology. |
@@ -26,27 +26,27 @@ action, beat 'em up, hack and slash, third-person. 137 projects; 22 with a permi
 | [Smash](https://github.com/guillaume-gouchon/smash.js) | copy | MIT | JavaScript | 5 | 2018-04-30 | Super Smash Bros-like in HTML5 (with some Worms in it) |
 | [Breakout-VR](https://github.com/marksteelz3/Atari-VR---Breakout) | copy | MIT | C# | 4 | 2017-12-28 | My first VR project in which I created a 3D version of the classic Atari game Breakout |
 | [Jet-Story](https://github.com/adamenkov/jet-story) | copy | MIT | Assembly | 4 | 2026-05-25 | Remake of the ZX Spectrum game "Jet-Story" |
-| [Gang Garrison 2](https://github.com/Gang-Garrison-2/Gang-Garrison-2) | library use | MPL-2.0 (per list, GitHub could not read the license file) | Game Maker Language | 120 | 2026-07-26 | The main repository for development and issue tracking of Gang Garrison 2 |
+| [Gang Garrison 2](https://github.com/Gang-Garrison-2/Gang-Garrison-2) | library use | MPL-2.0 (per list, GitHub could not read the license file) | Game Maker Language | 120 | 2026-09-28 | The main repository for development and issue tracking of Gang Garrison 2 |
 | [MechCommander 2 Omnitech](https://github.com/Echelon9/mechcommander2-open) | library use | MS-PL (per list, GitHub could not read the license file) | C++ | 31 | 2013-03-03 | MechCommander 2 Omnitech |
-| [CnC Remastered Collection](https://github.com/electronicarts/CnC_Remastered_Collection) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C++ | 21389 | 2025-01-16 archived | Command & Conquer: Remastered Collection |
-| [Amnesia: The Dark Descent](https://github.com/FrictionalGames/AmnesiaTheDarkDescent) | study only | GPL-3.0 | C++ | 3674 | 2020-10-12 |  |
-| [Amnesia: A Machine for Pigs](https://github.com/FrictionalGames/AmnesiaAMachineForPigs) | study only | GPL-3.0 | C++ | 1459 | 2023-09-25 |  |
-| [DOOM Retro](https://github.com/bradharding/doomretro) | study only | GPL-3.0 | C | 771 | 2026-09-23 | The classic, refined DOOM source port. For Windows PC. |
-| [OpenD2](https://github.com/eezstreet/OpenD2) | study only | GPL-3.0 | C | 603 | 2021-05-31 | A project to open source Diablo 2. |
-| [Penumbra: Overture](https://github.com/FrictionalGames/PenumbraOverture) | study only | GPL-3.0 | C++ | 564 | 2017-12-25 | Penumbra: Overture is a first person horror game, using the HPL1 Engine. |
-| [openMSX](https://github.com/openMSX/openMSX) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 550 | 2026-09-23 | the MSX emulator that aims for perfection |
-| [donut](https://github.com/plowteam/donut) | study only | GPL-3.0 | C++ | 481 | 2024-03-27 | Open source reimplementation of The Simpsons: Hit & Run |
-| [Neverball](https://github.com/Neverball/neverball) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C | 442 | 2026-09-21 | Tilt the floor to roll a ball through an obstacle course before time runs out. |
+| [CnC Remastered Collection](https://github.com/electronicarts/CnC_Remastered_Collection) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C++ | 21385 | 2025-01-16 archived | Command & Conquer: Remastered Collection |
+| [Amnesia: The Dark Descent](https://github.com/FrictionalGames/AmnesiaTheDarkDescent) | study only | GPL-3.0 | C++ | 3678 | 2020-10-12 |  |
+| [Amnesia: A Machine for Pigs](https://github.com/FrictionalGames/AmnesiaAMachineForPigs) | study only | GPL-3.0 | C++ | 1460 | 2023-09-25 |  |
+| [DOOM Retro](https://github.com/bradharding/doomretro) | study only | GPL-3.0 | C | 775 | 2026-10-06 | The classic, refined DOOM source port. For Windows PC. |
+| [OpenD2](https://github.com/eezstreet/OpenD2) | study only | GPL-3.0 | C | 605 | 2021-05-31 | A project to open source Diablo 2. |
+| [Penumbra: Overture](https://github.com/FrictionalGames/PenumbraOverture) | study only | GPL-3.0 | C++ | 566 | 2017-12-25 | Penumbra: Overture is a first person horror game, using the HPL1 Engine. |
+| [openMSX](https://github.com/openMSX/openMSX) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 555 | 2026-10-06 | the MSX emulator that aims for perfection |
+| [donut](https://github.com/plowteam/donut) | study only | GPL-3.0 | C++ | 482 | 2024-03-27 | Open source reimplementation of The Simpsons: Hit & Run |
+| [Neverball](https://github.com/Neverball/neverball) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C | 443 | 2026-10-02 | Tilt the floor to roll a ball through an obstacle course before time runs out. |
 | [Hovertank 3D](https://github.com/FlatRockSoft/Hovertank3D) | study only | GPL-2.0 | C++ | 257 | 2014-06-04 | GPL release of Hovertank 3D source code. |
-| [openDarkEngine](https://github.com/volca02/openDarkEngine) | study only | GPL-2.0 | C++ | 172 | 2018-05-14 | Rewrite of the Dark Engine by Looking Glass |
-| [remc2](https://github.com/turican0/remc2) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C++ | 149 | 2026-09-22 | Recode Binary code of game Magic Carpet2 to C/C++ language(remake MC2 for any platform) |
+| [openDarkEngine](https://github.com/volca02/openDarkEngine) | study only | GPL-2.0 | C++ | 173 | 2018-05-14 | Rewrite of the Dark Engine by Looking Glass |
+| [remc2](https://github.com/turican0/remc2) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C++ | 150 | 2026-10-05 | Recode Binary code of game Magic Carpet2 to C/C++ language(remake MC2 for any platform) |
 | [Mininim](https://github.com/oitofelix/mininim) | study only | GPL-3.0 | C | 142 | 2020-12-31 | The Advanced Prince of Persia Engine (a childhood dream) |
 | [OpenYandere](https://github.com/Evilpersonwithnosoul/OpenYandere) | study only | GPL-3.0 | ShaderLab | 141 | 2024-06-27 | An open-source community rewrite of the game "Yandere Simulator" in C#. 2020 july 4th update (This isn't the leak guys s |
-| [SDL Sopwith](https://github.com/fragglet/sdl-sopwith) | study only | GPL-2.0 | C | 117 | 2026-08-19 | Classic bi-plane shoot-'em up |
-| [Bitfighter](https://github.com/bitfighter/bitfighter) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 87 | 2026-09-08 | The Bitfighter source code |
+| [SDL Sopwith](https://github.com/fragglet/sdl-sopwith) | study only | GPL-2.0 | C | 118 | 2026-09-28 | Classic bi-plane shoot-'em up |
+| [Bitfighter](https://github.com/bitfighter/bitfighter) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 88 | 2026-09-08 | The Bitfighter source code |
 | [OpenRaider](https://github.com/xythobuz/OpenRaider) | study only | GPL-2.0 | C++ | 85 | 2024-05-11 | Open Source Tomb Raider Engine |
 | [Zatacka X](https://github.com/simenheg/zatackax) | study only | GPL-3.0 | C | 69 | 2024-12-03 | Remake of "Achtung, die Kurve!" |
-| [OpenDrakan](https://github.com/Zalasus/opendrakan) | study only | GPL-3.0 | C++ | 58 | 2023-12-17 | A work-in-progress recreation of Surreal Software's Riot Engine |
+| [OpenDrakan](https://github.com/Zalasus/opendrakan) | study only | GPL-3.0 | C++ | 59 | 2023-12-17 | A work-in-progress recreation of Surreal Software's Riot Engine |
 | [Prince-Monogame](https://github.com/salvadorc17/Prince-Monogame) | study only | GPL-2.0 | C# | 53 | 2026-08-25 | Monogame implementation of Prince of Persia 2 |
 | [Hexoshi](https://github.com/hexoshi/hexoshi) | study only | GPL-3.0 | Python | 37 | 2023-10-14 |  |
 | [OpenNox](https://github.com/noxworld-dev/opennox) | study only | GPL-3.0 | C | 23 | 2024-11-23 archived | OpenNox main repository. |
@@ -99,16 +99,16 @@ action, beat 'em up, hack and slash, third-person. 137 projects; 22 with a permi
 | [xdigger](https://codeberg.org/osgames/xdigger.git) | study only | GPL-2.0 (per list, unverified) | C |  |  |  |
 | [XPilot](https://codeberg.org/osgames/xpilot.git) | study only | GPL-2.0 (per list, unverified) | C |  |  |  |
 | [XPilot NG](http://xpilot.cvs.sourceforge.net/) | study only | GPL-2.0 (per list, unverified) | C |  |  |  |
-| [mk.js](https://github.com/mgechev/mk.js) | check first | MIT (per list, GitHub could not read the license file) | JavaScript | 1550 | 2022-02-23 | Canvas implementation of basic fighting game which allows multiplayer over the network. |
-| [SDLPoP](https://github.com/NagyD/SDLPoP) | check first | GPL-3.0 | C | 1287 | 2025-12-24 | An open-source port of Prince of Persia, based on the disassembly of the DOS version. **decompiled or disassembled commercial game: legal status unclear** |
-| [Godot 2D Space Game](https://github.com/gdquest-demos/godot-2d-space-game) | check first | MIT (per list, GitHub could not read the license file) | GDScript | 1106 | 2026-05-16 | A 2D space exploration and mining game made with Godot and our AI framework |
-| [Cannonball](https://github.com/djyt/cannonball) | check first | MAME (per list, GitHub could not read the license file) | C++ | 872 | 2023-12-26 | Cannonball: An Enhanced OutRun Engine |
+| [mk.js](https://github.com/mgechev/mk.js) | check first | MIT (per list, GitHub could not read the license file) | JavaScript | 1552 | 2022-02-23 | Canvas implementation of basic fighting game which allows multiplayer over the network. |
+| [SDLPoP](https://github.com/NagyD/SDLPoP) | check first | GPL-3.0 | C | 1294 | 2025-12-24 | An open-source port of Prince of Persia, based on the disassembly of the DOS version. **decompiled or disassembled commercial game: legal status unclear** |
+| [Godot 2D Space Game](https://github.com/gdquest-demos/godot-2d-space-game) | check first | MIT (per list, GitHub could not read the license file) | GDScript | 1108 | 2026-05-16 | A 2D space exploration and mining game made with Godot and our AI framework |
+| [Cannonball](https://github.com/djyt/cannonball) | check first | MAME (per list, GitHub could not read the license file) | C++ | 876 | 2023-12-26 | Cannonball: An Enhanced OutRun Engine |
 | [Chocolate Duke3D](https://github.com/fabiensanglard/chocolate_duke3D) | check first | GPL-2.0 + CUSTOM (per list, GitHub could not read the license file) | C | 619 | 2019-03-30 archived | chocolate Duke Nukem,3D |
-| [R.E.L.I.V.E.](https://github.com/AliveTeam/alive_reversing) | check first | MIT (per list, GitHub could not read the license file) | C++ | 436 | 2026-09-20 | Re-implementation of Oddworld: Abe's Exoddus and Oddworld: Abe's Oddysee |
+| [R.E.L.I.V.E.](https://github.com/AliveTeam/alive_reversing) | check first | MIT (per list, GitHub could not read the license file) | C++ | 440 | 2026-09-28 | Re-implementation of Oddworld: Abe's Exoddus and Oddworld: Abe's Oddysee |
 | [OpenClonk](https://github.com/openclonk/openclonk) | check first | ISC (per list, GitHub could not read the license file) | C++ | 402 | 2026-04-28 | A free multiplayer action game where you control small and nimble humanoids |
-| [Doomsday Engine](https://github.com/skyjake/Doomsday-Engine) | check first | GPL-2.0 (SEE SOURCE FILES) + GPL-3.0 + LGPL-3.0 (CORE) (per list, GitHub could not read the license file) | C++ | 303 | 2026-06-03 | A portable, enhanced source port of Doom, Heretic and Hexen. |
+| [Doomsday Engine](https://github.com/skyjake/Doomsday-Engine) | check first | GPL-2.0 (SEE SOURCE FILES) + GPL-3.0 + LGPL-3.0 (CORE) (per list, GitHub could not read the license file) | C++ | 304 | 2026-06-03 | A portable, enhanced source port of Doom, Heretic and Hexen. |
 | [Doom64EX](https://github.com/svkaiser/Doom64EX) | check first | GPL-2.0 | C++ | 273 | 2025-11-16 | Doom64EX is a reverse-engineering project aimed to recreate Doom64 as close as possible with additional modding features **decompiled or disassembled commercial game: legal status unclear** |
-| [OpenVice](https://github.com/clashbyte/openvice) | check first | ? (GPL FOR SOME FILES) (per list, GitHub could not read the license file) | C# | 91 | 2024-09-24 | Grand Theft Auto: Vice City Open Source port to C# |
+| [OpenVice](https://github.com/clashbyte/openvice) | check first | ? (GPL FOR SOME FILES) (per list, GitHub could not read the license file) | C# | 92 | 2024-09-24 | Grand Theft Auto: Vice City Open Source port to C# |
 | [Cabbages and Kings](https://github.com/Mekire/cabbages-and-kings) | check first | MIT (per list, GitHub could not read the license file) | Python | 66 | 2018-07-03 |  |
 | [Cattle Bity](https://github.com/dogballs/cattle-bity) | check first | MIT (per list, GitHub could not read the license file) | TypeScript | 57 | 2021-11-04 | Clone of Battle City (1985) in TypeScript |
 | [BOOM: Remake](https://github.com/silverweed/lifish) | check first | CUSTOM (NON COMMERCIAL) (per list, GitHub could not read the license file) | C++ | 55 | 2026-09-07 | Remake of the videogame "BOOM" by Factor Software |
