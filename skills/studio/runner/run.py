@@ -75,7 +75,8 @@ class Runtime(list):
         if marker.exists() and marker.read_text() != str(store.resolve()):
             raise RuntimeError("runtime-state store mismatch")
         marker.write_text(str(store.resolve()))
-        super().__init__([executable, "--root", str(store), "--runroot", str(state / "run")])
+        # The caller delegates its scope; no user bus or session configuration is inherited.
+        super().__init__([executable, "--cgroup-manager=cgroupfs", "--root", str(store), "--runroot", str(state / "run")])
         home = root / "runtime-home"
         home.mkdir()
         xdg = state / "xdg"
@@ -119,16 +120,16 @@ def sandbox_args(image, name, seed, skill, egress, limits, input_bytes):
             "--pids-limit=" + str(limits["processes"]), "--cpus=" + str(limits["cpus"]),
             "--memory=" + str(limits["memory"]), "--memory-swap=" + str(limits["memory"]),
             "--ulimit=nofile=1024:1024",
-            "--tmpfs=/scratch:rw,nosuid,nodev,size=" + str(size) + ",uid=1000,gid=1000,mode=0755",
+            "--tmpfs=/scratch:rw,nosuid,nodev,size=" + str(size) + ",mode=0755",
             "--tmpfs=/scratch/.run:rw,nosuid,nodev,noexec,size=" + str(CAPTURE_RESERVE) + ",mode=0700",
-            "--tmpfs=/home/studio:rw,nosuid,nodev,size=33554432,uid=1000,gid=1000,mode=0700",
-            "--tmpfs=/home/checker:rw,nosuid,nodev,size=33554432,uid=1001,gid=1001,mode=0700",
+            "--tmpfs=/home/studio:rw,nosuid,nodev,size=33554432,mode=0700",
+            "--tmpfs=/home/checker:rw,nosuid,nodev,size=33554432,mode=0700",
             "--tmpfs=/audit:rw,nosuid,nodev,noexec,size=" + str(limits["scratch"] + 128 * 1024 * 1024) + ",mode=0700",
             "--mount=type=bind,src=" + str(seed / "inputs") + ",dst=/scratch/inputs,ro=true",
             "--mount=type=bind,src=" + str(seed / "brief.md") + ",dst=/scratch/brief.md,ro=true",
             "--mount=type=bind,src=" + str(skill) + ",dst=/skill/SKILL.md,ro=true",
             "--mount=type=bind,src=" + str(egress) + ",dst=/egress,ro=true",
-            "--entrypoint=python3", image, "/opt/studio/supervisor.py"]
+            "--entrypoint=/usr/bin/python3", image, "/opt/studio/supervisor.py"]
     return args
 
 

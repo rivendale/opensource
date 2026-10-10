@@ -65,14 +65,17 @@ def tools():
         "ffmpeg": ["/opt/tools/bin/ffmpeg", "-version"],
         "tesseract": ["tesseract", "--version"],
         "strace": ["strace", "--version"],
+        "node": ["node", "--version"],
         "numpy": ["python3", "-I", "-c", "import numpy; print(numpy.__version__)"]
     }.items():
         result = subprocess.run(command, env=clean_env("/home/studio"), capture_output=True, timeout=10)
         if result.returncode:
             raise RuntimeError("required image tool unavailable")
         versions[name] = result.stdout.decode("utf-8").splitlines()[0]
-    if not versions["ffmpeg"].startswith("ffmpeg version 7.0.2 "):
+    if not versions["ffmpeg"].startswith(("ffmpeg version 7.0.2 ", "ffmpeg version 7.0.2-static ")):
         raise RuntimeError("ffmpeg 7.0.2 required")
+    if int(versions["node"].lstrip("v").split(".")[0]) < 22:
+        raise RuntimeError("Node 22 or later required")
     # Reap tool inventory children before the agent phase.
     return versions
 
@@ -151,6 +154,7 @@ def main():
     if os.getpid() != 1 or os.getuid() != 0:
         raise RuntimeError("supervisor must be PID 1 as container root")
     for path, uid, mode in [("/scratch", 1000, 0o755), ("/home/studio", 1000, 0o700),
+                            ("/home/checker", 1001, 0o700),
                             ("/scratch/tmp", 1000, 0o700),
                             ("/scratch/.run", 0, 0o700), ("/audit", 0, 0o700)]:
         Path(path).mkdir(exist_ok=True)
@@ -170,7 +174,7 @@ def main():
                                 "-e", "raw=sendto,sendmsg,write,writev,pwrite64", "-o", "/audit/network.trace",
                                 "-u", "studio", *command], cwd="/scratch", env=clean_env("/home/studio"),
                                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                               stderr=subprocess.DEVNULL)
+                               stderr=None if start["mode"] == "probe" else subprocess.DEVNULL)
     while True:
         line = process.stdout.readline(2 * 1024 * 1024 + 1)
         if not line:

@@ -21,11 +21,18 @@ def network():
         connection.connect(("198.51.100.1", 443))
 
 
+def inaccessible(path):
+    try:
+        return not Path(path).exists()
+    except PermissionError:
+        return True
+
+
 def main():
     rules = {"network": refused(network),
              "root-write": refused(lambda: Path("/forbidden").write_text("probe")),
              "credential-file": refused(lambda: Path("/root/.aws/credentials").read_bytes()),
-             "early-answer-mount": all(not Path(p).exists() for p in
+             "early-answer-mount": all(inaccessible(p) for p in
                                        ["/audit/answers", "/answers", "/scratch/check.py", "/scratch/expected.json"]),
              "empty-home": not list(Path(os.environ["HOME"]).iterdir()),
              "clean-env": set(os.environ) == {"PATH", "HOME", "LANG", "STUDIO_FFMPEG", "TMPDIR"},

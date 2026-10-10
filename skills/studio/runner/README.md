@@ -1,7 +1,7 @@
 # Studio evaluation runner
 
 Implementation draft for the [runner contract](../../SPEC-studio.md#evaluation-lane).
-It is not ready to score studio skills. Runtime probes must pass on the selected image;
+It awaits independent review before scoring studio skills. Runtime probes must pass on the selected image;
 host-only checks do not prove container isolation. No studio acceptance cases are included here.
 
 ## Choices
@@ -10,11 +10,16 @@ Use rootless Podman with delegated cgroup v2 `cpu`, `memory` and `pids` controll
 seccomp enabled. The runner refuses a host that lacks them. It never substitutes a host
 subprocess, drops a resource limit, enables privileged mode, pulls an image or downloads tools.
 The runtime gets a fresh HOME and explicit image-store path, without inherited configuration
-or credential environment variables.
+or credential environment variables. Podman uses cgroupfs inside the caller's delegated scope,
+so it does not need an inherited user-bus address. On systemd hosts, launch build and probe
+commands with `systemd-run --user --scope --slice=user.slice -p Delegate=yes` before `python3`.
+This temporary scope changes no persistent service configuration. Verify the actual limits;
+a controller inventory alone does not prove container enforcement.
 
 The base is an operator-prepared OCI tool image, addressed by an immutable manifest digest,
 already loaded in that store. It contains Python 3, NumPy, tesseract, strace, a `useradd` command,
-and ffmpeg **7.0.2** at `/opt/tools/bin/ffmpeg`. Add the skill's local tools, fonts and model weights
+Node **22 or later**, and ffmpeg **7.0.2** at `/opt/tools/bin/ffmpeg`. UID 1000 must be unused.
+Add the skill's local tools, fonts and model weights
 before preparing that image; pin their versions and licenses there. The runner records observed
 tool versions and the exact final image identity. A case needing unavailable tools fails; there is
 no download fallback. Tesseract's version is recorded; OCR measurements are not an extra runner gate.
@@ -44,6 +49,24 @@ Only normalized denial metadata enters the published proxy log. The raw audit is
 The relay blocks key-bearing responses and stops accepting connections before the checker starts.
 
 ## Image preparation
+
+An amd64 preparation example is [tools.Containerfile](tools.Containerfile): official Node
+at a recorded manifest digest, Debian packages from the 2026-10-01 snapshot, and the
+[publisher's FFmpeg 7.0.2 static archive](https://johnvansickle.com/ffmpeg/).
+Download `https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz`
+as `ffmpeg.tar.xz` into a dedicated build context containing that recipe. Its SHA-256 must be
+`abda8d77ce8309141f83ab8edf0596834087c52467f6badf376a6a2a4c87cf67`; the recipe verifies it.
+The static FFmpeg build is GPL-3.0; its license is kept in the image. Keep the publisher's
+corresponding source and comply with redistribution terms before distributing this image.
+No downloaded third-party source or binary is committed here. This preparation build needs
+package networking; evaluation and the runner-layer build do not.
+
+Build that context with Podman using an explicit store, `--pull=never` and the cgroupfs
+manager inside a delegated scope. Download the pinned official base first. Export the resulting
+tool image to a local directory with `podman push --digestfile /absolute/tools-digest.txt
+localhost/studio-tools:2026-10-10 dir:/absolute/tools-export`. This local export records its
+manifest digest and makes the immutable `localhost/studio-tools@sha256:...` reference available
+in the store. No registry upload is needed. Record the final runner-layer digest the same way.
 
 Run the offline layer build against your already-loaded base digest:
 
@@ -80,6 +103,9 @@ The case supplies `brief.md`, `inputs/`, `expected.json`, and `check.py`. The sk
 not read or write studio acceptance cases. The runner stages only the brief and ordinary input
 files into read-only agent mounts. Execute bits under `inputs/bin/` are preserved; links, special
 files and setuid bits are refused or removed. Checker answers are frozen privately on the host.
+The agent sees fixed neutral paths `/scratch/brief.md`, `/scratch/inputs`, and `/skill/SKILL.md`;
+the host case folder and `--case-id` are never sent in its start frame or environment. Staging
+uses a random private directory. Input and brief contents remain the case author's responsibility.
 
 Provide secrets through already-open file descriptors, not arguments, environment variables,
 files under the case, or the image. The key-FD mapping contains numbers only:
@@ -130,7 +156,15 @@ safe agent failures may keep their captured tree. Unsafe archives are refused ra
 
 ## What remains unverified
 
-The implementation needs a prepared image and a successful real self-test on a host with CPU
-cgroup delegation, then independent review. GPU device admission is not implemented; GPU cases
+The [2026-10-10 synthetic receipt](validation-2026-10-10.json) records a prepared amd64 image
+and a passing real self-test: twelve agent refusals/invariants, three checker rules, actual
+cgroup limits, and 37 host checks. It used no model or credential and read no studio cases.
+The tool recipe's Node account is removed so the supervisor can create its own UID 1000.
+The self-test found and corrected tmpfs option compatibility, missing entrypoint PATH, and
+the early-answer probe's handling of a protected directory. A successful self-test does not
+establish model adapter behavior, paid-service behavior, or studio skill scores.
+
+Independent Claude review and real evaluation-lane acceptance remain pending.
+GPU device admission is not implemented; GPU cases
 must currently fail rather than silently use a weaker sandbox. The exact tool image and model
 snapshot used for scoring remain operator choices. No studio skill has been scored by this draft.
