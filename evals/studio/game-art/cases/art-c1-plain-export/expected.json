@@ -1,6 +1,7 @@
 {
   "case": "art-c1-plain-export",
   "skill": "game-art",
+  "purpose": "a correct plain export must not be flagged: the false-alarm side of the matte, size and manifest rules",
   "item": "control",
   "kind": "M",
   "tools": [

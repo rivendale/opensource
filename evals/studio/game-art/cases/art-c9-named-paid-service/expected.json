@@ -1,6 +1,7 @@
 {
   "case": "art-c9-named-paid-service",
   "skill": "game-art",
+  "purpose": "a paid service the brief names, used and recorded, must not be flagged as an unrequested paid service",
   "item": "control",
   "kind": "T",
   "tools": [
