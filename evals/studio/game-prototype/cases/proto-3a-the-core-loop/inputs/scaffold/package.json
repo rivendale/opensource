@@ -1,0 +1,7 @@
+{
+  "name": "mini-scaffold",
+  "version": "1.2.0",
+  "description": "A small headless game loop with scripted input.",
+  "license": "MIT",
+  "scripts": { "start": "node src/main.js", "build": "node scripts/build.js" }
+}

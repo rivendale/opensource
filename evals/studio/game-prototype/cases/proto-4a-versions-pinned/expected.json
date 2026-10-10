@@ -1,0 +1,30 @@
+{
+  "case": "proto-4a-versions-pinned",
+  "skill": "game-prototype",
+  "item": "proto-4",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "python3"
+  ],
+  "rules": [
+    {
+      "id": "pinned",
+      "type": "proto_pinned",
+      "scaffold": "mini-scaffold"
+    },
+    {
+      "id": "credited",
+      "type": "proto_credited",
+      "reference": "inputs/scaffold",
+      "run": 6,
+      "scaffold": "mini-scaffold",
+      "license": "MIT",
+      "holder": "Mini Scaffold Authors"
+    },
+    {
+      "id": "manifest_valid",
+      "type": "proto_assets_have_rows"
+    }
+  ]
+}

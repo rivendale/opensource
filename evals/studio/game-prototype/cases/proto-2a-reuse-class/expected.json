@@ -1,0 +1,42 @@
+{
+  "case": "proto-2a-reuse-class",
+  "skill": "game-prototype",
+  "item": "proto-2",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "python3"
+  ],
+  "rules": [
+    {
+      "id": "starts",
+      "type": "proto_starts",
+      "args": [
+        "src/main.js",
+        "--headless",
+        "--frames",
+        "60"
+      ],
+      "limit": 30
+    },
+    {
+      "id": "not_copied",
+      "type": "proto_not_copied",
+      "reference": "inputs/reference",
+      "run": 4
+    },
+    {
+      "id": "credited",
+      "type": "proto_credited",
+      "reference": "inputs/scaffold",
+      "run": 6,
+      "scaffold": "mini-scaffold",
+      "license": "MIT",
+      "holder": "Mini Scaffold Authors"
+    },
+    {
+      "id": "manifest_valid",
+      "type": "proto_assets_have_rows"
+    }
+  ]
+}
