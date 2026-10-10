@@ -150,6 +150,12 @@ reports the value it used.
 | video format | resolution, frame rate and aspect ratio exact; duration within 0.5 s |
 | prototype | starts and reaches its first interactive frame within 30 s on the stated target |
 
+## Where things live
+
+The skills, the manifest schema and the studio evaluation cases all live in this repository, so a skill and
+its tests change together: `skills/<skill>/`, `skills/studio/manifest.schema.json` (with a validator), and
+`evals/studio/<skill>/cases/<case>/`.
+
 ## Evaluation lane
 
 These skills make files, so they cannot be measured in a lane with no tools. Each case runs in a scratch
@@ -158,6 +164,28 @@ configuration), and pinned tool versions. Each case ships a checker script that 
 and prints a pass or fail per rule. A case that needs a model pins the model, version and seed. A case that needs
 a GPU or a long render is run by the operator outside CI; the case says exactly what to run and what the skill
 must report.
+
+**Runner contract** (what a runner must do before any studio case result counts):
+
+1. **Tools and models arrive before the run, never during it.** A pinned container image (digest recorded with
+   every result) holds the tools, at the versions the case names, and any local model weights a case needs. A
+   case may not download anything.
+2. **Isolation is enforced, not asked for.** The case runs in a container with a fresh, empty `HOME`, no
+   inherited environment variables, no mounted credentials and a read-only root. Network is off except one
+   egress route to the AI model's API, through a proxy that allows only that host; every other connection
+   fails and is logged.
+3. **Case layout.** `brief.md` (what the operator asks), `inputs/` (reference files, read-only), `expected.json`
+   (the rules and their thresholds, never shown to the skill), `check.py` (the checker). The runner copies
+   `brief.md` and `inputs/` into a fresh scratch directory and nothing else.
+4. **What is captured.** The final scratch tree, the agent's transcript, token usage, wall time, the proxy log and
+   the image digest. The scratch tree is kept as the result; the run's own claims are not trusted over it.
+5. **Limits.** 20 minutes wall time, 4 CPUs, 8 GB memory and 2 GB of scratch disk per case unless the case states
+   otherwise. A run that hits a limit is a failure, recorded with the limit it hit.
+6. **The checker runs in the same sandbox, after the agent exits.** It reads only the scratch tree and
+   `expected.json`; a produced build or script is run only there, with the network fully off. It prints one JSON
+   object: `{"case": id, "rules": [{"id": rule, "pass": true or false, "measured": value, "threshold": value}]}`.
+
+The sealed no-tools lane used for review skills does not apply here.
 
 ## Measure
 
