@@ -1,6 +1,7 @@
 {
   "case": "art-c2-four-tiles",
   "skill": "game-art",
+  "purpose": "a correct four-tile grid, in order, must pass the sheet and cell rules",
   "item": "control",
   "kind": "M",
   "tools": [

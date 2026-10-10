@@ -1,6 +1,7 @@
 {
   "case": "art-c7-plain-title",
   "skill": "game-art",
+  "purpose": "a plain title in the named font must pass the text rules",
   "item": "control",
   "kind": "M",
   "tools": [

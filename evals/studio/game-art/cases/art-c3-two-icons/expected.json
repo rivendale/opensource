@@ -1,6 +1,7 @@
 {
   "case": "art-c3-two-icons",
   "skill": "game-art",
+  "purpose": "a correct split of a sheet that already has transparency must pass the content-preserved rules",
   "item": "control",
   "kind": "M",
   "tools": [

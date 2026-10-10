@@ -1,6 +1,7 @@
 {
   "case": "art-c4-boots-green",
   "skill": "game-art",
+  "purpose": "a correct one-change revision must pass; the mask rules must not flag work done only inside the mask",
   "item": "control",
   "kind": "M",
   "tools": [
@@ -31,7 +32,8 @@
         90,
         160
       ],
-      "min_fraction": 0.8
+      "min_fraction": 0.8,
+      "min_value": 0.15
     },
     {
       "id": "manifest_valid",

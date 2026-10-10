@@ -1,6 +1,7 @@
 {
   "case": "art-c5-permissive-model",
   "skill": "game-art",
+  "purpose": "using a model whose license allows the game's use, with the license recorded, must not be flagged as a license failure",
   "item": "control",
   "kind": "T",
   "tools": [
