@@ -21,6 +21,11 @@ def run(M, case, d):
 
 def main(M, argv):
     prefix = argv[0] if argv else ""
+    try:
+        import audio_rules
+        print("ffmpeg:", audio_rules._run(["-version"]).stdout.splitlines()[0])
+    except Exception:  # noqa: BLE001
+        pass
     bad = 0
     for case in M.CASES:
         if not case["id"].startswith(prefix):

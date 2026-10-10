@@ -17,16 +17,34 @@ def _run(args):
     return subprocess.run([ffmpeg(), "-hide_banner", "-nostats", *args], capture_output=True, text=True, timeout=120)
 
 
+LAYOUT_CHANNELS = {"mono": 1, "stereo": 2, "2.1": 3, "quad": 4, "4.0": 4, "5.0": 5, "5.1": 6, "7.1": 8}
+
+
+def parse_stream(err):
+    """codec, rate and channel count from the first `Audio:` stream line in ffmpeg's stderr. The channel field reads `mono`, `stereo`, `5.1`, or `N channels`
+    (ffmpeg 6 prints `1 channels` for a file with no channel layout; 7 prints `mono`)."""
+    line = next((l for l in err.splitlines() if "Audio:" in l), None)
+    if line is None:
+        raise ValueError("not decodable audio")
+    fields = [f.strip() for f in line.split("Audio:", 1)[1].split(",")]
+    codec = fields[0].split()[0]
+    rate = next((int(m.group(1)) for f in fields for m in [re.fullmatch(r"(\d+) Hz", f)] if m), None)
+    ch = None
+    for f in fields:
+        m = re.fullmatch(r"(\d+) channels?", f)
+        if m:
+            ch = int(m.group(1))
+            break
+        if f.split("(")[0] in LAYOUT_CHANNELS:
+            ch = LAYOUT_CHANNELS[f.split("(")[0]]
+            break
+    if rate is None or ch is None:
+        raise ValueError("cannot read rate and channels from: " + line.strip()[:100])
+    return {"codec": codec, "rate": rate, "channels": ch}
+
+
 def info(path):
-    err = _run(["-i", str(path), "-f", "null", "-"]).stderr
-    m = re.search(r"Audio: (\w+).*?, (\d+) Hz, (\w+)", err)
-    if not m:
-        raise ValueError("not decodable audio: " + err.strip().splitlines()[-1][:80] if err.strip() else "not decodable audio")
-    ch = {"mono": 1, "stereo": 2}.get(m.group(3))
-    if ch is None:
-        mm = re.search(r"(\d+) channels", m.group(3))
-        ch = int(mm.group(1)) if mm else 0
-    return {"codec": m.group(1), "rate": int(m.group(2)), "channels": ch}
+    return parse_stream(_run(["-i", str(path), "-f", "null", "-"]).stderr)
 
 
 def decode(path):
