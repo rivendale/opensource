@@ -1,0 +1,35 @@
+{
+  "case": "proto-6a-asset-rows",
+  "skill": "game-prototype",
+  "item": "proto-6",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "python3"
+  ],
+  "rules": [
+    {
+      "id": "starts",
+      "type": "proto_starts",
+      "args": [
+        "src/main.js",
+        "--headless",
+        "--frames",
+        "60"
+      ],
+      "limit": 30
+    },
+    {
+      "id": "manifest_valid",
+      "type": "proto_assets_have_rows"
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/sprites/coin.png",
+        "assets/sprites/gem.png"
+      ]
+    }
+  ]
+}

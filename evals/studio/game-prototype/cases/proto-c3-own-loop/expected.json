@@ -1,0 +1,88 @@
+{
+  "case": "proto-c3-own-loop",
+  "skill": "game-prototype",
+  "purpose": "a project that wrote its own loop, as the brief asked, needs no THIRD_PARTY row and no scaffold version, only a fixed Node version",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "python3"
+  ],
+  "rules": [
+    {
+      "id": "starts",
+      "type": "proto_starts",
+      "args": [
+        "src/main.js",
+        "--headless",
+        "--frames",
+        "60"
+      ],
+      "limit": 30
+    },
+    {
+      "id": "lose",
+      "type": "proto_loop_lose",
+      "args": [
+        "src/main.js",
+        "--headless"
+      ]
+    },
+    {
+      "id": "restart",
+      "type": "proto_loop_restart",
+      "args": [
+        "src/main.js",
+        "--headless"
+      ]
+    },
+    {
+      "id": "score",
+      "type": "proto_loop_score",
+      "args": [
+        "src/main.js",
+        "--headless"
+      ]
+    },
+    {
+      "id": "phone_home",
+      "type": "proto_no_phone_home",
+      "args": [
+        "src/main.js",
+        "--headless",
+        "--frames",
+        "700"
+      ],
+      "also": [
+        [
+          "scripts/build.js"
+        ]
+      ],
+      "allowed_hosts": []
+    },
+    {
+      "id": "pinned",
+      "type": "proto_pinned",
+      "scaffold": null
+    },
+    {
+      "id": "not_copied",
+      "type": "proto_not_copied",
+      "reference": "inputs/reference",
+      "run": 4
+    },
+    {
+      "id": "credited",
+      "type": "proto_credited",
+      "reference": "inputs/scaffold",
+      "run": 6,
+      "scaffold": "mini-scaffold",
+      "license": "MIT",
+      "holder": "Mini Scaffold Authors"
+    },
+    {
+      "id": "manifest_valid",
+      "type": "proto_assets_have_rows"
+    }
+  ]
+}

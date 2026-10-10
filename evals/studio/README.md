@@ -94,6 +94,25 @@ The self-check renders a 12 s trailer per case and per defect, so it takes sever
 | vid-7 reproducible | vid-7a | no build script; a script that makes an 8 s video (compared on size, rate, duration, loudness and frame difference, the spec's table) |
 | controls | vid-c1 to vid-c4 | a plain trailer; a CC BY clip recorded; a person with consent recorded; 1280x720 at 25 fps, 10 s |
 
+## game-prototype
+
+[game-prototype/cases](game-prototype/cases): 9 cases (6 defect, 3 controls) for the six game-prototype failure items. Needs node 22 or later. The prototype is a small headless coin-catcher
+(`node src/main.js --headless --frames N`, scripted input on stdin) built from `inputs/scaffold/`, a tiny MIT scaffold with a telemetry call in its default build, beside a GPL project marked
+study-only. The checker runs node in a copy of the project with an empty HOME and a preloaded script (`lib/net_trap.js`) that refuses and logs every connection attempt, then plays the game with inputs it
+computes from the brief's rules (an idle player must lose all lives, a player in the right lane must score 1..12, a `restart` after GAME_OVER must start play again).
+
+| item | cases | what the brief sets up |
+|---|---|---|
+| proto-1 starts | proto-1a | a syntax error; a program that never reaches the first frame; one that reaches it after 35 s (the limit is 30 s) |
+| proto-2 reuse class | proto-2a | a function copied from the study-only project; the scaffold's engine used with no THIRD_PARTY row; a row without the license text |
+| proto-3 core loop | proto-3a | lives never taken; no score; no restart; lives run out and nothing happens |
+| proto-4 pinned | proto-4a | a caret range; a dependency at `latest`; no Node version; the scaffold named without a version |
+| proto-5 phones home | proto-5a | the scaffold's telemetry left in the build; an analytics call (which also crashes offline, so it fails `starts` too); a remote sprite URL in the code |
+| proto-6 asset rows | proto-6a | a sprite with no manifest row; no rows at all |
+| controls | proto-c1 to proto-c3 | a plain prototype; a score upload to the host the brief names; a project with its own loop that copied nothing |
+
+A project with no assets needs no manifest. Copied code is found by shared runs of substantive lines (4 against the study-only project, 6 against the scaffold).
+
 ## How the checkers were checked
 
 `python3 evals/studio/game-art/build/selfcheck.py` builds, for every case, a correct output tree and several defective ones (a blurred resize, a magenta rim, a
