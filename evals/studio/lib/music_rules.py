@@ -12,8 +12,7 @@ def mono(path):
     return rate, a.mean(axis=1)
 
 
-def onsets(x, rate, hop_ms=5, refractory_ms=120):
-    """Times (s) of energy onsets: positive flux of the 5 ms RMS curve above 30% of its maximum, local maxima at least 120 ms apart."""
+def _coarse(x, rate, hop_ms=5, refractory_ms=120):
     hop = int(rate * hop_ms / 1000)
     x = np.concatenate([np.zeros(hop * 4), x])
     n = len(x) // hop
@@ -27,6 +26,28 @@ def onsets(x, rate, hop_ms=5, refractory_ms=120):
         if flux[i] >= thr and flux[i] >= flux[i - 1] and flux[i] > flux[i + 1] and (i - last) * hop_ms >= refractory_ms:
             out.append((i - 4) * hop_ms / 1000)
             last = i
+    return out
+
+
+def onsets(x, rate, refractory_ms=120):
+    """Times (s) of energy onsets. Coarse pass: positive flux of the 5 ms RMS curve above 30% of its maximum, local maxima at least 120 ms apart. Fine pass (so the
+    timing error is far under 1 BPM at the tempos in the cases): around each coarse onset, the first millisecond at which a 2 ms RMS reaches 20% of its maximum
+    over the next 25 ms."""
+    out = []
+    w = max(1, int(rate * 0.002))
+    for t in _coarse(x, rate, refractory_ms=refractory_ms):
+        a = max(0, int((t - 0.012) * rate))
+        seg = x[a: a + int(0.04 * rate)]
+        if len(seg) < 4 * w:
+            out.append(t)
+            continue
+        c = np.concatenate([[0.0], np.cumsum(seg.astype(np.float64) ** 2)])
+        step = max(1, int(rate * 0.001))
+        idx = np.arange(0, len(seg) - w, step)
+        r = np.sqrt((c[idx + w] - c[idx]) / w)
+        peak = r[: int(0.025 * rate / step)].max()
+        k = int(np.argmax(r >= 0.2 * peak)) if peak > 0 else 0
+        out.append((a + idx[k]) / rate)
     return out
 
 
