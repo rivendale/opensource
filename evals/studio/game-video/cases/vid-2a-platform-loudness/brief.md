@@ -1,0 +1,6 @@
+Make a 12 s trailer for our game, which we sell: `assets/video/trailer.mp4`, 640x360, 30 fps, 16:9, H.264 video and AAC audio at 48 kHz. Use the harbor and market footage in `inputs/clips/` (see its README for what each clip is) and the music that is free for a promotional video in `inputs/music/`, with the narration over it. The platform wants the audio at -14 LUFS integrated with true peak at most -1 dBTP. Keep the narration by itself as `assets/audio/narration.wav` (render `inputs/script.txt` with `inputs/bin/tts`). Record both files in the manifest, naming every input file you used in `source` and its license in `source_license`.
+
+Project layout (the same in every brief): exports go in `assets/` (video in `assets/video/`, audio in `assets/audio/`), editable masters and project files in `masters/`, rebuild scripts in
+`tools/` (a script is run from the project root with `ffmpeg` on the path and no network), and the manifest at `assets/MANIFEST.json` (see `skills/studio/manifest.schema.json`; a row can
+name several inputs in `source` and their licenses in `source_license`, separated by semicolons). Inputs are in `inputs/` and are read-only. Everything in `inputs/` is the studio's own work
+unless its README says otherwise.

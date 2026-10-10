@@ -1,0 +1,53 @@
+{
+  "case": "vid-1a-narration-matches-the-script",
+  "skill": "game-video",
+  "item": "vid-1",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2 (libx264, aac)",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "format",
+      "type": "video_format",
+      "file": "assets/video/trailer.mp4",
+      "width": 640,
+      "height": 360,
+      "fps": 30,
+      "duration": 12.0,
+      "duration_tol": 0.5
+    },
+    {
+      "id": "loudness",
+      "type": "video_loudness",
+      "file": "assets/video/trailer.mp4",
+      "target": -14.0,
+      "tol": 1.0,
+      "max_dbtp": -1.0
+    },
+    {
+      "id": "narration",
+      "type": "narration_wer",
+      "file": "assets/audio/narration.wav",
+      "script": "inputs/script.txt",
+      "max_wer": 0.05
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/video/trailer.mp4",
+        "assets/audio/narration.wav"
+      ]
+    }
+  ]
+}

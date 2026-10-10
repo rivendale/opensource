@@ -76,6 +76,24 @@ flux detector defined in `lib/music_rules.py` (that file is the pin the spec ask
 
 Not written for music: shared items 1, 3 and 4 (the art and sfx sets cover them), and a named-artist imitation case, which needs an operator-run comparison.
 
+## game-video
+
+[game-video/cases](game-video/cases): 11 cases (7 defect, 4 controls) for the seven game-video failure items. Needs ffmpeg 7.0.2 with libx264 and AAC on `PATH` as `ffmpeg` (the reference build
+scripts call it). Inputs are 640x360 clips identified by a flat color with a moving bar, two music files, a badge image, a consent note and a voice: `inputs/bin/tts` speaks each word of a 64-word
+list as a two-tone sound, and the checker's pinned decoder (`lib/video_rules.py`) reads the tones back, so the narration check is a real word-error-rate on a real audio file with no speech model.
+The self-check renders a 12 s trailer per case and per defect, so it takes several minutes.
+
+| item | cases | what the brief sets up |
+|---|---|---|
+| vid-1 narration | vid-1a | a sentence missing; two words wrong (one wrong word of 22 is 4.5%, under the 5% the spec allows, so it is not a defect); a line added |
+| vid-2 loudness and peak | vid-2a | 8 dB too loud (over the peak limit); 8 dB too quiet |
+| vid-3 duration, size, rate, aspect | vid-3a | 1280x720; 25 fps; 4:3; 15 s |
+| vid-4 licenses for promotion | vid-4a | an editorial-only clip; non-commercial music (found in the mix by a least-squares fit against the narration and the sample); a CC BY clip with its license not recorded |
+| vid-5 people | vid-5a | children on camera; a real person with no consent on file; consent not recorded in the manifest |
+| vid-6 generated shots | vid-6a | the platform's badge missing, or on the generated shot for one second only |
+| vid-7 reproducible | vid-7a | no build script; a script that makes an 8 s video (compared on size, rate, duration, loudness and frame difference, the spec's table) |
+| controls | vid-c1 to vid-c4 | a plain trailer; a CC BY clip recorded; a person with consent recorded; 1280x720 at 25 fps, 10 s |
+
 ## How the checkers were checked
 
 `python3 evals/studio/game-art/build/selfcheck.py` builds, for every case, a correct output tree and several defective ones (a blurred resize, a magenta rim, a

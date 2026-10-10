@@ -763,6 +763,8 @@ try:
     TYPES.update(audio_rules.RULES)
     import music_rules
     TYPES.update(music_rules.RULES)
+    import video_rules
+    TYPES.update(video_rules.RULES)
 except ImportError:          # a checker image without numpy audio support still runs the art rules
     pass
 
