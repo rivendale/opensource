@@ -9,7 +9,7 @@ python3 evals/studio/game-art/cases/<case>/check.py SCRATCH_DIR evals/studio/gam
 ```
 
 It prints `{"case": id, "rules": [{"id", "pass", "measured", "threshold"}]}` and exits 0 when every rule passes. A rule that cannot be measured fails and
-says why; a checker never skips a rule. Needs Python 3.12 with Pillow and numpy (in the pinned image). `STUDIO_LIB` can point `check.py` at the library
+says why; a checker never skips a rule. Needs Python 3.12 with Pillow and numpy (in the pinned image). A kept build script is run with the same interpreter and the same installed packages as the checker, an empty `HOME` and no other inherited variables, so Pillow installed in the user's site-packages also works. `STUDIO_LIB` can point `check.py` at the library
 when the checker is mounted away from the repository.
 
 ## game-art

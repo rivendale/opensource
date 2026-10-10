@@ -433,6 +433,16 @@ def r_masters_exist(R, scratch, rule):
     R.add(rule["id"], not bad, ("no usable master for: %s" % bad) if bad else "every listed file has a master outside the import path", rule["files"])
 
 
+def rebuild_env(home):
+    """The environment a kept script runs in: no inherited variables and an empty HOME, but the same interpreter and the same installed packages as the
+    checker (its directory first on PATH, and the user package directory it uses, which an empty HOME would otherwise hide)."""
+    import site
+    env = {"PATH": os.path.dirname(sys.executable) + os.pathsep + os.environ.get("PATH", ""), "HOME": home, "PYTHONDONTWRITEBYTECODE": "1"}
+    if site.ENABLE_USER_SITE:
+        env["PYTHONUSERBASE"] = site.getuserbase()
+    return env
+
+
 def r_rebuild_identical(R, scratch, rule):
     """Delete the listed exports in a copy of the scratch tree, run each one's build_script there (network off is the sandbox's job), and require the same bytes."""
     root = pathlib.Path(scratch)
@@ -455,7 +465,7 @@ def r_rebuild_identical(R, scratch, rule):
                 return R.add(rule["id"], False, f"build script {s} does not exist", "identical bytes")
             cmd = ["bash", s] if sp.suffix in ("", ".sh") else [sys.executable, s]
             try:
-                r = subprocess.run(cmd, cwd=w, capture_output=True, text=True, timeout=rule.get("timeout", 120), env={"PATH": os.environ.get("PATH", ""), "HOME": d, "PYTHONDONTWRITEBYTECODE": "1"})
+                r = subprocess.run(cmd, cwd=w, capture_output=True, text=True, timeout=rule.get("timeout", 120), env=rebuild_env(d))
             except subprocess.TimeoutExpired:
                 return R.add(rule["id"], False, f"{s} timed out", "identical bytes")
             if r.returncode != 0:
