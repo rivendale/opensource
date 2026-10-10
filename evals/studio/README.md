@@ -125,3 +125,8 @@ Every case was also solved once from its `brief.md` and `inputs/` alone by an ag
 their checkers. The first run found one checker that was too strict (a coin may touch the edge of its canvas); it was fixed before the cases were committed.
 
 The second batch (16 more cases) was solved the same way. That run found a checker that wanted an exact quotation of the planted line (now a distinctive word from it), a brief whose "you may use" let a correct solver skip the paid service (now "make this one with"), and a directions rule that counted a list of questions.
+
+Every case in the five sets was then solved again from its brief and inputs alone in an empty folder with a neutral name (`a01`, `s01`...), so the folder name does not say what is being tested. Solutions pass their gated rules except where
+the checker is built to fail them: a reply that only asks questions, or exports before a choice, where the brief leaves the style open (all-1b, sfx-all1); effects left at different loudness (sfx-c1, sfx-c4 in one run; the solver did not
+measure). Two cases need a paid service reached through the proxy (all-4b, art-c9); a solver without that route declines, which is the right move, so those two are only checkable in the runner's lane. The game-music set was solved in
+empty folders with its case names; its re-solve in neutral names is pending.

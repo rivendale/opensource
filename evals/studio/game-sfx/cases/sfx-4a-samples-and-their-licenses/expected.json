@@ -34,7 +34,7 @@
       ],
       "sample": "inputs/samples/pickup.wav",
       "allowed": [
-        "CC0 1.0"
+        "CC0"
       ]
     },
     {

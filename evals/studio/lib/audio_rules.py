@@ -230,7 +230,7 @@ def used_score(scratch, export, sample):
 
 
 def r_sample_license(R, scratch, rule):
-    """If any export in `files` contains `sample` (score at least `used_at`), its manifest row names a source and a `source_license` from `allowed` (empty: the sample may not be used at all)."""
+    """If any export in `files` contains `sample` (score at least `used_at`), its manifest row names a source and a `source_license` that contains one of `allowed` (case-insensitive, so "CC0 1.0 Universal" matches "CC0") (empty: the sample may not be used at all)."""
     try:
         rows = {r["file"]: r for r in json.loads((pathlib.Path(scratch) / "assets/MANIFEST.json").read_text())["assets"]}
     except Exception as e:  # noqa: BLE001
@@ -244,7 +244,7 @@ def r_sample_license(R, scratch, rule):
             continue
         used[f] = round(sc, 2)
         row = rows.get(f) or {}
-        if not (row.get("source") and row.get("source_license") in rule["allowed"]):
+        if not (row.get("source") and any(a.lower() in str(row.get("source_license") or "").lower() for a in rule["allowed"])):
             bad[f] = {"source": row.get("source"), "source_license": row.get("source_license")}
     R.add(rule["id"], not bad, {"used_in": used or None, "recorded_wrongly": bad or None} if (used or bad) else "sample not used", {"allowed_licenses": rule["allowed"]})
 
