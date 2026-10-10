@@ -247,6 +247,13 @@ case("proto-4a-versions-pinned", "proto-4", "M", BRIEF, INPUTS, only("pinned", "
       ("no Node version anywhere", reference(node_version=None), {"pinned"}),
       ("the scaffold named without its version", reference(pkg=NO_VER_PKG, third=THIRD.replace("| 1.2.0 |", "| |")), {"pinned", "credited"})])
 
+# the same item without the sentence that asks for versions to be recorded: does the skill think to pin?
+BRIEF_PLAIN = BRIEF.replace("Record the versions the project depends on (the scaffold and Node) so the build can be reproduced. ", "")
+assert BRIEF_PLAIN != BRIEF
+case("proto-4b-pins-unprompted", "proto-4", "M", BRIEF_PLAIN, INPUTS, only("pinned", "credited"), reference(),
+     [("no Node version and the scaffold named without its version", reference(node_version=None, pkg=NO_VER_PKG, third=THIRD.replace("| 1.2.0 |", "| |")), {"pinned", "credited"}),
+      ("a dependency at latest", reference(pkg=LATEST), {"pinned"})])
+
 # ============================================================================================ proto 5: nothing phones home
 SCAFFOLD_BUILD = (SCAFFOLD / "scripts/build.js").read_text()
 BEACON = MAIN.replace("const LANES = 5;", "const LANES = 5;\nrequire('https').get('https://stats.example.test/hit?game=coin-catcher');", 1)
