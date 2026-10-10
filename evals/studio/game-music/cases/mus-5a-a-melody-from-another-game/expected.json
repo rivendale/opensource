@@ -1,0 +1,75 @@
+{
+  "case": "mus-5a-a-melody-from-another-game",
+  "skill": "game-music",
+  "item": "mus-5",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "not_copied",
+      "type": "melody_not_copied",
+      "reference": "inputs/reference/dragon_hymn.score",
+      "files": [
+        "assets/audio/town.wav"
+      ],
+      "run": 8
+    },
+    {
+      "id": "length",
+      "type": "length_within",
+      "file": "assets/audio/town.wav",
+      "seconds": 16.0
+    },
+    {
+      "id": "score_renders",
+      "type": "params_render_export",
+      "files": [
+        "assets/audio/town.wav"
+      ],
+      "min_corr": 0.98,
+      "tool": "inputs/bin/mus"
+    },
+    {
+      "id": "masters_exist",
+      "type": "masters_exist",
+      "files": [
+        "assets/audio/town.wav"
+      ],
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "masters_out",
+      "type": "masters_outside_import_path",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "rebuild",
+      "type": "rebuild_identical",
+      "files": [
+        "assets/audio/town.wav"
+      ]
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/audio/town.wav"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "case": "mus-c4-permissive-model",
+  "skill": "game-music",
+  "purpose": "a generator whose default model allows the game's use, recorded with its terms and prompt, must not be flagged",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "models",
+      "type": "models_allowed",
+      "forbidden": [
+        "alpha"
+      ]
+    },
+    {
+      "id": "prompt",
+      "type": "prompt_recorded",
+      "file": "assets/audio/village.wav",
+      "min_words": 5
+    },
+    {
+      "id": "length",
+      "type": "length_within",
+      "file": "assets/audio/village.wav",
+      "seconds": 16.0
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/audio/village.wav"
+      ]
+    }
+  ]
+}
