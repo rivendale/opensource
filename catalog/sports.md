@@ -4,7 +4,7 @@ sports games. 11 projects; 2 with a permissive code license. Sorted by reuse, th
 
 | project | reuse | license | language | stars | last push | about |
 |---|---|---|---|---|---|---|
-| [Open Golf](https://github.com/mgerdes/Open-Golf) | copy | MIT | C | 1932 | 2024-03-18 | A cross-platform minigolf game written in C. |
+| [Open Golf](https://github.com/mgerdes/Open-Golf) | copy | MIT | C | 1934 | 2024-03-18 | A cross-platform minigolf game written in C. |
 | [Ball-Fall-game-Unity2D](https://github.com/oussamabonnor1/Ball-Fall-game-Unity2D) | copy | MIT | C# | 25 | 2019-05-21 | A C# based game made with UNITY3D, Ball Fall is an addictive catch game. Keep your eyes open and your fingers ready. |
 | [NOVA PINBALL](https://github.com/wesleywerner/nova-pinball) | study only | GPL-3.0 (per list, GitHub could not read the license file) | Lua | 29 | 2026-09-20 archived | A pinball game created with the Love game framework |
 | [Nox Imperii](https://github.com/Kinniken/NoxImperii) | study only | GPL-3.0 | C | 15 | 2017-03-19 |  |

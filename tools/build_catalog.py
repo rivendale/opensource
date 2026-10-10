@@ -315,6 +315,43 @@ def enrich(entries, cache_path, batch=50):
     return info
 
 
+def games_seeds(entries):
+    """Merge curated provenance; retain an explicit record for unsupported hosts."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'domains', 'games-seeds.json')
+    if not os.path.exists(path):
+        sys.exit('missing games seeds: ' + path)
+    try:
+        spec = json.load(open(path, encoding='utf-8'))
+    except (OSError, ValueError):
+        sys.exit('unreadable curated games seeds')
+    seeds = spec.get('seeds') if isinstance(spec, dict) else None
+    if not isinstance(seeds, list):
+        sys.exit('games seeds must contain a seeds list')
+    dropped, accepted, seen = [], [], set()
+    for seed in seeds:
+        if (not isinstance(seed, dict) or set(seed) != {'repo', 'genre', 'why'}
+                or any(not isinstance(seed[k], str) or not seed[k].strip() for k in seed)
+                or seed['genre'] not in GENRES
+                or any(c in seed['why'] for c in '\r\n')
+                or not re.fullmatch(r'https://[A-Za-z0-9.-]+/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', seed['repo'])):
+            sys.exit('invalid curated games seed')
+        slug = gh_slug(seed['repo'])
+        key = (slug or seed['repo']).lower()
+        reason = None
+        if key in seen:
+            reason = 'listed twice in the curated seed file'
+        elif not slug:
+            reason = 'metadata host unsupported: the games build enriches GitHub repositories only'
+        seen.add(key)
+        if reason:
+            dropped.append({**seed, 'reason': reason})
+        else:
+            accepted.append(seed)
+            add(entries, slug, seed['repo'], 'curated', [seed['genre']], seed['why'],
+                {'curated_genre': seed['genre'], 'curated_why': seed['why'], 'curated_repo': seed['repo']})
+    return seeds, dropped, accepted
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", required=True)
@@ -330,6 +367,7 @@ def main():
     parse_trilarion(os.path.join(a.src, "trilarion"), entries)
     parse_topic(os.path.join(a.src, "topic.json"), entries)
     parse_topic(os.path.join(a.src, "topics_extra.json"), entries)
+    seeds, curated_dropped, accepted_seeds = games_seeds(entries)
     counts = collections.Counter(s for e in entries.values() for s in e["sources"])
     print(f"parsed {len(entries)} unique projects: {dict(counts)}", file=sys.stderr)
 
@@ -379,8 +417,10 @@ def main():
         pushed = (g or {}).get("pushedAt")
         age_days = (today - datetime.date.fromisoformat(pushed[:10])).days if pushed else None
         out.append({
-            "name": e["name"], "genre": genre_of(e["labels"]), "labels": e["labels"][:6],
-            "sources": e["sources"], "repo": (g or {}).get("nameWithOwner") and f"https://github.com/{g['nameWithOwner']}" or e["repo"],
+            "name": e["name"], "genre": e.get("curated_genre") or genre_of(e["labels"]), "labels": e["labels"][:6],
+            "sources": e["sources"],
+            **({"curated_why": e["curated_why"], "curated_repo": e["curated_repo"]} if e.get("curated_repo") else {}),
+            "repo": (g or {}).get("nameWithOwner") and f"https://github.com/{g['nameWithOwner']}" or e["repo"],
             "homepage": (g or {}).get("homepageUrl") or e.get("homepage"),
             "description": re.sub(r"\s*[\u2014\u2013]\s*", " - ", ((g or {}).get("description") or e["description"] or "")).strip()[:200],
             "language": ((g or {}).get("primaryLanguage") or {}).get("name") if g else e.get("list_language"),
@@ -388,16 +428,21 @@ def main():
             "stars": (g or {}).get("stargazerCount"), "pushed": pushed[:10] if pushed else None,
             "active": age_days is not None and age_days <= 730, "archived": (g or {}).get("isArchived"),
             "deps": e.get("deps"), "platform": e.get("platform"), "state": e.get("state"),
-            "note": "; ".join(x for x in [e.get("github_status"), (ov or {}).get("note"),
+            "note": "; ".join(x for x in [e.get("github_status"), e.get("curated_why"), (ov or {}).get("note"),
                                           "decompiled or disassembled commercial game: legal status unclear" if decomp else None] if x) or None,
         })
+    for seed in accepted_seeds:
+        if not any((row.get('curated_repo') or '').lower() == seed['repo'].lower() for row in out):
+            curated_dropped.append({**seed, 'reason': 'excluded by the catalog filters or a reviewed override'})
+    if len(seeds) != sum('curated' in row['sources'] for row in out) + len(curated_dropped):
+        sys.exit('curated seeds do not reconcile to rows plus drops')
     out.sort(key=lambda r: (r["genre"], {"copy": 0, "library": 1, "study": 2, "check": 3}[r["reuse"]], -(r["stars"] or 0), r["name"].lower()))
     os.makedirs(os.path.join(a.out, "data"), exist_ok=True)
     os.makedirs(os.path.join(a.out, "catalog"), exist_ok=True)
-    json.dump({"built": today.isoformat(), "count": len(out), "dropped": dict(dropped), "entries": out},
+    json.dump({"built": today.isoformat(), "count": len(out), "dropped": dict(dropped), "curated_seeds": len(seeds), "curated_dropped": curated_dropped, "entries": out},
               open(os.path.join(a.out, "data", "catalog.json"), "w"), indent=1, ensure_ascii=False)
     print(f"dropped: {dict(dropped)}", file=sys.stderr)
-    write_markdown(out, a.out, today, dropped)
+    write_markdown(out, a.out, today, dropped, len(seeds), curated_dropped)
     print(f"wrote {len(out)} entries", file=sys.stderr)
 
 
@@ -409,11 +454,11 @@ def reuse_text(r):
     return REUSE_TEXT[r["reuse"]] + (" (see note)" if r["reuse"] == "copy" and r.get("note") else "")
 
 
-def write_markdown(out, root, today, dropped):
+def write_markdown(out, root, today, dropped, seed_count=0, seed_drops=()):
     by = collections.defaultdict(list)
     for r in out:
         by[r["genre"]].append(r)
-    idx = ["# Catalog", "", f"Built {today.isoformat()} from three public lists and GitHub topic searches; every GitHub "
+    idx = ["# Catalog", "", f"Built {today.isoformat()} from three public lists, GitHub topic searches and curated seeds; every GitHub "
            "project's license and activity read from GitHub's API that day. Rebuild with `tools/fetch_sources.sh && "
            "python3 tools/build_catalog.py --src sources --out .`", "",
            "**Left out on purpose:** " + ("; ".join(f"{n} {why}" for why, n in dropped.items()) or "nothing") +
@@ -445,6 +490,12 @@ def write_markdown(out, root, today, dropped):
             md.append(f"| {name} | {reuse_text(r)} | {esc(lic)} | {esc(r['language'] or '')} | "
                       f"{r['stars'] if r['stars'] is not None else ''} | {last} | {about} |")
         open(os.path.join(root, "catalog", f"{slug}.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
+    idx += ['', '## Curated seeds', '',
+            f'{seed_count} seeds = {seed_count - len(seed_drops)} catalog rows + {len(seed_drops)} listed drops.',
+            'Edit [games-seeds.json](../tools/domains/games-seeds.json), then rebuild. Metadata hosts other than GitHub are not enriched.',
+            '', '| repository | reason left out | reference note |', '|---|---|---|']
+    for seed in seed_drops:
+        idx.append(f"| [{esc(seed['repo'])}]({seed['repo']}) | {esc(seed['reason'])} | {esc(seed['why'])} |")
     open(os.path.join(root, "catalog", "README.md"), "w", encoding="utf-8").write("\n".join(idx) + "\n")
 
 

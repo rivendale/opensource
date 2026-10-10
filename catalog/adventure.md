@@ -4,12 +4,12 @@ adventure, point-and-click, interactive fiction, visual novels. 76 projects; 18 
 
 | project | reuse | license | language | stars | last push | about |
 |---|---|---|---|---|---|---|
-| [Bladecoder Adventure Engine](https://github.com/bladecoder/bladecoder-adventure-engine) | copy | Apache-2.0 | Java | 645 | 2026-08-04 | Classic point and click adventure game engine and editor |
+| [Bladecoder Adventure Engine](https://github.com/bladecoder/bladecoder-adventure-engine) | copy | Apache-2.0 | Java | 646 | 2026-08-04 | Classic point and click adventure game engine and editor |
 | [Undum](https://github.com/idmillington/undum) | copy | MIT | JavaScript | 349 | 2018-10-11 | A client-side framework for narrative hypertext interactive fiction. |
 | [LBA2 Remake](https://github.com/LBALab/lba2remake) | copy | MIT | TypeScript | 286 | 2026-04-17 | A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React |
 | [Hypatia](https://github.com/hypatia-software-org/hypatia-engine) | copy | MIT | Python | 280 | 2017-04-27 | Hypatia Engine: make 2D action adventure games. For programmers and nonprogrammers alike. |
-| [The House](https://github.com/arturkot/the-house-game) | copy | MIT | JavaScript | 213 | 2024-01-04 | Simple adventure game written in HTML, CSS and JS. |
-| [Squiffy](https://github.com/textadventures/squiffy) | copy | MIT | TypeScript | 167 | 2026-09-18 | a tool for creating interactive fiction |
+| [The House](https://github.com/arturkot/the-house-game) | copy | MIT | JavaScript | 215 | 2024-01-04 | Simple adventure game written in HTML, CSS and JS. |
+| [Squiffy](https://github.com/textadventures/squiffy) | copy | MIT | TypeScript | 164 | 2026-10-01 | a tool for creating interactive fiction |
 | [engge](https://github.com/scemino/engge) | copy | MIT | C++ | 151 | 2022-11-06 archived | Open source remake of Thimbleweed Park's engine |
 | [RustTextAdventure](https://github.com/Ali-Marandi/RustTextAdventure) | copy | MIT | Rust | 109 | 2026-09-01 | A professional and creative text-based adventure game in Rust, showcasing memory safety and idiomatic patterns. |
 | [Sintel The Game](https://github.com/jonburesh/sintelgame) | copy | MIT | Python | 106 | 2018-09-05 | An open source adventure game created with Blender |
@@ -18,23 +18,23 @@ adventure, point-and-click, interactive fiction, visual novels. 76 projects; 18 
 | [gist-txt](https://github.com/potomak/gist-txt) | copy | MIT | JavaScript | 73 | 2021-04-25 | A minimal text adventure engine |
 | [Nitrosharp](https://github.com/CommitteeOfZero/nitrosharp) | copy | MIT | C# | 57 | 2025-12-30 | Open-source N2System reimplementation |
 | [RuZZT](https://github.com/yokljo/ruzzt) | copy | MIT | Rust | 50 | 2019-08-23 | RUZZT - A ZZT game engine clone written in Rust |
-| [TaleWeaver](https://github.com/jschm42/taleweaver) | copy | MIT | Python | 20 | 2026-09-23 | A next-generation AI-powered text adventure engine featuring dynamic storytelling, procedural world-building, and immers |
+| [TaleWeaver](https://github.com/jschm42/taleweaver) | copy | MIT | Python | 21 | 2026-10-05 | A next-generation AI-powered text adventure engine featuring dynamic storytelling, procedural world-building, and immers |
 | [zorkClone](https://github.com/vatbub/zorkClone) | copy | Apache-2.0 | Java | 19 | 2023-06-01 | A reimplementation of the original Zork game developed by Infocom |
 | [Bash Theft Auto](https://github.com/stuffbymax/Bash-Theft-Auto) | copy | MIT | Shell | 17 | 2026-08-29 | a gta but in terminal |
 | [javascript-E.T.](https://github.com/FranciscoG/javascript-E.T.) | copy | MIT | Assembly | 10 | 2026-03-17 | Work in progress, slow slow progress ;-) An HTML5 version of the classic Atari game E.T. |
-| [Ren'py](https://github.com/renpy/renpy) | library use | LGPL-2.1 (MOST CODE UNDER MIT) (per list, GitHub could not read the license file) | Ren'Py | 6854 | 2026-09-22 | The Ren'Py Visual Novel Engine |
+| [Ren'py](https://github.com/renpy/renpy) | library use | LGPL-2.1 (MOST CODE UNDER MIT) (per list, GitHub could not read the license file) | Ren'Py | 6883 | 2026-10-06 | The Ren'Py Visual Novel Engine |
 | [Sludge](https://github.com/opensludge/opensludge) | library use | LGPL-2.1 | C++ | 78 | 2023-07-20 | SLUDGE Adventure Game Engine |
 | [Serious Engine](https://github.com/Croteam-official/Serious-Engine) | study only | GPL-2.0 | C++ | 3180 | 2020-10-31 | An open source version of a game engine developed by Croteam for the classic Serious Sam games. |
-| [Twine](https://github.com/klembot/twinejs) | study only | GPL-3.0 | TypeScript | 2891 | 2026-09-05 | Twine, a tool for telling interactive, nonlinear stories |
-| [unitystation](https://github.com/unitystation/unitystation) | study only | AGPL-3.0 | C# | 734 | 2026-09-21 | The original unitystation |
+| [Twine](https://github.com/klembot/twinejs) | study only | GPL-3.0 | TypeScript | 2900 | 2026-10-04 | Twine, a tool for telling interactive, nonlinear stories |
+| [unitystation](https://github.com/unitystation/unitystation) | study only | AGPL-3.0 | C# | 734 | 2026-10-03 | The original unitystation |
 | [ResidualVM](https://github.com/residualvm/residualvm) | study only | GPL-2.0 | C++ | 400 | 2024-09-08 archived | ResidualVM main repository |
 | [Captain Blood](https://github.com/storm-devs/captain-blood) | study only | GPL-3.0 | C++ | 279 | 2024-06-04 |  |
 | [Dedalus](https://github.com/pistacchio/Dedalus) | study only | GPL-2.0 (per list, GitHub could not read the license file) | JavaScript | 184 | 2024-04-02 | A system based on Javascript and HTML to generate and run Choose Your Own Adventure narrative |
-| [rlvm](https://github.com/eglaysher/rlvm) | study only | GPL-3.0 | C++ | 168 | 2024-09-08 | RealLive clone for Linux and OSX |
+| [rlvm](https://github.com/eglaysher/rlvm) | study only | GPL-3.0 | C++ | 169 | 2024-09-08 | RealLive clone for Linux and OSX |
 | [Little Big Adventure 2 - Engine source code](https://github.com/LBALab/lba2-classic-community) | study only | GPL-2.0 | C++ | 109 | 2026-09-17 | Community-maintained source port of the original Little Big Adventure 2 (Twinsen’s Odyssey) engine. |
+| [UchuServer](https://github.com/UchuServer/Uchu) | study only | AGPL-3.0 | C# | 92 | 2025-10-03 | LEGO Universe server written in C# |
 | [TwinEngine](https://github.com/LBALab/twin-e) | study only | GPL-2.0 | C | 91 | 2025-08-31 | TwinEngine: a Little Big Adventure engine |
-| [UchuServer](https://github.com/UchuServer/Uchu) | study only | AGPL-3.0 | C# | 91 | 2025-10-03 | LEGO Universe server written in C# |
-| [Serious Sam Android](https://github.com/aarcangeli/Serious-Sam-Android) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 87 | 2024-07-29 | Porting of Serious Sam: The Second Encounter for android |
+| [Serious Sam Android](https://github.com/aarcangeli/Serious-Sam-Android) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 89 | 2024-07-29 | Porting of Serious Sam: The Second Encounter for android |
 | [Little Big Adventure 1 - Engine source code](https://github.com/LBALab/lba1-classic-community) | study only | GPL-2.0 | Assembly | 67 | 2025-11-27 archived |  |
 | [Free in the Dark (engine)](https://github.com/jmimu/FITD) | study only | GPL-2.0 | C | 54 | 2022-07-29 | Free in the Dark |
 | [Head over Heels](https://github.com/dougmencken/HeadOverHeels) | study only | GPL-3.0 | C++ | 50 | 2026-04-14 | The free and open source remake of the game “Head over Heels” |
@@ -57,9 +57,9 @@ adventure, point-and-click, interactive fiction, visual novels. 76 projects; 18 
 | [ONScripter](https://web.archive.org/web/20231102082402/http://onscripter.osdn.jp/onscripter.html) | study only | GPL-2.0 (per list, unverified) | C++ |  |  |  |
 | [terrarium](https://gitlab.com/hydren/terrarium.git) | study only | GPL-2.0 (per list, unverified) | C++ |  |  |  |
 | [Vegan on a Desert Island](https://gitlab.com/voadi/voadi.git) | study only | GPL-3.0 (per list, unverified) | Lua |  |  |  |
-| [Ship of Harkinian](https://github.com/HarbourMasters/Shipwright) | check first | MIT (per list, GitHub could not read the license file) | C | 5470 | 2026-09-22 |  |
+| [Ship of Harkinian](https://github.com/HarbourMasters/Shipwright) | check first | MIT (per list, GitHub could not read the license file) | C | 5537 | 2026-10-06 |  |
 | [Reconstruction of ZZT](https://github.com/asiekierka/reconstruction-of-zzt) | check first | MIT (per list, GitHub could not read the license file) | Pascal | 385 | 2025-06-30 | The Reconstruction of ZZT |
-| [INSTEAD](https://github.com/instead-hub/instead) | check first | MIT (per list, GitHub could not read the license file) | C | 258 | 2026-09-21 | INSTEAD - Simple Text Adventure Interpreter |
+| [INSTEAD](https://github.com/instead-hub/instead) | check first | MIT (per list, GitHub could not read the license file) | C | 258 | 2026-10-06 | INSTEAD - Simple Text Adventure Interpreter |
 | [Abuse 1996](https://github.com/antrad/Abuse_1996) | check first | CUSTOM + public domain + GPL-2.0 + WTFPL (per list, GitHub could not read the license file) | C++ | 154 | 2016-07-17 | SDL2 port of Abuse by Crack dot Com |
 | [Reconstruction of Super ZZT](https://github.com/asiekierka/reconstruction-of-super-zzt) | check first | MIT (per list, GitHub could not read the license file) | Pascal | 44 | 2025-06-30 | The Reconstruction of Super ZZT |
 | [Deer Portal](https://github.com/deerportal/deerportal) | check first | Zlib (per list, GitHub could not read the license file) | C++ | 34 | 2025-07-30 | Full of the diamonds :gem: board game driven by a :deer: Deer :deer: god and classical elements :fire: 💦 :dash: :earth_a |

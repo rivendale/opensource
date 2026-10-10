@@ -18,7 +18,7 @@ guidance; this repository does not certify an installation or a deployed service
 
 | domain | what it holds | start here |
 |---|---|---|
-| Games | a genre catalog of 2,718 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
+| Games | a genre catalog of 2,740 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
 | Software | 371 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
 
 | Tools | `tools/web/`: two readers that turn a public web page into text for an agent without trusting the page. `fetch` tries scholarly APIs, a direct read and the Wayback Machine; `browse` renders JavaScript pages in a headless browser whose every request goes through a public-only proxy. 212 independent tests. | [`tools/web/`](tools/web/README.md) |
@@ -29,9 +29,11 @@ this repository; everything else lives under [`software/`](software/).
 ## Games
 
 A chassis for building new games **from open source instead of from scratch**: a genre catalog of
-2,718 open-source games and engines with each project's license and activity read from GitHub,
+2,740 open-source games and engines with each project's license and activity read from GitHub,
 a build playbook per genre, a guide to building with AI coding tools (Claude, Codex, Grok), and
 engineering lessons from small games we built.
+
+- [Reference: archive.org](references/archive-org.md): manuals, shareware, magazines and preservation collections; links only.
 
 ## Start a new game
 
@@ -89,7 +91,7 @@ licenses (often non-commercial). Check assets separately. This is practical guid
 
 ## Genres
 
-598 of 2,718 projects have a permissive code license verified on GitHub. Built 2026-09-23.
+598 of 2,740 projects have a permissive code license verified on GitHub. Built 2026-09-23.
 
 | genre | projects | copy | active in the last 2 years | playbook |
 |---|---|---|---|---|

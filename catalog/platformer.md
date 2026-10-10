@@ -4,52 +4,52 @@
 
 | project | reuse | license | language | stars | last push | about |
 |---|---|---|---|---|---|---|
-| [OpenGOAL](https://github.com/open-goal/jak-project) | copy | ISC | Common Lisp | 3528 | 2026-09-22 | Reviving the language that brought us the Jak & Daxter Series |
-| [Red Runner](https://github.com/BayatGames/RedRunner) | copy | MIT | C# | 921 | 2026-01-29 | Red Runner, Awesome Platformer Game. |
-| [2D Platformer Hunter](https://github.com/ta-david-yu/2D-Platformer-Hunter) | copy | MIT | C# | 364 | 2024-04-03 | A 2D Platformer Controller in Unity |
-| [AAAAXY](https://github.com/divVerent/aaaaxy) | copy | Apache-2.0 | Go | 300 | 2026-09-23 | A nonlinear 2D puzzle platformer taking place in impossible spaces. |
-| [Kailius](https://github.com/Walkator/Kailius) | copy | MIT | C# | 281 | 2024-06-18 | 2D Platform Game developed in Unity for Android, Windows, and Linux. Kailius is inspired by the early RPGs, featuring Pi |
+| [OpenGOAL](https://github.com/open-goal/jak-project) | copy | ISC | Common Lisp | 3546 | 2026-10-05 | Reviving the language that brought us the Jak & Daxter Series |
+| [Red Runner](https://github.com/BayatGames/RedRunner) | copy | MIT | C# | 925 | 2026-01-29 | Red Runner, Awesome Platformer Game. |
+| [2D Platformer Hunter](https://github.com/ta-david-yu/2D-Platformer-Hunter) | copy | MIT | C# | 366 | 2024-04-03 | A 2D Platformer Controller in Unity |
+| [AAAAXY](https://github.com/divVerent/aaaaxy) | copy | Apache-2.0 | Go | 303 | 2026-10-06 | A nonlinear 2D puzzle platformer taking place in impossible spaces. |
+| [Kailius](https://github.com/Walkator/Kailius) | copy | MIT | C# | 282 | 2024-06-18 | 2D Platform Game developed in Unity for Android, Windows, and Linux. Kailius is inspired by the early RPGs, featuring Pi |
 | [Super Tilt Bro](https://github.com/sgadrat/super-tilt-bro) | copy | WTFPL | Assembly | 156 | 2026-02-01 | NES homebrew inspired by Super Smash Bros |
-| [Mario Objects](https://github.com/jazzyjester/Mario-Game) | copy | MIT | C# | 86 | 2026-07-12 | Mario Game + Level Editor Created In C# |
+| [Mario Objects](https://github.com/jazzyjester/Mario-Game) | copy | MIT | C# | 87 | 2026-07-12 | Mario Game + Level Editor Created In C# |
 | [Wario-Land-3](https://github.com/Nearoo/Wario-Land-3) | copy | MIT | Python | 51 | 2018-10-15 | A remake of the GBC-Game "Wario Land 3" using Pygame for Python |
-| [Gods Deluxe](https://github.com/jotd666/gods-deluxe) | copy | MIT | Java | 48 | 2025-03-09 |  |
+| [Gods Deluxe](https://github.com/jotd666/gods-deluxe) | copy | MIT | Java | 50 | 2025-03-09 |  |
 | [Elemental One](https://github.com/voithos/elemental-one) | copy | MIT | JavaScript | 46 | 2015-08-16 | A simple platformer made along the theme of Ludum Dare 28 |
-| [SkyOfSteel](https://github.com/ForLoveOfCats/SkyOfSteel) | copy | MIT | C# | 43 | 2020-08-17 archived | Git repo and bug tracker for SkyOfSteel |
+| [SkyOfSteel](https://github.com/ForLoveOfCats/SkyOfSteel) | copy | MIT | C# | 41 | 2020-08-17 archived | Git repo and bug tracker for SkyOfSteel |
 | [OpenRhythm](https://github.com/OpenRhythm/OpenRhythm) | copy | ISC | C++ | 27 | 2018-01-26 | Rhythm game similar to FoF, GH, or RB. (no longer in development) |
 | [trifle-psychotic](https://github.com/jan-orzechowski/trifle-psychotic) | copy | Zlib | C | 19 | 2023-08-05 | A retro sci-fi platformer written in C |
 | [GAMELAN](https://github.com/GamelanPKMM/GAMELAN) | copy | MIT | C# | 12 | 2018-07-13 | GAMELAN (Game Mengenal Budaya Nusantara) |
 | [Data Storm](https://github.com/haroldo-ok/datastorm) | copy | Apache-2.0 | C | 9 | 2017-01-08 | This is a Sega Master System clone of an Atari 2600 game named Turmoil. I had originally made the first, unfinished, ver |
 | [Hurrican](https://github.com/thrimbor/Hurrican) | copy | MIT | C++ | 4 | 2023-11-05 | Freeware jump and shoot game created by Poke53280, based on the Turrican game series by Manfred Trenz |
-| [Squally](https://github.com/Squalr/Squally) | library use | MPL-2.0 | C++ | 486 | 2026-05-22 | 2D Platformer Educational Game for Teaching Game Hacking - C++/cocos2d-x |
+| [Squally](https://github.com/Squalr/Squally) | library use | MPL-2.0 | C++ | 487 | 2026-05-22 | 2D Platformer Educational Game for Teaching Game Hacking - C++/cocos2d-x |
 | [Nikki and the Robots](https://github.com/nikki-and-the-robots/nikki) | library use | LGPL-3.0 | NewLisp | 125 | 2022-06-19 | Nikki and the Robots platformer game |
 | [Mega Mario](https://mmario.sourceforge.net/) | library use | LGPL-2.1 (per list, unverified) | C++ |  |  |  |
 | [Mrfuze](https://codeberg.org/osgames/mrfuze.git) | library use | LGPL-2.1 (per list, unverified) | Python |  |  |  |
-| [SuperTux](https://github.com/SuperTux/supertux) | study only | GPL-3.0 | C++ | 3153 | 2026-09-23 | SuperTux source code |
-| [Keen Dreams](https://github.com/keendreams/keen) | study only | GPL-2.0 | C | 1967 | 2014-11-12 | Keen Dreams on Greenlight! |
+| [SuperTux](https://github.com/SuperTux/supertux) | study only | GPL-3.0 | C++ | 3163 | 2026-10-03 | SuperTux source code |
+| [Keen Dreams](https://github.com/keendreams/keen) | study only | GPL-2.0 | C | 1968 | 2014-11-12 | Keen Dreams on Greenlight! |
 | [uMario](https://github.com/jakowskidev/uMario_Jakowski) | study only | GPL-2.0 | C++ | 803 | 2022-10-12 | uMario C++/SDL2 Game by Łykasz Jakowski |
-| [Jazz² Resurrection](https://github.com/deathkiller/jazz2) | study only | GPL-3.0 |  | 574 | 2026-08-22 | 🎮 · Jazz² Resurrection: Open-source reimplementation of Jazz Jackrabbit 2 |
-| [Sonic Robo Blast 2](https://github.com/STJr/SRB2) | study only | GPL-2.0 | C | 564 | 2026-09-23 | SRB2 2.2 Public (GitLab Mirror) |
+| [Jazz² Resurrection](https://github.com/deathkiller/jazz2) | study only | GPL-3.0 |  | 575 | 2026-08-22 | 🎮 · Jazz² Resurrection: Open-source reimplementation of Jazz Jackrabbit 2 |
+| [Sonic Robo Blast 2](https://github.com/STJr/SRB2) | study only | GPL-2.0 | C | 567 | 2026-10-03 | SRB2 2.2 Public (GitLab Mirror) |
 | [NXEngine-evo](https://github.com/nxengine/nxengine-evo) | study only | GPL-3.0 | C | 549 | 2026-03-04 | nxengine refactoring |
-| [Open Surge](https://github.com/alemart/opensurge) | study only | GPL-3.0 | C | 478 | 2026-07-29 | Retro game engine inspired by 16-bit Sonic games. |
+| [Open Surge](https://github.com/alemart/opensurge) | study only | GPL-3.0 | C | 482 | 2026-07-29 | Retro game engine inspired by 16-bit Sonic games. |
 | [Super Bombinhas](https://github.com/victords/super-bombinhas) | study only | GPL-3.0 | Ruby | 314 | 2025-05-09 | A 2D platformer written in Ruby. |
 | [The Secret Chronicles of Dr. M.](https://github.com/Secretchronicles/TSC) | study only | GPL-3.0 | C++ | 223 | 2026-08-10 | An open source two-dimensional platform game. |
-| [Tux Builder](https://github.com/Alzter/TuxBuilder) | study only | GPL-3.0 | GDScript | 215 | 2023-06-14 | A Godot re-implementation of SuperTux |
-| [NXEngine](https://github.com/EXL/NXEngine) | study only | GPL-3.0 | C++ | 199 | 2022-10-13 | A port of the open-source rewrite Cave Story game engine for various platforms. Original author is Caitlin "rogueeve" Sh |
-| [CaveExpress](https://github.com/mgerhardy/caveexpress) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C++ | 164 | 2026-09-13 | CaveExpress is a classic 2D platformer with physics-based gameplay and dozens of levels. CavePacker is a Sokoban game. |
-| [WarMUX](https://github.com/yeKcim/warmux) | study only | GPL-2.0 |  | 151 | 2023-08-09 | warmux is an old worms clone project. It's a dead project, website is down, code is here now. |
-| [Minilens](https://github.com/KOBUGE-Games/minilens) | study only | GPL-3.0 | GDScript | 143 | 2018-07-16 | Cute puzzle platformer starring a cleaning robot on post-apocalyptic Earth |
+| [Tux Builder](https://github.com/Alzter/TuxBuilder) | study only | GPL-3.0 | GDScript | 213 | 2023-06-14 | A Godot re-implementation of SuperTux |
+| [NXEngine](https://github.com/EXL/NXEngine) | study only | GPL-3.0 | C++ | 200 | 2022-10-13 | A port of the open-source rewrite Cave Story game engine for various platforms. Original author is Caitlin "rogueeve" Sh |
+| [CaveExpress](https://github.com/mgerhardy/caveexpress) | study only | GPL-3.0 (per list, GitHub could not read the license file) | C++ | 165 | 2026-09-13 | CaveExpress is a classic 2D platformer with physics-based gameplay and dozens of levels. CavePacker is a Sokoban game. |
+| [WarMUX](https://github.com/yeKcim/warmux) | study only | GPL-2.0 |  | 152 | 2023-08-09 | warmux is an old worms clone project. It's a dead project, website is down, code is here now. |
 | [The Legend of Edgar](https://github.com/riksweeney/edgar) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C | 143 | 2026-02-09 | A 2D platform game with a persistent world. When Edgar's father fails to return home after venturing out one dark and st |
+| [Minilens](https://github.com/KOBUGE-Games/minilens) | study only | GPL-3.0 | GDScript | 142 | 2018-07-16 | Cute puzzle platformer starring a cleaning robot on post-apocalyptic Earth |
 | [ReflectionHLE](https://github.com/ReflectionHLE/ReflectionHLE) | study only | GPL-2.0 (AND OTHERS) (per list, GitHub could not read the license file) | C | 137 | 2026-07-17 | Ports of Keen Dreams, the 3D Catacomb games and Wolfenstein 3D and derived games, and BioMenace (DOS) |
-| [L'Abbaye des Morts](https://github.com/nevat/abbayedesmorts-gpl) | study only | GPL-3.0 | C | 104 | 2026-07-03 | l'Abbaye des Morts - ported to Linux, Pandora, GCW0, Wii and PSP |
+| [L'Abbaye des Morts](https://github.com/nevat/abbayedesmorts-gpl) | study only | GPL-3.0 | C | 107 | 2026-10-05 | l'Abbaye des Morts - ported to Linux, Pandora, GCW0, Wii and PSP |
 | [TUSSLE](https://github.com/digiholic/universalSmashSystem) | study only | GPL-3.0 | Python | 97 | 2022-11-17 | The official GitHub for the Universal Smash System, an Open Source fighting engine based on the Super Smash Bros. game s |
 | [Lionheart Remake](https://github.com/b3dgs/lionheart-remake) | study only | GPL-3.0 | Java | 86 | 2026-08-13 | Java remake of Lionheart amiga game |
 | [Beat Feet](https://github.com/beat-feet/beat-feet) | study only | GPL-3.0 | Kotlin | 85 | 2026-08-09 | Jump your way through cities, each automatically generated from the beat of the music. |
 | [Dave Gnukem](https://github.com/davidjoffe/dave_gnukem) | study only | GPL-2.0 | C++ | 84 | 2026-06-25 | Dave Gnukem is a cross-platform 2D scrolling platform shooter inspired by Duke Nukem 1 |
-| [SuperTux Classic](https://github.com/Alzter/SuperTux-Classic) | study only | GPL-3.0 | GDScript | 67 | 2026-07-04 | A remake of SuperTux Milestone 1 (versions 0.1.0 - 0.1.4) created from the ground up in Godot! |
+| [SuperTux Classic](https://github.com/Alzter/SuperTux-Classic) | study only | GPL-3.0 | GDScript | 68 | 2026-07-04 | A remake of SuperTux Milestone 1 (versions 0.1.0 - 0.1.4) created from the ground up in Godot! |
 | [Cosmo-Engine](https://github.com/yuv422/cosmo-engine) | study only | GPL-2.0 | C | 66 | 2026-03-23 | A new game engine to play the MS-DOS game "Cosmo's Cosmic Adventure" on modern systems |
 | [Azimuth](https://github.com/mdsteele/azimuth) | study only | GPL-3.0 | C | 62 | 2026-05-20 | A metroidvania with vector graphics |
 | [WWW](https://github.com/alexdantas/www) | study only | GPL-3.0 | JavaScript | 59 | 2022-12-03 | Low-resolution (32x32) HTML5 clone of the famous VVVVVV game |
-| [REminiscence / REinforced](https://github.com/chermenin/REminiscence) | study only | GPL-3.0 | C++ | 56 | 2026-07-09 | REminiscence is a re-implementation of the engine used in the game Flashback made by Delphine Software. |
+| [REminiscence / REinforced](https://github.com/chermenin/REminiscence) | study only | GPL-3.0 | C++ | 58 | 2026-07-09 | REminiscence is a re-implementation of the engine used in the game Flashback made by Delphine Software. |
 | [Jump Don't Die](https://github.com/danirod/jumpdontdie) | study only | GPL-3.0 | Java | 55 | 2023-05-01 | Source code for the Android game developed on my YouTube tutorial. Made using libGDX, Scene2D, Box2D. |
 | [terrarium](https://github.com/hydren/terrarium) | study only | GPL-2.0 | C++ | 40 | 2018-12-13 | Terraria-clone game. (Moved to https://gitlab.com/hydren/terrarium, this is a mirror) |
 | [XEvil](https://github.com/lvella/xevil) | study only | GPL-2.0 (per list, GitHub could not read the license file) | C++ | 40 | 2026-07-28 | Adaptation for modern compilers and 64 bits machines of old XEvil game. |
@@ -73,18 +73,18 @@
 | [Tux!](https://gitlab.com/luckeyproductions/games/Tux.git) | study only | GPL-3.0 (per list, unverified) | C++ |  |  |  |
 | [Venzone](https://www.ariis.it/static/repos/git/venzone.git) | study only | GPL-3.0 (per list, unverified) | Haskell |  |  |  |
 | [Which Way Is Up?](https://web.archive.org/web/20220727232259/http://www.oletus.fi/static/whichwayisup/) | study only | GPL-2.0 (per list, unverified) | Python |  |  |  |
-| [VVVVVV](https://github.com/TerryCavanagh/VVVVVV) | check first | CUSTOM (per list, GitHub could not read the license file) | ActionScript | 8023 | 2026-08-24 | The source code to VVVVVV! http://thelettervsixtim.es/ |
-| [Mario-Level-1](https://github.com/justinmeister/Mario-Level-1) | check first | none | Python | 2234 | 2023-04-24 | The first level of Super Mario Bros made with Python and Pygame. |
+| [VVVVVV](https://github.com/TerryCavanagh/VVVVVV) | check first | CUSTOM (per list, GitHub could not read the license file) | ActionScript | 8024 | 2026-10-06 | The source code to VVVVVV! http://thelettervsixtim.es/ |
+| [Mario-Level-1](https://github.com/justinmeister/Mario-Level-1) | check first | none | Python | 2236 | 2023-04-24 | The first level of Super Mario Bros made with Python and Pygame. |
 | [Journey to the Center of Hawkthorne](https://github.com/hawkthorne/hawkthorne-journey) | check first | none | Lua | 1151 | 2024-11-26 | Digital Estate Planning: The Game |
-| [DDraceNetwork](https://github.com/ddnet/ddnet) | check first | ZLIB (SRC/ENGINE/EXTERNAL PARTLY BSD) (per list, GitHub could not read the license file) | C++ | 831 | 2026-09-22 | DDraceNetwork, a free cooperative platformer game |
-| [Mari0](https://github.com/Stabyourself/mari0) | check first | MIT (per list, GitHub could not read the license file) | Lua | 775 | 2023-09-15 | Mario + Portal platformer |
-| [Frogatto](https://github.com/frogatto/frogatto) | check first | NOASSERTION | Ruby | 703 | 2026-09-19 | Frogatto & Friends is an action-adventure game, starring a certain quixotic frog. |
+| [DDraceNetwork](https://github.com/ddnet/ddnet) | check first | ZLIB (SRC/ENGINE/EXTERNAL PARTLY BSD) (per list, GitHub could not read the license file) | C++ | 838 | 2026-10-06 | DDraceNetwork, a free cooperative platformer game |
+| [Mari0](https://github.com/Stabyourself/mari0) | check first | MIT (per list, GitHub could not read the license file) | Lua | 778 | 2023-09-15 | Mario + Portal platformer |
+| [Frogatto](https://github.com/frogatto/frogatto) | check first | NOASSERTION | Ruby | 704 | 2026-09-19 | Frogatto & Friends is an action-adventure game, starring a certain quixotic frog. |
 | [GlPortal](https://github.com/GlPortal/glPortal) | check first | Zlib (per list, GitHub could not read the license file) | C++ | 384 | 2024-10-05 | :video_game: Open Source teleportation based first person puzzle-platformer |
 | [Gish](https://github.com/blinry/gish) | check first | NOASSERTION | C | 356 | 2017-01-12 | Open Source version of the award-winning physics platformer |
 | [Punchy](https://github.com/fishfolk/punchy) | check first | NOASSERTION | Rust | 312 | 2024-06-06 | A 2.5D side-scroller beatemup, made in Bevy |
-| [Commander Genius](https://github.com/gerstrong/Commander-Genius) | check first | NOASSERTION | C++ | 224 | 2026-08-09 | Modern Interpreter for the Commander Keen (Vorticon Dreams and Galaxy) and also Cosmos Cosmic Adventure games. This is a |
-| [keyboardwarrior](https://github.com/elicoggins/keyboardwarrior) | check first | NOASSERTION | Shell | 172 | 2026-09-22 | A rhythm typing game built in Rust. Type letters in time with the music, using your existing Clone Hero / YARG chart lib |
-| [Abuse](https://github.com/Xenoveritas/abuse) | check first | PUBLIC DOMAIN (PARTS) + GPL-2.0 (PARTS) + WTFPL (PARTS) (per list, GitHub could not read the license file) | C++ | 169 | 2026-08-31 | Abuse SDL port originally from Crack-Dot-Com and released into the public domain |
+| [Commander Genius](https://github.com/gerstrong/Commander-Genius) | check first | NOASSERTION | C++ | 223 | 2026-09-30 | Modern Interpreter for the Commander Keen (Vorticon Dreams and Galaxy) and also Cosmos Cosmic Adventure games. This is a |
+| [keyboardwarrior](https://github.com/elicoggins/keyboardwarrior) | check first | NOASSERTION | Shell | 189 | 2026-09-24 | A rhythm typing game built in Rust. Type letters in time with the music, using your existing Clone Hero / YARG chart lib |
+| [Abuse](https://github.com/Xenoveritas/abuse) | check first | PUBLIC DOMAIN (PARTS) + GPL-2.0 (PARTS) + WTFPL (PARTS) (per list, GitHub could not read the license file) | C++ | 170 | 2026-10-05 | Abuse SDL port originally from Crack-Dot-Com and released into the public domain |
 | [YKnytt](https://github.com/youkaicountry/yknytt) | check first | MIT (per list, GitHub could not read the license file) | C# | 105 | 2026-08-05 | Implementation of Knytt Stories in the Godot engine |
 | [HFT Mario Party](https://github.com/amiruqdah/mario-party) | check first | none | C# | 73 | 2015-10-31 | :video_game: a Unity3D local multiplayer game made for MLH LocalHackDay |
 | [Infinite Mario Bros](https://github.com/cflewis/Infinite-Mario-Bros) | check first | BSD-3-Clause (per list, GitHub could not read the license file) | Java | 39 | 2019-01-24 | A more compatible version of Infinite Mario |
