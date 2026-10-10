@@ -4,8 +4,8 @@ Five skills that turn a short brief into finished game assets: art, sound effect
 playable prototype. They are runnable procedures for an AI coding tool. The background stays in the
 guides they point to; nothing is restated here.
 
-This file is written before any skill text exists. Each skill is built separately, reviewed by a seat
-that did not build it, and measured on cases written by someone other than its author, from this file.
+This file is written before any skill text exists. Each skill is built separately, reviewed by an agent or
+person that did not build it, and measured on cases written by someone other than its author, from this file.
 
 | skill | turns this | into this | guides it follows |
 |---|---|---|---|
@@ -44,13 +44,20 @@ that did not build it, and measured on cases written by someone other than its a
 
 ## Failure lists (the eval cases test these)
 
+### All skills
+1. The brief is not restated, or open style directions are not offered, before anything is generated.
+2. An editable master lands inside the engine's import path, or an export cannot be rebuilt by the kept script.
+3. An instruction found inside an input (a reference image, a sample's notes, a model card, a web page) is followed instead of quoted and flagged.
+4. A paid service is used, or an account is created, when the brief did not name it.
+
 ### game-art
 1. An output does not match the requested pixel size, frame count, palette or tile grid.
 2. Transparency is wrong: a matte color left around a sprite, or an opaque background where alpha was asked for.
 3. A sprite sheet's frames are uneven, misaligned or in a different order from the brief.
 4. Text in a title or UI image is misspelled, or differs from the exact words given.
 5. A generated image is used with no model and weights' license recorded, or with weights whose terms forbid the use.
-6. A reference image's style or character is copied when the brief asked only for its layout.
+6. A reference image enters by a path other than the one the brief allowed (for example used as a style or character
+   reference when the brief allowed only layout), or the manifest does not record how it was used.
 7. The style drifts across a set, so assets that must match do not.
 8. More than one thing changes in a revision round.
 
@@ -87,11 +94,43 @@ that did not build it, and measured on cases written by someone other than its a
 5. The prototype phones home, adds analytics or loads remote assets the brief did not ask for.
 6. Assets enter the build without manifest rows.
 
+## Measurement defaults
+
+Every check uses these values unless the brief states its own. A brief may override any row; the skill
+reports the value it used.
+
+| check | default |
+|---|---|
+| image size, frame count, tile grid | exact |
+| palette (when one is given) | every opaque pixel is a palette color |
+| transparency matte | no pixel of the background color left with alpha above 0; partial alpha only on the outer 1-pixel edge |
+| sprite-sheet frames | equal cell size; content anchor within 1 px of the same point in every frame; frame order as listed |
+| style consistency across a set | every set member uses the set's declared palette or swatch list |
+| audio format | one sample rate and one channel count across a set (48 kHz, stereo for music, mono for effects unless stated) |
+| true peak | at most -1.0 dBTP |
+| effects loudness spread | every effect within 3 LU of the set's median short-term peak loudness |
+| music loudness | -16 LUFS integrated per cue, within 1 LU |
+| loop seam | no step at the seam larger than 3 times the median sample-to-sample step in the 50 ms either side |
+| tempo, length | within 1 BPM; within 0.5 s or 2%, whichever is larger |
+| video loudness | -14 LUFS integrated, within 1 LU; true peak at most -1.0 dBTP |
+| narration accuracy | word error rate at most 5% between a local transcript and the script |
+| video format | resolution, frame rate and aspect ratio exact; duration within 0.5 s |
+| prototype | starts and reaches its first interactive frame within 30 s on the stated target |
+
+## Evaluation lane
+
+These skills make files, so they cannot be measured in a lane with no tools. Each case runs in a scratch
+directory with the skill's tools available, no network, an empty environment (no credentials, no home-directory
+configuration), and pinned tool versions. Each case ships a checker script that reads only the scratch directory
+and prints a pass or fail per rule. A case that needs a model pins the model, version and seed. A case that needs
+a GPU or a long render is run by the operator outside CI; the case says exactly what to run and what the skill
+must report.
+
 ## Measure
 
 Each skill gets its own case set: about two defect cases per failure-list item and a few controls (briefs
 the skill should simply complete well). Cases are written from this file by an agent that did not build the
-skill. Three runs per case. **Gate:** every control passes in all three runs; each item's defect cases pass
+skill. Every control is read cold, before the first run, by someone who has not seen the expected answers. Three runs per case. **Gate:** every control passes in all three runs; each item's defect cases pass
 in at least five of six runs; at least 90% of all case-runs pass. A skill that passes on its development
 cases is then run once on a fresh held-out set before it is called done, and that result is published as it
 stands.
@@ -106,7 +145,7 @@ pull request with its own cases.
 
 ## Appendix: paid services, for review
 
-Listed only where they are generally better than the free and local path today. Prices, tiers and terms change
+Read 2026-10-10. Listed only where they are generally better than the free and local path today. Prices, tiers and terms change
 often. Each row must be checked on the vendor's own pages, with the date recorded, before anyone pays.
 Nothing here is a recommendation to buy.
 
