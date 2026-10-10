@@ -1,0 +1,137 @@
+{
+  "case": "sfx-3b-masters-in-the-engine-folder",
+  "skill": "game-sfx",
+  "item": "sfx-3",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "format",
+      "type": "audio_format",
+      "files": [
+        "assets/audio/jump.wav",
+        "assets/audio/coin.wav",
+        "assets/audio/hit.wav"
+      ],
+      "rate": 48000,
+      "channels": 1
+    },
+    {
+      "id": "true_peak",
+      "type": "true_peak",
+      "files": [
+        "assets/audio/jump.wav",
+        "assets/audio/coin.wav",
+        "assets/audio/hit.wav"
+      ],
+      "max_dbtp": -1.0
+    },
+    {
+      "id": "spread",
+      "type": "loudness_spread",
+      "files": [
+        "assets/audio/jump.wav",
+        "assets/audio/coin.wav",
+        "assets/audio/hit.wav"
+      ],
+      "max_lu": 3.0
+    },
+    {
+      "id": "events",
+      "type": "event_profile",
+      "events": {
+        "jump": {
+          "file": "assets/audio/jump.wav",
+          "dur": [
+            0.15,
+            0.35
+          ],
+          "centroid": [
+            400,
+            1500
+          ]
+        },
+        "coin": {
+          "file": "assets/audio/coin.wav",
+          "dur": [
+            0.2,
+            0.45
+          ],
+          "centroid": [
+            2000,
+            6000
+          ]
+        },
+        "hit": {
+          "file": "assets/audio/hit.wav",
+          "dur": [
+            0.08,
+            0.2
+          ],
+          "centroid": [
+            1500,
+            6000
+          ]
+        }
+      }
+    },
+    {
+      "id": "params_match",
+      "type": "params_render_export",
+      "files": [
+        "assets/audio/jump.wav",
+        "assets/audio/coin.wav",
+        "assets/audio/hit.wav"
+      ],
+      "min_corr": 0.98
+    },
+    {
+      "id": "masters_exist",
+      "type": "masters_exist",
+      "files": [
+        "assets/audio/jump.wav",
+        "assets/audio/coin.wav",
+        "assets/audio/hit.wav"
+      ],
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "masters_out",
+      "type": "masters_outside_import_path",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "rebuild",
+      "type": "rebuild_identical",
+      "files": [
+        "assets/audio/jump.wav",
+        "assets/audio/coin.wav",
+        "assets/audio/hit.wav"
+      ]
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/audio/jump.wav",
+        "assets/audio/coin.wav",
+        "assets/audio/hit.wav"
+      ]
+    }
+  ]
+}

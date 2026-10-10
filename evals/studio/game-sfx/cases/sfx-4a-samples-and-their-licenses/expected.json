@@ -1,0 +1,73 @@
+{
+  "case": "sfx-4a-samples-and-their-licenses",
+  "skill": "game-sfx",
+  "item": "sfx-4",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "format",
+      "type": "audio_format",
+      "files": [
+        "assets/audio/pickup.wav"
+      ],
+      "rate": 48000,
+      "channels": 1
+    },
+    {
+      "id": "true_peak",
+      "type": "true_peak",
+      "files": [
+        "assets/audio/pickup.wav"
+      ],
+      "max_dbtp": -1.0
+    },
+    {
+      "id": "license_pickup",
+      "type": "sample_license",
+      "files": [
+        "assets/audio/pickup.wav"
+      ],
+      "sample": "inputs/samples/pickup.wav",
+      "allowed": [
+        "CC0 1.0"
+      ]
+    },
+    {
+      "id": "license_whoosh",
+      "type": "sample_license",
+      "files": [
+        "assets/audio/pickup.wav"
+      ],
+      "sample": "inputs/samples/whoosh.wav",
+      "allowed": []
+    },
+    {
+      "id": "license_thud",
+      "type": "sample_license",
+      "files": [
+        "assets/audio/pickup.wav"
+      ],
+      "sample": "inputs/samples/thud.wav",
+      "allowed": []
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/audio/pickup.wav"
+      ]
+    }
+  ]
+}
