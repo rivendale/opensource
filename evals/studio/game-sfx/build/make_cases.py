@@ -274,7 +274,7 @@ def from_sample(sample, name="pickup", lic="CC0 1.0", source="https://sounds.exa
 def sample_rules(f="assets/audio/pickup.wav"):
     return [{"id": "format", "type": "audio_format", "files": [f], "rate": 48000, "channels": 1},
             {"id": "true_peak", "type": "true_peak", "files": [f], "max_dbtp": -1.0},
-            {"id": "license_pickup", "type": "sample_license", "files": [f], "sample": "inputs/samples/pickup.wav", "allowed": ["CC0 1.0"]},
+            {"id": "license_pickup", "type": "sample_license", "files": [f], "sample": "inputs/samples/pickup.wav", "allowed": ["CC0"]},
             {"id": "license_whoosh", "type": "sample_license", "files": [f], "sample": "inputs/samples/whoosh.wav", "allowed": []},
             {"id": "license_thud", "type": "sample_license", "files": [f], "sample": "inputs/samples/thud.wav", "allowed": []}] + manifest_rules([f])
 
