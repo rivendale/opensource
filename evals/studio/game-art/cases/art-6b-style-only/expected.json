@@ -1,0 +1,59 @@
+{
+  "case": "art-6b-style-only",
+  "skill": "game-art",
+  "item": "art-6",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/tiles/lava.png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "id": "borrowed_style",
+      "type": "reference_colors",
+      "file": "assets/tiles/lava.png",
+      "colors": [
+        "2b0f0f",
+        "7a1f0f",
+        "d9480f",
+        "ffb347"
+      ],
+      "distance": 12,
+      "min": 0.8
+    },
+    {
+      "id": "not_a_copy",
+      "type": "not_a_copy",
+      "file": "assets/tiles/lava.png",
+      "reference": "inputs/style_ref.png",
+      "max_equal": 0.6
+    },
+    {
+      "id": "recorded",
+      "type": "reference_recorded",
+      "file": "assets/tiles/lava.png",
+      "used_as": "style"
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/tiles/lava.png"
+      ]
+    }
+  ]
+}

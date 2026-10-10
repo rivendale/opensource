@@ -1,0 +1,19 @@
+{
+  "case": "all-1b-directions-before-art",
+  "skill": "game-art",
+  "item": "all-1",
+  "kind": "T",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "directions",
+      "type": "directions_offered",
+      "count": 3,
+      "min_words": 5,
+      "assets_dir": "assets"
+    }
+  ]
+}
