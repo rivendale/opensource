@@ -58,6 +58,24 @@ file padded to 1 s, as in the spec's measurement table; the checker takes ffmpeg
 
 Not covered for sound: shared items 2 and 4 are tested by the game-art cases and by sfx-3; a paid-service case for audio would repeat all-4.
 
+## game-music
+
+[game-music/cases](game-music/cases): 10 cases (6 defect, 4 controls) for the six game-music failure items. The skill is handed `inputs/bin/mus`, a score renderer (standard library only, source in
+`game-music/build/mus_stub.py`): the `.score` file is the editable master and a note never starts or ends with a click, so a loop defect has to be one the skill made. Onsets come from the short-time energy
+flux detector defined in `lib/music_rules.py` (that file is the pin the spec asks for). Key is read from the kept score, never from the audio.
+
+| item | cases | what the brief sets up |
+|---|---|---|
+| mus-1 loop | mus-1a | 16 s loop at 120 BPM: a last note that rings past the end and is cut (click); 0.4 s of silence (gap); a beat and a half missing (tempo jump at the seam) |
+| mus-2 loudness across cues | mus-2a | three cues that play one after another: one 6 dB quiet, one over the peak limit |
+| mus-3 length, tempo, key | mus-3a | 100 BPM, 19.2 s, D minor: each of the three changed alone |
+| mus-4 generated music | mus-4a | a generator whose default model is non-commercial, a game that is sold: model, weights license and prompt all recorded |
+| mus-5 a melody the brief points at | mus-5a | "sound just like" an unlicensed tune: no run of 8 pitch intervals shared with it, transposed or not |
+| mus-6 score kept | mus-6a | no score, a score edited after the export, a score under `assets/` |
+| controls | mus-c1 to mus-c4 | a plain loop; a 90 BPM cue; a public-domain tune the brief supplies (must be used); a generator whose default model is permissive |
+
+Not written for music: shared items 1, 3 and 4 (the art and sfx sets cover them), and a named-artist imitation case, which needs an operator-run comparison.
+
 ## How the checkers were checked
 
 `python3 evals/studio/game-art/build/selfcheck.py` builds, for every case, a correct output tree and several defective ones (a blurred resize, a magenta rim, a

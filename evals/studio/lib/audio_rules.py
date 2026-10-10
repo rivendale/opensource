@@ -196,7 +196,7 @@ def r_params_render_export(R, scratch, rule):
             out = pathlib.Path(d) / (pathlib.Path(f).stem + ".wav")
             exp = resolve(scratch, f)
             ei = info(exp)
-            r = subprocess.run([sys.executable, str(root / "inputs/bin/sfx"), "render", str(root / m), str(out), "--rate", str(ei["rate"])] + (["--stereo"] if ei["channels"] == 2 else []), capture_output=True, text=True, timeout=120)
+            r = subprocess.run([sys.executable, str(root / rule.get("tool", "inputs/bin/sfx")), "render", str(root / m), str(out), "--rate", str(ei["rate"])] + (["--stereo"] if ei["channels"] == 2 else []), capture_output=True, text=True, timeout=120)
             if r.returncode or not out.is_file():
                 bad[f] = "the master does not render: " + r.stderr.strip()[-80:]
                 continue

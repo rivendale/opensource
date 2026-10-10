@@ -24,7 +24,7 @@ _spec = importlib.util.spec_from_file_location("validate_manifest", _vpath)
 _vm = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_vm)
 
-MASTER_SUFFIXES = {".sfx", ".jsfxr", ".xcf", ".kra", ".psd", ".ase", ".aseprite", ".blend", ".ora", ".svg", ".sfxr", ".mid", ".midi", ".rpp", ".als", ".flp"}
+MASTER_SUFFIXES = {".score", ".sfx", ".jsfxr", ".xcf", ".kra", ".psd", ".ase", ".aseprite", ".blend", ".ora", ".svg", ".sfxr", ".mid", ".midi", ".rpp", ".als", ".flp"}
 
 
 def hexcolor(h):
@@ -761,6 +761,8 @@ TYPES = {k[2:]: v for k, v in globals().items() if k.startswith("r_")}
 try:
     import audio_rules
     TYPES.update(audio_rules.RULES)
+    import music_rules
+    TYPES.update(music_rules.RULES)
 except ImportError:          # a checker image without numpy audio support still runs the art rules
     pass
 
