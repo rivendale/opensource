@@ -1,0 +1,134 @@
+{
+  "runner": "studio-runner/0.1.0",
+  "runner_sha256": "3dbba02dbbd01438220560e0054c3bd1af6a37a02349f976ac227fb9d97aa043",
+  "status": "passed",
+  "runtime": {
+    "podman": "4.9.3",
+    "oci_runtime": "crun version 1.14.1",
+    "cgroup_version": "v2",
+    "controllers": [
+      "cpu",
+      "memory",
+      "pids"
+    ],
+    "rootless": true,
+    "seccomp": true
+  },
+  "image": {
+    "reference": "localhost/studio-runner@sha256:4f50c986a10560fe0f08bb78362530d856ba1fa6c4acd445fd56c8c5ef543724",
+    "id": "ef340362e7569f707b219a99e5dfb6d15668a71e2cd0260952bfccccf132df74",
+    "sources": {
+      "supervisor.py": "bf3954f1e3904cb0683500c0b73e6dbf7bc2edcdc2e2e36150f19519a7ce7fec",
+      "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+      "probe.py": "910bbbcd530524196d92b24b21d14a84ae6958e4d794c0b8dc18ceeb3075f1fe",
+      "agent.py": "b9631751a17c45d6ac86dd4a5aa45c1cdb994d9a77537272b3301508d3dcd878",
+      "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+      "proxy.py": "71d7bddd380385a8ba73e0b1da392c4900eb0f98c1b1d15c73b066db310fc164",
+      "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+    }
+  },
+  "tools": {
+    "python": "3.11.2",
+    "agent": "studio-runner/0.1.0",
+    "ffmpeg": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+    "tesseract": "tesseract 5.3.0",
+    "strace": "strace -- version 6.1",
+    "node": "v22.23.3",
+    "numpy": "1.24.2"
+  },
+  "limits": {
+    "cpus": 4,
+    "memory": 8589934592,
+    "scratch": 2147483648,
+    "processes": 256
+  },
+  "probes": {
+    "network": true,
+    "root-write": true,
+    "credential-file": true,
+    "early-answer-mount": true,
+    "empty-home": true,
+    "clean-env": true,
+    "executable-input": true,
+    "unprivileged": true,
+    "no-agent-capabilities": true,
+    "credential-sentinel": true,
+    "capture-protected": true,
+    "inputs-read-only": true
+  },
+  "checker": {
+    "case": "runner-selftest",
+    "rules": [
+      {
+        "id": "network-denial-audited",
+        "pass": true,
+        "measured": 1,
+        "threshold": "at least one denied connection"
+      },
+      {
+        "id": "captures-before-checker",
+        "pass": true,
+        "measured": "capture files",
+        "threshold": "all four"
+      },
+      {
+        "id": "answers-after-drain",
+        "pass": true,
+        "measured": "after-drain",
+        "threshold": "after-drain"
+      }
+    ]
+  },
+  "mounts": [
+    {
+      "destination": "/skill/SKILL.md",
+      "read_only": true
+    },
+    {
+      "destination": "/egress",
+      "read_only": true
+    },
+    {
+      "destination": "/scratch/inputs",
+      "read_only": true
+    },
+    {
+      "destination": "/scratch/brief.md",
+      "read_only": true
+    }
+  ],
+  "agent_exit": 0,
+  "limits_hit": [],
+  "checked_on": "2026-10-10",
+  "scope": "Synthetic runtime self-test only; no studio skill scores or independent review",
+  "tool_image": "localhost/studio-tools@sha256:6536c80dffbb79b60695008404f21ba243af4041a6bb469cafcff2e089b9eac3",
+  "host_checks": {
+    "passed": 37,
+    "total": 37
+  },
+  "no_models_or_credentials": true,
+  "synthetic_agent_flow": {
+    "status": "passed",
+    "upstream": "mocked on host; actual container agent and Unix relay",
+    "model_calls": 2,
+    "shell_artifact_verified": true,
+    "assistant_turns": 2,
+    "tool_turns": 1,
+    "reported_tokens": {
+      "prompt_tokens": 4,
+      "completion_tokens": 2,
+      "total_tokens": 6
+    },
+    "checker_rules_passed": 3,
+    "host_case_identifier_absent_from_model_messages": true
+  },
+  "synthetic_key_response_refusal": {
+    "expected_status": "failed",
+    "observed_status": "failed",
+    "incident": true,
+    "scratch_kept": false,
+    "checker_not_run": true,
+    "upstream_calls": 1,
+    "real_credential_used": false
+  }
+}
