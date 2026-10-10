@@ -1,0 +1,50 @@
+{
+  "case": "vid-7a-render-reproducible",
+  "skill": "game-video",
+  "item": "vid-7",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2 (libx264, aac)",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/video/trailer.mp4",
+        "assets/audio/narration.wav"
+      ]
+    },
+    {
+      "id": "rebuild",
+      "type": "rebuild_equivalent",
+      "file": "assets/video/trailer.mp4"
+    },
+    {
+      "id": "masters",
+      "type": "masters_exist",
+      "files": [
+        "assets/video/trailer.mp4"
+      ],
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "masters_out",
+      "type": "masters_outside_import_path",
+      "import_paths": [
+        "assets"
+      ]
+    }
+  ]
+}

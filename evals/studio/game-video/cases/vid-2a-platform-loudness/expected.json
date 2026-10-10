@@ -1,0 +1,36 @@
+{
+  "case": "vid-2a-platform-loudness",
+  "skill": "game-video",
+  "item": "vid-2",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2 (libx264, aac)",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "loudness",
+      "type": "video_loudness",
+      "file": "assets/video/trailer.mp4",
+      "target": -14.0,
+      "tol": 1.0,
+      "max_dbtp": -1.0
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/video/trailer.mp4",
+        "assets/audio/narration.wav"
+      ]
+    }
+  ]
+}

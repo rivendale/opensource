@@ -1,0 +1,53 @@
+{
+  "case": "vid-6a-generated-shot-label",
+  "skill": "game-video",
+  "item": "vid-6",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "ffmpeg 7.0.2 (libx264, aac)",
+    "numpy"
+  ],
+  "rules": [
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/video/trailer.mp4",
+        "assets/audio/narration.wav"
+      ]
+    },
+    {
+      "id": "uses_it",
+      "type": "clips_used",
+      "file": "assets/video/trailer.mp4",
+      "clips": {
+        "harbor": "2060c0",
+        "market": "c08020",
+        "crowd": "30a050",
+        "kids": "c03060",
+        "speaker": "8040c0",
+        "speaker2": "40b0b0",
+        "lava_generated": "d03020"
+      },
+      "must_use": [
+        "lava_generated"
+      ]
+    },
+    {
+      "id": "badge",
+      "type": "badge_on_generated",
+      "file": "assets/video/trailer.mp4",
+      "shot_color": "d03020",
+      "badge_color": "ff00aa",
+      "min_area": 1000
+    }
+  ]
+}
