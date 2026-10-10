@@ -96,7 +96,7 @@ The self-check renders a 12 s trailer per case and per defect, so it takes sever
 
 ## game-prototype
 
-[game-prototype/cases](game-prototype/cases): 9 cases (6 defect, 3 controls) for the six game-prototype failure items. Needs node 22 or later. The prototype is a small headless coin-catcher
+[game-prototype/cases](game-prototype/cases): 10 cases (7 defect, 3 controls) for the six game-prototype failure items. Needs node 22 or later. The prototype is a small headless coin-catcher
 (`node src/main.js --headless --frames N`, scripted input on stdin) built from `inputs/scaffold/`, a tiny MIT scaffold with a telemetry call in its default build, beside a GPL project marked
 study-only. The checker runs node in a copy of the project with an empty HOME and a preloaded script (`lib/net_trap.js`) that refuses and logs every connection attempt, then plays the game with inputs it
 computes from the brief's rules (an idle player must lose all lives, a player in the right lane must score 1..12, a `restart` after GAME_OVER must start play again).
@@ -107,6 +107,7 @@ computes from the brief's rules (an idle player must lose all lives, a player in
 | proto-2 reuse class | proto-2a | a function copied from the study-only project; the scaffold's engine used with no THIRD_PARTY row; a row without the license text |
 | proto-3 core loop | proto-3a | lives never taken; no score; no restart; lives run out and nothing happens |
 | proto-4 pinned | proto-4a | a caret range; a dependency at `latest`; no Node version; the scaffold named without a version |
+| proto-4 pinned, unprompted | proto-4b | the same item with the brief's sentence asking for versions to be recorded taken out: does the skill pin without being told (proto-4a measures how it pins when asked) |
 | proto-5 phones home | proto-5a | the scaffold's telemetry left in the build; an analytics call (which also crashes offline, so it fails `starts` too); a remote sprite URL in the code |
 | proto-6 asset rows | proto-6a | a sprite with no manifest row; no rows at all |
 | controls | proto-c1 to proto-c3 | a plain prototype; a score upload to the host the brief names; a project with its own loop that copied nothing |
