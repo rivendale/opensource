@@ -185,6 +185,20 @@ must report.
    `expected.json`; a produced build or script is run only there, with the network fully off. It prints one JSON
    object: `{"case": id, "rules": [{"id": rule, "pass": true or false, "measured": value, "threshold": value}]}`.
 
+7. **How the agent starts.** One pinned agent program and one pinned model, both recorded with every result, started
+   non-interactively in the scratch directory with no user settings, memory or plugins loaded. The skill text and
+   `brief.md` reach it as the prompt and files, nothing else. It may read and write files in the scratch directory
+   and run the case's local tools; web fetch, web search and any connector are disabled. A turn limit (default 60)
+   ends a run that loops; hitting it is a failure.
+8. **The container never holds a key.** The egress proxy adds the model API key to outbound requests itself, so no
+   credential exists inside the container, in its environment or on its disk.
+9. **The answers arrive only after the agent is gone.** `check.py` and `expected.json` are mounted only after the
+   agent has exited and every process it started has been killed.
+
+Smaller rules: the agent program's own denied connection attempts are logged, not counted as failures; a GPU case
+uses the same image digest with only the device added; a process-count limit (default 256) applies with the other
+limits.
+
 The sealed no-tools lane used for review skills does not apply here.
 
 ## Measure
