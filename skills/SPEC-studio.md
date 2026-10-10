@@ -181,7 +181,9 @@ must report.
    the image digest. The scratch tree is kept as the result; the run's own claims are not trusted over it.
    After the agent exits and before the checker runs, the runner writes the transcript to `.run/transcript.md` and
    the proxy log to `.run/proxy.log` inside the scratch tree, so checkers that judge process (a restated brief,
-   offered directions, a flagged instruction, an unrequested paid service) read them from there.
+   offered directions, a flagged instruction, an unrequested paid service) read them from there. The proxy log records host,
+   method, status, bytes and time only, never headers or bodies, and the runner refuses to keep or publish a tree
+   whose `.run/` files match the API key's pattern.
 5. **Limits.** 20 minutes wall time, 4 CPUs, 8 GB memory and 2 GB of scratch disk per case unless the case states
    otherwise. A run that hits a limit is a failure, recorded with the limit it hit.
 6. **The checker runs in the same sandbox, after the agent exits.** It reads only the scratch tree and
