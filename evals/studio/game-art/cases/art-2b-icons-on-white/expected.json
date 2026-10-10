@@ -1,0 +1,165 @@
+{
+  "case": "art-2b-icons-on-white",
+  "skill": "game-art",
+  "item": "art-2",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "sword_size",
+      "type": "size_exact",
+      "file": "assets/ui/icon_sword.png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "id": "sword_transparent",
+      "type": "border_transparent",
+      "file": "assets/ui/icon_sword.png",
+      "min_transparent_fraction": 0.3
+    },
+    {
+      "id": "sword_no_white",
+      "type": "matte_clean",
+      "file": "assets/ui/icon_sword.png",
+      "matte": "ffffff",
+      "tolerance": 0
+    },
+    {
+      "id": "sword_silhouette",
+      "type": "silhouette",
+      "file": "assets/ui/icon_sword.png",
+      "source": "inputs/icons_white.png",
+      "source_box": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "matte": "ffffff",
+      "min_iou": 0.97
+    },
+    {
+      "id": "shield_size",
+      "type": "size_exact",
+      "file": "assets/ui/icon_shield.png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "id": "shield_transparent",
+      "type": "border_transparent",
+      "file": "assets/ui/icon_shield.png",
+      "min_transparent_fraction": 0.3
+    },
+    {
+      "id": "shield_no_white",
+      "type": "matte_clean",
+      "file": "assets/ui/icon_shield.png",
+      "matte": "ffffff",
+      "tolerance": 0
+    },
+    {
+      "id": "shield_silhouette",
+      "type": "silhouette",
+      "file": "assets/ui/icon_shield.png",
+      "source": "inputs/icons_white.png",
+      "source_box": [
+        32,
+        0,
+        32,
+        32
+      ],
+      "matte": "ffffff",
+      "min_iou": 0.97
+    },
+    {
+      "id": "potion_size",
+      "type": "size_exact",
+      "file": "assets/ui/icon_potion.png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "id": "potion_transparent",
+      "type": "border_transparent",
+      "file": "assets/ui/icon_potion.png",
+      "min_transparent_fraction": 0.3
+    },
+    {
+      "id": "potion_no_white",
+      "type": "matte_clean",
+      "file": "assets/ui/icon_potion.png",
+      "matte": "ffffff",
+      "tolerance": 0
+    },
+    {
+      "id": "potion_silhouette",
+      "type": "silhouette",
+      "file": "assets/ui/icon_potion.png",
+      "source": "inputs/icons_white.png",
+      "source_box": [
+        0,
+        32,
+        32,
+        32
+      ],
+      "matte": "ffffff",
+      "min_iou": 0.97
+    },
+    {
+      "id": "key_size",
+      "type": "size_exact",
+      "file": "assets/ui/icon_key.png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "id": "key_transparent",
+      "type": "border_transparent",
+      "file": "assets/ui/icon_key.png",
+      "min_transparent_fraction": 0.3
+    },
+    {
+      "id": "key_no_white",
+      "type": "matte_clean",
+      "file": "assets/ui/icon_key.png",
+      "matte": "ffffff",
+      "tolerance": 0
+    },
+    {
+      "id": "key_silhouette",
+      "type": "silhouette",
+      "file": "assets/ui/icon_key.png",
+      "source": "inputs/icons_white.png",
+      "source_box": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "matte": "ffffff",
+      "min_iou": 0.97
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/ui/icon_sword.png",
+        "assets/ui/icon_shield.png",
+        "assets/ui/icon_potion.png",
+        "assets/ui/icon_key.png"
+      ]
+    }
+  ]
+}

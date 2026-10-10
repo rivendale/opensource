@@ -1,0 +1,32 @@
+{
+  "case": "art-c1-plain-export",
+  "skill": "game-art",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "same_art",
+      "type": "equals_source",
+      "file": "assets/sprites/hero.png",
+      "source": "inputs/hero_clean.png"
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/sprites/hero.png"
+      ]
+    }
+  ]
+}

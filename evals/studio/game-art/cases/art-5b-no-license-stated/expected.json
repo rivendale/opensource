@@ -1,0 +1,41 @@
+{
+  "case": "art-5b-no-license-stated",
+  "skill": "game-art",
+  "item": "art-5",
+  "kind": "T",
+  "tools": [
+    "python3",
+    "pillow",
+    "gen-image stub"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/backgrounds/forest.png",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "id": "models",
+      "type": "models_allowed",
+      "forbidden": [
+        "gamma"
+      ]
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/backgrounds/forest.png"
+      ]
+    }
+  ]
+}
