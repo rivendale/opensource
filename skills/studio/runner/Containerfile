@@ -1,0 +1,14 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+# BASE_IMAGE is an operator-prepared, immutable tool image, already in the store.
+# No package, model, font or weight downloads occur here or during evaluation.
+USER root
+COPY common.py agent.py supervisor.py probe.py proxy.py build_image.py selftest.py /opt/studio/
+RUN useradd --uid 1000 --no-create-home --shell /usr/sbin/nologin studio \
+    && mkdir -p /scratch/inputs /scratch/.run /skill /egress /audit /home/studio /home/checker \
+    && python3 -c 'import numpy' \
+    && /opt/tools/bin/ffmpeg -version | head -1 | grep '^ffmpeg version 7.0.2 ' \
+    && tesseract --version \
+    && strace --version
+ENTRYPOINT ["python3", "/opt/studio/supervisor.py"]
