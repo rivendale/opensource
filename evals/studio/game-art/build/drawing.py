@@ -133,3 +133,64 @@ def icons_on_white():
         sub = a[y:y + 32, x:x + 32]
         sub[m] = ic[m]
     return a
+
+
+def outlined(a, color=DARK):
+    """Recolor every edge pixel (opaque with a transparent 4-neighbor, or on the canvas edge) to the outline color."""
+    op = a[..., 3] == 255
+    pad = np.pad(op, 1, constant_values=False)
+    inner = pad[:-2, 1:-1] & pad[2:, 1:-1] & pad[1:-1, :-2] & pad[1:-1, 2:]
+    out = a.copy()
+    out[op & ~inner, :3] = rgb(color)
+    return out
+
+
+def icon16(kind):
+    a = canvas(16, 16)
+    if kind == "potion":
+        rect(a, 6, 2, 10, 6, LIME); rect(a, 3, 6, 13, 14, GREEN); rect(a, 5, 8, 7, 10, LIME)
+    elif kind == "scroll":
+        rect(a, 3, 3, 13, 13, YELLOW); rect(a, 5, 5, 11, 6, ORANGE); rect(a, 5, 8, 11, 9, ORANGE)
+    elif kind == "gem":
+        rect(a, 5, 3, 11, 5, BLUE); rect(a, 3, 5, 13, 10, BLUE); rect(a, 5, 10, 11, 13, BLUE); rect(a, 6, 6, 8, 8, LIME)
+    else:
+        rect(a, 4, 3, 12, 13, YELLOW); rect(a, 3, 5, 13, 11, YELLOW); rect(a, 6, 5, 10, 11, ORANGE)
+    return a
+
+
+SWATCHES = ["2b0f0f", "7a1f0f", "d9480f", "ffb347"]
+GROUND = ["3a2a1a", "5a4a2a", "7a6a3a", "9a8a5a"]
+
+
+def lava_tile(seed=1):
+    import random
+    r = random.Random(seed)
+    a = canvas(32, 32, SWATCHES[0])
+    for _ in range(60):
+        x, y, w, h = r.randrange(32), r.randrange(32), r.randrange(2, 7), r.randrange(1, 4)
+        rect(a, x, y, min(32, x + w), min(32, y + h), SWATCHES[r.randrange(1, 4)])
+    return a
+
+
+def style_reference():
+    """64x64 volcanic ground in four colors: its own picture (a ridge and a glow) that must not be copied."""
+    a = canvas(64, 64, SWATCHES[0])
+    rect(a, 0, 40, 64, 64, SWATCHES[1])
+    rect(a, 8, 30, 56, 42, SWATCHES[1])
+    rect(a, 20, 22, 44, 32, SWATCHES[2])
+    rect(a, 28, 12, 36, 24, SWATCHES[3])
+    for x in range(0, 64, 6):
+        rect(a, x, 52, x + 3, 58, SWATCHES[2])
+    return a
+
+
+MENU_BOXES = [(30, 6, 100, 16), (50, 30, 60, 12), (50, 48, 60, 12), (50, 66, 60, 12), (6, 66, 24, 20)]
+REF_COLORS = ["000000", "ffee00", "00ffcc", "ff0066", "f0f0f0"]
+
+
+def menu_reference():
+    a = canvas(160, 90, REF_COLORS[0])
+    for i, (x, y, w, h) in enumerate(MENU_BOXES):
+        rect(a, x, y, x + w, y + h, REF_COLORS[[2, 1, 1, 1, 3][i]])
+    rect(a, 36, 9, 124, 13, REF_COLORS[4])
+    return a

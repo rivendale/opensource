@@ -1,0 +1,55 @@
+{
+  "case": "art-4b-a-glyph-the-display-font-lacks",
+  "skill": "game-art",
+  "item": "art-4",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow",
+    "fonttools",
+    "tesseract (operator-run rule)"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/ui/title.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "id": "text_recorded",
+      "type": "text_in_manifest",
+      "file": "assets/ui/title.png",
+      "strings": [
+        "Se\u00f1or Calavera: D\u00eda de Muertos"
+      ]
+    },
+    {
+      "id": "glyphs",
+      "type": "font_covers",
+      "file": "assets/ui/title.png"
+    },
+    {
+      "id": "ocr",
+      "type": "ocr_exact",
+      "file": "assets/ui/title.png",
+      "string": "Se\u00f1or Calavera: D\u00eda de Muertos",
+      "gate": false
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/ui/title.png"
+      ]
+    }
+  ]
+}

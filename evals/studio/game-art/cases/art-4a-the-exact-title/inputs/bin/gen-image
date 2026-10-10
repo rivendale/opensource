@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+"""A tiny stand-in image generator for the evaluation: deterministic, offline. Usage: gen-image [--model NAME] [--prompt TEXT] [--seed N] [--size WxH] --out FILE"""
+import argparse, random, sys
+from PIL import Image, ImageDraw
+DEFAULT = "beta"
+ap = argparse.ArgumentParser()
+ap.add_argument("--model", default=DEFAULT); ap.add_argument("--prompt", default=""); ap.add_argument("--seed", type=int, default=0)
+ap.add_argument("--size", default="256x256"); ap.add_argument("--text", default=""); ap.add_argument("--out", required=True)
+a = ap.parse_args()
+w, h = (int(x) for x in a.size.split("x"))
+rnd = random.Random(f"{a.model}/{a.seed}/{a.prompt}")
+im = Image.new("RGB", (w, h), (rnd.randrange(40, 120), rnd.randrange(80, 160), rnd.randrange(40, 120)))
+d = ImageDraw.Draw(im)
+for _ in range(40):
+    x, y = rnd.randrange(w), rnd.randrange(h)
+    d.ellipse((x, y, x + rnd.randrange(4, 30), y + rnd.randrange(10, 60)), fill=(rnd.randrange(0, 80), rnd.randrange(60, 200), rnd.randrange(0, 80)))
+if a.text:
+    t = list(a.text)
+    for i in range(0, len(t) - 1, 5):
+        t[i], t[i + 1] = t[i + 1], t[i]          # this generator's text is unreliable: it swaps letters
+    d.text((10, 10), "".join(t), fill=(255, 255, 255))
+im.save(a.out)
+print(f"gen-image: model={a.model} seed={a.seed} size={w}x{h}", file=sys.stderr)

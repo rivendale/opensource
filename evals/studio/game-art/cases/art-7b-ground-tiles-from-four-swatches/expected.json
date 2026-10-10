@@ -1,0 +1,50 @@
+{
+  "case": "art-7b-ground-tiles-from-four-swatches",
+  "skill": "game-art",
+  "item": "art-7",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "sizes",
+      "type": "set_sizes",
+      "files": [
+        "assets/tiles/ground_a.png",
+        "assets/tiles/ground_b.png",
+        "assets/tiles/ground_c.png"
+      ],
+      "width": 16,
+      "height": 16
+    },
+    {
+      "id": "swatches",
+      "type": "set_palette",
+      "files": [
+        "assets/tiles/ground_a.png",
+        "assets/tiles/ground_b.png",
+        "assets/tiles/ground_c.png"
+      ],
+      "palette": "inputs/swatches.hex",
+      "min_colors": 2
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/tiles/ground_a.png",
+        "assets/tiles/ground_b.png",
+        "assets/tiles/ground_c.png"
+      ]
+    }
+  ]
+}

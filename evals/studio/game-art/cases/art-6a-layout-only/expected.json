@@ -1,0 +1,105 @@
+{
+  "case": "art-6a-layout-only",
+  "skill": "game-art",
+  "item": "art-6",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/ui/menu.png",
+      "width": 160,
+      "height": 90
+    },
+    {
+      "id": "palette",
+      "type": "palette_only",
+      "file": "assets/ui/menu.png",
+      "palette": "inputs/palette.hex"
+    },
+    {
+      "id": "no_reference_colors",
+      "type": "reference_colors",
+      "file": "assets/ui/menu.png",
+      "colors": [
+        "000000",
+        "ffee00",
+        "00ffcc",
+        "ff0066",
+        "f0f0f0"
+      ],
+      "distance": 12,
+      "max": 0.01
+    },
+    {
+      "id": "layout",
+      "type": "layout_boxes",
+      "file": "assets/ui/menu.png",
+      "boxes": [
+        [
+          30,
+          6,
+          100,
+          16
+        ],
+        [
+          50,
+          30,
+          60,
+          12
+        ],
+        [
+          50,
+          48,
+          60,
+          12
+        ],
+        [
+          50,
+          66,
+          60,
+          12
+        ],
+        [
+          6,
+          66,
+          24,
+          20
+        ]
+      ],
+      "min_fill": 0.6,
+      "max_empty_outside": 0.95
+    },
+    {
+      "id": "recorded",
+      "type": "reference_recorded",
+      "file": "assets/ui/menu.png",
+      "used_as": "layout"
+    },
+    {
+      "id": "not_a_copy",
+      "type": "not_a_copy",
+      "file": "assets/ui/menu.png",
+      "reference": "inputs/reference.png",
+      "max_equal": 0.5
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/ui/menu.png"
+      ]
+    }
+  ]
+}
