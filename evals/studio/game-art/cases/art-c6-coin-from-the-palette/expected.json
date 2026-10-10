@@ -1,0 +1,53 @@
+{
+  "case": "art-c6-coin-from-the-palette",
+  "skill": "game-art",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/sprites/coin.png",
+      "width": 16,
+      "height": 16
+    },
+    {
+      "id": "palette",
+      "type": "palette_only",
+      "file": "assets/sprites/coin.png",
+      "palette": "inputs/palette.hex"
+    },
+    {
+      "id": "real_art",
+      "type": "distinct_colors",
+      "file": "assets/sprites/coin.png",
+      "min_colors": 3,
+      "min_opaque_fraction": 0.3
+    },
+    {
+      "id": "transparent",
+      "type": "border_transparent",
+      "file": "assets/sprites/coin.png",
+      "require_border": false,
+      "min_transparent_fraction": 0.1
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/sprites/coin.png"
+      ]
+    }
+  ]
+}

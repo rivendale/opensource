@@ -1,0 +1,57 @@
+{
+  "case": "art-8b-cloak-blue-in-palette",
+  "skill": "game-art",
+  "item": "art-8",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/sprites/hero_v3.png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "id": "only_the_cloak",
+      "type": "outside_mask_unchanged",
+      "file": "assets/sprites/hero_v3.png",
+      "previous": "inputs/hero_v1.png",
+      "mask": "inputs/cloak_mask.png"
+    },
+    {
+      "id": "cloak_is_blue",
+      "type": "inside_mask_hue",
+      "file": "assets/sprites/hero_v3.png",
+      "mask": "inputs/cloak_mask.png",
+      "hue_range": [
+        190,
+        250
+      ],
+      "min_fraction": 0.8
+    },
+    {
+      "id": "palette",
+      "type": "palette_only",
+      "file": "assets/sprites/hero_v3.png",
+      "palette": "inputs/palette.hex"
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/sprites/hero_v3.png"
+      ]
+    }
+  ]
+}

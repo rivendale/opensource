@@ -1,0 +1,66 @@
+{
+  "case": "art-3b-baseline-and-centre",
+  "skill": "game-art",
+  "item": "art-3",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "file": "assets/sprites/run.png",
+      "cell_width": 32,
+      "cell_height": 32,
+      "cols": 4,
+      "rows": 2,
+      "id": "size",
+      "type": "size_exact",
+      "width": 128,
+      "height": 64
+    },
+    {
+      "file": "assets/sprites/run.png",
+      "cell_width": 32,
+      "cell_height": 32,
+      "cols": 4,
+      "rows": 2,
+      "id": "anchor",
+      "type": "anchor_aligned",
+      "tolerance": 1
+    },
+    {
+      "file": "assets/sprites/run.png",
+      "cell_width": 32,
+      "cell_height": 32,
+      "cols": 4,
+      "rows": 2,
+      "id": "content",
+      "type": "content_preserved",
+      "sources": [
+        "inputs/frame_1.png",
+        "inputs/frame_2.png",
+        "inputs/frame_3.png",
+        "inputs/frame_4.png",
+        "inputs/frame_5.png",
+        "inputs/frame_6.png",
+        "inputs/frame_7.png",
+        "inputs/frame_8.png"
+      ]
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/sprites/run.png"
+      ]
+    }
+  ]
+}

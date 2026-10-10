@@ -1,0 +1,43 @@
+{
+  "case": "art-1b-six-frame-strip",
+  "skill": "game-art",
+  "item": "art-1",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/sprites/ball_roll.png",
+      "width": 192,
+      "height": 32
+    },
+    {
+      "id": "six_frames",
+      "type": "cells_nonempty",
+      "file": "assets/sprites/ball_roll.png",
+      "cell_width": 32,
+      "cell_height": 32,
+      "cols": 6,
+      "rows": 1,
+      "count": 6
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/sprites/ball_roll.png"
+      ]
+    }
+  ]
+}

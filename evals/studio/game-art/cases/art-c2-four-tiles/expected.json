@@ -1,0 +1,41 @@
+{
+  "case": "art-c2-four-tiles",
+  "skill": "game-art",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "order",
+      "type": "cells_equal_sources",
+      "file": "assets/tiles/ground.png",
+      "cell_width": 16,
+      "cell_height": 16,
+      "cols": 4,
+      "rows": 1,
+      "sources": [
+        "inputs/tile_1.png",
+        "inputs/tile_2.png",
+        "inputs/tile_3.png",
+        "inputs/tile_4.png"
+      ]
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/tiles/ground.png"
+      ]
+    }
+  ]
+}
