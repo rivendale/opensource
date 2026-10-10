@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "assets/backgrounds/forest.png",
+      "kind": "background",
+      "tool": "ComfyUI",
+      "tool_version": "0.3.1",
+      "seed_or_params": 1234,
+      "date": "2026-10-10",
+      "model": "example-diffusion 1.0",
+      "weights_license": "OpenRAIL++-M (model card, read 2026-10-10)",
+      "source": null,
+      "source_license": null,
+      "reference_used_as": "layout",
+      "master": "masters/backgrounds/forest.png",
+      "build_script": "tools/make_forest.sh",
+      "paid_service": null
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "assets/sfx/door.ogg",
+      "kind": "sfx",
+      "tool": "ffmpeg",
+      "tool_version": "6.1",
+      "seed_or_params": "trimmed 0.2s to 1.1s, normalized to -3 dBFS",
+      "date": "2026-10-10",
+      "model": null,
+      "weights_license": null,
+      "source": "https://example.test/samples/door-slam",
+      "source_license": "CC0-1.0",
+      "reference_used_as": "none",
+      "master": "masters/sfx/door.wav",
+      "build_script": "tools/export_sfx.sh",
+      "paid_service": null
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "assets/music/forest-loop.ogg",
+      "kind": "music",
+      "tool": "FluidSynth",
+      "tool_version": "2.3.4",
+      "seed_or_params": "tempo 96, key D minor, 8 bars, soundfont example-gm.sf2",
+      "date": "2026-10-10",
+      "model": null,
+      "weights_license": null,
+      "source": null,
+      "source_license": null,
+      "reference_used_as": "none",
+      "master": "masters/music/forest-loop.mid",
+      "build_script": "tools/render_music.sh",
+      "paid_service": null
+    }
+  ]
+}

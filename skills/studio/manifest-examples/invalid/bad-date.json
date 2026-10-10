@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "assets/sprites/hero.png",
+      "kind": "sprite",
+      "tool": "LibreSprite",
+      "tool_version": "1.3.0",
+      "seed_or_params": "hand-drawn",
+      "date": "10/10/2026",
+      "model": null,
+      "weights_license": null,
+      "source": null,
+      "source_license": null,
+      "reference_used_as": "none",
+      "master": "masters/sprites/hero.aseprite",
+      "build_script": "tools/export_sprites.sh",
+      "paid_service": null
+    }
+  ]
+}
