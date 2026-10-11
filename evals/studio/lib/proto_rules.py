@@ -12,7 +12,8 @@ def run_node(scratch, args, stdin="", timeout=30):
     import time
     with tempfile.TemporaryDirectory() as d:
         t = pathlib.Path(d) / "tree"
-        shutil.copytree(scratch, t, ignore=shutil.ignore_patterns(".run", "node_modules"))
+        import studio_lib
+        studio_lib.copy_project(scratch, t)
         logf = pathlib.Path(d) / "net.log"
         env = {"PATH": os.environ.get("PATH", ""), "HOME": d, "STUDIO_NET_LOG": str(logf), "NODE_OPTIONS": f"--require {HERE / 'net_trap.js'}", "NO_COLOR": "1"}
         t0 = time.time()

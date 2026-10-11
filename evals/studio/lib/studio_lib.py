@@ -48,7 +48,6 @@ class Rules:
 
     def add(self, rid, ok, measured, threshold):
         self.rules.append({"id": rid, "pass": bool(ok), "measured": measured, "threshold": threshold})
-        self.rules[-1]["gate"] = True
 
     def out(self):
         return {"case": self.case, "rules": self.rules}
@@ -435,6 +434,22 @@ def r_masters_exist(R, scratch, rule):
     R.add(rule["id"], not bad, ("no usable master for: %s" % bad) if bad else "every listed file has a master outside the import path", rule["files"])
 
 
+def copy_project(src, dst, skip=(".run", "node_modules")):
+    """Copies the project tree for a checker that runs a kept script. The checker's own temporary directory may sit inside the tree (in the runner it did), so any directory that
+    holds the destination, or is the temporary directory, is left out: a copy of a tree into itself would recurse."""
+    src, dst = pathlib.Path(src).resolve(), pathlib.Path(dst).resolve()
+    tmp = pathlib.Path(tempfile.gettempdir()).resolve()
+
+    def ignore(directory, names):
+        out = []
+        for n in names:
+            p = (pathlib.Path(directory) / n).resolve()
+            if n in skip or p == tmp or p == dst or dst.is_relative_to(p) or (n == "tmp" and pathlib.Path(directory).resolve() == src):
+                out.append(n)
+        return out
+    shutil.copytree(src, dst, ignore=ignore)
+
+
 def rebuild_env(home):
     """The environment a kept script runs in: no inherited variables and an empty HOME, but the same interpreter and the same installed packages as the
     checker (its directory first on PATH, and the user package directory it uses, which an empty HOME would otherwise hide)."""
@@ -457,7 +472,7 @@ def r_rebuild_identical(R, scratch, rule):
         return R.add(rule["id"], False, "no build_script recorded for every listed file", "identical bytes")
     with tempfile.TemporaryDirectory() as d:
         w = pathlib.Path(d) / "tree"
-        shutil.copytree(root, w, ignore=shutil.ignore_patterns("__pycache__"))
+        copy_project(root, w, skip=(".run", "node_modules", "__pycache__"))
         before = {f: sha(w / f) for f in rule["files"] if (w / f).is_file()}
         for f in rule["files"]:
             (w / f).unlink(missing_ok=True)
@@ -518,12 +533,14 @@ def r_font_covers(R, scratch, rule):
 
 
 def r_ocr_exact(R, scratch, rule):
-    """Operator-run (gate: false): the pinned OCR engine, on the image at 2x, returns the string after lower-casing and collapsing whitespace."""
+    """The pinned OCR engine (an `optional` rule is left out of the output on a host without it), on the image at 2x, returns the string after lower-casing and collapsing whitespace."""
     p, err = _need(scratch, rule["file"])
     if err:
         return R.add(rule["id"], False, err, rule["string"])
     exe = shutil.which("tesseract")
     if not exe:
+        if rule.get("optional"):
+            return          # no engine on this host: the rule is not emitted (the runner image has tesseract, where it decides)
         return R.add(rule["id"], False, "tesseract is not installed here", rule["string"])
     with tempfile.TemporaryDirectory() as d:
         with Image.open(p) as im:
@@ -665,7 +682,8 @@ def turns(scratch):
                 out.append((role, "\n".join(buf)))
             role, buf = m.group(1).lower(), []
         else:
-            buf.append(line)
+            # the runner quotes every body line ("> text") so tool output cannot forge a heading
+            buf.append(line[2:] if line.startswith("> ") else ("" if line == ">" else line))
     if role:
         out.append((role, "\n".join(buf)))
     return out
@@ -783,8 +801,6 @@ def run_case(scratch, expected_path):
             fn(R, scratch, rule)
         except Exception as e:  # noqa: BLE001
             R.add(rule["id"], False, f"checker error: {type(e).__name__}: {e}", None)
-        if rule.get("gate") is False and R.rules and R.rules[-1]["id"] == rule["id"]:
-            R.rules[-1]["gate"] = False       # an operator-run rule: reported, not counted in the gate
     return R.out()
 
 
@@ -794,4 +810,4 @@ def main(argv):
         return 2
     out = run_case(argv[1], argv[2])
     print(json.dumps(out, indent=2))
-    return 0 if all(r["pass"] for r in out["rules"] if r["gate"]) else 1
+    return 0 if all(r["pass"] for r in out["rules"]) else 1

@@ -217,7 +217,7 @@ def r_rebuild_equivalent(R, scratch, rule):
         return R.add(rule["id"], False, "no build script for " + rule["file"], None)
     with tempfile.TemporaryDirectory() as d:
         t = pathlib.Path(d) / "tree"
-        shutil.copytree(root, t, ignore=shutil.ignore_patterns(".run"))
+        S.copy_project(root, t)
         (t / rule["file"]).unlink()
         cmd = ["bash", bs] if bs.endswith(".sh") else [sys.executable, bs]
         r = subprocess.run(cmd, cwd=t, env=S.rebuild_env(d), capture_output=True, text=True, timeout=300)

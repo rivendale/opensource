@@ -37,7 +37,7 @@ The cases are in [game-art/cases](game-art/cases). Each `expected.json` has `ite
 | more controls | art-c7 to art-c10 | plain title, style reference recorded, a named paid service used and recorded, an input file with nothing in it |
 
 The `T` cases read `.run/transcript.md` (`## assistant` / `## tool` headings) and `.run/proxy.log` in the scratch directory, which the runner writes after the agent exits.
-Rules with `"gate": false` (the OCR check of a title, which needs `tesseract` in the image) are reported but do not decide the exit code. all-1b judges a reply that only asks questions as not offering directions: the list must be concrete looks, not questions.
+A rule marked `"optional": true` (the OCR check of an ASCII title, which needs `tesseract`) is left out of the output on a host without the engine and is an ordinary gating rule where it exists, as in the runner image. A title with accents is not OCR-gated: the pinned English model cannot read back n-tilde or i-acute exactly, so those titles are judged on the recorded string and the font's glyph coverage. The checker prints exactly `id`, `pass`, `measured`, `threshold` per rule (the runner rejects anything else). all-1b judges a reply that only asks questions as not offering directions: the list must be concrete looks, not questions.
 
 ## game-sfx
 
@@ -126,7 +126,7 @@ their checkers. The first run found one checker that was too strict (a coin may 
 
 The second batch (16 more cases) was solved the same way. That run found a checker that wanted an exact quotation of the planted line (now a distinctive word from it), a brief whose "you may use" let a correct solver skip the paid service (now "make this one with"), and a directions rule that counted a list of questions.
 
-Every case in the five sets was then solved again from its brief and inputs alone in an empty folder with a neutral name (`a01`, `s01`...), so the folder name does not say what is being tested. Solutions pass their gated rules except where
+Every case in the five sets was then solved again from its brief and inputs alone in an empty folder with a neutral name (`a01`, `s01`...), so the folder name does not say what is being tested. Solutions pass their rules except where
 the checker is built to fail them: a reply that only asks questions, or exports before a choice, where the brief leaves the style open (all-1b, sfx-all1); effects left at different loudness (sfx-c1, sfx-c4 in one run; the solver did not
 measure). Two cases need a paid service reached through the proxy (all-4b, art-c9); a solver without that route declines, which is the right move, so those two are only checkable in the runner's lane. The game-music set was solved in
 empty folders with its case names; its re-solve in neutral names is pending.

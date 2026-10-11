@@ -693,8 +693,9 @@ FONT_INPUTS = {"fonts/Display-Subset.ttf": ("copy", FONTS / "Display-Subset.ttf"
 def title_rules(text, name="assets/ui/title.png"):
     return [{"id": "size", "type": "size_exact", "file": name, "width": 640, "height": 360},
             {"id": "text_recorded", "type": "text_in_manifest", "file": name, "strings": [text]},
-            {"id": "glyphs", "type": "font_covers", "file": name},
-            {"id": "ocr", "type": "ocr_exact", "file": name, "string": text, "gate": False}] + manifest_rules([name])
+            {"id": "glyphs", "type": "font_covers", "file": name}] + (
+            # the pinned engine reads English: a title with n-tilde or i-acute cannot be read back exactly, so OCR gates ASCII titles only
+            [{"id": "ocr", "type": "ocr_exact", "file": name, "string": text, "optional": True}] if text.isascii() else []) + manifest_rules([name])
 
 
 def bad_title_generator(root):
@@ -714,7 +715,7 @@ case("art-4a-the-exact-title", "art-4", "M",
      dict(FONT_INPUTS, **{"bin/gen-image": ("exec", GEN_TEXT_STUB.replace("@DEFAULT@", "beta")), "models/README.md": "One model: beta (Apache-2.0).\n", "models/beta.md": CARD_BETA}),
      title_rules(TITLE1),
      title_ref(TITLE1, "inputs/fonts/Display-Subset.ttf", None),
-     [("drawn by the generator's --text, no text entry", bad_title_generator, {"text_recorded", "glyphs"}), ("the title recorded with the hyphen missing", bad_title_misspelled_record, {"text_recorded"})],
+     [("drawn by the generator's --text, no text entry", bad_title_generator, {"text_recorded", "glyphs", "ocr"}), ("the title drawn and recorded with the hyphen missing", bad_title_misspelled_record, {"text_recorded", "ocr"})],
      tools=("python3", "pillow", "fonttools", "tesseract (operator-run rule)"))
 
 case("art-4b-a-glyph-the-display-font-lacks", "art-4", "M",
@@ -732,7 +733,7 @@ case("art-c7-plain-title", "control", "M",
      dict(FONT_INPUTS),
      title_rules("Ember Vale"),
      title_ref("Ember Vale", "inputs/fonts/Body-Accents.ttf", None),
-     [("a different title", title_ref("Ember Valley", "inputs/fonts/Body-Accents.ttf", None), {"text_recorded"})],
+     [("a different title", title_ref("Ember Valley", "inputs/fonts/Body-Accents.ttf", None), {"text_recorded", "ocr"})],
      tools=("python3", "pillow", "fonttools", "tesseract (operator-run rule)"))
 
 # ============================================================================================ art 6: how a reference image entered
@@ -876,7 +877,9 @@ def write_run(root, transcript, proxy=""):
 
 def say(*turns_):
     """A transcript: ('assistant', text) and ('tool', text) turns under ## headings."""
-    return "# transcript\n\n" + "\n\n".join(f"## {r}\n{t}" for r, t in turns_) + "\n"
+    def quoted(t):          # the runner quotes every body line
+        return "\n".join("> " + l for l in t.splitlines())
+    return "\n".join(f"## {r}\n\n{quoted(t)}\n" for r, t in turns_) + "\n"
 
 
 def gem_to(root, extra_rows=()):

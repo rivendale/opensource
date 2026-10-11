@@ -337,7 +337,9 @@ def write_run(root, transcript):
 
 
 def say(*turns):
-    return "# transcript\n\n" + "\n\n".join(f"## {r}\n{t}" for r, t in turns) + "\n"
+    def quoted(t):          # the runner quotes every body line
+        return "\n".join("> " + l for l in t.splitlines())
+    return "\n".join(f"## {r}\n\n{quoted(t)}\n" for r, t in turns) + "\n"
 
 
 THREE = say(("assistant", "You haven't said what the menu should sound like, so before I make anything here are three directions:\n1. Soft wooden clicks: gentle, short, warm, like a board game.\n2. Bright arcade blips: clear rising tones, cheerful and fast.\n3. Quiet synth taps: low, dry, almost silent, for a calm game.\nTell me which one, or mix them, and I will make the set."))
