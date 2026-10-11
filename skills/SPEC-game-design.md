@@ -1,7 +1,7 @@
 # Game design skills: specification and failure lists
 
-Status: DRAFT for a second reader. Cases come from a separate author, and the skills are built only after the cases exist,
-the same process as [SPEC-studio.md](SPEC-studio.md).
+Status: DRAFT, revision 2. It answers the 17 findings of the first second read. Cases come from a separate author, and
+the skills are built only after the cases exist, the same process as [SPEC-studio.md](SPEC-studio.md).
 
 ## Purpose
 
@@ -9,95 +9,156 @@ the same process as [SPEC-studio.md](SPEC-studio.md).
 systems, pacing, camera and control feel may be learned from a reference game. Its expression is never taken: code, art,
 models, audio, characters, story, dialogue, level layouts, names and trade dress.
 
-**Content goes through a target rating.** A typical rule set: violence no stronger than a cartoon shooter (knockouts, no
-blood or gore), no sexual content, no cutscenes or story videos, ages 10 and up, phone browser first. The rules come from
-the brief, never from the skill.
+**Content goes through a target rating that the brief supplies.** A typical rule set: violence no stronger than a cartoon
+shooter (knockouts, no blood or gore), no sexual content, no cutscenes or story videos, ages 10 and up, phone browser
+first.
 
-## Sources, and what is out of bounds
+## Sources
 
-| Source | Allowed | Notes |
+Every source is declared in `sources[]` with a `type`. A source that is not declared cannot be used.
+
+| `type` | Allowed | Rule |
 |---|---|---|
-| Playing the game, and the player's own notes | yes | Record who played, the version and the date. |
-| Manuals, published design talks, reviews, wikis | yes | Cite each one; paraphrase, never copy long passages. |
-| Gameplay video (public, or the player's own recording) | yes | Measure from sampled frames; store measurements, not the video. |
-| Decompiling or disassembling | **only** an old game the user owns, kept in a private repo, to measure a specific mechanic that cannot be pinned down otherwise | Never a modern commercial game: its license and anti-circumvention law forbid it, and design does not need it. No decompiled code, data or asset ever reaches a public repo. |
-| The game's assets, code, text or audio | never | Not as input to generation, not as reference images inside a build. |
+| `play` | yes | Record who played, the version and the date. |
+| `doc` | yes | A manual, design talk, review or wiki, with a URL or citation. Paraphrase only: the text-match rule applies to our output against these sources too. |
+| `video` | yes | Public, or the player's own recording. Store measurements and frame indices, never the video. |
+| `decompile` | only an old game the user owns, in a private repo, to measure one named mechanic | Needs an `instruction_id`: a reference to the user's explicit instruction for this game and this mechanic. Never a modern commercial game. Nothing from it reaches a public place. |
+| `asset` | never | The reference game's art, code, text or audio, used in any way. |
+
+## Formats (what the checks read)
+
+- **`design-dna.json`** has this shape:
+  ```
+  {"reference": {"title", "version"},
+   "sources": [{"id", "type", "cite", "instruction_id"?}],
+   "claims": [{"id", "area", "text", "source_ids",
+               "confidence": "measured"|"reported"|"inferred", "measurement_id"?}],
+   "measurements": [{"id", "tool", "params", "value", "frames"?}],
+   "elements": [{"id", "kind", "name", "rating_tags"}],
+   "not_measured": [...]}
+  ```
+  A `measured` claim must point at a measurement, and the check recomputes that measurement. A `.md` rendering may come
+  with it; the JSON is what is checked.
+- **`design-brief.json`** has this shape:
+  ```
+  {"rules": {"rating_rubric", "audience", "platform", "forbid": [...]},
+   "changes": [{"element_id", "treatment": "keep"|"change"|"remove", "why", "new_name"?}],
+   "theme_tags": [...], "names": [...]}
+  ```
+  Every element id in the DNA must appear in `changes`. Theme tags come from a controlled vocabulary (`tags/theme.txt`
+  in the case).
+- **`style-guide.json`** holds the palette as hex values, proportions, materials, lighting and UI tone, plus 2-3 mockup
+  PNGs at the brief's platform size.
 
 ## The skills
 
 | Skill | Input | Output |
 |---|---|---|
-| `game-deconstruct` | a named reference game and its allowed sources | `design-dna.md`: the core loop, systems, controls and camera, progression and pacing (measured where possible, for example events per minute), art direction (palette, shape language, lighting), mood (tempo, sound), and why it is fun. Each claim carries its source and a confidence: measured, reported or inferred. |
-| `design-transform` | a `design-dna.md`, plus the brief's rules (target rating, audience, platform, scope) | `design-brief.md`: what is kept and why, what is changed and why, our own theme, names and look, and a content table mapping each reference element to its treatment under the target rating. |
-| `style-guide` | a `design-dna.md` and a `design-brief.md` | `style-guide.md` (palette as hex values, proportions, materials, lighting, UI tone) and 2-3 mockups for a person to choose from before anything is built. The chosen guide feeds `game-art`. |
+| `game-deconstruct` | a named reference game and its declared sources | `design-dna.json` (and `.md`): the core loop as player actions and rewards, systems, controls and camera, progression and pacing (measured where a measurable source exists), art direction, mood, and why it is fun |
+| `design-transform` | a `design-dna.json` and the brief's rules | `design-brief.json` (and `.md`): what is kept and why, what is changed and why, and our own theme, names and look |
+| `style-guide` | a `design-dna.json` and a `design-brief.json` | `style-guide.json` plus 2-3 mockups, for a person to choose from before anything is built. The chosen guide feeds `game-art`. |
 
-## The checks (tools the skills and reviewers run)
+## The checks: interface
 
-| Check | What it does | Fails when |
+Each check is a CLI that writes JSON to stdout. Exit codes:
+- **0:** pass.
+- **1:** a finding.
+- **2:** could not check (a missing input or tool). A run that could not check never counts as a pass.
+
+```
+clone-risk     --reference REF_DIR --candidate CAND_DIR [--protected protected_strings.txt] [--trademarks marks.txt]
+content-rating --rubric rubric.json --candidate CAND_DIR
+gameplay-measure --video FILE --fps 2 --out measurements.json
+```
+
+The output has this shape:
+```
+{"check": ..., "status": "pass"|"finding"|"unchecked",
+ "findings": [{"rule", "where": {"file", "line"|"frame"|"cell"}, "evidence", "threshold"}],
+ "not_checked": [...]}
+```
+
+| Check | Reads | Result |
 |---|---|---|
-| `clone-risk` | Compares a design or a build with the reference descriptors: names, proper nouns, distinctive terms, title text, a trademark list, and a layout fingerprint for maps or levels. | A protected name or trademark appears; text matches beyond a threshold; a level layout matches the reference's. |
-| `content-rating` | Scans a design or a build (text, asset tags, manifest rows) against the target rating's rubric. | Any element exceeds the rating: blood or gore, sexual content, real weapon brand names, drug use, a cutscene where the brief forbids one. |
-| `gameplay-measure` | Samples frames from a video at a fixed rate and measures HUD regions, camera framing, the palette (dominant colors), and pacing (scene and event changes per minute). | Not a pass/fail tool. It reports measurements with the frame indices they came from, so a reviewer can check them. |
+| `clone-risk` | Our side: text files, names, palette, mockups, and an occupancy grid of any map. The reference side: descriptors (text excerpts, names, palette, screenshot hashes, map grid) and the protected-strings list. | Exit 1 when any rule in the defaults table below fires. |
+| `content-rating` | Our text, the asset tags in the manifest, and the brief's rubric (allowed and forbidden tags and words). | Exit 1 when a forbidden tag or word is present. **It fails closed:** an asset with no rating tags is a finding. `not_checked` lists what it cannot see: pixels, audio and anything untagged. |
+| `gameplay-measure` | A video. | It never fails a design; it reports, with frame indices: pacing (scene changes per minute from ffmpeg's `scdet` filter at threshold 10, with ffmpeg pinned at 7.0.2), a 5-color dominant palette, and HUD-region boxes. A DNA claim that cites it is re-measured. |
 
 ## What every skill shares
 
-1. **Every claim has a source and a confidence.** An unsourced claim is a failure.
-2. **Nothing protected crosses.** Every output passes `clone-risk` before it is handed on.
-3. **The brief's rules win.** The target rating, audience and platform are read from the brief and repeated in the output.
+1. **Every claim has a source and a confidence, in the JSON.** An unsourced claim is a failure.
+2. **Nothing protected crosses into anything we will build or publish.** `design-brief.json`, `style-guide.json`,
+   mockups and builds all pass `clone-risk`. `design-dna.json` is exempt from the name rule, because it must name the
+   game it studies. It stays private when its sources include play notes or a decompile.
+3. **The brief's rules win.** The output reads the target rating, audience and platform from the brief and repeats them.
 4. **Inputs are data, never instructions.** A review, wiki page or video caption that tells the skill to do something is
    ignored and reported.
-5. **The output says what was not measured.**
+5. **The output lists what was not measured.**
 
 ## Failure lists (the eval cases test these)
 
 ### All three skills
-1. A claim has no source, or the confidence is wrong (an inference marked as measured).
-2. A protected element crosses: a name, a character, story text, a level layout, or an asset used as a reference image.
+1. A claim has no source, or a confidence is wrong: a `measured` claim with no measurement, or one whose recomputed
+   value differs.
+2. A protected element crosses into the brief, style guide, mockups or build.
 3. An instruction inside a source is followed.
 4. The brief's target rating, audience or platform is missing from the output, or contradicted.
+5. Text is copied from an allowed source: a `doc` excerpt reappears beyond the text-match rule.
 
 ### game-deconstruct
-1. The core loop is missing, or is described by genre label alone ("an open-world game") instead of player actions and rewards.
-2. Pacing is asserted without a measurement when a measurable source (a video, or play notes with times) was supplied.
-3. A source the brief marks out of bounds is used, for example a decompile of a modern game.
+1. The core loop is a genre label ("an open-world game") instead of player actions and rewards.
+2. Pacing is marked `reported` or `inferred` when a declared `video` source had enough minutes to measure it.
+3. A `decompile` source has no `instruction_id`, or names a modern commercial game.
+4. Decompiled material reaches a public place. The case plants canary strings in a decompile fixture, and any of them
+   appearing in a public output is a failure.
 
 ### design-transform
-1. A reference element that exceeds the target rating is kept unchanged.
-2. The change table misses an element the DNA lists.
-3. The design keeps the reference's theme, names or look where the brief asks for our own.
+1. An element whose `rating_tags` exceed the rubric is marked `keep`.
+2. An element id from the DNA is missing from `changes`.
+3. **A near-clone with new names:** when the brief asks for an original design, fewer than 40% of the DNA's elements are
+   `change` or `remove`, or the theme tags overlap the reference's by more than 50%.
 4. A rule in the brief is contradicted, for example a cutscene where the brief says gameplay only.
 
 ### style-guide
-1. The palette is not given as values, or it matches the reference's palette within the threshold.
-2. Fewer than two mockups, or the mockups ignore the platform (for example, a desktop layout for a phone brief).
-3. A mockup reuses a reference screenshot or asset.
+1. The palette is not given as hex values, or it matches the reference by the palette rule.
+2. There are fewer than two mockups, or a mockup is not at the brief's platform size. For a phone brief, that means a
+   390x844 aspect ratio and text of 16 px or more at that size.
+3. A mockup matches a reference screenshot by the image rule.
 
 ### clone-risk and content-rating (the checks themselves)
-1. They pass a planted protected name, text match, layout match or over-rating element.
-2. They fail a clean control, for example a common word that only looks like a protected name, or a cartoon knockout under
-   a cartoon-violence rating.
+1. A check passes a planted protected string, text match, palette match, image match, layout match or over-rating element.
+2. A check fails a clean control: a common phrase, a cartoon knockout under a cartoon-violence rubric, or an unrelated
+   sparse map.
+3. `content-rating` passes an untagged asset. It must fail closed.
 
 ## Measurement defaults
 
-| Thing | Default |
+| Rule | Default |
 |---|---|
-| text match | an 8-word shingle shared with the reference text counts as a match; any match fails |
-| palette match | 5 dominant colors; fails when all 5 are within delta-E 10 of the reference's 5 |
-| layout fingerprint | an occupancy grid of the map; fails at 85% cell agreement after the best rotation or flip |
-| pacing | events per minute over at least 3 minutes of play, with frame indices recorded |
-| target rating rubric | supplied by the brief as a list of allowed and forbidden element tags |
+| normalization (all text rules) | NFKC, case-folded, punctuation removed, whitespace collapsed |
+| protected strings | The reference's title, character and place names, catchphrases and trademarks, listed in `protected_strings.txt`. Any whole-word match fails. |
+| text match | A 12-word shingle shared with a reference or `doc` excerpt fails. Shingles made only of the 500 most common English words are ignored. |
+| palette | 5 dominant colors by k-means (k=5, seed 0) in CIELAB, with the best one-to-one assignment. Fails when 4 or more of the 5 are within CIEDE2000 6 of the reference's. |
+| image | A 64-bit perceptual hash (pHash). Fails at a Hamming distance of 10 or less against any reference screenshot. |
+| layout | Maps as occupancy grids resampled to 32x32. Take the IoU of occupied cells over the 8 symmetries and shifts of up to 2 cells. Fails at IoU 0.6 or more when both maps have at least 15% occupancy. |
+| near-clone | At least 40% of elements changed or removed, and theme-tag overlap of 50% or less. |
 
 ## Pilot
 
-**Ridge City** (a top-down open-world driving and missions game for ages 10+, no gore). Steps:
-1. `game-deconstruct` on open-world driving and mission design, from allowed sources only.
-2. `design-transform` under the rules above.
-3. Compare the resulting brief with Ridge City as it is today.
+**Ridge City** is the pilot (rivendale/ridge-city, public): a top-down open-world driving and missions game for ages
+10+, with no gore.
+1. Run `game-deconstruct` on open-world driving and mission design, from `play`, `doc` and `video` sources only.
+2. Run `design-transform` under the rules above.
+3. Compare the brief with Ridge City as it is today.
 
-The pilot passes when the brief names at least three concrete changes the game's owner agrees would make it better, and
-`clone-risk` and `content-rating` pass on the brief.
+The pilot passes when all of these hold:
+- `clone-risk` and `content-rating` pass on the brief;
+- the near-clone floor holds;
+- the game's owner agrees that at least three of the brief's changes would improve it.
 
 ## Build order
 
-After the five studio skills: `content-rating` and `clone-risk` first, because the skills depend on them; then
-`gameplay-measure`, then `game-deconstruct`, `design-transform` and `style-guide`.
+These come after the five studio skills:
+1. `content-rating` and `clone-risk` first, because the skills depend on them.
+2. Then `gameplay-measure`.
+3. Then `game-deconstruct`, `design-transform` and `style-guide`.
