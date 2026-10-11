@@ -82,7 +82,7 @@ The output has this shape:
 |---|---|---|
 | `clone-risk` | Our side: text files, names, palette, mockups, and an occupancy grid of any map. The reference side: descriptors (text excerpts, names, palette, screenshot hashes, map grid) and the protected-strings list. | Exit 1 when any rule in the defaults table below fires. |
 | `content-rating` | Our text, the asset tags in the manifest, and the brief's rubric (allowed and forbidden tags and words). | Exit 1 when a forbidden tag or word is present. **It fails closed:** an asset with no rating tags is a finding. `not_checked` lists what it cannot see: pixels, audio and anything untagged. |
-| `gameplay-measure` | A video. | It never fails a design; it reports, with frame indices: pacing (scene changes per minute from ffmpeg's `scdet` filter at threshold 10 on the FULL frame rate, with ffmpeg pinned at 7.0.2), a 5-color dominant palette from frames sampled at `--fps`, and HUD regions (screen areas whose pixels stay unchanged in 90% or more of the sampled frames, reported as boxes). A DNA claim that cites it is re-measured. |
+| `gameplay-measure` | A video. | It never fails a design; it reports, with frame indices: pacing (scene changes per minute from ffmpeg's `scdet` filter at threshold 10 on the FULL frame rate, with ffmpeg pinned at 7.0.2), a 5-color dominant palette from frames sampled at `--fps`, and HUD regions (screen areas whose pixels stay unchanged, meaning a per-channel absolute difference of 8 or less from the median frame, in 90% or more of the sampled frames; regions smaller than 16x16 px are dropped; reported as boxes). A DNA claim that cites it is re-measured. |
 
 ## What every skill shares
 
