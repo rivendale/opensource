@@ -1,6 +1,6 @@
 # Game design skills: specification and failure lists
 
-Status: DRAFT, revision 2. It answers the 17 findings of the first second read. Cases come from a separate author, and
+Status: revision 3. It answers the 17 findings of the first read and the 10 of the second. Cases come from a separate author, and
 the skills are built only after the cases exist, the same process as [SPEC-studio.md](SPEC-studio.md).
 
 ## Purpose
@@ -82,7 +82,7 @@ The output has this shape:
 |---|---|---|
 | `clone-risk` | Our side: text files, names, palette, mockups, and an occupancy grid of any map. The reference side: descriptors (text excerpts, names, palette, screenshot hashes, map grid) and the protected-strings list. | Exit 1 when any rule in the defaults table below fires. |
 | `content-rating` | Our text, the asset tags in the manifest, and the brief's rubric (allowed and forbidden tags and words). | Exit 1 when a forbidden tag or word is present. **It fails closed:** an asset with no rating tags is a finding. `not_checked` lists what it cannot see: pixels, audio and anything untagged. |
-| `gameplay-measure` | A video. | It never fails a design; it reports, with frame indices: pacing (scene changes per minute from ffmpeg's `scdet` filter at threshold 10, with ffmpeg pinned at 7.0.2), a 5-color dominant palette, and HUD-region boxes. A DNA claim that cites it is re-measured. |
+| `gameplay-measure` | A video. | It never fails a design; it reports, with frame indices: pacing (scene changes per minute from ffmpeg's `scdet` filter at threshold 10 on the FULL frame rate, with ffmpeg pinned at 7.0.2), a 5-color dominant palette from frames sampled at `--fps`, and HUD regions (screen areas whose pixels stay unchanged in 90% or more of the sampled frames, reported as boxes). A DNA claim that cites it is re-measured. |
 
 ## What every skill shares
 
@@ -108,7 +108,7 @@ The output has this shape:
 ### game-deconstruct
 1. The core loop is a genre label ("an open-world game") instead of player actions and rewards.
 2. Pacing is marked `reported` or `inferred` when a declared `video` source had enough minutes to measure it.
-3. A `decompile` source has no `instruction_id`, or names a modern commercial game.
+3. A `decompile` source has no `instruction_id`, its `instruction_id` is not found in a record the skill did not write (the case supplies `instructions.json`), or it names a modern commercial game.
 4. Decompiled material reaches a public place. The case plants canary strings in a decompile fixture, and any of them
    appearing in a public output is a failure.
 
@@ -122,7 +122,8 @@ The output has this shape:
 ### style-guide
 1. The palette is not given as hex values, or it matches the reference by the palette rule.
 2. There are fewer than two mockups, or a mockup is not at the brief's platform size. For a phone brief, that means a
-   390x844 aspect ratio and text of 16 px or more at that size.
+   390x844 aspect ratio, and text of 16 px or more at that size when the mockup is HTML or SVG. For a PNG mockup, text size
+   is listed under `not_checked`.
 3. A mockup matches a reference screenshot by the image rule.
 
 ### clone-risk and content-rating (the checks themselves)
@@ -136,12 +137,14 @@ The output has this shape:
 | Rule | Default |
 |---|---|
 | normalization (all text rules) | NFKC, case-folded, punctuation removed, whitespace collapsed |
-| protected strings | The reference's title, character and place names, catchphrases and trademarks, listed in `protected_strings.txt`. Any whole-word match fails. |
+| protected strings | The reference's title, character and place names, catchphrases and trademarks, listed in `protected_strings.txt`, one per line, with a flag `cs` (case-sensitive, for names that are also common words: "Link", "Portal") or `ci`. A whole-word match fails. Caught: case and Unicode variants after NFKC. Also caught: digit-for-letter swaps (0→o, 1→l/i, 3→e, 4→a, 5→s, 7→t) when the line is marked `leet`. Not caught, and listed under `not_checked`: misspellings and translations. |
 | text match | A 12-word shingle shared with a reference or `doc` excerpt fails. Shingles made only of the 500 most common English words are ignored. |
-| palette | 5 dominant colors by k-means (k=5, seed 0) in CIELAB, with the best one-to-one assignment. Fails when 4 or more of the 5 are within CIEDE2000 6 of the reference's. |
-| image | A 64-bit perceptual hash (pHash). Fails at a Hamming distance of 10 or less against any reference screenshot. |
-| layout | Maps as occupancy grids resampled to 32x32. Take the IoU of occupied cells over the 8 symmetries and shifts of up to 2 cells. Fails at IoU 0.6 or more when both maps have at least 15% occupancy. |
-| near-clone | At least 40% of elements changed or removed, and theme-tag overlap of 50% or less. |
+| palette | 5 dominant colors by k-means in CIELAB on a fixed sample: every 4th pixel in both directions after a resize to 256 px on the long side. Init is k-means++ from seed 0, with 50 iterations. The check ships its own numpy implementation, so the result does not depend on a library. Colors are matched by the best one-to-one assignment. Fails when 4 or more of the 5 are within CIEDE2000 6 of the reference's. |
+| image | A 64-bit DCT perceptual hash (32x32 grayscale, top-left 8x8 DCT, median threshold), of the whole image, of a 3x3 split, and of the mirrored image. Fails at a Hamming distance of 10 or less against any reference screenshot. Heavy overlays and recolors are listed under `not_checked`. |
+| layout | Maps as occupancy grids resampled to 32x32. A cell is occupied when 25% or more of its source pixels are occupied. Take the IoU of occupied cells over the 8 symmetries and shifts of up to 2 cells. Fails at IoU 0.6 or more when both maps have at least 15% occupancy. **Known risk:** two regular road lattices of similar spacing can reach the threshold with no copying. The cases include lattice-vs-lattice controls, and the threshold moves if they measure above it. |
+| near-clone | At least 40% of elements changed or removed. Theme overlap is the share of the reference's theme tags kept (kept / reference tags), and it must be 50% or less. |
+| re-measurement tolerance | A recomputed measurement must match the claimed value within 5% (counts and rates) or exactly (categorical values). |
+| allowed phrases | `content-rating` takes an `allow_phrases` list from the rubric, for example "blood orange" and "killer app", checked before the forbidden words. |
 
 ## Pilot
 
