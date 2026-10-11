@@ -105,7 +105,7 @@ Items 7 to 11 apply only when the brief names a phone or a browser target.
    missing or hidden in any of them. Hiding a joystick at a wide landscape width (`sm:hidden`) is the measured failure.
 9. **A control is too small, covered or off screen.** A core-loop control is under 44x44 CSS px, or is not inside the
    viewport, measured against the profile's `innerWidth` x `innerHeight`, so a control below the fold of a scrolling page
-   fails. The checker probes `elementFromPoint` at its center and four points inset 4 px from its edges. It fails
+   fails. The checker probes `elementFromPoint` at its center and the middle of each of its four edges (inset 4 px; a corner point would miss a rounded button). It fails
    when the hit element is not the control or a descendant (`control.contains(hit)`). An action bar covering an
    arrow's edge is the measured failure.
 10. **The only control hint is for a keyboard or mouse.** On a touch profile, a visible text hint names a key or mouse
