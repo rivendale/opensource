@@ -785,6 +785,8 @@ try:
     TYPES.update(video_rules.RULES)
     import proto_rules
     TYPES.update(proto_rules.RULES)
+    import web_rules
+    TYPES.update(web_rules.RULES)
 except ImportError:          # a checker image without numpy audio support still runs the art rules
     pass
 

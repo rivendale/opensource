@@ -51,7 +51,7 @@ def main(argv):
                 if os.environ.get("REPLAY_TMP_INSIDE"):      # the runner's first draft put the checker's TMPDIR in the scratch tree
                     (scratch / "tmp").mkdir(exist_ok=True)
                 env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home), "LANG": "C.UTF-8", "TMPDIR": str(scratch / "tmp") if os.environ.get("REPLAY_TMP_INSIDE") else str(home / "tmp"), "STUDIO_LIB": str(lib)}
-                for k in ("LD_LIBRARY_PATH", "TESSDATA_PREFIX", "STUDIO_NODE_MODULES", "STUDIO_CHROME", "STUDIO_FFMPEG", "STUDIO_NODE"):
+                for k in ("PYTHONPATH", "PYTHONUSERBASE", "LD_LIBRARY_PATH", "TESSDATA_PREFIX", "STUDIO_NODE_MODULES", "STUDIO_CHROME", "STUDIO_FFMPEG", "STUDIO_NODE"):
                     if k in os.environ:
                         env[k] = os.environ[k]
                 r = subprocess.run([sys.executable, str(answers / "check.py"), str(scratch), str(answers / "expected.json")], cwd=scratch, env=env, capture_output=True, text=True, timeout=300)

@@ -1,0 +1,86 @@
+{
+  "case": "proto-c5-phone-ready-page",
+  "skill": "game-prototype",
+  "purpose": "a phone-ready page (controls on pointer:coarse, 64 px, touch hint, touch-action none, zoom allowed) must pass every phone item",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "controls_visible",
+      "type": "web_controls_visible",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "targets",
+      "type": "web_targets",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "hints",
+      "type": "web_hints",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "page_stable",
+      "type": "web_page_stable",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "zoom_not_blocked",
+      "type": "web_zoom_not_blocked",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    }
+  ]
+}
