@@ -56,7 +56,9 @@ def drain():
 
 def clean_env(home):
     return {"PATH": "/usr/local/bin:/usr/bin:/bin:/opt/tools/bin", "HOME": home,
-            "LANG": "C.UTF-8", "STUDIO_FFMPEG": "/opt/tools/bin/ffmpeg", "TMPDIR": "/scratch/tmp"}
+            "LANG": "C.UTF-8", "STUDIO_FFMPEG": "/opt/tools/bin/ffmpeg",
+            "STUDIO_CHROME": "/opt/tools/chrome-linux64/chrome", "STUDIO_NODE_MODULES": "/opt/tools/node_modules",
+            "TMPDIR": home + "/tmp" if home == "/home/checker" else "/scratch/tmp"}
 
 
 def tools():
@@ -66,6 +68,10 @@ def tools():
         "tesseract": ["tesseract", "--version"],
         "strace": ["strace", "--version"],
         "node": ["node", "--version"],
+        "chrome": ["/opt/tools/chrome-linux64/chrome", "--version"],
+        "puppeteer_core": ["node", "-e", 'console.log(require("/opt/tools/node_modules/puppeteer-core/package.json").version)'],
+        "pillow": ["python3", "-I", "-c", "import PIL; print(PIL.__version__)"],
+        "fonttools": ["python3", "-I", "-c", "import fontTools; print(fontTools.__version__)"],
         "numpy": ["python3", "-I", "-c", "import numpy; print(numpy.__version__)"]
     }.items():
         result = subprocess.run(command, env=clean_env("/home/studio"), capture_output=True, timeout=10)
@@ -108,7 +114,13 @@ def audit_records():
         for line in stream:
             if "= -1 " not in line or not any(x in line for x in ("connect(", "sendto(", "sendmsg(")):
                 continue
+            if "EINPROGRESS" in line or "EAGAIN" in line or "AF_UNIX" in line:
+                continue
             address = re.search(r'inet_addr\("([0-9.]+)"\)', line)
+            if address and address.group(1).startswith("127."):
+                continue
+            if '"::1"' in line:
+                continue
             result.append({"host": address.group(1) if address else "network",
                            "method": "CONNECT", "status": "DENIED", "bytes": 0, "time": time.time()})
             if len(result) > 5000:
@@ -120,7 +132,7 @@ def limits_hit():
     root = Path("/sys/fs/cgroup")
     hits = []
     for file, keys, name in [("pids.events", {"max"}, "process count"),
-                              ("memory.events", {"max", "oom", "oom_kill"}, "memory")]:
+                              ("memory.events", {"oom", "oom_kill"}, "memory")]:
         values = dict(line.split() for line in (root / file).read_text().splitlines())
         if any(int(values.get(key, "0")) > 0 for key in keys):
             hits.append(name)
@@ -150,11 +162,41 @@ def snapshot():
         send("archive-end")
 
 
+def receive_library():
+    root = Path("/audit/lib")
+    root.mkdir(mode=0o755)
+    total = 0
+    while True:
+        frame = read_frame(sys.stdin.buffer)
+        if frame["type"] == "library-end":
+            return
+        name = frame.get("name", "")
+        parts = Path(name).parts
+        if frame["type"] != "library-file" or not parts or Path(name).is_absolute() or ".." in parts:
+            raise ValueError("unsafe checker library entry")
+        path = root.joinpath(*parts)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("xb") as stream:
+            while True:
+                chunk = read_frame(sys.stdin.buffer)
+                if chunk["type"] == "library-file-end":
+                    break
+                if chunk["type"] != "library-chunk":
+                    raise ValueError("invalid checker library frame")
+                data = base64.b64decode(chunk["data"], validate=True)
+                total += len(data)
+                if total > 16 * 1024 * 1024:
+                    raise ValueError("checker library exceeds limit")
+                stream.write(data)
+        path.chmod(0o555 if frame.get("executable") else 0o444)
+
+
 def main():
     if os.getpid() != 1 or os.getuid() != 0:
         raise RuntimeError("supervisor must be PID 1 as container root")
     for path, uid, mode in [("/scratch", 1000, 0o755), ("/home/studio", 1000, 0o700),
                             ("/home/checker", 1001, 0o700),
+                            ("/home/checker/tmp", 1001, 0o700),
                             ("/scratch/tmp", 1000, 0o700),
                             ("/scratch/.run", 0, 0o700), ("/audit", 0, 0o700)]:
         Path(path).mkdir(exist_ok=True)
@@ -224,10 +266,13 @@ def main():
     Path("/audit/answers").mkdir(mode=0o755)
     for name in ["check.py", "expected.json"]:
         Path("/audit/answers", name).write_bytes(base64.b64decode(answer[name], validate=True))
+    receive_library()
     # Checker is a different unprivileged UID. It cannot alter .run/ claims.
     os.chmod("/audit", 0o755)
     for folder, dirs, files in os.walk("/scratch", followlinks=False):
-        if Path(folder) == Path("/scratch/.run") or Path("/scratch/inputs") in Path(folder).parents or folder == "/scratch/inputs":
+        current = Path(folder)
+        if any(current == protected or protected in current.parents for protected in
+               [Path("/scratch/.run"), Path("/scratch/inputs"), Path("/scratch/skills/studio")]):
             continue
         os.chown(folder, 1001, 1001)
         for name in files:
@@ -235,8 +280,9 @@ def main():
             if not str(path).startswith("/scratch/.run/") and path.name != "brief.md":
                 os.chown(path, 1001, 1001)
     with Path("/audit/checker.out").open("wb") as output:
+        checker_env = {**clean_env("/home/checker"), "STUDIO_LIB": "/audit/lib", "PYTHONPATH": "/audit/lib"}
         process = subprocess.Popen(["python3", "/audit/answers/check.py", "/scratch", "/audit/answers/expected.json"],
-                                   cwd="/scratch", env=clean_env("/home/checker"), preexec_fn=unprivileged(1001),
+                                   cwd="/scratch", env=checker_env, preexec_fn=unprivileged(1001),
                                    stdout=output, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
         deadline = time.monotonic() + 120
         while process.poll() is None:

@@ -127,7 +127,8 @@ def sandbox_args(image, name, seed, skill, egress, limits, input_bytes):
             "--tmpfs=/audit:rw,nosuid,nodev,noexec,size=" + str(limits["scratch"] + 128 * 1024 * 1024) + ",mode=0700",
             "--mount=type=bind,src=" + str(seed / "inputs") + ",dst=/scratch/inputs,ro=true",
             "--mount=type=bind,src=" + str(seed / "brief.md") + ",dst=/scratch/brief.md,ro=true",
-            "--mount=type=bind,src=" + str(skill) + ",dst=/skill/SKILL.md,ro=true",
+            "--mount=type=bind,src=" + str(seed / "studio-resources") + ",dst=/scratch/skills/studio,ro=true",
+            "--mount=type=bind,src=" + str(skill) + ",dst=/skill,ro=true",
             "--mount=type=bind,src=" + str(egress) + ",dst=/egress,ro=true",
             "--entrypoint=/usr/bin/python3", image, "/opt/studio/supervisor.py"]
     return args
@@ -232,6 +233,18 @@ def run(args):
         (seed / "brief.md").write_bytes(brief.read_bytes())
         (seed / "brief.md").chmod(0o644)
         input_bytes = plain_tree(args.case / "inputs", seed / "inputs") + brief.stat().st_size
+        resources = seed / "studio-resources"
+        resources.mkdir()
+        result["studio_resources"] = {}
+        for filename in ["manifest.schema.json", "validate_manifest.py"]:
+            source = Path(__file__).resolve().parent.parent / filename
+            if source.is_symlink() or not source.is_file() or source.stat().st_size > 512 * 1024:
+                raise ValueError("unsafe or missing shared studio resource")
+            target = resources / filename
+            target.write_bytes(source.read_bytes())
+            target.chmod(0o644)
+            input_bytes += target.stat().st_size
+            result["studio_resources"][filename] = sha256(target)
         private_answers = root / "private-answers"
         private_answers.mkdir(mode=0o700)
         for file in ["check.py", "expected.json"]:
@@ -240,12 +253,28 @@ def run(args):
                 raise ValueError("unsafe or oversized checker answers")
             (private_answers / file).write_bytes(source.read_bytes())
             result[file + "_sha256"] = sha256(private_answers / file)
-        skill = root / "SKILL.md"
-        if args.skill.is_symlink() or not args.skill.is_file() or args.skill.stat().st_size > 256 * 1024:
+        library = private_answers / "lib"
+        if args.checker_lib:
+            if plain_tree(args.checker_lib, library) > 16 * 1024 * 1024:
+                raise ValueError("checker library exceeds 16 MiB")
+        else:
+            library.mkdir()
+        result["checker_lib_files"] = {str(p.relative_to(library)): sha256(p)
+                                       for p in sorted(library.rglob("*")) if p.is_file()}
+        skill = root / "skill"
+        entry = args.skill / "SKILL.md" if args.skill.is_dir() else args.skill
+        if args.skill.is_symlink() or entry.is_symlink() or not entry.is_file() or entry.stat().st_size > 256 * 1024:
             raise ValueError("unsafe or oversized skill")
-        skill.write_bytes(args.skill.read_bytes())
-        skill.chmod(0o644)
-        result["skill_sha256"] = sha256(skill)
+        if args.skill.is_dir():
+            plain_tree(args.skill, skill)
+        else:
+            # Legacy single-file callers receive only that file, never its siblings.
+            skill.mkdir()
+            (skill / "SKILL.md").write_bytes(entry.read_bytes())
+            (skill / "SKILL.md").chmod(0o644)
+        result["skill_sha256"] = sha256(skill / "SKILL.md")
+        result["skill_files"] = {str(p.relative_to(skill)): sha256(p)
+                                for p in sorted(skill.rglob("*")) if p.is_file()}
         result["brief_sha256"] = sha256(seed / "brief.md")
         egress = root / "egress"
         egress.mkdir(mode=0o755)
@@ -271,8 +300,6 @@ def run(args):
             relay = Relay(egress / "api.sock", routes, keys, args.model, args.turns, args.ca_file)
             thread = threading.Thread(target=relay.serve_forever, daemon=True)
             thread.start()
-        # Sentinel is outside all mounts; probe must be unable to read it.
-        (root / "credential-sentinel").write_text("synthetic isolation sentinel")
         launched = time.monotonic()
         process = subprocess.Popen(list(runtime) + sandbox_args(args.image, name, seed, skill, egress,
                                     args.limits, input_bytes), env=runtime.env, stdin=subprocess.PIPE,
@@ -286,7 +313,7 @@ def run(args):
         if frame["type"] != "ready":
             raise RuntimeError("image preflight failed")
         result["tools"] = frame["versions"]
-        result["mounts"] = mount_receipt(runtime, name, [seed / "inputs", seed / "brief.md", skill, egress])
+        result["mounts"] = mount_receipt(runtime, name, [seed / "inputs", seed / "brief.md", resources, skill, egress])
         transcript, events, usage = [], [], {}
         drained = False
         while True:
@@ -330,6 +357,11 @@ def run(args):
                 time.sleep(0.05)
         log = list(relay.log) if relay else []
         log += frame["audit"]
+        if relay:
+            result["paid_routes"] = [{"host": host, "path": path, **budget}
+                                     for (host, path), budget in sorted(relay.budgets.items())]
+            if relay.limit_hit:
+                result["limits_hit"].append("paid route calls or bytes")
         result["usage"] = usage
         capture(process, {"transcript.md": "\n".join(transcript),
                           "proxy.log": "".join(json.dumps(v, sort_keys=True) + "\n" for v in log),
@@ -366,6 +398,16 @@ def run(args):
             result[file + "_sha256"] = sha256(source)
         # First transmission of either answer occurs after a clean snapshot scan.
         process.stdin.write(encode(answers))
+        for source in sorted(library.rglob("*")):
+            if source.is_file():
+                relative = str(source.relative_to(library))
+                process.stdin.write(encode({"type": "library-file", "name": relative,
+                                           "executable": bool(source.stat().st_mode & 0o111)}))
+                with source.open("rb") as stream:
+                    while block := stream.read(65536):
+                        process.stdin.write(encode({"type": "library-chunk", "data": base64.b64encode(block).decode()}))
+                process.stdin.write(encode({"type": "library-file-end"}))
+        process.stdin.write(encode({"type": "library-end"}))
         process.stdin.flush()
         frame = frames.next()
         if frame["type"] == "drained":
@@ -439,13 +481,14 @@ def main():
     parser.add_argument("--store", type=Path, required=True)
     parser.add_argument("--case", type=Path, required=True)
     parser.add_argument("--case-id", required=True)
-    parser.add_argument("--skill", type=Path, required=True)
+    parser.add_argument("--skill", type=Path, required=True, help="Read-only skill directory containing SKILL.md (or legacy single file)")
+    parser.add_argument("--checker-lib", type=Path, help="Trusted checker library bundle, transferred only after agent drain")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model", default="synthetic-probe")
     parser.add_argument("--host", default="api.example.test")
     parser.add_argument("--api-path", default="/v1/chat/completions")
     parser.add_argument("--key-fds", default="{}", help='JSON mapping exact host to inherited key FD; no key values')
-    parser.add_argument("--paid-routes", default="[]", help='JSON routes: name, host, path; explicit keys per host')
+    parser.add_argument("--paid-routes", default="[]", help='JSON routes: name, host, path, max_calls, max_bytes; bytes count requests plus responses')
     parser.add_argument("--ca-file", type=Path, help="Explicit public CA bundle for a test HTTPS host")
     parser.add_argument("--selftest", type=Path)
     parser.add_argument("--turns", type=int, default=60)

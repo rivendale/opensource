@@ -15,15 +15,30 @@ from agent import TOOLS
 MAX_BODY = 1024 * 1024
 
 
+def attempted_host(path):
+    try:
+        host = urlsplit(path if "://" in path else "//" + path).hostname or ""
+    except ValueError:
+        return "unlisted"
+    if len(host) > 253 or not all(re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", label)
+                                 for label in host.lower().split(".")):
+        return "unlisted"
+    return host.lower()
+
+
 class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
     daemon_threads = True
     block_on_close = False
 
     def __init__(self, path, routes, keys, model, turn_limit, ca_file=None):
         self.routes = {}
+        self.budgets = {}
         for route in routes:
-            if set(route) != {"name", "host", "path"}:
-                raise ValueError("route requires name, host and path")
+            fields = {"name", "host", "path"}
+            if route.get("name") != "model":
+                fields |= {"max_calls", "max_bytes"}
+            if set(route) != fields:
+                raise ValueError("paid route requires explicit call and byte caps")
             host, route_path = route["host"], route["path"]
             if (host, route_path) in self.routes:
                 raise ValueError("duplicate proxy route")
@@ -32,6 +47,11 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             if not route_path.startswith("/") or any(c in route_path for c in "?#\r\n"):
                 raise ValueError("route must name an exact HTTP path")
             self.routes[(host, route_path)] = route["name"]
+            if route["name"] != "model":
+                if any(type(route[k]) is not int or route[k] <= 0 for k in ("max_calls", "max_bytes")):
+                    raise ValueError("paid caps must be positive integers")
+                self.budgets[(host, route_path)] = {"max_calls": route["max_calls"],
+                                                   "max_bytes": route["max_bytes"], "calls": 0, "bytes": 0}
         if set(keys) != {host for host, _ in self.routes}:
             raise ValueError("each routed host needs its own explicit key")
         self.keys, self.model, self.turn_limit = keys, model, turn_limit
@@ -41,6 +61,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         self.log, self.calls = [], 0
         self.active_requests = 0
         self.incident = False
+        self.limit_hit = False
         self.lock = threading.Lock()
         self.slots = threading.BoundedSemaphore(4)
         super().__init__(str(path), Handler)
@@ -67,7 +88,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         self.record("unlisted", "OTHER", 400, 0)
 
     def record(self, host, method, status, size):
-        # Host comes from the configured route, never from an untrusted request.
+        # Refused hosts are validated DNS names, never arbitrary request text.
         with self.lock:
             self.log.append({"host": host, "method": method, "status": status,
                              "bytes": size, "time": time.time()})
@@ -96,7 +117,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def reject(self, status=403):
-        self.server.record("unlisted", self.command if self.command in {"POST", "GET", "CONNECT"} else "OTHER", status, 0)
+        self.server.record(attempted_host(self.path), self.command if self.command in {"POST", "GET", "CONNECT"} else "OTHER", status, 0)
         self.reply(status)
 
     def do_POST(self):
@@ -132,6 +153,18 @@ class Handler(BaseHTTPRequestHandler):
             payload = json.dumps(request, allow_nan=False).encode()
         except (ValueError, TypeError, OSError):
             return self.reject(400)
+        budget = self.server.budgets.get((host, target.path))
+        if budget:
+            with self.server.lock:
+                if budget["calls"] >= budget["max_calls"] or budget["bytes"] + len(payload) > budget["max_bytes"]:
+                    self.server.limit_hit = True
+                    exhausted = True
+                else:
+                    budget["calls"] += 1
+                    budget["bytes"] += len(payload)
+                    exhausted = False
+            if exhausted:
+                return self.reject(429)
         connection = http.client.HTTPSConnection(host, 443, timeout=60, context=self.server.context)
         try:
             # Do not forward caller headers, cookies, authorization or Host overrides.
@@ -139,7 +172,15 @@ class Handler(BaseHTTPRequestHandler):
             connection.request("POST", target.path, payload, headers)
             response = connection.getresponse()
             body = response.read(MAX_BODY + 1)
-            if any(key in body for key in self.server.keys.values()) or KEY_PATTERN.search(body):
+            key_incident = any(key in body for key in self.server.keys.values()) or KEY_PATTERN.search(body)
+            if budget:
+                with self.server.lock:
+                    budget["bytes"] += len(body)
+                    exhausted = budget["bytes"] > budget["max_bytes"]
+                    self.server.limit_hit |= exhausted
+                if exhausted and not key_incident:
+                    return self.reject(429)
+            if key_incident:
                 self.server.incident = True
                 self.server.record(host, "POST", 502, 0)
                 return self.reply(502, b'{"error":"key incident; operator must rotate key"}')

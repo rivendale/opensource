@@ -18,7 +18,8 @@ a controller inventory alone does not prove container enforcement.
 
 The base is an operator-prepared OCI tool image, addressed by an immutable manifest digest,
 already loaded in that store. It contains Python 3, NumPy, tesseract, strace, a `useradd` command,
-Node **22 or later**, and ffmpeg **7.0.2** at `/opt/tools/bin/ffmpeg`. UID 1000 must be unused.
+Node **22 or later**, Pillow, fontTools, puppeteer-core **25.3.0**, Chrome for Testing
+**150.0.7871.46**, and ffmpeg **7.0.2** at `/opt/tools/bin/ffmpeg`. UID 1000 must be unused.
 Add the skill's local tools, fonts and model weights
 before preparing that image; pin their versions and licenses there. The runner records observed
 tool versions and the exact final image identity. A case needing unavailable tools fails; there is
@@ -37,7 +38,10 @@ Egress is a host process listening on a Unix socket. The container has **no IP n
 The socket relay accepts only POST requests to exact configured HTTPS host/path pairs, refuses
 CONNECT and redirects, checks the pinned model and tool envelope, and adds authorization on the
 host. Caller headers are discarded. Each paid-service host requires its own explicit key FD and
-route name, and that name must appear in the brief. A host such as `pixelforge.example.test` can
+route name, and that name must appear in the brief. Each paid route also requires positive
+`max_calls` and `max_bytes` caps. Bytes count canonical request bodies plus response bodies;
+crossing either cap fails the run, including when the agent ignores a refusal. Counts and caps
+are recorded separately in `result.json`. A host such as `pixelforge.example.test` can
 therefore be configured explicitly; there is no wildcard or arbitrary URL forwarding.
 DNS and TLS validation occur on the host. `--ca-file` can name a public test CA bundle for an
 explicit test host; its hash is recorded. It must contain no private key. There is no inherited
@@ -46,6 +50,10 @@ TLS environment override. No browser, web search, fetch or connector tool exists
 The proxy log contains only `host`, `method`, `status`, `bytes`, and `time`. Root-owned strace
 records refused network syscalls; payload arguments are raw addresses, not headers or bodies.
 Only normalized denial metadata enters the published proxy log. The raw audit is destroyed.
+Refused relay requests record the attempted DNS hostname when valid (lowercase, at most 253
+characters); malformed names are `unlisted`. Nonblocking connects in progress and loopback or
+Unix socket operations are not denials. Memory pressure reclaimed at `memory.max` is not OOM;
+`oom`, `oom_kill` and the process limit's `max` event fail the run.
 The relay blocks key-bearing responses and stops accepting connections before the checker starts.
 
 ## Image preparation
@@ -58,7 +66,17 @@ as `ffmpeg.tar.xz` into a dedicated build context containing that recipe. Its SH
 `abda8d77ce8309141f83ab8edf0596834087c52467f6badf376a6a2a4c87cf67`; the recipe verifies it.
 The static FFmpeg build is GPL-3.0; its license is kept in the image. Keep the publisher's
 corresponding source and comply with redistribution terms before distributing this image.
-No downloaded third-party source or binary is committed here. This preparation build needs
+Also download the [official Chrome for Testing archive](https://storage.googleapis.com/chrome-for-testing-public/150.0.7871.46/linux64/chrome-linux64.zip)
+as `chrome.zip`; its SHA-256 is `ad115a7498a17f53f6ed0914458326c6516addc756224db14c32184a9b1ab078`.
+Copy `package.json` and `package-lock.json` beside the recipe. The lock includes integrity values
+for every npm dependency; installation disables lifecycle scripts.
+The [Puppeteer supported-browser table](https://pptr.dev/supported-browsers) pairs version 25.3.0
+with this Chrome version. Chrome dependencies follow the [upstream Linux list](https://pptr.dev/troubleshooting#chrome-doesnt-launch-on-linux).
+The tool inventory records all four added versions. `STUDIO_CHROME` and `STUDIO_NODE_MODULES`
+point to fixed image paths for agents and checkers. Browser calls inside the isolated container
+need `--no-sandbox` and `--disable-dev-shm-usage`; the surrounding Podman sandbox stays enforced.
+The image retains Chrome and npm package license files; review redistribution terms before
+distributing the image. No downloaded third-party source or binary is committed here. This preparation build needs
 package networking; evaluation and the runner-layer build do not.
 
 Build that context with Podman using an explicit store, `--pull=never` and the cgroupfs
@@ -92,8 +110,8 @@ python3 skills/studio/runner/selftest.py \
 ```
 
 This starts an actual container with synthetic inputs, without model calls or credentials.
-It attempts a forbidden network connection, root and capture writes, a credential-file read,
-and an early-answer read. It also checks empty HOME, a clean environment, zero agent capabilities,
+It attempts a forbidden network connection and root, input and capture writes.
+A strict bind-source receipt verifies that credential directories and checker answers are absent. It also checks empty HOME, a clean environment, zero agent capabilities,
 read-only inputs, and logged network denial. A failing probe fails the receipt. Startup refusal
 is a failed self-test, never evidence that those in-container probes passed.
 
@@ -116,7 +134,8 @@ python3 skills/studio/runner/run.py run \
   --image registry.example/studio@sha256:<64-hex-manifest-digest> \
   --selftest /absolute/selftest/result.json \
   --case /absolute/case --case-id case-name \
-  --skill /absolute/skill/SKILL.md --output /absolute/new-result-directory \
+  --skill /absolute/skill --checker-lib /absolute/checker-library \
+  --output /absolute/new-result-directory \
   --model immutable-model-snapshot --host api.example.test \
   --key-fds '{"api.example.test":3}'
 ```
@@ -147,6 +166,16 @@ The host scans that snapshot before transmitting checker answers. The checker ru
 in the same container, with the relay closed and IP networking still disabled. It receives
 `check.py /scratch /audit/answers/expected.json` and must emit one strict JSON object with case
 and nonempty, uniquely identified rule results. Its exit code must be zero.
+Its temporary directory is `/home/checker/tmp`, outside the measured scratch tree.
+Pass the full skill directory to `--skill` to expose its helpers and references at `/skill`.
+The runner copies regular files only, preserves executable bits, hashes each file, and mounts
+the copy read-only. Legacy single-file callers expose only `/skill/SKILL.md`.
+The shared manifest schema and validator are copied from this checkout, hashed, and exposed
+read-only at `/scratch/skills/studio`, matching the relative paths in studio briefs.
+`--checker-lib` accepts a trusted library bundle up to 16 MiB. Its regular files are frozen
+and individually hashed before launch, then streamed into root-owned `/audit/lib` only after
+agent drain and the snapshot scan. The checker receives `STUDIO_LIB` and `PYTHONPATH` pointing
+there. The bundle is never mounted or sent during the agent phase.
 
 The final snapshot is scanned again before publication. If `.run/` contains an API key's exact
 value or recognizable pattern, or a proxy response contains a key, the result is a failed incident:
@@ -157,7 +186,7 @@ safe agent failures may keep their captured tree. Unsafe archives are refused ra
 ## What remains unverified
 
 The [2026-10-10 synthetic receipt](validation-2026-10-10.json) records a prepared amd64 image
-and a passing real self-test: twelve agent refusals/invariants, three checker rules, actual
+and the original passing self-test: twelve reported observations, three checker rules, actual
 cgroup limits, and 37 host checks. It used no model or credential and read no studio cases.
 The tool recipe's Node account is removed so the supervisor can create its own UID 1000.
 The self-test found and corrected tmpfs option compatibility, missing entrypoint PATH, and
@@ -171,7 +200,18 @@ messages. A mocked response containing the synthetic authorization marker correc
 an incident, skipped the checker and kept no scratch tree. Neither run used a real credential
 or contacted a model service. Provider TLS, real model behavior and paid services remain unproved.
 
-Independent Claude review and real evaluation-lane acceptance remain pending.
+Independent Claude review found checker integration gaps. The [2026-10-11 integration receipt](validation-2026-10-11.json) records
+the fixes; real evaluation-lane acceptance remains pending. Three original observations
+(credential-file, credential-sentinel, early-answer-mount) used absent paths and could pass
+without proving their claimed protection. They are removed from the nine retained probes.
+The exact readonly bind-source receipt still verifies no host credentials or answers are mounted.
+Write tracing is retained so an `ENOSPC` failure is still detected when an agent later deletes
+files before drain. One synthetic five-minute 1080p30 x264 render took 47.37 seconds without
+tracing and 51.89 seconds with it (9.55% more wall time; identical 200,607,207-byte videos).
+This single pair is not an overhead bound for other workloads. The integration receipt also
+records a checker-launched Chrome mobile screenshot, Pillow inspection, fontTools import,
+delayed checker-library import, helper execution, safe scratch copying, and the expected paid-cap
+and key-response refusals. Independent reference/defect replay is still required before scoring.
 GPU device admission is not implemented; GPU cases
 must currently fail rather than silently use a weaker sandbox. The exact tool image and model
 snapshot used for scoring remain operator choices. No studio skill has been scored by this draft.
