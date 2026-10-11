@@ -93,7 +93,7 @@ person that did not build it, and measured on cases written by someone other tha
 4. The scaffold or engine version is not pinned.
 5. The prototype phones home, adds analytics or loads remote assets the brief did not ask for.
 6. Assets enter the build without manifest rows.
-Items 7 to 11 apply only when the brief names a phone or a browser target.
+Items 7 to 14 apply only when the brief names a phone or a browser target.
 
 7. **A core-loop action cannot be done by touch.** The brief lists each core-loop action and the observable it
    produces: a console line, a DOM attribute, or a state value. The checker drives the build with touch events only
@@ -115,6 +115,15 @@ Items 7 to 11 apply only when the brief names a phone or a browser target.
 11. **The page moves under the player's thumb.** After a one-finger drag and a two-finger pinch on the play surface,
     the page's scroll position and `visualViewport.scale` must be unchanged. The checker tests behavior, not the
     viewport tag. A build must not block zoom with `maximum-scale=1`, because that fails WCAG 1.4.4 (Resize Text).
+12. **Two thumbs at once do not work.** For a game whose brief pairs a movement control with an action (steer and
+    fire, walk and jump), the checker holds the movement control with one touch point and taps the action with a second
+    (`Input.dispatchTouchEvent` with two points). It fails when the second touch is dropped or ends the first: the action's
+    observable does not appear, or movement stops.
+13. **A long press selects text or opens a menu instead of playing.** The checker holds a core-loop control for 800 ms. It
+    fails when the page selection becomes non-empty or a `contextmenu` event reaches the default handler during play.
+14. **A control sits under the phone's notch or gesture bar.** With safe-area insets of top 47 px and bottom 34 px applied
+    at load (`Emulation.setSafeAreaInsetsOverride`), each core-loop control must lie inside the viewport minus the insets.
+    A page that sets `viewport-fit=cover` must also use `env(safe-area-inset-*)` in its layout.
 
 ## The asset manifest
 
@@ -171,7 +180,7 @@ reports the value it used.
 | export rebuilt by the kept script | byte-identical for a deterministic tool; for model output with the stated seed, the same size and format and within every tolerance in this table for that asset type |
 | video format | resolution, frame rate and aspect ratio exact; duration within 0.5 s |
 | prototype | starts and reaches its first interactive frame within 30 s on the stated target |
-| prototype on a phone (items 7 to 11) | headless Chrome with a pinned version, the device profile applied BEFORE navigation (applied after, the layout width stays 980); coarse-pointer touch profiles as in item 8; touch events only, keyboard disabled; touch target 44x44 CSS px. A frame-rate floor, when the brief names one, needs a real GPU and is operator-run, not part of the CPU lane |
+| prototype on a phone (items 7 to 14) | headless Chrome with a pinned version, the device profile applied BEFORE navigation (applied after, the layout width stays 980); coarse-pointer touch profiles as in item 8; touch events only, keyboard disabled; touch target 44x44 CSS px. A frame-rate floor, when the brief names one, needs a real GPU and is operator-run, not part of the CPU lane |
 
 ## Where things live
 
