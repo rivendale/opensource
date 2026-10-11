@@ -98,13 +98,14 @@ Items 7 to 11 apply only when the brief names a phone or a browser target.
 7. **A core-loop action cannot be done by touch.** The brief lists each core-loop action and the observable it
    produces: a console line, a DOM attribute, or a state value. The checker drives the build with touch events only
    and the keyboard disabled, because an emulator still accepts keys and hides the gap. It fails when an action's
-   observable never appears. Controls are found by their accessible name, or by a `data-control` attribute the
-   skill must add.
+   observable never appears. A control matches an action when its `data-control` value or its accessible name
+   equals the action's name in the brief (ignoring case). A control with any other name counts as no control found.
 8. **Touch controls appear by screen width instead of by input type.** The checker runs coarse-pointer touch profiles
    at 390x844, 844x390, 1194x834 and 1280x720. It also rotates without a reload. It fails when a control from item 7 is
    missing or hidden in any of them. Hiding a joystick at a wide landscape width (`sm:hidden`) is the measured failure.
 9. **A control is too small, covered or off screen.** A core-loop control is under 44x44 CSS px, or is not inside the
-   viewport. The checker probes `elementFromPoint` at its center and four points inset 4 px from its edges. It fails
+   viewport, measured against the profile's `innerWidth` x `innerHeight`, so a control below the fold of a scrolling page
+   fails. The checker probes `elementFromPoint` at its center and four points inset 4 px from its edges. It fails
    when the hit element is not the control or a descendant (`control.contains(hit)`). An action bar covering an
    arrow's edge is the measured failure.
 10. **The only control hint is for a keyboard or mouse.** On a touch profile, a visible text hint names a key or mouse
