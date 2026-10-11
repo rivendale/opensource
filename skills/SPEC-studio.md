@@ -93,6 +93,18 @@ person that did not build it, and measured on cases written by someone other tha
 4. The scaffold or engine version is not pinned.
 5. The prototype phones home, adds analytics or loads remote assets the brief did not ask for.
 6. Assets enter the build without manifest rows.
+7. **An action that a key performs has no touch control** when the brief targets a phone or a browser. The checker
+   drives the build in a phone profile (Android Chrome, 390x844 and 844x390) with touch events only and the keyboard
+   disabled, because an emulator still accepts keys and hides the gap. It fails when any core-loop action in the brief
+   cannot be done by touch.
+8. **Touch controls appear by screen width instead of by input type.** They must show on `(pointer: coarse)` and stay
+   visible in both orientations. Hiding a joystick at a wide landscape width (`sm:hidden`) is the measured failure.
+9. **A control is too small or covered.** A core-loop control is under 44x44 CSS px, or another element is on top of
+   its center (an `elementFromPoint` hit test at the control's center returns a different element).
+10. **The only control hint is for a keyboard or mouse** ("WASD", "right mouse button", "press Z") on a touch device,
+    with no touch wording beside it.
+11. **The page moves under the player's thumb.** A drag on the play area scrolls or zooms the page (no `touch-action`
+    on the play surface, or a viewport that allows pinch-zoom during play).
 
 ## The asset manifest
 
@@ -149,6 +161,7 @@ reports the value it used.
 | export rebuilt by the kept script | byte-identical for a deterministic tool; for model output with the stated seed, the same size and format and within every tolerance in this table for that asset type |
 | video format | resolution, frame rate and aspect ratio exact; duration within 0.5 s |
 | prototype | starts and reaches its first interactive frame within 30 s on the stated target |
+| prototype on a phone (items 7 to 11) | phone profile 390x844 and 844x390, touch events only, keyboard disabled; touch target 44x44 CSS px; a frame-rate floor of 30 fps median on the Bro Cart `fps-bench` mobile profile when the brief names one |
 
 ## Where things live
 
