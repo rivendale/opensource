@@ -204,19 +204,37 @@ def main():
         os.chmod(path, mode)
     versions = tools()
     start = read_frame(sys.stdin.buffer)
-    if start["type"] != "start" or start["mode"] not in {"run", "probe"}:
+    if start["type"] != "start" or start["mode"] not in {"run", "probe", "replay"}:
         raise ValueError("expected start frame")
     verify_limits(start["limits"])
     command = (["python3", "-I", "/opt/studio/probe.py"] if start["mode"] == "probe" else
                ["python3", "/opt/studio/agent.py", "--model", start["model"],
                 "--host", start["host"], "--path", start["path"], "--turns", str(start["turns"])])
+    if start["mode"] == "replay":
+        command = ["python3", "/opt/studio/replay.py", "--limit", str(start["replay_limit"])]
     send("ready", versions=versions)
     # Root tracer owns the audit file; -u launches the program with no root caps.
     process = subprocess.Popen(["strace", "-D", "-f", "-e", "trace=connect,sendto,sendmsg,write,writev,pwrite64,truncate,ftruncate",
                                 "-e", "raw=sendto,sendmsg,write,writev,pwrite64", "-o", "/audit/network.trace",
                                 "-u", "studio", *command], cwd="/scratch", env=clean_env("/home/studio"),
-                               stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                               stdin=subprocess.PIPE if start["mode"] == "replay" else subprocess.DEVNULL, stdout=subprocess.PIPE,
                                stderr=None if start["mode"] == "probe" else subprocess.DEVNULL)
+    if start["mode"] == "replay":
+        total = 0
+        while True:
+            frame = read_frame(sys.stdin.buffer)
+            if frame["type"] not in {"replay-chunk", "replay-end"}:
+                raise ValueError("invalid replay transport")
+            if frame["type"] == "replay-chunk":
+                data = base64.b64decode(frame["data"], validate=True)
+                total += len(data)
+                if len(data) > 65536 or total > start["replay_limit"] + 64 * 1024 * 1024:
+                    raise ValueError("replay transport exceeds limit")
+            process.stdin.write(encode(frame))
+            process.stdin.flush()
+            if frame["type"] == "replay-end":
+                process.stdin.close()
+                break
     while True:
         line = process.stdout.readline(2 * 1024 * 1024 + 1)
         if not line:

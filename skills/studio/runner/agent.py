@@ -97,7 +97,7 @@ def main():
     skill = Path("/skill/SKILL.md").read_text()
     brief = Path("/scratch/brief.md").read_text()
     messages = [{"role": "system", "content": skill + "\n\nSandbox facts: the working directory is /scratch; "
-                 "/scratch/inputs and /skill are read-only. The available tools are shell and local_image."},
+                 "/scratch/inputs and /skill are read-only. The available tools are shell and view_image."},
                 {"role": "user", "content": brief}]
     tokens = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     emit("identity", agent=VERSION, model=args.model)

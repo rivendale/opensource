@@ -204,6 +204,8 @@ def run(args):
     process = None
     relay = None
     thread = None
+    transfer = None
+    transfer_errors = []
     runtime = None
     name = "studio-" + uuid.uuid4().hex
     key_values = []
@@ -220,7 +222,7 @@ def run(args):
             result["reason"] = "runtime unavailable or missing delegated cgroup v2 cpu, memory, pids or seccomp"
             raise
         result["image"] = image_identity(runtime, args.image)
-        if args.mode == "run":
+        if args.mode in {"run", "replay"}:
             receipt = json.loads(args.selftest.read_text())
             if (receipt.get("status") != "passed" or receipt.get("image") != result["image"]
                     or receipt.get("runner") != VERSION or receipt.get("runner_sha256") != result["runner_sha256"]):
@@ -232,7 +234,14 @@ def run(args):
             raise ValueError("unsafe or oversized brief")
         (seed / "brief.md").write_bytes(brief.read_bytes())
         (seed / "brief.md").chmod(0o644)
-        input_bytes = plain_tree(args.case / "inputs", seed / "inputs") + brief.stat().st_size
+        if (args.case / "inputs").exists() or (args.case / "inputs").is_symlink():
+            input_bytes = plain_tree(args.case / "inputs", seed / "inputs")
+        else:
+            # Cases with no reference files still get the same empty read-only
+            # inputs mount, with no visible change to the neutral case layout.
+            (seed / "inputs").mkdir(mode=0o755)
+            input_bytes = 0
+        input_bytes += brief.stat().st_size
         resources = seed / "studio-resources"
         resources.mkdir()
         result["studio_resources"] = {}
@@ -276,6 +285,36 @@ def run(args):
         result["skill_files"] = {str(p.relative_to(skill)): sha256(p)
                                 for p in sorted(skill.rglob("*")) if p.is_file()}
         result["brief_sha256"] = sha256(seed / "brief.md")
+        replay_tree = None
+        if args.mode == "replay":
+            if args.replay.is_symlink() or args.replay.stat().st_size > MAX_FRAME:
+                raise ValueError("unsafe replay metadata")
+            metadata = json.loads(args.replay.read_text())
+            if metadata["case"] != args.case_id or args.tree < 0:
+                raise ValueError("replay case mismatch")
+            replay_tree = metadata["trees"][args.tree]
+            tar_name = replay_tree["tar"]
+            if not isinstance(tar_name, str) or Path(tar_name).name != tar_name:
+                raise ValueError("unsafe replay archive name")
+            source = args.replay.parent / tar_name
+            if source.is_symlink() or not source.is_file() or source.stat().st_size > args.scratch + 64 * 1024 * 1024:
+                raise ValueError("unsafe or oversized replay archive")
+            frozen_tar = root / "replay.tar"
+            total = 0
+            with source.open("rb") as input_stream, frozen_tar.open("xb") as output_stream:
+                while block := input_stream.read(65536):
+                    total += len(block)
+                    if total > args.scratch + 64 * 1024 * 1024:
+                        raise ValueError("replay archive exceeds staging limit")
+                    output_stream.write(block)
+            expected = replay_tree["expect"]
+            if not isinstance(expected, dict) or not expected or any(not isinstance(k, str) or type(v) is not bool for k, v in expected.items()):
+                raise ValueError("invalid replay expected verdict")
+            with frozen_tar.open("rb") as stream:
+                tar_sha256 = hashlib.file_digest(stream, "sha256").hexdigest()
+            result["replay"] = {"tree": args.tree, "tar_sha256": tar_sha256,
+                                "metadata_sha256": sha256(args.replay), "expected": expected,
+                                "model_called": False}
         egress = root / "egress"
         egress.mkdir(mode=0o755)
         if args.mode == "run":
@@ -307,13 +346,28 @@ def run(args):
         frames = Frames(process, launched + args.wall)
         process.stdin.write(encode({"type": "start", "mode": args.mode, "model": args.model,
                                    "host": args.host, "path": args.api_path, "turns": args.turns,
-                                   "limits": args.limits}))
+                                   "limits": args.limits,
+                                   "replay_limit": args.scratch - CAPTURE_RESERVE - input_bytes}))
         process.stdin.flush()
         frame = frames.next()
         if frame["type"] != "ready":
             raise RuntimeError("image preflight failed")
         result["tools"] = frame["versions"]
         result["mounts"] = mount_receipt(runtime, name, [seed / "inputs", seed / "brief.md", resources, skill, egress])
+        if replay_tree is not None:
+            def transfer_replay():
+                try:
+                    with frozen_tar.open("rb") as stream:
+                        while block := stream.read(65536):
+                            process.stdin.write(encode({"type": "replay-chunk", "data": base64.b64encode(block).decode()}))
+                    process.stdin.write(encode({"type": "replay-end"}))
+                    process.stdin.flush()
+                except Exception:
+                    transfer_errors.append(True)
+            # Frame reception keeps enforcing the wall deadline if extraction
+            # stalls while the writer is blocked on the container's pipe.
+            transfer = threading.Thread(target=transfer_replay, daemon=True)
+            transfer.start()
         transcript, events, usage = [], [], {}
         drained = False
         while True:
@@ -343,6 +397,10 @@ def run(args):
                 raise RuntimeError("unexpected agent protocol frame")
         if not drained:
             raise RuntimeError("agent drain not proved")
+        if transfer:
+            transfer.join(timeout=5)
+            if transfer.is_alive() or transfer_errors:
+                raise RuntimeError("replay transfer failed")
         result["agent_exit"] = frame["code"]
         result["limits_hit"] = frame["limits_hit"]
         result["agent_wall_seconds"] = time.monotonic() - launched
@@ -357,6 +415,17 @@ def run(args):
                 time.sleep(0.05)
         log = list(relay.log) if relay else []
         log += frame["audit"]
+        if replay_tree is not None:
+            transcript = []
+            for role, content in replay_tree["transcript"]:
+                if role not in {"assistant", "tool"} or not isinstance(content, str):
+                    raise ValueError("invalid replay transcript")
+                transcript.append("## " + role + "\n\n" + "\n".join("> " + line for line in content.splitlines()) + "\n")
+            for row in replay_tree["proxy"]:
+                if (not isinstance(row["host"], str) or not re.fullmatch(r"[a-zA-Z0-9.-]{1,253}", row["host"])
+                        or type(row["status"]) is not int or not 100 <= row["status"] <= 599):
+                    raise ValueError("invalid replay proxy observation")
+                log.append({"host": row["host"], "method": "POST", "status": row["status"], "bytes": 0, "time": time.time()})
         if relay:
             result["paid_routes"] = [{"host": host, "path": path, **budget}
                                      for (host, path), budget in sorted(relay.budgets.items())]
@@ -418,8 +487,9 @@ def run(args):
             result["limits_hit"] = frame["limits_hit"]
             result["reason"] = "limit hit: " + ", ".join(frame["limits_hit"])
             raise RuntimeError("checker resource limit")
-        if frame["code"] != 0:
+        if frame["code"] != 0 and not (replay_tree is not None and frame["code"] == 1):
             raise RuntimeError("checker failed")
+        result["checker_exit"] = frame["code"]
         result["checker"] = checker_result(json.loads(frame["output"]), args.case_id)
         if frames.next()["type"] != "archive-start":
             raise RuntimeError("missing final archive")
@@ -436,6 +506,12 @@ def run(args):
         shutil.copytree(after, args.output / "scratch")
         result["status"] = "passed" if all(r["pass"] for r in result["checker"]["rules"]) else "failed"
         result["reason"] = None if result["status"] == "passed" else "checker rules failed"
+        if replay_tree is not None:
+            got = {r["id"]: r["pass"] for r in result["checker"]["rules"]}
+            matched = got == result["replay"]["expected"]
+            result["replay"]["matched"] = matched
+            result["status"] = "passed" if matched else "failed"
+            result["reason"] = None if matched else "replay verdict differs from host"
     except TimeoutError:
         result["reason"] = "wall time limit"
     except Exception:
@@ -451,6 +527,8 @@ def run(args):
         if process and process.poll() is None:
             process.kill()
             process.wait(timeout=5)
+        if transfer:
+            transfer.join(timeout=5)
         if runtime and process:
             try:
                 command(runtime, ["rm", "--force", name], timeout=10)
@@ -476,7 +554,9 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=["run", "probe"])
+    parser.add_argument("mode", choices=["run", "probe", "replay"])
+    parser.add_argument("--replay", type=Path, help="Emitted replay.json; replay mode only, never calls a model")
+    parser.add_argument("--tree", type=int, default=0, help="Zero-based tree index in replay.json")
     parser.add_argument("--image", required=True)
     parser.add_argument("--store", type=Path, required=True)
     parser.add_argument("--case", type=Path, required=True)
@@ -508,6 +588,8 @@ def main():
         parser.error("run requires a pinned model, explicit key FD and selftest receipt")
     if args.mode == "run" and args.model.lower() in {"latest", "auto", "default"}:
         parser.error("mutable model aliases are not pins")
+    if args.mode == "replay" and (not args.replay or not args.selftest or args.key_fds or args.paid_routes):
+        parser.error("replay requires metadata and selftest, and refuses credential FDs or paid routes")
     for name in ["store", "case", "skill", "output"]:
         setattr(args, name, getattr(args, name).absolute())
     return run(args)

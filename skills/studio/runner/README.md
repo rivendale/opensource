@@ -183,6 +183,48 @@ no scratch tree is kept, the reason is recorded without the secret, and the oper
 rotate the key. Result directories are private by default and are never overwritten. Ordinary
 safe agent failures may keep their captured tree. Unsafe archives are refused rather than extracted.
 
+## Fixture replay
+
+Before calling a model, use the independently emitted reference/defect trees to
+check library, image and capture compatibility through the actual sandbox:
+
+Prepare the bundle and trees from a pinned case checkout using its
+`evals/studio/pack_lib.py` and each set's `build/selfcheck.py --emit DIR`, as
+described in the [lane integration notes](https://github.com/rivendale/opensource/blob/78ceb3470edce6d5aa1e24138cbf350cc7cdfd1e/evals/studio/LANE.md).
+These are checker inputs, not additional instructions for the evaluated skill.
+
+```sh
+python3 skills/studio/runner/run.py replay \
+  --store /absolute/image-store \
+  --image registry.example/studio@sha256:<64-hex-manifest-digest> \
+  --selftest /absolute/selftest/result.json \
+  --case /absolute/case --case-id case-name \
+  --skill /absolute/skill --checker-lib /absolute/checker-library \
+  --replay /absolute/emitted-case/replay.json --tree 0 \
+  --output /absolute/new-replay-result-directory
+```
+
+Repeat for every zero-based tree index in the emitted metadata. The host freezes
+and hashes the archive, then streams bounded chunks to an extractor running as
+the agent UID, under the same image, cgroups and readonly mounts. No model or
+shell command is involved, so large audio/video fixtures do not hit the shell's
+16 KiB command limit. Traversal paths, links, special files, duplicate entries and
+attempts to replace inputs, shared resources or `.run/` are refused. Execute bits
+are retained; setuid/setgid bits are removed. A missing source `inputs/` directory
+becomes an empty readonly inputs mount.
+
+After extraction and process drain, the ordinary capture path quotes fixture
+transcript turns and records fixture proxy observations, then admits the real
+checker and its library. The checker gets the same environment and outside-scratch
+temporary directory as a normal run. Replay passes only when every rule ID and
+boolean verdict equals the host's `expect`, including intentionally failing
+defects. Checker exit 1 is accepted for a replay defect with valid JSON; other
+nonzero exits still fail. `result.json` records the checker exit, archive and
+metadata hashes, expected verdict and match. Replay refuses credential FDs and
+paid routes. Fixture proxy observations are replay data, not actual provider
+requests. A replay pass establishes compatibility, not a skill score or model
+acceptance.
+
 ## What remains unverified
 
 The [2026-10-10 synthetic receipt](validation-2026-10-10.json) records a prepared amd64 image
@@ -211,7 +253,9 @@ tracing and 51.89 seconds with it (9.55% more wall time; identical 200,607,207-b
 This single pair is not an overhead bound for other workloads. The integration receipt also
 records a checker-launched Chrome mobile screenshot, Pillow inspection, fontTools import,
 delayed checker-library import, helper execution, safe scratch copying, and the expected paid-cap
-and key-response refusals. Independent reference/defect replay is still required before scoring.
+and key-response refusals. The [replay receipt](validation-replay-2026-10-11.json) records all 262 trees across 88 cases: independent
+reference/defect compatibility and an actual `view_image` round trip with a mock
+upstream; provider TLS and real model behavior still require operator acceptance.
 GPU device admission is not implemented; GPU cases
 must currently fail rather than silently use a weaker sandbox. The exact tool image and model
 snapshot used for scoring remain operator choices. No studio skill has been scored by this draft.
