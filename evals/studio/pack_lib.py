@@ -11,7 +11,7 @@ OUTPUT_DIR must not exist. The bundle holds everything a case's `check.py` impor
 
 The runner mounts it at a fixed path (say `/opt/studio-lib`), records the hash of `BUNDLE.json` in `result.json`, and sets for the checker: `STUDIO_LIB=/opt/studio-lib`.
 The image provides the rest: python3 with numpy, Pillow and fontTools; ffmpeg at `/opt/tools/bin/ffmpeg` (also `STUDIO_FFMPEG`); tesseract; node 22 with puppeteer-core in a fixed
-directory (`STUDIO_NODE_MODULES`) and Chrome for Testing 150.0.7871.24 headless shell (`STUDIO_CHROME`). `check.py SCRATCH EXPECTED` needs nothing else.
+directory (`STUDIO_NODE_MODULES`) and Chrome for Testing 150.0.7871.46 (the full chrome-linux64 build the runner recipe installs; the headless shell gives the same verdicts) (`STUDIO_CHROME`). `check.py SCRATCH EXPECTED` needs nothing else.
 """
 import hashlib, json, pathlib, shutil, sys
 

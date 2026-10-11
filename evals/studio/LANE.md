@@ -23,7 +23,7 @@ The bundle is flat: the rule modules (`studio_lib.py`, `audio_rules.py`, `music_
 | audio, music, video checkers | ffmpeg 7.0.2 with libx264, AAC, libvorbis, libopus, libmp3lame (the static build has them), also reachable as `ffmpeg` on PATH for the kept build scripts |
 | title OCR (ASCII titles) | tesseract with the English model |
 | prototype (Node) checkers | node 22 or later |
-| phone items (7 to 11) | puppeteer-core in a fixed directory (`STUDIO_NODE_MODULES`), Chrome for Testing 150.0.7871.24 headless shell (`STUDIO_CHROME`), the libraries it loads |
+| phone items (7 to 11) | puppeteer-core in a fixed directory (`STUDIO_NODE_MODULES`), Chrome for Testing 150.0.7871.46 (the full chrome-linux64 build the runner recipe installs; the headless shell gives the same verdicts) (`STUDIO_CHROME`), the libraries it loads |
 
 The checker libraries (numpy, Pillow, fontTools) must be importable system-wide in the image, not from a user site: the checker runs with a clean environment that has no `PYTHONPATH` and an empty `HOME`. `replay_local.py` passes `PYTHONPATH`, `PYTHONUSERBASE`, `LD_LIBRARY_PATH` and the `STUDIO_*` variables through, so it can run on a host whose packages are per-user; the lane must not.
 
