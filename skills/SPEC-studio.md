@@ -117,13 +117,18 @@ Items 7 to 14 apply only when the brief names a phone or a browser target.
     viewport tag. A build must not block zoom with `maximum-scale=1`, because that fails WCAG 1.4.4 (Resize Text).
 12. **Two thumbs at once do not work.** For a game whose brief pairs a movement control with an action (steer and
     fire, walk and jump), the checker holds the movement control with one touch point and taps the action with a second
-    (`Input.dispatchTouchEvent` with two points). It fails when the second touch is dropped or ends the first: the action's
+    (`Input.dispatchTouchEvent` with two points). The brief names the movement observable, for example a `data-player-x`
+    attribute. It fails when the second touch is dropped or ends the first: the action's
     observable does not appear, or movement stops.
-13. **A long press selects text or opens a menu instead of playing.** The checker holds a core-loop control for 800 ms. It
-    fails when the page selection becomes non-empty or a `contextmenu` event reaches the default handler during play.
+13. **A long press selects text or opens a menu instead of playing.** Headless Chrome makes no selection and no
+    `contextmenu` event from a touch hold, so a hold-and-watch check could never fail. The checker reads what a long press
+    would do on Android instead: each core-loop control with text has an effective `user-select` of `none` (the nearest
+    ancestor that is not `auto` decides), and a control that is or holds a link or an image default-prevents a cancelable
+    `contextmenu` event dispatched on it.
 14. **A control sits under the phone's notch or gesture bar.** With safe-area insets of top 47 px and bottom 34 px applied
     at load (`Emulation.setSafeAreaInsetsOverride`), each core-loop control must lie inside the viewport minus the insets.
     A page that sets `viewport-fit=cover` must also use `env(safe-area-inset-*)` in its layout.
+    A page without `viewport-fit=cover` is not measured: the browser keeps its layout viewport inside the safe area.
 
 ## The asset manifest
 
