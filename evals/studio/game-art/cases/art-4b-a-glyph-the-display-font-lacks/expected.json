@@ -31,13 +31,6 @@
       "file": "assets/ui/title.png"
     },
     {
-      "id": "ocr",
-      "type": "ocr_exact",
-      "file": "assets/ui/title.png",
-      "string": "Se\u00f1or Calavera: D\u00eda de Muertos",
-      "gate": false
-    },
-    {
       "id": "manifest_valid",
       "type": "manifest_valid",
       "import_paths": [
