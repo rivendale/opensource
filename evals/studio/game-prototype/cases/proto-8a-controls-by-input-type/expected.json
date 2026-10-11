@@ -1,0 +1,37 @@
+{
+  "case": "proto-8a-controls-by-input-type",
+  "skill": "game-prototype",
+  "item": "proto-8",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "controls_visible",
+      "type": "web_controls_visible",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    }
+  ]
+}

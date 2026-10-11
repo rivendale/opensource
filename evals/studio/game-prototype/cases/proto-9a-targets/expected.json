@@ -1,0 +1,37 @@
+{
+  "case": "proto-9a-targets",
+  "skill": "game-prototype",
+  "item": "proto-9",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "targets",
+      "type": "web_targets",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    }
+  ]
+}

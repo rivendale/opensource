@@ -292,6 +292,125 @@ case("proto-c3-own-loop", "control", "M", NO_SCAFFOLD_BRIEF, INPUTS, [r if r["id
      purpose="a project that wrote its own loop, as the brief asked, needs no THIRD_PARTY row and no scaffold version, only a fixed Node version")
 
 
+# ============================================================================================ proto 7-11: a phone or browser target (touch-only play)
+WEB_ACTIONS = {"left": "left", "right": "right", "jump": "jump"}
+WEB_SPEC = {"actions": WEB_ACTIONS, "play": "#play"}
+WEB_BRIEF = ("Make a small browser game for phones, a coin catcher, that is playable with touch alone. The player slides left and right and jumps. Serve it as a static site: the page is `index.html` in the project "
+             "root. The play surface is the element `#play`. The core-loop actions are `left`, `right` and `jump`. Each time one happens, append its name to the `data-action-log` attribute of `<body>`, separated by "
+             "spaces (for example `left right jump`). Each action needs a control a player can touch: give it a `data-control` attribute equal to the action's name (or an accessible name equal to it). Keyboard play is welcome "
+             "too. It will be tested on an Android Chrome phone profile in portrait and landscape and on a tablet, with touch events only.\n")
+
+
+def web_page(hud="coarse", size=64, bar=0, offscreen=False, hint="touch", touch_action=True, scrollable=False, meta="width=device-width, initial-scale=1, viewport-fit=cover", jump=True,
+             rotate_bug=False, jump_named=True):
+    """A coin-catcher page. hud: coarse (shown on pointer:coarse) | min640 | min1024 | none (keyboard only). hint: touch | kb_only | both_adjacent."""
+    show = {"coarse": "@media (pointer: coarse) { .hud { display: block; } }", "min640": ".hud { display: block; } @media (min-width: 640px) { .hud { display: none; } }",
+            "min1024": ".hud { display: block; } @media (min-width: 1024px) { .hud { display: none; } }", "none": ".hud { display: none; }"}[hud]
+    hide_kb = "@media (pointer: coarse) { #hint .kb { display: none; } #hint .touch { display: inline; } }" if hint == "touch" else "@media (pointer: coarse) { #hint .touch { display: inline; } }"
+    kb_text = {"touch": "Arrow keys to move, space to jump.", "kb_only": "WASD to move, right mouse button to jump, press Z to dash.", "both_adjacent": "Arrow keys to move, space to jump."}[hint]
+    touch_html = '<span class="touch">Tap the arrows to move, tap Jump to jump.</span>' if hint in ("touch", "both_adjacent") else ""
+    top = "top: 420px; bottom: auto;" if offscreen else "bottom: calc(12px + env(safe-area-inset-bottom));"
+    jump_btn = ('<button id="b-jump" data-control="jump" aria-label="Jump">Jump</button>' if jump_named else '<button id="b-jump">&#8679;</button>') if jump else ""
+    body_style = "overflow: hidden;" if not scrollable else "min-height: 300vh;"
+    html_height = "height: 100%;" if not scrollable else ""
+    canvas_ta = "touch-action: none;" if touch_action else ""
+    bar_html = f'<div id="bar" style="position: fixed; left: 0; right: 0; bottom: 0; height: {bar}px; z-index: 5; background: #333c57;"></div>' if bar else ""
+    resize = "" if not rotate_bug else "const wide = innerWidth > 700; if (wide) document.querySelector('.hud').style.display = 'none';"
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="{meta}">
+<title>Coin Catcher</title>
+<style>
+  html, body {{ margin: 0; {html_height} background: #1a1c2c; color: #f4f4f4; font-family: sans-serif; {body_style} }}
+  #play {{ display: block; width: 100%; height: 100vh; {canvas_ta} }}
+  #hint {{ position: fixed; top: 8px; left: 8px; right: 8px; margin: 0; font-size: 14px; }}
+  #hint .touch {{ display: none; }}
+  .hud {{ display: none; }}
+  {show}
+  {hide_kb}
+  .hud button {{ position: fixed; {top} width: {size}px; height: {size}px; font-size: 22px; border-radius: 12px; border: 2px solid #f4f4f4; background: #333c57; color: #fff; }}
+  #b-left {{ left: 12px; }}
+  #b-right {{ left: {size + 24}px; }}
+  #b-jump {{ right: 12px; width: {size + 24}px; }}
+</style>
+</head>
+<body>
+<canvas id="play" aria-label="play area"></canvas>
+<p id="hint"><span class="kb">{kb_text}</span> {touch_html}</p>
+<div class="hud">
+  <button id="b-left" data-control="left" aria-label="Left">&#9664;</button>
+  <button id="b-right" data-control="right" aria-label="Right">&#9654;</button>
+  {jump_btn}
+</div>
+{bar_html}
+<script>
+  const log = (name) => {{ document.body.dataset.actionLog = ((document.body.dataset.actionLog || '') + ' ' + name).trim(); }};
+  const canvas = document.getElementById('play');
+  const ctx = canvas.getContext('2d');
+  let x = 100;
+  function draw() {{ canvas.width = innerWidth; canvas.height = innerHeight; ctx.fillStyle = '#41a6f6'; ctx.fillRect(x, canvas.height - 200, 32, 32); {resize} }}
+  addEventListener('resize', draw); draw();
+  const act = (name) => {{ if (name === 'left') x -= 20; if (name === 'right') x += 20; log(name); draw(); }};
+  for (const b of document.querySelectorAll('[data-control]')) b.addEventListener('pointerdown', (e) => {{ e.preventDefault(); act(b.dataset.control); }});
+  const jb = document.getElementById('b-jump'); if (jb) jb.addEventListener('pointerdown', (e) => {{ e.preventDefault(); act('jump'); }});
+  addEventListener('keydown', (e) => {{ if (e.key === 'ArrowLeft') act('left'); if (e.key === 'ArrowRight') act('right'); if (e.key === ' ') act('jump'); }});
+</script>
+</body>
+</html>
+"""
+
+
+def web(**kw):
+    def go(root):
+        for child in list(pathlib.Path(root).iterdir()):
+            if child.name != "inputs":
+                shutil.rmtree(child) if child.is_dir() else child.unlink()
+        ensure(root, "index.html", web_page(**kw))
+    return go
+
+
+def wr(*items):
+    out = []
+    spec = {"spec": WEB_SPEC}
+    table = {"7": {"id": "touch_actions", "type": "web_touch_actions"}, "8": {"id": "controls_visible", "type": "web_controls_visible"}, "9": {"id": "targets", "type": "web_targets"},
+             "10": {"id": "hints", "type": "web_hints"}, "11": {"id": "page_stable", "type": "web_page_stable"}, "11z": {"id": "zoom_not_blocked", "type": "web_zoom_not_blocked"}}
+    for i in items:
+        out.append(dict(table[i], **spec))
+    return out
+
+
+WT = ("node 22", "puppeteer-core", "Chrome for Testing 150.0.7871.24 (headless shell)")
+case("proto-7a-touch-actions", "proto-7", "M", WEB_BRIEF, {}, wr("7"), web(),
+     [("keyboard only: no touch controls at all", web(hud="none"), {"touch_actions"}),
+      ("there is no jump control", web(jump=False), {"touch_actions"}),
+      ("the jump control has no data-control and no accessible name", web(jump_named=False), {"touch_actions"})], tools=WT)
+case("proto-8a-controls-by-input-type", "proto-8", "M", WEB_BRIEF, {}, wr("7", "8"), web(),
+     [("controls hidden from 640 px up (sm:hidden): gone at 844x390, 1194x834, 1280x720", web(hud="min640"), {"controls_visible"}),
+      ("controls hidden from 1024 px up (lg:hidden): fine on a phone, gone on a tablet and a laptop-width touch screen", web(hud="min1024"), {"controls_visible"}),
+      ("controls hidden when the page is rotated without a reload", web(rotate_bug=True), {"controls_visible"})], tools=WT)
+case("proto-9a-targets", "proto-9", "M", WEB_BRIEF, {}, wr("7", "9"), web(),
+     [("32 px buttons", web(size=32), {"targets"}),
+      ("an action bar covers the lower part of the buttons: the center is clear, the lower inset points are not", web(bar=40), {"targets"}),
+      ("buttons placed 420 px from the top: off screen in landscape", web(offscreen=True), {"targets"})], tools=WT)
+case("proto-10a-hints", "proto-10", "M", WEB_BRIEF, {}, wr("7", "10"), web(),
+     [("the only hint on a touch phone is 'WASD ... right mouse button ... press Z'", web(hint="kb_only"), {"hints"})], tools=WT)
+case("proto-11a-page-stays-put", "proto-11", "M", WEB_BRIEF, {}, wr("7", "11", "11z"), web(),
+     [("no touch-action on the play surface and a page taller than the screen: a drag scrolls and a pinch zooms", web(touch_action=False, scrollable=True), {"page_stable"}),
+      ("zoom blocked with maximum-scale=1 and user-scalable=no (a WCAG 1.4.4 failure, though the page does not move)", web(meta="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"), {"zoom_not_blocked"})], tools=WT)
+
+case("proto-c5-phone-ready-page", "control", "M", WEB_BRIEF, {}, wr("7", "8", "9", "10", "11", "11z"), web(),
+     [("32 px buttons", web(size=32), {"targets"})], tools=WT,
+     purpose="a phone-ready page (controls on pointer:coarse, 64 px, touch hint, touch-action none, zoom allowed) must pass every phone item")
+case("proto-c6-keyboard-hint-with-touch-wording-beside-it", "control", "M", WEB_BRIEF, {}, wr("7", "10"), web(hint="both_adjacent"),
+     [("keyboard-only hint", web(hint="kb_only"), {"hints"})], tools=WT,
+     purpose="a keyboard hint with touch wording in the element beside it must not be flagged as a keyboard-only hint")
+case("proto-c7-exactly-44-px-and-a-bar-that-only-touches", "control", "M", WEB_BRIEF, {}, wr("7", "9"), web(size=44, bar=0),
+     [("44 px buttons with a 20 px bar over the lower part", web(size=44, bar=20), {"targets"})], tools=WT,
+     purpose="buttons of exactly 44 px that nothing covers must pass the size and cover check (a boundary must not be flagged)")
+
+
 def write_cases():
     if CASES_DIR.exists():
         shutil.rmtree(CASES_DIR)

@@ -112,6 +112,26 @@ computes from the brief's rules (an idle player must lose all lives, a player in
 | proto-6 asset rows | proto-6a | a sprite with no manifest row; no rows at all |
 | controls | proto-c1 to proto-c3 | a plain prototype; a score upload to the host the brief names; a project with its own loop that copied nothing |
 
+### Phone items 7 to 11 (a browser game played by touch)
+
+Eight more cases in the same folder (proto-7a to proto-11a, proto-c5 to proto-c7) for the phone items added in the spec. The brief asks for a small coin-catcher page whose actions are `left`, `right` and `jump`; each action
+appends its name to `data-action-log` on `<body>`. `lib/web_probe.mjs` serves the project and drives it in headless Chrome for Testing 150 with puppeteer-core: the device profile (Android Chrome user agent, mobile, touch) is applied
+before navigation, then it taps with touch events only (no key is ever sent), measures at 390x844, 844x390, 1194x834 and 1280x720 with a coarse pointer, rotates the same page without a reload, probes `elementFromPoint` at the
+center and the middle of each edge inset 4 px (a rounded or round button has no pixels at its corners, which a first version of the probe got wrong), drags and pinches on `#play`, and reads the viewport meta. It needs
+`STUDIO_NODE_MODULES` and `STUDIO_CHROME`.
+
+| item | case | what the brief sets up |
+|---|---|---|
+| 7 touch actions | proto-7a | no touch controls at all; no jump control; a jump control with no `data-control` and no accessible name |
+| 8 controls by input type | proto-8a | hidden from 640 px up (`sm:hidden`); hidden from 1024 px up; hidden after a rotation without a reload |
+| 9 targets | proto-9a | 32 px buttons; a bar over the lower part of the buttons (the center is clear); buttons 420 px from the top, off screen in landscape |
+| 10 hints | proto-10a | the only hint is "WASD ... right mouse button ... press Z" |
+| 11 the page stays put | proto-11a | no `touch-action` on a scrolling page (a drag scrolls, a pinch zooms); `maximum-scale=1` (the page does not move, and zoom is blocked) |
+| controls | proto-c5 to c7 | a phone-ready page; a keyboard hint with touch wording beside it; buttons of exactly 44 px that nothing covers |
+
+The pages are fixtures generated from one template (`build/make_cases.py`, `web_page`); the cases ship no inputs, since the skill builds the page. Two blind solves of the brief from scratch (never run in a browser, as the
+solver had none) gave: one page with 27 px buttons in the wide profiles and a locked viewport, one with a locked viewport only. Both are real findings, not checker faults. The third solve-time fault was the corner probe above.
+
 A project with no assets needs no manifest. Copied code is found by shared runs of substantive lines (4 against the study-only project, 6 against the scaffold).
 
 ## How the checkers were checked

@@ -1,0 +1,38 @@
+{
+  "case": "proto-c7-exactly-44-px-and-a-bar-that-only-touches",
+  "skill": "game-prototype",
+  "purpose": "buttons of exactly 44 px that nothing covers must pass the size and cover check (a boundary must not be flagged)",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    },
+    {
+      "id": "targets",
+      "type": "web_targets",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play"
+      }
+    }
+  ]
+}
