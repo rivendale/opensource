@@ -1,0 +1,56 @@
+{
+  "case": "proto-c9-no-viewport-fit-cover",
+  "skill": "game-prototype",
+  "purpose": "without viewport-fit=cover the browser keeps the page inside the safe area, so controls 12 px from the bottom must not be flagged",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "safe_area",
+      "type": "web_safe_area",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    }
+  ]
+}

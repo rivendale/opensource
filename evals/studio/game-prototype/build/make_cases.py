@@ -301,16 +301,23 @@ WEB_BRIEF = ("Make a small browser game for phones, a coin catcher, that is play
              "too. It will be tested on an Android Chrome phone profile in portrait and landscape and on a tablet, with touch events only.\n")
 
 
+HOLD_JUMP = {"ok": "", "drops_second": "if (timer) return;      /* a held movement control swallows the action */", "second_cancels": "stopHold();             /* any new touch ends the hold */"}
+CONTEXT = {"none": "addEventListener('contextmenu', (e) => e.preventDefault());", "auto": ""}
+
+
 def web_page(hud="coarse", size=64, bar=0, offscreen=False, hint="touch", touch_action=True, scrollable=False, meta="width=device-width, initial-scale=1, viewport-fit=cover", jump=True,
-             rotate_bug=False, jump_named=True):
+             rotate_bug=False, jump_named=True, hold="ok", select="none", safe="env", ctrl_tag="button"):
     """A coin-catcher page. hud: coarse (shown on pointer:coarse) | min640 | min1024 | none (keyboard only). hint: touch | kb_only | both_adjacent."""
     show = {"coarse": "@media (pointer: coarse) { .hud { display: block; } }", "min640": ".hud { display: block; } @media (min-width: 640px) { .hud { display: none; } }",
             "min1024": ".hud { display: block; } @media (min-width: 1024px) { .hud { display: none; } }", "none": ".hud { display: none; }"}[hud]
     hide_kb = "@media (pointer: coarse) { #hint .kb { display: none; } #hint .touch { display: inline; } }" if hint == "touch" else "@media (pointer: coarse) { #hint .touch { display: inline; } }"
     kb_text = {"touch": "Arrow keys to move, space to jump.", "kb_only": "WASD to move, right mouse button to jump, press Z to dash.", "both_adjacent": "Arrow keys to move, space to jump."}[hint]
     touch_html = '<span class="touch">Tap the arrows to move, tap Jump to jump.</span>' if hint in ("touch", "both_adjacent") else ""
-    top = "top: 420px; bottom: auto;" if offscreen else "bottom: calc(12px + env(safe-area-inset-bottom));"
-    jump_btn = ('<button id="b-jump" data-control="jump" aria-label="Jump">Jump</button>' if jump_named else '<button id="b-jump">&#8679;</button>') if jump else ""
+    bottom = {"env": "bottom: calc(12px + env(safe-area-inset-bottom));", "none": "bottom: 12px;", "fixed": "bottom: 40px;"}[safe]
+    top = "top: 420px; bottom: auto;" if offscreen else bottom
+    sel = "user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;" if select == "none" else ""
+    ctl = ctrl_tag
+    jump_btn = (f'<{ctl} id="b-jump" data-control="jump" aria-label="Jump" role="button">Jump</{ctl}>' if jump_named else f'<{ctl} id="b-jump" role="button">&#8679;</{ctl}>') if jump else ""
     body_style = "overflow: hidden;" if not scrollable else "min-height: 300vh;"
     html_height = "height: 100%;" if not scrollable else ""
     canvas_ta = "touch-action: none;" if touch_action else ""
@@ -330,7 +337,7 @@ def web_page(hud="coarse", size=64, bar=0, offscreen=False, hint="touch", touch_
   .hud {{ display: none; }}
   {show}
   {hide_kb}
-  .hud button {{ position: fixed; {top} width: {size}px; height: {size}px; font-size: 22px; border-radius: 12px; border: 2px solid #f4f4f4; background: #333c57; color: #fff; }}
+  .hud button, .hud div[role=button] {{ position: fixed; {top} width: {size}px; height: {size}px; font-size: 22px; border-radius: 12px; border: 2px solid #f4f4f4; background: #333c57; color: #fff; box-sizing: border-box; display: flex; align-items: center; justify-content: center; {sel} }}
   #b-left {{ left: 12px; }}
   #b-right {{ left: {size + 24}px; }}
   #b-jump {{ right: 12px; width: {size + 24}px; }}
@@ -340,8 +347,8 @@ def web_page(hud="coarse", size=64, bar=0, offscreen=False, hint="touch", touch_
 <canvas id="play" aria-label="play area"></canvas>
 <p id="hint"><span class="kb">{kb_text}</span> {touch_html}</p>
 <div class="hud">
-  <button id="b-left" data-control="left" aria-label="Left">&#9664;</button>
-  <button id="b-right" data-control="right" aria-label="Right">&#9654;</button>
+  <{ctl} id="b-left" data-control="left" aria-label="Left" role="button">&#9664;</{ctl}>
+  <{ctl} id="b-right" data-control="right" aria-label="Right" role="button">&#9654;</{ctl}>
   {jump_btn}
 </div>
 {bar_html}
@@ -353,8 +360,20 @@ def web_page(hud="coarse", size=64, bar=0, offscreen=False, hint="touch", touch_
   function draw() {{ canvas.width = innerWidth; canvas.height = innerHeight; ctx.fillStyle = '#41a6f6'; ctx.fillRect(x, canvas.height - 200, 32, 32); {resize} }}
   addEventListener('resize', draw); draw();
   const act = (name) => {{ if (name === 'left') x -= 20; if (name === 'right') x += 20; log(name); draw(); }};
-  for (const b of document.querySelectorAll('[data-control]')) b.addEventListener('pointerdown', (e) => {{ e.preventDefault(); act(b.dataset.control); }});
-  const jb = document.getElementById('b-jump'); if (jb) jb.addEventListener('pointerdown', (e) => {{ e.preventDefault(); act('jump'); }});
+  let timer = null, holdPointer = null;
+  const stopHold = () => {{ if (timer) clearInterval(timer); timer = null; holdPointer = null; }};
+  const startHold = (dir, id) => {{ stopHold(); holdPointer = id; timer = setInterval(() => {{ x += dir === 'right' ? 4 : -4; document.body.dataset.playerX = String(x); draw(); }}, 50); }};
+  document.body.dataset.playerX = String(x);
+  for (const b of document.querySelectorAll('[data-control]')) b.addEventListener('pointerdown', (e) => {{
+    e.preventDefault();
+    const name = b.dataset.control;
+    if (name === 'left' || name === 'right') {{ log(name); startHold(name, e.pointerId); return; }}
+    {HOLD_JUMP[hold]}
+    log(name);
+  }});
+  addEventListener('pointerup', (e) => {{ if (e.pointerId === holdPointer) stopHold(); }});
+  addEventListener('pointercancel', (e) => {{ if (e.pointerId === holdPointer) stopHold(); }});
+  {CONTEXT[select]}
   addEventListener('keydown', (e) => {{ if (e.key === 'ArrowLeft') act('left'); if (e.key === 'ArrowRight') act('right'); if (e.key === ' ') act('jump'); }});
 </script>
 </body>
@@ -409,6 +428,38 @@ case("proto-c6-keyboard-hint-with-touch-wording-beside-it", "control", "M", WEB_
 case("proto-c7-exactly-44-px-and-a-bar-that-only-touches", "control", "M", WEB_BRIEF, {}, wr("7", "9"), web(size=44, bar=0),
      [("44 px buttons with a 20 px bar over the lower part", web(size=44, bar=20), {"targets"})], tools=WT,
      purpose="buttons of exactly 44 px that nothing covers must pass the size and cover check (a boundary must not be flagged)")
+
+
+# ---- items 12 to 14: two thumbs, long press, safe area
+WEB_SPEC2 = dict(WEB_SPEC, hold={"move": "right", "action": "jump"}, extra=["two_thumbs", "long_press", "safe_area"])
+WEB_BRIEF2 = (WEB_BRIEF.rstrip("\n") + " `<body>` also carries `data-player-x`, the player's x position in pixels: holding the `right` control moves the player right continuously and holding `left` moves "
+              "it left, and `jump` can be tapped while a movement control is held. A player holds controls for a second or more and the page will be used on phones with a notch and a gesture bar.\n")
+
+
+def wr2(*items):
+    table = {"7": {"id": "touch_actions", "type": "web_touch_actions"}, "9": {"id": "targets", "type": "web_targets"}, "12": {"id": "two_thumbs", "type": "web_two_thumbs"},
+             "13": {"id": "long_press", "type": "web_long_press"}, "14": {"id": "safe_area", "type": "web_safe_area"}}
+    return [dict(table[i], spec=WEB_SPEC2) for i in items]
+
+
+case("proto-12a-two-thumbs", "proto-12", "M", WEB_BRIEF2, {}, wr2("7", "12"), web(),
+     [("a held movement control swallows the jump: the second touch is dropped", web(hold="drops_second"), {"two_thumbs"}),
+      ("any new touch ends the hold: movement stops when the jump is tapped", web(hold="second_cancels"), {"two_thumbs"})], tools=WT)
+case("proto-13a-long-press", "proto-13", "M", WEB_BRIEF2, {}, wr2("7", "13"), web(),
+     [("button text selectable and the browser menu not prevented", web(select="auto"), {"long_press"}),
+      ("the same on role=button divs", web(select="auto", ctrl_tag="div"), {"long_press"})], tools=WT)
+case("proto-14a-safe-area", "proto-14", "M", WEB_BRIEF2, {}, wr2("7", "14"), web(),
+     [("viewport-fit=cover and the buttons 12 px from the bottom: under the gesture bar, no env()", web(safe="none"), {"safe_area"}),
+      ("viewport-fit=cover with a fixed 40 px margin that happens to clear the bar: no env() in the page", web(safe="fixed"), {"safe_area"})], tools=WT)
+case("proto-c8-phone-ready-page-with-notch-and-hold", "control", "M", WEB_BRIEF2, {}, wr2("7", "9", "12", "13", "14"), web(),
+     [("two thumbs broken", web(hold="second_cancels"), {"two_thumbs"})], tools=WT,
+     purpose="a page that handles two touch points, protects its controls from a long press and uses the safe-area insets must pass items 12 to 14")
+case("proto-c9-no-viewport-fit-cover", "control", "M", WEB_BRIEF2, {}, wr2("7", "14"),
+     web(safe="none", meta="width=device-width, initial-scale=1"), [("viewport-fit=cover with the same layout", web(safe="none"), {"safe_area"})], tools=WT,
+     purpose="without viewport-fit=cover the browser keeps the page inside the safe area, so controls 12 px from the bottom must not be flagged")
+case("proto-c10-controls-that-are-not-buttons", "control", "M", WEB_BRIEF2, {}, wr2("7", "13"), web(ctrl_tag="div"),
+     [("the same divs, selectable", web(ctrl_tag="div", select="auto"), {"long_press"})], tools=WT,
+     purpose="controls built as role=button divs with user-select none and the contextmenu prevented must pass the long-press item")
 
 
 def write_cases():

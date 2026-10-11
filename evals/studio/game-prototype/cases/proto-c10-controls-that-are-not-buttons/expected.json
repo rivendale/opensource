@@ -1,0 +1,56 @@
+{
+  "case": "proto-c10-controls-that-are-not-buttons",
+  "skill": "game-prototype",
+  "purpose": "controls built as role=button divs with user-select none and the contextmenu prevented must pass the long-press item",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "long_press",
+      "type": "web_long_press",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    }
+  ]
+}

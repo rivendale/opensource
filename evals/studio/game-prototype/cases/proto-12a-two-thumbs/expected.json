@@ -1,0 +1,55 @@
+{
+  "case": "proto-12a-two-thumbs",
+  "skill": "game-prototype",
+  "item": "proto-12",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "two_thumbs",
+      "type": "web_two_thumbs",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    }
+  ]
+}

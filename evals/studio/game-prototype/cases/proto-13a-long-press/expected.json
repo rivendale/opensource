@@ -1,0 +1,55 @@
+{
+  "case": "proto-13a-long-press",
+  "skill": "game-prototype",
+  "item": "proto-13",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "long_press",
+      "type": "web_long_press",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    }
+  ]
+}

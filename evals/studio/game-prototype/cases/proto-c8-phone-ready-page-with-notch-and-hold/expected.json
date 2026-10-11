@@ -1,0 +1,119 @@
+{
+  "case": "proto-c8-phone-ready-page-with-notch-and-hold",
+  "skill": "game-prototype",
+  "purpose": "a page that handles two touch points, protects its controls from a long press and uses the safe-area insets must pass items 12 to 14",
+  "item": "control",
+  "kind": "M",
+  "tools": [
+    "node 22",
+    "puppeteer-core",
+    "Chrome for Testing 150.0.7871.24 (headless shell)"
+  ],
+  "rules": [
+    {
+      "id": "touch_actions",
+      "type": "web_touch_actions",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "targets",
+      "type": "web_targets",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "two_thumbs",
+      "type": "web_two_thumbs",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "long_press",
+      "type": "web_long_press",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    },
+    {
+      "id": "safe_area",
+      "type": "web_safe_area",
+      "spec": {
+        "actions": {
+          "left": "left",
+          "right": "right",
+          "jump": "jump"
+        },
+        "play": "#play",
+        "hold": {
+          "move": "right",
+          "action": "jump"
+        },
+        "extra": [
+          "two_thumbs",
+          "long_press",
+          "safe_area"
+        ]
+      }
+    }
+  ]
+}

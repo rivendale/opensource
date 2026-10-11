@@ -43,10 +43,11 @@ const TOUCH = /\b(tap|taps|drag|swipe|pinch|hold|touch|joystick)\b/i;
 const browser = await puppeteer.launch({ executablePath: chromePath(), args: ['--no-sandbox', '--disable-dev-shm-usage'] });
 const out = { url, profiles: {}, notes: [] };
 
-async function open(w, h) {
+async function open(w, h, insets) {
   const page = await browser.newPage();
   await page.setUserAgent(UA);
   await page.setViewport({ width: w, height: h, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });   // before navigation
+  if (insets) await (await page.createCDPSession()).send('Emulation.setSafeAreaInsetsOverride', { insets });  // also before navigation: env() is read at layout
   await page.goto(url, { waitUntil: 'load', timeout: 20000 }).catch((e) => { out.notes.push('goto: ' + e.message); });
   await new Promise((r) => setTimeout(r, 400));
   return page;
@@ -144,6 +145,70 @@ for (const [w, h] of PROFILES) {
   }
   await page.close();
 }
+
+const extra = spec.extra || [];
+const wait = (ms) => new Promise((ok) => setTimeout(ok, ms));
+
+if (extra.includes('two_thumbs')) {
+  // item 12: hold the movement control with one touch point, tap the action with a second, keep the first down
+  const { move, action } = spec.hold;
+  const page = await open(390, 844);
+  const cs = await measureControls(page);
+  const m = cs.find((c) => c.name === move), a = cs.find((c) => c.name === action);
+  if (!m || !a || !m.found || !a.found) out.two_thumbs = { error: 'control not found' };
+  else {
+    const mid = (r) => ({ x: (r[0] + r[2]) / 2, y: (r[1] + r[3]) / 2 });
+    const p0 = { ...mid(m.rect), id: 0 }, p1 = { ...mid(a.rect), id: 1 };
+    const c = await page.createCDPSession();
+    const send = (type, touchPoints) => c.send('Input.dispatchTouchEvent', { type, touchPoints });
+    const px = () => page.evaluate(() => Number(document.body.dataset.playerX));
+    const x0 = await px();
+    await send('touchStart', [p0]); await wait(300);
+    const x1 = await px();
+    await send('touchStart', [p0, p1]); await wait(100);
+    await send('touchEnd', [p1]); await wait(50);   // touchEnd lists the points that are released
+    const x2 = await px(); await wait(400);
+    const x3 = await px();
+    const log = await page.evaluate(() => document.body.dataset.actionLog || '');
+    await send('touchEnd', []);
+    out.two_thumbs = { moved_before: x1 > x0, action_logged: log.split(/\s+/).includes(action), moved_after: x3 > x2 + 4, x: [x0, x1, x2, x3] };
+  }
+  await page.close();
+}
+
+if (extra.includes('long_press')) {
+  // item 13: the page's own protection of each control against a long press. Headless Chrome on Linux makes no selection and no contextmenu from a touch hold (measured), so the
+  // check reads what Android would do: the effective user-select of the control, and whether the page default-prevents a cancelable contextmenu on it.
+  const page = await open(390, 844);
+  out.long_press = await page.evaluate((names, findSrc) => {
+    const find = new Function('name', 'return (' + findSrc + ')(name)');
+    return names.map((name) => {
+      const el = find(name);
+      if (!el) return { name, found: false };
+      let sel = 'auto';
+      for (let e = el; e; e = e.parentElement) { const v = getComputedStyle(e).userSelect || getComputedStyle(e).webkitUserSelect; if (v && v !== 'auto') { sel = v; break; } }
+      const ev = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 5, clientY: 5 });
+      const notPrevented = el.dispatchEvent(ev);
+      const hasText = (el.textContent || '').trim().length > 0;
+      const linkOrImage = !!el.closest('a[href]') || !!el.querySelector('img,a[href]');
+      return { name, found: true, user_select: sel, has_text: hasText, contextmenu_default_runs: notPrevented, link_or_image: linkOrImage };
+    });
+  }, Object.keys(spec.actions), FIND.toString());
+  await page.close();
+}
+
+if (extra.includes('safe_area')) {
+  // item 14: insets of top 47 and bottom 34 applied at load; every control must lie inside the viewport minus the insets
+  const insets = { top: 47, bottom: 34, left: 0, right: 0 };
+  const page = await open(390, 844, insets);
+  out.safe_area = { insets, controls: await measureControls(page), viewport_meta: await page.evaluate(() => (document.querySelector('meta[name=viewport]') || {}).content || null) };
+  await page.close();
+  const text = [];
+  const walk = (d) => { for (const f of fs.readdirSync(d)) { const q = path.join(d, f); if (f === 'node_modules' || f === '.run' || f === 'inputs') continue; if (fs.statSync(q).isDirectory()) walk(q); else if (/\.(html|css|js|mjs)$/.test(f)) text.push(fs.readFileSync(q, 'utf8')); } };
+  walk(root);
+  out.safe_area.source_uses_env = text.some((t) => /env\(\s*safe-area-inset/.test(t));
+}
+
 await browser.close();
 server.close();
 console.log(JSON.stringify(out));
