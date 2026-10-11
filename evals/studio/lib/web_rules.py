@@ -88,4 +88,47 @@ def r_web_zoom_not_blocked(R, scratch, rule):
     R.add(rule["id"], not locked, o.get("viewport_meta"), "zoom not blocked")
 
 
+def r_web_two_thumbs(R, scratch, rule):
+    """Item 12: hold the movement control with one touch point and tap the action with a second; the action's observable appears and the movement does not stop."""
+    o = probe(scratch, rule)
+    s = o.get("two_thumbs") or {}
+    if "error" in s or not s:
+        return R.add(rule["id"], False, s.get("error", "no measurement"), "action done while movement is held")
+    ok = s["moved_before"] and s["action_logged"] and s["moved_after"]
+    R.add(rule["id"], ok, {k: s[k] for k in ("moved_before", "action_logged", "moved_after")} | {"player_x": s["x"]}, "movement continues and the action registers")
+
+
+def r_web_long_press(R, scratch, rule):
+    """Item 13: no core-loop control can be selected by a long press (effective user-select none), and a control that is or holds a link or an image default-prevents the contextmenu."""
+    o = probe(scratch, rule)
+    bad = []
+    for c in o.get("long_press") or []:
+        if not c["found"]:
+            bad.append(c["name"] + ": no control found")
+        elif c["has_text"] and c["user_select"] != "none":
+            bad.append(f"{c['name']}: text is selectable (user-select {c['user_select']})")
+        elif c["link_or_image"] and c["contextmenu_default_runs"]:
+            bad.append(f"{c['name']}: a link or image opens the browser menu")
+    R.add(rule["id"], not bad and bool(o.get("long_press")), {"problems": bad or None}, "no selection and no browser menu from a long press")
+
+
+def r_web_safe_area(R, scratch, rule):
+    """Item 14: with insets top 47, bottom 34 applied at load, each control lies inside the viewport minus the insets; a page with viewport-fit=cover uses env(safe-area-inset-*) somewhere in its files."""
+    o = probe(scratch, rule)
+    s = o.get("safe_area") or {}
+    ins, W, H = s.get("insets", {}), 390, 844
+    bad = []
+    for c in s.get("controls", []):
+        if not (c["found"] and c["shown"]):
+            continue
+        l, t, r, b = c["rect"]
+        if t < ins["top"] or b > H - ins["bottom"] or l < ins["left"] or r > W - ins["right"]:
+            bad.append(f"{c['name']} {c['rect']}")
+    cover = "viewport-fit=cover" in (s.get("viewport_meta") or "").replace(" ", "")
+    if not cover:
+        bad = []          # without viewport-fit=cover the browser already keeps the layout viewport inside the safe area; nothing to measure
+    no_env = cover and not s.get("source_uses_env")
+    R.add(rule["id"], not bad and not no_env, {"outside_safe_area": bad or None, "viewport_fit_cover_without_env": no_env or None}, "inside the safe area; env() used with viewport-fit=cover")
+
+
 RULES = {k[2:]: v for k, v in globals().items() if k.startswith("r_")}

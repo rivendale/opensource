@@ -132,6 +132,18 @@ center and the middle of each edge inset 4 px (a rounded or round button has no 
 The pages are fixtures generated from one template (`build/make_cases.py`, `web_page`); the cases ship no inputs, since the skill builds the page. Two blind solves of the brief from scratch (never run in a browser, as the
 solver had none) gave: one page with 27 px buttons in the wide profiles and a locked viewport, one with a locked viewport only. Both are real findings, not checker faults. The third solve-time fault was the corner probe above.
 
+### Phone items 12 to 14 (two thumbs, long press, safe area)
+
+Six more cases (proto-12a, proto-13a, proto-14a, proto-c8 to c10) on a second brief that adds `data-player-x` (the player's x position; holding `right` raises it) and says the page is used with a notch and a gesture bar.
+
+| item | measured as | case |
+|---|---|---|
+| 12 two thumbs | `Input.dispatchTouchEvent`: hold `right` with touch point 0, add point 1 on `jump`, release point 1 (`touchEnd` lists the points that are **released**), keep point 0 down; require `jump` in the action log and `data-player-x` still rising | a held movement control swallows the jump; any new touch ends the hold |
+| 13 long press | the effective `user-select` of each control (walking up the ancestors) is `none` when it has text, and a control that is or holds a link or image default-prevents a cancelable `contextmenu` dispatched on it. **Not** a real 800 ms hold: headless Chrome on Linux makes no selection and no `contextmenu` from a touch hold (an 800 ms `Input.dispatchTouchEvent` hold and an `Input.synthesizeTapGesture` long tap both produced none, on text in a `div` and in a `button`, in the full build and the headless shell), so a check built on them would always pass | selectable button text; the same on `role=button` divs |
+| 14 safe area | `Emulation.setSafeAreaInsetsOverride` (top 47, bottom 34) before navigation; with `viewport-fit=cover`, each control lies inside 390x844 minus the insets and the page's files use `env(safe-area-inset-*)`. A page without `viewport-fit=cover` is not measured: the browser already keeps it inside the safe area | buttons 12 px from the bottom with no `env()`; a fixed 40 px margin that clears the bar by luck |
+
+Controls: a page that does all three; a page without `viewport-fit=cover` and controls 12 px from the bottom; controls built as `role=button` divs. Two blind solves of the second brief (no browser available to the solver) pass all five rules for the phone items with the notch and hold sentences in the brief.
+
 A project with no assets needs no manifest. Copied code is found by shared runs of substantive lines (4 against the study-only project, 6 against the scaffold).
 
 ## How the checkers were checked
