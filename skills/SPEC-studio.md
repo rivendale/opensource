@@ -93,6 +93,27 @@ person that did not build it, and measured on cases written by someone other tha
 4. The scaffold or engine version is not pinned.
 5. The prototype phones home, adds analytics or loads remote assets the brief did not ask for.
 6. Assets enter the build without manifest rows.
+Items 7 to 11 apply only when the brief names a phone or a browser target.
+
+7. **A core-loop action cannot be done by touch.** The brief lists each core-loop action and the observable it
+   produces: a console line, a DOM attribute, or a state value. The checker drives the build with touch events only
+   and the keyboard disabled, because an emulator still accepts keys and hides the gap. It fails when an action's
+   observable never appears. Controls are found by their accessible name, or by a `data-control` attribute the
+   skill must add.
+8. **Touch controls appear by screen width instead of by input type.** The checker runs coarse-pointer touch profiles
+   at 390x844, 844x390, 1194x834 and 1280x720. It also rotates without a reload. It fails when a control from item 7 is
+   missing or hidden in any of them. Hiding a joystick at a wide landscape width (`sm:hidden`) is the measured failure.
+9. **A control is too small, covered or off screen.** A core-loop control is under 44x44 CSS px, or is not inside the
+   viewport. The checker probes `elementFromPoint` at its center and four points inset 4 px from its edges. It fails
+   when the hit element is not the control or a descendant (`control.contains(hit)`). An action bar covering an
+   arrow's edge is the measured failure.
+10. **The only control hint is for a keyboard or mouse.** On a touch profile, a visible text hint names a key or mouse
+    action ("WASD", "arrow keys", "right mouse button", "press Z", "scroll to zoom") with no touch wording ("tap",
+    "drag", "swipe", "pinch", "hold") in the same element or the one beside it in the DOM. A hint drawn on a canvas
+    must also exist as text the checker can read, such as an `aria-label` or a visually hidden element.
+11. **The page moves under the player's thumb.** After a one-finger drag and a two-finger pinch on the play surface,
+    the page's scroll position and `visualViewport.scale` must be unchanged. The checker tests behavior, not the
+    viewport tag. A build must not block zoom with `maximum-scale=1`, because that fails WCAG 1.4.4 (Resize Text).
 
 ## The asset manifest
 
@@ -149,6 +170,7 @@ reports the value it used.
 | export rebuilt by the kept script | byte-identical for a deterministic tool; for model output with the stated seed, the same size and format and within every tolerance in this table for that asset type |
 | video format | resolution, frame rate and aspect ratio exact; duration within 0.5 s |
 | prototype | starts and reaches its first interactive frame within 30 s on the stated target |
+| prototype on a phone (items 7 to 11) | headless Chrome with a pinned version, the device profile applied BEFORE navigation (applied after, the layout width stays 980); coarse-pointer touch profiles as in item 8; touch events only, keyboard disabled; touch target 44x44 CSS px. A frame-rate floor, when the brief names one, needs a real GPU and is operator-run, not part of the CPU lane |
 
 ## Where things live
 
