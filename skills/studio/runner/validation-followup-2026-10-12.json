@@ -1,0 +1,100 @@
+{
+  "date_utc": "2026-10-12",
+  "task": "T18",
+  "tested_base_commit": "db536772eaa057bc74db1b57dd2567e18b34502b",
+  "runner_sha256": "614378e01b286ba909ef3071013c840ce1c3ab604181c8f2cefd9ca7e2f2c12e",
+  "image_reference": "localhost/studio-runner@sha256:a9d142c18396d7fe748ef1d64ca37486fcc017853d94cffac147e1f8f17fc8ca",
+  "checker_source_commit": "a28253c688ea965dd90eccea16e96802ae5cacfd",
+  "checker_bundle_sha256": "a66da53b082d9325ae0fd4a07ff821484983680d4982dcd9f506c73c620e95fc",
+  "changed_checker_files": [
+    "web_probe.mjs",
+    "web_rules.py"
+  ],
+  "phone_replay": {
+    "cases": 6,
+    "trees": 15,
+    "matched": 15
+  },
+  "existing_prototype_replay_with_current_bundle": {
+    "cases": 18,
+    "trees": 57,
+    "matched": 57,
+    "archive_and_host_verdict_source_commit": "78ceb3470edce6d5aa1e24138cbf350cc7cdfd1e",
+    "case_files_unchanged_on_current_main": true
+  },
+  "cumulative_replay_coverage": {
+    "unique_cases": 94,
+    "unique_trees": 277,
+    "matched": 277,
+    "current_bundle_prototype_trees": 72,
+    "prior_unchanged_art_sfx_music_video_trees": 205,
+    "prior_receipt": "validation-replay-2026-10-11.json",
+    "note": "The 205 non-prototype trees retain their prior receipt; only the two browser checker files changed. All 72 prototype trees were checked against the current bundle."
+  },
+  "usage_regressions": [
+    {
+      "name": "failed-usage-green-20261012",
+      "run_status": "failed",
+      "reason": "turn limit",
+      "usage": {
+        "prompt_tokens": 2,
+        "completion_tokens": 1,
+        "total_tokens": 3
+      },
+      "all_captures_match": true
+    },
+    {
+      "name": "tool-failure-usage-20261012",
+      "run_status": "failed",
+      "reason": "tool output limit",
+      "usage": {
+        "prompt_tokens": 2,
+        "completion_tokens": 1,
+        "total_tokens": 3
+      },
+      "all_captures_match": true
+    },
+    {
+      "name": "agent-flow-usage-20261012",
+      "run_status": "passed",
+      "reason": null,
+      "usage": {
+        "prompt_tokens": 6,
+        "completion_tokens": 3,
+        "total_tokens": 9
+      },
+      "all_captures_match": true
+    }
+  ],
+  "tool_output_failure_without_finished_event_retains_usage": true,
+  "red_before_fix": {
+    "reason": "turn limit",
+    "actual_usage": {},
+    "expected_usage": {
+      "prompt_tokens": 2,
+      "completion_tokens": 1,
+      "total_tokens": 3
+    }
+  },
+  "host_mock_checks": {
+    "passed": 41,
+    "total": 41
+  },
+  "fresh_isolation_selftest": {
+    "status": "passed",
+    "probes": 9,
+    "checker_rules": 3
+  },
+  "additional_real_provider_calls": 0,
+  "credential_grant_calls_used": 1,
+  "credential_grant_max_calls": 5,
+  "model_or_skill_score": null,
+  "provider_receipt": "validation-provider-2026-10-12.json",
+  "remaining": "Independent review of the usage fix; operator pilot/scoring and real paid-route acceptance are not claimed. The provider receipt is one bounded transport exchange, not a completed game-art evaluation.",
+  "case_files_edited": false,
+  "relay_changed": false,
+  "relative_links": {
+    "checked": 436,
+    "problems": 0
+  }
+}

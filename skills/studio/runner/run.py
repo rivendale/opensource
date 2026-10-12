@@ -196,7 +196,8 @@ def capture(process, files):
 def run(args):
     result = {"runner": VERSION, "status": "failed", "reason": "runner preflight or isolation failure",
               "runner_sha256": sha256(__file__),
-              "case": args.case_id, "agent": VERSION, "model": args.model, "limits": args.limits}
+              "case": args.case_id, "agent": VERSION, "model": args.model, "limits": args.limits,
+              "usage": {}}
     # No overwritten results and no mixed case runs.
     args.output.mkdir(parents=True, exist_ok=False)
     os.chmod(args.output, 0o700)
@@ -385,8 +386,14 @@ def run(args):
                 elif event["type"] == "probe":
                     result["probes"] = event["rules"]
                     transcript.append("## tool\n\nSynthetic isolation probe completed.\n")
-                if event["type"] == "finished":
-                    usage = event["usage"]
+                if event["type"] == "assistant":
+                    reported = event.get("usage")
+                    fields = ("prompt_tokens", "completion_tokens", "total_tokens")
+                    if not isinstance(reported, dict) or any(type(reported.get(k)) is not int or reported[k] < 0 for k in fields):
+                        raise ValueError("invalid assistant token usage")
+                    usage = {k: usage.get(k, 0) + reported[k] for k in fields}
+                    # Retain paid usage even if a later event, tool or drain fails.
+                    result["usage"] = dict(usage)
                 if len(encode({"events": events})) > MAX_FRAME - 65536:
                     raise ValueError("event capture size limit")
             elif frame["type"] == "drained":

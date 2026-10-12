@@ -1,6 +1,6 @@
 # Studio evaluation runner
 
-Implementation draft for the [runner contract](../../SPEC-studio.md#evaluation-lane).
+Implementation for the [runner contract](../../SPEC-studio.md#evaluation-lane).
 It awaits independent review before scoring studio skills. Runtime probes must pass on the selected image;
 host-only checks do not prove container isolation. No studio acceptance cases are included here.
 
@@ -259,3 +259,7 @@ upstream; provider TLS and real model behavior still require operator acceptance
 GPU device admission is not implemented; GPU cases
 must currently fail rather than silently use a weaker sandbox. The exact tool image and model
 snapshot used for scoring remain operator choices. No studio skill has been scored by this draft.
+
+Token usage is accumulated from validated assistant response events as they arrive, and retained in `result.json`, `.run/usage.json` and `.run/run.json` when a later tool or turn limit fails the run. A final cumulative event does not add those tokens a second time. Runs failing before any reported response retain an empty usage object.
+
+The [2026-10-12 follow-up receipt](validation-followup-2026-10-12.json) records the failed-run usage regression, fresh self-test and additional phone replays with a current checker bundle. The [provider transport receipt](validation-provider-2026-10-12.json) covers one real response; its one-call cap deliberately stopped the evaluation, so it is not a completed skill score.
