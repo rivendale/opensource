@@ -62,7 +62,8 @@ def test(args, mode):
             (case/'expected.json').write_text('{}')
             (case/'check.py').write_text(CHECKER)
             fd, writer = os.pipe()
-            os.write(writer, KEY); os.close(writer)
+            fd_key = KEY + (b'"' if mode == 'invalid-key-quote' else b'\\' if mode == 'invalid-key-backslash' else b'')
+            os.write(writer, fd_key); os.close(writer)
             output = args.output / mode
             sys.argv = ['run.py','run','--store',str(args.store),'--image',args.image,
                 '--selftest',str(args.selftest),'--case',str(case),'--case-id','synthetic-one-response',
@@ -73,6 +74,10 @@ def test(args, mode):
             finally: os.close(fd)
             result = json.loads((output/'result.json').read_text())
             capture = json.loads((output/'scratch/.run/run.json').read_text())
+            if mode.startswith('invalid-key-'):
+                assert code == 1 and not calls and result['key_scan'] == 'passed'
+                assert result['exception']['type'] == 'ValueError' and result['exception']['message'] == 'invalid key input'
+                return {'scenario':mode,'passed':True,'mock_requests':0,'real_requests':0,'key_scan':'passed','capture_scope':result['capture_scope']}
             if mode == 'preflight-error':
                 assert code == 1 and not calls and result['key_scan'] == 'passed'
                 assert result['exception']['message'] == 'synthetic preflight failure'
@@ -113,9 +118,20 @@ def main():
         result={'status':'failed','reason':'synthetic','usage':{'total_tokens':3}}
         run.failed_capture(root,out,result,[],['sk-'+'x'*20],[],[])
         assert result['incident'] and result['key_scan']=='incident' and not (out/'scratch').exists()
-    results=[test(args,mode) for mode in ['questions','capture-error','checker-error','preflight-error']]
+    # An exact synthetic key in a tool echo has no recognizable pattern prefix.
+    with tempfile.TemporaryDirectory(prefix='studio-exact-scan-fixture-') as temp:
+        root=Path(temp);out=root/'out';out.mkdir()
+        result={'status':'failed','reason':'synthetic capture error'}
+        echo={'type':'tool','text':json.dumps({'exit':1,'output':KEY.decode()})}
+        run.failed_capture(root,out,result,[echo],['tool echo: '+KEY.decode()],[],[KEY])
+        assert result['incident'] and result['key_scan']=='incident' and not (out/'scratch').exists()
+    class BrokenString(Exception):
+        def __str__(self): raise RuntimeError('synthetic formatting failure')
+    assert run.exception_receipt(BrokenString(),[]) == {'type':'BrokenString','message':'unavailable'}
+    assert run.exception_receipt(ValueError('test'),['wrong-type'])['message']=='unavailable'
+    results=[test(args,mode) for mode in ['questions','capture-error','checker-error','preflight-error','invalid-key-quote','invalid-key-backslash']]
     (args.output/'receipt.json').write_text(json.dumps({'fixtures':results,'diagnostic_redaction':'passed',
-        'pattern_scan_suppression':'passed','real_provider_calls':0},indent=2)+'\n')
+        'pattern_scan_suppression':'passed','exact_key_tool_echo_suppression':'passed','diagnostic_formatting_fallback':'passed','real_provider_calls':0},indent=2)+'\n')
     print(json.dumps({'fixtures_passed':len(results),'real_provider_calls':0}))
 
 if __name__=='__main__':main()

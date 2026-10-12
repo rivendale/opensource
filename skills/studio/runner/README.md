@@ -182,8 +182,11 @@ value or recognizable pattern, or a proxy response contains a key, the result is
 no scratch tree is kept, the reason is recorded without the secret, and the operator is told to
 rotate the key. Result directories are private by default and are never overwritten. Ordinary
 safe agent failures keep scanned evidence. Exceptions record their type, a bounded message
-with exact keys and recognizable key patterns redacted before truncation, and source filenames,
-functions and line numbers without host paths. Unsafe archives are refused rather than extracted.
+with exact keys and recognizable key patterns redacted before truncation (or
+`message: unavailable` if formatting fails), and source filenames,
+functions and line numbers without host paths. FD keys containing quotes or backslashes
+are refused, so JSON encoding cannot escape an accepted key. Other encoded or split keys
+are not redacted; the scanner does not claim detection of arbitrary encodings. Unsafe archives are refused rather than extracted.
 
 If the container fails before a complete capture arrives, the host retains the events it has
 received in `.run/` and scans them before retaining anything. `capture_scope` distinguishes

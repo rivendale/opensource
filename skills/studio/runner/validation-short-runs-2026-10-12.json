@@ -31,6 +31,22 @@
       "real_requests": 0,
       "key_scan": "passed",
       "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "invalid-key-quote",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "invalid-key-backslash",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
     }
   ],
   "diagnostic_redaction": "passed",
@@ -42,12 +58,16 @@
   "baseline": "one-response questions already pass; injected capture failure loses .run and exception details on the merged runner",
   "original_pilot_root_cause": "not reproduced; no new paid run",
   "mandatory_isolation_selftest": "passed",
-  "runner_sha256": "3005daa93ba9e329d8f56818508b4c35c96e458a0252bcebd6e036a70fb17fad",
-  "test_sha256": "00a5db241cc9ac4bc224a40340757f0f20020ce3cbf639a4595557070f250f5f",
+  "runner_sha256": "e161d906b50e29a7c61ca44978fcb6b3283f4c4d3dc52656dd4942104b3ba1b6",
+  "test_sha256": "38d855e846b286ce591232eeb7090b7f43b6c1515a54bab12cb7e2f09a52fbf4",
   "relative_links": {
     "checked": 441,
     "problems": 0
   },
   "syntax_and_whitespace": "passed",
-  "skill_score_published": false
+  "skill_score_published": false,
+  "exact_key_tool_echo_suppression": "passed",
+  "diagnostic_formatting_fallback": "passed",
+  "exact_key_mutant_sensitivity": "passed: removing the exact-key scan publishes the synthetic tool echo, violating the new fixture assertion",
+  "FD_quoted_and_backslashed_keys": "refused before provider calls"
 }

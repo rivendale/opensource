@@ -195,15 +195,18 @@ def capture(process, files):
 
 
 def exception_receipt(error, keys):
-    # Redact before truncating: a prefix of an exact key must not escape.
-    message = str(error).encode('utf-8', 'replace')
-    for key in keys:
-        if key:
-            message = message.replace(key, b'[REDACTED]')
-    message = KEY_PATTERN.sub(b'[REDACTED]', message)
-    return {'type': type(error).__name__, 'message': message[:2048].decode('utf-8', 'replace'),
-            'frames': [{'file': Path(f.filename).name, 'line': f.lineno,
-                        'function': f.name} for f in traceback.extract_tb(error.__traceback__)[-12:]]}
+    try:
+        # Redact before truncating: a prefix of an exact key must not escape.
+        message = str(error).encode('utf-8', 'replace')
+        for key in keys:
+            if key:
+                message = message.replace(key, b'[REDACTED]')
+        message = KEY_PATTERN.sub(b'[REDACTED]', message)
+        return {'type': type(error).__name__, 'message': message[:2048].decode('utf-8', 'replace'),
+                'frames': [{'file': Path(f.filename).name, 'line': f.lineno,
+                            'function': f.name} for f in traceback.extract_tb(error.__traceback__)[-12:]]}
+    except Exception:
+        return {'type': type(error).__name__, 'message': 'unavailable'}
 
 
 def failed_capture(root, output, result, events, transcript, log, keys, snapshot=None):
@@ -376,7 +379,7 @@ def run(args):
             # FD mappings are operator input, never environment credentials.
             for host, fd in args.key_fds.items():
                 data = os.read(fd, 4097).strip()
-                if not data or len(data) > 4096 or any(c < 33 or c > 126 for c in data):
+                if not data or len(data) > 4096 or any(c < 33 or c > 126 or c in (34, 92) for c in data):
                     raise ValueError("invalid key input")
                 keys[host] = data
             for route in args.paid_routes:
