@@ -1,0 +1,60 @@
+{
+  "task": "T17",
+  "date_utc": "2026-10-12",
+  "tested_base_commit": "7e2131d016d65f5d15a004f221b8716e9fc68dab",
+  "merged_runner_commit": "61af783f4f1f5e1b0705433dd8233c7b42084153",
+  "runner_sha256": "614378e01b286ba909ef3071013c840ce1c3ab604181c8f2cefd9ca7e2f2c12e",
+  "image_reference": "localhost/studio-runner@sha256:a9d142c18396d7fe748ef1d64ca37486fcc017853d94cffac147e1f8f17fc8ca",
+  "skill_files_sha256": {
+    "SKILL.md": "468be522e47816101f92afc83a4c4d381cc07a86e851c8577c9bed15c8b10526",
+    "scripts/art.py": "6f78c206c742ba5c7a22390dc96e1882856606e55d4c67af3676050874b31645"
+  },
+  "helper_sha256": "6f78c206c742ba5c7a22390dc96e1882856606e55d4c67af3676050874b31645",
+  "synthetic_runner_integration": {
+    "status": "passed",
+    "skill_mount": "/skill",
+    "shared_validator_mount": "/scratch/skills/studio/validate_manifest.py",
+    "steps": [
+      "cut",
+      "pack",
+      "size/frame/palette/alpha/anchor/edge measurements",
+      "masked revision",
+      "manifest",
+      "credits",
+      "byte-identical second rebuild"
+    ],
+    "mock_provider_calls": 2,
+    "real_provider_calls": 0,
+    "usage": {
+      "prompt_tokens": 4,
+      "completion_tokens": 2,
+      "total_tokens": 6
+    },
+    "checker_rules": [
+      {
+        "id": "packaging-complete",
+        "pass": true,
+        "measured": "packaging artifacts",
+        "threshold": "all four"
+      }
+    ]
+  },
+  "red_before_fix": {
+    "helper_exit": 2,
+    "error": "No such file or directory: '/studio/validate_manifest.py'",
+    "runner_status": "failed"
+  },
+  "local_synthetic_observations": 17,
+  "relative_links": {
+    "checked": 431,
+    "problems": 0
+  },
+  "syntax_and_whitespace": "passed",
+  "no_studio_cases_read_or_written": true,
+  "no_credentials_used": true,
+  "no_real_art_generation_or_skill_score": true,
+  "remaining": "Independent Claude review and scored pilot/development/held-out evaluation. A new explicit T17 credential grant is required for real provider calls; T18 grant is closed.",
+  "final_skill_sha256": "468be522e47816101f92afc83a4c4d381cc07a86e851c8577c9bed15c8b10526",
+  "manifest_fixture_self_check": "passed",
+  "image_magick_version": "Version: ImageMagick 6.9.11-60 Q16 x86_64 2021-01-25 https://imagemagick.org"
+}

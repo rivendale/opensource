@@ -110,7 +110,11 @@ Write one row per export in `assets/MANIFEST.json` using the shared
 [schema](../studio/manifest.schema.json). The helper reads a complete row JSON,
 validates the whole manifest and project paths with the existing
 [validator](../studio/validate_manifest.py), then replaces or adds that file's row
-atomically. Use null for inapplicable required fields, not omitted fields. It
+atomically. In a reference checkout it uses the adjacent shared validator. In the
+studio runner, where this skill is mounted at `/skill`, it uses the runner's hashed,
+read-only `/scratch/skills/studio/validate_manifest.py` resource. It does not search
+reference inputs or arbitrary project directories for executable validators.
+Use null for inapplicable required fields, not omitted fields. It
 refuses masters/scripts within import paths and paths escaping the project.
 For a new set, create all rows before placing all exports in the final folder,
 or validate a complete manifest with the shared validator; the helper refuses
@@ -126,7 +130,10 @@ manifest-derived Markdown for that section, without overwriting a project's file
 
 Deliver the exports, masters, repeatable script, manifest, credits and measured
 report. Name failed or unavailable checks and remaining operator decisions.
-For evaluation use the independent `evals/studio/game-art/` cases and studio
-runner contract. Do not create expected answers or claim acceptance from your own
+For evaluation use the independent `evals/studio/game-art/` cases and the merged
+[studio runner](https://github.com/rivendale/opensource/blob/61af783f4f1f5e1b0705433dd8233c7b42084153/skills/studio/runner/README.md). Supply this whole skill directory,
+including `scripts/`, using the runner's `--skill` option. Tools and shared resources
+must already be in the pinned image or mounted by the runner; never install them
+during a case. Do not create expected answers or claim acceptance from your own
 smoke checks. Independent cases, three-run controls and held-out evaluation are
 separate from producing this skill.

@@ -186,11 +186,22 @@ def revision(a):
             'threshold': 0, 'mask': 'nonblack with nonzero alpha allows changes'}
 
 
+def manifest_validator():
+    # The runner mounts the skill independently of the reference repository.
+    # Its hashed, read-only shared resources have this fixed agent-visible path.
+    candidates = [Path(__file__).resolve().parents[2] / 'studio/validate_manifest.py',
+                  Path('/scratch/skills/studio/validate_manifest.py')]
+    source = next((p for p in candidates if p.is_file()), None)
+    if source is None:
+        raise ValueError('shared manifest validator unavailable; use the reference checkout or studio runner')
+    spec = importlib.util.spec_from_file_location('studio_manifest', source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def manifest(a):
-    spec = importlib.util.spec_from_file_location('studio_manifest',
-               Path(__file__).resolve().parents[2] / 'studio/validate_manifest.py')
-    validator = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(validator)
+    validator = manifest_validator()
     root = Path(a.root).resolve(strict=True)
     def contained(s):
         if validator.path_error(s):
@@ -244,9 +255,7 @@ def manifest(a):
 
 
 def credits(a):
-    spec = importlib.util.spec_from_file_location('studio_manifest',
-               Path(__file__).resolve().parents[2] / 'studio/validate_manifest.py')
-    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    module = manifest_validator()
     m = json.loads(Path(a.input).read_text())
     if errs := module.validate(m):
         raise ValueError(f'manifest invalid: {errs}')
