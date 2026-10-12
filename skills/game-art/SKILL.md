@@ -36,8 +36,12 @@ replace this step with a generic acknowledgment.
 Restate the asset list, purpose in the game, engine import directory, exact sizes,
 frame names/order and tile grid, palette or swatches, transparency/background,
 literal UI/title strings, target formats and revision constraints. Name missing
-constraints. If style is open, offer three or four distinct directions and wait
-for the operator's choice before generating art. Keep the chosen direction and
+constraints. Style is open only when the brief supplies no palette, swatches,
+reference or style sheet and names no look. A supplied palette plus exact size
+closes style: restate those constraints, produce the assets and list assumptions;
+ask only about constraints that are missing. A brief with no look in mind and no
+palette still gets three or four distinct directions and waits for the operator's
+choice before generating art. Keep the chosen direction and
 shared palette in the project's style sheet; use it for every set member.
 
 Refuse briefs using a real person's likeness, face or name, including references
