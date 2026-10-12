@@ -25,7 +25,7 @@ The cases are in [game-art/cases](game-art/cases). Each `expected.json` has `ite
 | art-3 frames | art-3a, art-3b | twelve frames whose file names sort wrongly as text; eight figures on different baselines and offsets |
 | art-5 model and weights license | art-5a, art-5b | a stand-in generator whose default model is non-commercial (5a) or has no stated license (5b), for a game that is sold |
 | art-8 one change per round | art-8a, art-8b | a mask-limited recolor of a hat, of a cloak within a palette |
-| all-2 masters and rebuild scripts | all-2a, all-2b | layers that tempt a copy into `assets/`; three variants that must come from a script that rebuilds the same bytes |
+| all-2 masters and rebuild scripts | all-2a, all-2b, all-2c | layers that tempt a copy into `assets/`; three variants that must come from a script that rebuilds the same bytes; one export whose script must rebuild it from an empty root (only `inputs/`, `tools/`, `masters/` and the manifest) |
 | controls | art-c1 to art-c6 | the same checkers on briefs with no trap |
 
 | art-4 text in images | art-4a, art-4b | an exact title with a generator whose `--text` swaps letters; a title with accents that the display font cannot draw |

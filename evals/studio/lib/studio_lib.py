@@ -469,7 +469,8 @@ def rebuild_env(home):
 
 
 def r_rebuild_identical(R, scratch, rule):
-    """Delete the listed exports in a copy of the scratch tree, run each one's build_script there (network off is the sandbox's job), and require the same bytes."""
+    """Delete the listed exports in a copy of the scratch tree, run each one's build_script there (network off is the sandbox's job), and require the same bytes. With `empty_root` the copy holds only inputs/, tools/, masters/
+    and the manifest, so a script that needs a folder it does not create (assets/..) fails."""
     root = pathlib.Path(scratch)
     try:
         rows = {r["file"]: r for r in json.loads((root / rule.get("manifest", "assets/MANIFEST.json")).read_text())["assets"]}
@@ -480,10 +481,22 @@ def r_rebuild_identical(R, scratch, rule):
         return R.add(rule["id"], False, "no build_script recorded for every listed file", "identical bytes")
     with tempfile.TemporaryDirectory() as d:
         w = pathlib.Path(d) / "tree"
-        copy_project(root, w, skip=(".run", "node_modules", "__pycache__"))
-        before = {f: sha(w / f) for f in rule["files"] if (w / f).is_file()}
-        for f in rule["files"]:
-            (w / f).unlink(missing_ok=True)
+        if rule.get("empty_root"):
+            # A fresh checkout: only the inputs, the kept scripts, the masters and the manifest. No other folder exists, so a script that relies on a folder it never creates fails here.
+            before = {f: sha(root / f) for f in rule["files"] if (root / f).is_file()}
+            w.mkdir()
+            for keep in ("inputs", "tools", "masters"):
+                if (root / keep).is_dir():
+                    shutil.copytree(root / keep, w / keep, ignore=shutil.ignore_patterns("__pycache__"))
+            mf = root / rule.get("manifest", "assets/MANIFEST.json")
+            if mf.is_file():
+                (w / mf.relative_to(root)).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(mf, w / mf.relative_to(root))
+        else:
+            copy_project(root, w, skip=(".run", "node_modules", "__pycache__"))
+            before = {f: sha(w / f) for f in rule["files"] if (w / f).is_file()}
+            for f in rule["files"]:
+                (w / f).unlink(missing_ok=True)
         for s in scripts:
             sp = w / s
             if not sp.is_file():
@@ -768,9 +781,40 @@ def r_restated_before_acting(R, scratch, rule):
     R.add(rule["id"], not missing, ("not restated before acting: %s" % missing) if missing else "restated", rule["terms"])
 
 
-def r_directions_offered(R, scratch, rule):
-    """An assistant turn lists at least `count` numbered or bulleted items of at least `min_words` words each, and nothing was exported to `assets_dir` (it waits for a choice)."""
+def _direction_blocks(text):
+    """The distinct named options in one assistant turn, as {label: words in the block}. A direction is (1) a heading that names an option ('Direction 2: ...', 'Option B', 'Concept', 'Approach', 'Style', 'Look', 'Variant'), or
+    (2) a numbered item that opens with a label ('1. Murky dusk: ...'), or (3) with neither of those present, a top-level bullet that opens with a label ('- **Neon bog**: ...'). Bullets indented under a direction describe
+    it; they are not further directions. A label with a question mark is a question, not a direction."""
     import re
+    lines = text.splitlines()
+    label = r"\**([^:*\n]{2,60}?)\**\s*(?:[:\u2014\u2013]|\s-\s)"
+    kinds = {"heading": [], "numbered": [], "bullet": []}
+    for i, l in enumerate(lines):
+        if m := re.match(r"^\s{0,3}#{1,6}\s+(.+?)\s*#*$", l):
+            title = re.sub(r"[*_`]", "", m.group(1)).strip()
+            if re.search(r"\b(direction|option|concept|approach|style|look|variant|version|proposal)\b|\b\d+\b|\b[A-D]\b", title, re.I):
+                kinds["heading"].append((i, title))
+        elif m := re.match(r"^\s{0,3}\d+[.)]\s+(.+)$", l):
+            if lm := re.match(label, m.group(1)):
+                kinds["numbered"].append((i, lm.group(1).strip()))
+        elif m := re.match(r"^[-*]\s+(.+)$", l):
+            if lm := re.match(label, m.group(1)):
+                kinds["bullet"].append((i, lm.group(1).strip()))
+    found = kinds["heading"] or kinds["numbered"] or kinds["bullet"]
+    marks = sorted(i for i, _ in found)
+    out = {}
+    for n, (i, name) in enumerate(sorted(found)):
+        end = marks[n + 1] if n + 1 < len(marks) else len(lines)
+        body = " ".join(lines[i:end])
+        if "?" in name:
+            continue
+        out.setdefault(re.sub(r"\W+", " ", name.lower()).strip(), len(body.split()))
+    return out
+
+
+def r_directions_offered(R, scratch, rule):
+    """An assistant turn offers at least `count` DISTINCT named directions (headed, numbered, or labelled top-level bullets; see _direction_blocks), each of at least `min_words` words with its description, and nothing was exported
+    to `assets_dir` (it waits for a choice). One direction described in several bullets is one direction."""
     t = turns(scratch)
     if t is None:
         return R.add(rule["id"], False, "no .run/transcript.md", rule["count"])
@@ -778,8 +822,7 @@ def r_directions_offered(R, scratch, rule):
     for role, text in t:
         if role != "assistant":
             continue
-        items = [m for m in re.findall(r"^\s*(?:\d+[.)]|[-*])\s+(.+)$", text, re.M) if len(m.split()) >= rule["min_words"] and "?" not in m]   # a list of questions is not a list of directions
-        best = max(best, len(items))
+        best = max(best, sum(1 for w in _direction_blocks(text).values() if w >= rule["min_words"]))
     d = pathlib.Path(scratch) / rule["assets_dir"]
     made = [f.relative_to(scratch).as_posix() for f in d.rglob("*") if f.is_file()] if d.is_dir() else []
     R.add(rule["id"], best >= rule["count"] and not made, {"directions": best, "exported_before_a_choice": made[:4]}, {"directions": rule["count"], "exported": 0})

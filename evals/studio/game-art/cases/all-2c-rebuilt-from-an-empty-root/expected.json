@@ -1,0 +1,56 @@
+{
+  "case": "all-2c-rebuilt-from-an-empty-root",
+  "skill": "game-art",
+  "item": "all-2",
+  "kind": "M",
+  "tools": [
+    "python3",
+    "pillow"
+  ],
+  "rules": [
+    {
+      "id": "size",
+      "type": "size_exact",
+      "file": "assets/sprites/hero_16.png",
+      "width": 16,
+      "height": 16
+    },
+    {
+      "id": "faithful",
+      "type": "matches_blocks",
+      "file": "assets/sprites/hero_16.png",
+      "source": "inputs/hero_32.png",
+      "factor": 2,
+      "min_fraction": 0.95
+    },
+    {
+      "id": "rebuild",
+      "type": "rebuild_identical",
+      "files": [
+        "assets/sprites/hero_16.png"
+      ],
+      "empty_root": true
+    },
+    {
+      "id": "masters_out",
+      "type": "masters_outside_import_path",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_valid",
+      "type": "manifest_valid",
+      "import_paths": [
+        "assets"
+      ]
+    },
+    {
+      "id": "manifest_rows",
+      "type": "manifest_rows",
+      "files": [
+        "assets/sprites/hero_16.png"
+      ]
+    }
+  ]
+}
