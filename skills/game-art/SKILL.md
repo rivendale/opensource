@@ -86,15 +86,25 @@ Run `python3 skills/game-art/scripts/art.py --help` for arguments. Inside the
 runner use `python3 /skill/scripts/art.py`; read the bundled schema before
 constructing a manifest row.
 
-Examples, from the reference-repository root (replace paths with project paths):
+Examples inside the isolated runner, from the project root. For a reference
+checkout, replace `/skill/scripts/art.py` with the absolute path to this helper:
 
 ```sh
-python3 skills/game-art/scripts/art.py cut masters/sheet.png assets/walk --cell 32 32
-python3 skills/game-art/scripts/art.py pack assets/walk.png assets/walk/0000.png assets/walk/0001.png --columns 2
-python3 skills/game-art/scripts/art.py check assets/walk.png --size 64 32 --cell 32 32 --frames 2 --alpha transparent --palette '#203040,#ffffff' --anchors --edge-alpha
-python3 skills/game-art/scripts/art.py revision masters/before.png assets/after.png masters/mask.png
-python3 skills/game-art/scripts/art.py manifest --root game --row game/masters/row.json --exports assets --import-path assets
+python3 /skill/scripts/art.py resize masters/large.png masters/sheet.png --size 64 32 --palette '#203040,#ffffff'
+python3 /skill/scripts/art.py cut masters/sheet.png assets/walk --cell 32 32
+python3 /skill/scripts/art.py pack assets/walk.png assets/walk/0000.png assets/walk/0001.png --columns 2
+python3 /skill/scripts/art.py check assets/walk.png --size 64 32 --cell 32 32 --frames 2 --alpha transparent --matte '#ff00ff' --palette '#203040,#ffffff' --anchors --edge-alpha
+python3 /skill/scripts/art.py revision masters/before.png assets/after.png masters/mask.png
+python3 /skill/scripts/art.py manifest --root game --row game/masters/row.json --exports assets --import-path assets
 ```
+
+Resize uses nearest pixel-center sampling, with no interpolation. Use it for
+pixel art or an explicitly requested nearest-neighbor export, not smooth painting.
+Resize each frame separately before packing so cells do not blend or shift.
+Optional palette snapping affects opaque pixels only, preserves sampled alpha,
+and picks the closest squared-RGB color; the first listed color wins a tie.
+Use the same size for a palette-only conversion. Partial-alpha colors are left
+unchanged, as the shared palette rule gates opaque pixels.
 
 Cut preserves row-major cell order without trimming. Pack takes an explicit file
 list in the brief's frame order, refuses unequal frame dimensions, and reports
@@ -104,8 +114,11 @@ choose columns dividing the frame count or use a different packer with explicit
 metadata. The helper refuses partial rows.
 
 Report actual pixel sizes, cell grid, frame count, alpha counts, palette violations
-and anchors. Palette defaults apply to opaque pixels. The alpha check can reject
-a specified matte color and partial alpha beyond the outer one-pixel edge.
+and anchors. Palette defaults apply to opaque pixels. A transparent check requires `--matte` with the brief's actual background color
+(the magenta example is only a placeholder), rejects that color at any nonzero
+alpha, and automatically rejects partial alpha beyond the outer one-pixel edge.
+A transparent pixel alone does not prove a sprite has no matte. If the background
+color is unknown, report that measurement as blocked; do not guess it.
 For sprites, compare bottom-center opaque bounds within 1 px across all frames,
 or measure the brief's custom anchor separately. Empty sprite frames fail anchor
 checks. Tile seams, frame semantics and lighting require inspecting rendered
@@ -136,7 +149,18 @@ atomically. In a reference checkout it uses the adjacent shared validator. In th
 studio runner, where this skill is mounted at `/skill`, it uses the runner's hashed,
 read-only `/scratch/skills/studio/validate_manifest.py` resource. It does not search
 reference inputs or arbitrary project directories for executable validators.
-Use null for inapplicable required fields, not omitted fields. It
+Each row requires `file`, `kind`, `tool`, `tool_version`, `seed_or_params`,
+`date`, `model`, `weights_license`, `source`, `source_license`,
+`reference_used_as`, `master`, `build_script` and `paid_service`.
+Use project-relative forward-slash paths for file, master and build script;
+use the actual tool version, recorded parameters and an ISO `YYYY-MM-DD` date.
+For original local drawing, model, weights_license, source, source_license and
+paid_service are null, and reference_used_as is `none`. A used reference must
+instead record `layout`, `style` or `character`. A model requires its actual
+weights terms; reused material requires source and license. Optional `text`
+entries contain exact `string` and `font` values. Do not put dimensions, frames
+or palette in the row: those belong in the measured report, not schema fields.
+Use null only where the schema permits it, not for required tool/date fields. It
 refuses masters/scripts within import paths and paths escaping the project.
 For a new set, create all rows before placing all exports in the final folder,
 or validate a complete manifest with the shared validator; the helper refuses

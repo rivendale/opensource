@@ -115,11 +115,51 @@ def color(s):
     return bytes.fromhex(s[1:])
 
 
+def resize(a):
+    w, h, data = read_png(a.input)
+    ow, oh = a.size
+    if ow < 1 or oh < 1 or ow * oh > MAX_PIXELS:
+        raise ValueError('positive output dimensions must stay within the 16M-pixel limit')
+    # Sample pixel centers without interpolation, including noninteger scales.
+    out = bytearray(ow * oh * 4)
+    palette = [color(c) for c in a.palette.split(',')] if a.palette else None
+    if palette is not None and not 1 <= len(palette) <= 256:
+        raise ValueError('palette must contain 1 to 256 #rrggbb colors')
+    cache = {}
+    changed = 0
+    for y in range(oh):
+        sy = min(h - 1, (2 * y + 1) * h // (2 * oh))
+        for x in range(ow):
+            sx = min(w - 1, (2 * x + 1) * w // (2 * ow))
+            pixel = data[(sy * w + sx) * 4:(sy * w + sx) * 4 + 4]
+            if palette and pixel[3] == 255:
+                rgb = pixel[:3]
+                if rgb not in cache:
+                    # Bounded cache; palette order breaks exact distance ties.
+                    if len(cache) >= 4096:
+                        cache.clear()
+                    cache[rgb] = min(palette, key=lambda c: sum(
+                        (rgb[i] - c[i]) ** 2 for i in range(3)))
+                snapped = cache[rgb]
+                changed += snapped != rgb
+                pixel = snapped + pixel[3:]
+            i = (y * ow + x) * 4
+            out[i:i + 4] = pixel
+    write_png(a.output, ow, oh, out)
+    return {'pass': True, 'size': [ow, oh], 'source_size': [w, h],
+            'filter': 'nearest pixel center', 'palette_snapped_opaque_pixels': changed,
+            'palette_distance': 'squared RGB; first listed color wins ties',
+            'alpha': 'preserved from sampled pixels'}
+
+
 def check(a):
     w, h, data = read_png(a.input)
     cw, ch = cell_size(w, h, a.cell or [w, h])
     palette = {color(c) for c in a.palette.split(',')} if a.palette else None
     matte = color(a.matte) if a.matte else None
+    if a.alpha == 'transparent' and matte is None:
+        raise ValueError('transparent checks require --matte with the brief background color')
+    edge_alpha = a.edge_alpha or a.alpha == 'transparent'
     rules = []
     def rule(name, measured, threshold, passed):
         rules.append({'id': name, 'pass': bool(passed), 'measured': measured,
@@ -151,7 +191,7 @@ def check(a):
                 alpha = frame[(y * cw + x) * 4 + 3]
                 if alpha == 255:
                     points.append((x, y))
-                if a.edge_alpha and 0 < alpha < 255:
+                if edge_alpha and 0 < alpha < 255:
                     boundary = any(nx < 0 or nx >= cw or ny < 0 or ny >= ch or
                                    frame[(ny * cw + nx) * 4 + 3] == 0
                                    for nx, ny in ((x + dx, y + dy)
@@ -161,7 +201,7 @@ def check(a):
         if a.anchors:
             anchors.append([(min(x for x, _ in points) + max(x for x, _ in points)) / 2,
                             max(y for _, y in points)] if points else None)
-    if a.edge_alpha:
+    if edge_alpha:
         rule('partial-alpha-edge', interior, 0, interior == 0)
     if a.anchors:
         valid = all(v is not None for v in anchors)
@@ -278,6 +318,9 @@ def main():
     c.add_argument('--cell', nargs=2, type=int, required=True); c.set_defaults(run=cut)
     c = sub.add_parser('pack'); c.add_argument('output'); c.add_argument('inputs', nargs='+')
     c.add_argument('--columns', type=int, required=True); c.set_defaults(run=pack)
+    c = sub.add_parser('resize'); c.add_argument('input'); c.add_argument('output')
+    c.add_argument('--size', nargs=2, type=int, required=True)
+    c.add_argument('--palette'); c.set_defaults(run=resize)
     c = sub.add_parser('check'); c.add_argument('input')
     c.add_argument('--size', nargs=2, type=int, required=True)
     c.add_argument('--cell', nargs=2, type=int); c.add_argument('--frames', type=int)
