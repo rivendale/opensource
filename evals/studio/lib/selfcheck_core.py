@@ -53,21 +53,29 @@ def emit_tree(M, case, name, d, verdict, out):
 
 
 def main(M, argv):
+    argv = list(argv)
     emit = None
     if "--emit" in argv:
         i = argv.index("--emit")
         emit, argv = argv[i + 1], argv[:i] + argv[i + 2:]
-    replay = {}
+    explicit, skip = "--coverage" in argv, "--no-coverage" in argv
+    argv = [a for a in argv if a not in ("--coverage", "--no-coverage")]
     prefix = argv[0] if argv else ""
+    # The gate: a full run (no case prefix) also requires every rule TYPE in use to be failed by at least one defect somewhere in the set; a rule type that nothing makes
+    # fail may not be able to. A prefix run sees only part of the set, so it reports coverage only when asked (--coverage).
+    coverage = explicit or (not prefix and not skip)
+    replay = {}
     try:
         import audio_rules
         print("ffmpeg:", audio_rules._run(["-version"]).stdout.splitlines()[0])
     except Exception:  # noqa: BLE001
         pass
     bad = 0
+    all_types, failed_types = {}, set()
     for case in M.CASES:
         if not case["id"].startswith(prefix):
             continue
+        failed_by_a_defect = set()
         # the checker script itself, as the runner will call it
         d = tree(M, case)
         case["reference"](d)
@@ -89,10 +97,22 @@ def main(M, argv):
             failed = {k for k, v in res.items() if not v["pass"]}
             if emit:
                 replay[case["id"]].append(dict(emit_tree(M, case, "defect-%02d" % len(replay[case["id"]]), d, res, emit), description=name))
+            failed_by_a_defect |= failed
             good = failed == set(expect)
             print(f"  {'ok  ' if good else 'FAIL'} {name}: fails {sorted(failed)}" + ("" if good else f"  (wanted {sorted(expect)})"))
             bad += not good
             shutil.rmtree(d)
+        rules_here = json.loads((M.CASES_DIR / case["id"] / "expected.json").read_text())["rules"]
+        for r in rules_here:
+            all_types.setdefault(r["type"], []).append(case["id"])
+            if r["id"] in failed_by_a_defect:
+                failed_types.add(r["type"])
+    if coverage:
+        never = {ty: cases for ty, cases in all_types.items() if ty not in failed_types}
+        print(f"coverage: {len(all_types)} rule types in use, {len(failed_types)} failed by at least one defect somewhere in the set")
+        for ty, cases in sorted(never.items()):
+            print(f"  NEVER FAILED: {ty} (used in {len(cases)} case(s): {', '.join(cases[:3])}{' ...' if len(cases) > 3 else ''})")
+        bad += bool(never)
     if emit:
         for cid, trees in replay.items():
             (pathlib.Path(emit) / cid / "replay.json").write_text(json.dumps({"case": cid, "trees": trees}, indent=2) + "\n")

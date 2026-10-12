@@ -416,6 +416,14 @@ def r_masters_outside_import_path(R, scratch, rule):
             for f in d.rglob("*"):
                 if f.is_file() and f.suffix.lower() in MASTER_SUFFIXES:
                     bad.append(f.relative_to(root).as_posix())
+    try:      # a master or build script that the manifest itself places under the import path counts, whatever its file suffix
+        for r in json.loads((root / rule.get("manifest", "assets/MANIFEST.json")).read_text())["assets"]:
+            for key in ("master", "build_script"):
+                m = r.get(key)
+                if m and any(m.startswith(ip + "/") for ip in imp) and m not in bad:
+                    bad.append(m)
+    except Exception:  # noqa: BLE001  (no manifest: the suffix scan above stands)
+        pass
     R.add(rule["id"], not bad, bad[:6] or "none", "no editable master under " + ", ".join(imp))
 
 
