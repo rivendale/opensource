@@ -1,0 +1,53 @@
+{
+  "fixtures": [
+    {
+      "scenario": "questions",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "final-scratch-snapshot"
+    },
+    {
+      "scenario": "capture-error",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "checker-error",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "preflight-error",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    }
+  ],
+  "diagnostic_redaction": "passed",
+  "pattern_scan_suppression": "passed",
+  "real_provider_calls": 0,
+  "date": "2026-10-12",
+  "base_commit": "61af783f4f1f5e1b0705433dd8233c7b42084153",
+  "image": "localhost/studio-runner@sha256:a9d142c18396d7fe748ef1d64ca37486fcc017853d94cffac147e1f8f17fc8ca",
+  "baseline": "one-response questions already pass; injected capture failure loses .run and exception details on the merged runner",
+  "original_pilot_root_cause": "not reproduced; no new paid run",
+  "mandatory_isolation_selftest": "passed",
+  "runner_sha256": "3005daa93ba9e329d8f56818508b4c35c96e458a0252bcebd6e036a70fb17fad",
+  "test_sha256": "00a5db241cc9ac4bc224a40340757f0f20020ce3cbf639a4595557070f250f5f",
+  "relative_links": {
+    "checked": 441,
+    "problems": 0
+  },
+  "syntax_and_whitespace": "passed",
+  "skill_score_published": false
+}

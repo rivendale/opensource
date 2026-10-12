@@ -15,9 +15,10 @@ import tarfile
 import tempfile
 import threading
 import time
+import traceback
 import uuid
 
-from common import VERSION, MAX_FRAME, checker_result, encode, leak_reason, plain_tree, sha256
+from common import KEY_PATTERN, VERSION, MAX_FRAME, checker_result, encode, leak_reason, plain_tree, sha256
 from proxy import Relay
 
 CAPTURE_RESERVE = 32 * 1024 * 1024
@@ -193,6 +194,55 @@ def capture(process, files):
     process.stdin.flush()
 
 
+def exception_receipt(error, keys):
+    # Redact before truncating: a prefix of an exact key must not escape.
+    message = str(error).encode('utf-8', 'replace')
+    for key in keys:
+        if key:
+            message = message.replace(key, b'[REDACTED]')
+    message = KEY_PATTERN.sub(b'[REDACTED]', message)
+    return {'type': type(error).__name__, 'message': message[:2048].decode('utf-8', 'replace'),
+            'frames': [{'file': Path(f.filename).name, 'line': f.lineno,
+                        'function': f.name} for f in traceback.extract_tb(error.__traceback__)[-12:]]}
+
+
+def failed_capture(root, output, result, events, transcript, log, keys, snapshot=None):
+    """Retain scanned received evidence even when the container protocol fails.
+
+    A host-only receipt is not a proof of drain, a complete scratch snapshot,
+    or permission to send checker answers. Those gates remain unchanged.
+    """
+    candidate = root / 'failure-capture'
+    if snapshot is not None:
+        shutil.copytree(snapshot, candidate)
+    else:
+        candidate.mkdir()
+    capture_root = candidate / '.run'
+    capture_root.mkdir(exist_ok=True)
+    result['capture_scope'] = 'drained-scratch-snapshot' if snapshot is not None else 'host-received-events-only'
+    result['key_scan'] = 'pending'
+    files = {'transcript.md': '\n'.join(transcript),
+             'proxy.log': ''.join(json.dumps(row, sort_keys=True) + '\n' for row in log),
+             'usage.json': json.dumps(result.get('usage', {})),
+             'run.json': json.dumps({**result, 'events': events}, sort_keys=True)}
+    for name, content in files.items():
+        (capture_root / name).write_text(content)
+    reason = leak_reason(candidate)
+    for key in keys:
+        reason = reason or leak_reason(candidate, key)
+    if reason or result.get('incident'):
+        result['key_scan'] = 'incident'
+        result['incident'] = True
+        result['reason'] = 'API key incident in .run; tree excluded; operator must rotate key'
+        return
+    result['key_scan'] = 'passed'
+    # Persist the final scan disposition; replacing pending with passed adds no input data.
+    (capture_root / 'run.json').write_text(json.dumps({**result, 'events': events}, sort_keys=True))
+    if (output / 'scratch').exists():
+        shutil.rmtree(output / 'scratch')
+    shutil.copytree(candidate, output / 'scratch')
+
+
 def run(args):
     result = {"runner": VERSION, "status": "failed", "reason": "runner preflight or isolation failure",
               "runner_sha256": sha256(__file__),
@@ -210,6 +260,8 @@ def run(args):
     runtime = None
     name = "studio-" + uuid.uuid4().hex
     key_values = []
+    events, transcript, log, usage = [], [], [], {}
+    scanned_snapshot = None
     root = Path(tempfile.mkdtemp(prefix="studio-private-"))
     try:
         runtime = Runtime(args.store, root)
@@ -455,6 +507,8 @@ def run(args):
             result["reason"] = "API key incident in .run; tree excluded; operator must rotate key"
             result["incident"] = True
             raise RuntimeError("key incident")
+        scanned_snapshot = before
+        result["key_scan"] = "passed"
         if frames.next() != {"type": "answers-ready", "processes": 0}:
             raise RuntimeError("answer phase not proved")
         if result["limits_hit"] or result["agent_exit"] != 0 or (args.mode == "run" and not usage):
@@ -508,6 +562,8 @@ def run(args):
             result["reason"] = "API key incident in .run; tree excluded; operator must rotate key"
             result["incident"] = True
             raise RuntimeError("key incident")
+        scanned_snapshot = after
+        result["key_scan"] = "passed"
         if frames.next()["type"] != "done" or process.wait(timeout=5) != 0:
             raise RuntimeError("supervisor did not finish")
         shutil.copytree(after, args.output / "scratch")
@@ -519,10 +575,14 @@ def run(args):
             result["replay"]["matched"] = matched
             result["status"] = "passed" if matched else "failed"
             result["reason"] = None if matched else "replay verdict differs from host"
-    except TimeoutError:
+    except TimeoutError as error:
+        result["exception"] = exception_receipt(error, key_values)
         result["reason"] = "wall time limit"
-    except Exception:
-        # Keep the generic/specific safe reason. Never serialize exceptions or keys.
+    except Exception as error:
+        result["exception"] = exception_receipt(error, key_values)
+        if result["reason"] == "runner preflight or isolation failure":
+            result["reason"] = "runner exception: " + type(error).__name__
+        # Keep specific reasons and redacted diagnostics; never serialize raw exceptions or keys.
         if runtime and process:
             try:
                 state = json.loads(command(runtime, ["inspect", name]))[0]["State"]
@@ -532,21 +592,44 @@ def run(args):
                 pass
     finally:
         if process and process.poll() is None:
-            process.kill()
-            process.wait(timeout=5)
+            try:
+                process.kill()
+                process.wait(timeout=5)
+            except Exception as error:
+                result['process_cleanup_exception'] = exception_receipt(error, key_values)
+                result['cleanup_unverified'] = True
+                result['status'] = 'failed'
+                result['reason'] = result['reason'] or 'process cleanup unverified'
         if transfer:
             transfer.join(timeout=5)
         if runtime and process:
             try:
                 command(runtime, ["rm", "--force", name], timeout=10)
-            except Exception:
+            except Exception as error:
+                result["cleanup_exception"] = exception_receipt(error, key_values)
                 result["cleanup_unverified"] = True
                 result["status"] = "failed"
+                result["reason"] = result["reason"] or "container cleanup unverified"
         if relay:
-            relay.shutdown()
-            relay.server_close()
+            try:
+                relay.shutdown()
+                relay.server_close()
+            except Exception as error:
+                result['relay_cleanup_exception'] = exception_receipt(error, key_values)
+                result['status'] = 'failed'
+                result['reason'] = result['reason'] or 'relay cleanup unverified'
         if thread:
             thread.join(timeout=5)
+        if result['status'] != 'passed':
+            try:
+                failed_capture(root, args.output, result, events, transcript,
+                               log or (list(relay.log) if relay else []), key_values,
+                               scanned_snapshot)
+            except Exception as error:
+                result['capture_exception'] = exception_receipt(error, key_values)
+                result['key_scan'] = 'not_completed'
+                # A missing scan never becomes a retained unverified tree.
+                shutil.rmtree(args.output / 'scratch', ignore_errors=True)
         shutil.rmtree(root, ignore_errors=True)
         result["wall_seconds"] = time.monotonic() - started
         if result.get("incident"):
@@ -554,6 +637,10 @@ def run(args):
             # Avoid returning token usage or checker measurements from a tainted run.
             result.pop("checker", None)
             result.pop("usage", None)
+            result.pop("exception", None)
+            result.pop("capture_exception", None)
+            for field in ['cleanup_exception', 'process_cleanup_exception', 'relay_cleanup_exception']:
+                result.pop(field, None)
         (args.output / "result.json").write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
     print(json.dumps({"status": result["status"], "reason": result["reason"], "result": str(args.output / "result.json")}))
     return 0 if result["status"] == "passed" else 1
