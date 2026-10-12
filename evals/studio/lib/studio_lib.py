@@ -697,17 +697,73 @@ def turns(scratch):
     return out
 
 
+_READ_ONLY = {"cat", "ls", "head", "tail", "file", "identify", "find", "wc", "stat", "pwd", "grep", "echo", "printf", "which", "du", "sha256sum", "md5sum", "test", "true"}
+# options that make an otherwise read-only program write a file or run something, by program
+_WRITES = {"find": {"-exec", "-execdir", "-ok", "-okdir", "-delete", "-fls", "-fprint", "-fprint0", "-fprintf"},
+           "file": {"-C", "--compile"}, "identify": {"-write", "+write"}}
+
+
+def _read_only_command(cmd):
+    """True only for a shell command that cannot create or change a file: every simple command starts with a read-only program, nothing redirects to a file, runs in the background,
+    or substitutes a command or process, and no option of an allowed program makes it write. This is an allow-list of programs plus a deny-list of options, so it is not
+    exhaustive; what holds is the fail-closed default: anything not recognized counts as acting."""
+    import re
+    c = re.sub(r"\d?>\s*/dev/null|\d>&\d", " ", cmd)
+    if any(x in c for x in (">", "<(", "`", "$(", "<<")):
+        return False
+    if "&" in c.replace("&&", " "):      # a lone & backgrounds a command, and the next one runs unchecked
+        return False
+    for seg in re.split(r"&&|\|\||[;|\n]", c):
+        words = seg.split()
+        if not words:
+            continue
+        if words[0] not in _READ_ONLY or any(w in _WRITES.get(words[0], ()) for w in words):
+            return False
+    return True
+
+
+def _calls_of(text):
+    """(prose, calls): an assistant turn's prose, and the tool calls the runner appends after a 'Tool calls:' line as one JSON list as [(name, args)]. calls is None when there are none to read."""
+    import json
+    marker = "Tool calls:\n"
+    i = text.find(marker) if text.startswith(marker) else text.find("\n" + marker)
+    if i < 0:
+        return text, None
+    head, tail = text[:i], text[i + len(marker) + (0 if text.startswith(marker) else 1):]
+    try:
+        raw = json.loads(tail.strip())
+    except ValueError:
+        return head, None
+    calls = []
+    for c in raw if isinstance(raw, list) else []:
+        fn = (c.get("function") or {}) if isinstance(c, dict) else {}
+        try:
+            args = json.loads(fn.get("arguments") or "{}")
+        except ValueError:
+            args = {}
+        calls.append((fn.get("name"), args if isinstance(args, dict) else {}))
+    return head, calls
+
+
 def r_restated_before_acting(R, scratch, rule):
-    """Before the first tool use, an assistant turn contains every one of `terms` (the brief restated: purpose, size, constraints)."""
+    """Before the agent first does something that can change the project, an assistant turn has said every one of `terms` (the brief restated: purpose, size, constraints).
+    Looking is not acting: viewing an image or a read-only shell command (cat, ls, identify...) comes first in nearly every run, because the brief names inputs. A tool call that is
+    not recognizably read-only ends the window, and so does a tool result with no call to read (fail closed)."""
     t = turns(scratch)
     if t is None:
         return R.add(rule["id"], False, "no .run/transcript.md", rule["terms"])
-    said = ""
+    said, looking = "", False
     for role, text in t:
         if role == "tool":
+            if looking:
+                continue
             break
         if role == "assistant":
-            said += "\n" + text.lower()
+            prose, calls = _calls_of(text)
+            said += "\n" + prose.lower()
+            looking = bool(calls) and all(n == "view_image" or (n == "shell" and _read_only_command(str(a.get("command", "")))) for n, a in calls)
+            if calls and not looking:
+                break
     missing = [x for x in rule["terms"] if x.lower() not in said]
     R.add(rule["id"], not missing, ("not restated before acting: %s" % missing) if missing else "restated", rule["terms"])
 

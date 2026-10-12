@@ -923,6 +923,21 @@ RESTATED = say(("assistant", "Brief as I read it: a gem pickup icon, 16x16 pixel
 ACTED = say(("tool", "wrote tools/make_gem.py"), ("assistant", "Done."))
 
 
+RESTATE_TEXT = ("Complete restatement: a gem pickup icon for the UI, 16x16 pixels, only the 8 colors in inputs/palette.hex, on a transparent background, "
+                "exported as assets/ui/gem.png with a manifest row. Starting now.")
+
+
+def calls(name, command):
+    """One tool call in the runner's transcript format (a JSON list after 'Tool calls:')."""
+    return json.dumps([{"id": "toolu_1", "type": "function", "function": {"name": name, "arguments": json.dumps({"command": command})}}])
+
+
+LOOKED_THEN_RESTATED = say(("assistant", "Let me read the palette first.\nTool calls:\n" + calls("shell", "cat /scratch/inputs/palette.hex")),
+                           ("tool", "{\"exit\": 0, \"output\": \"1a1c2c\\n5d275d\\n\"}"),
+                           ("assistant", RESTATE_TEXT + "\nTool calls:\n" + calls("shell", "python3 tools/make_gem.py")),
+                           ("tool", "{\"exit\": 0}"), ("assistant", "Done."))
+
+
 def gem_run(transcript):
     def go(root):
         gem_to(root)
@@ -936,7 +951,22 @@ case("all-1a-brief-restated", "all-1", "T",
      GEM_RULES + [{"id": "restated", "type": "restated_before_acting", "terms": ["16x16", "palette", "transparent"]}],
      gem_run(RESTATED),
      [("started work without restating the brief", gem_run(ACTED), {"restated"}),
-      ("restated the size but not the palette or the background", gem_run(say(("assistant", "A 16x16 gem icon. On it."), ("tool", "wrote tools/make_gem.py"))), {"restated"})])
+      ("restated the size but not the palette or the background", gem_run(say(("assistant", "A 16x16 gem icon. On it."), ("tool", "wrote tools/make_gem.py"))), {"restated"}),
+      # looking is not acting: these are the runner's real 'Tool calls:' turns
+      ("read the palette first, then restated in full, then drew (the control: must still pass)", gem_run(LOOKED_THEN_RESTATED), set()),
+      ("restated only after a mkdir", gem_run(say(("assistant", "Setting up.\nTool calls:\n" + calls("shell", "mkdir -p assets/ui masters tools")), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ("restated only after a command that read and then wrote", gem_run(say(("assistant", "Palette first.\nTool calls:\n" + calls("shell", "cat inputs/palette.hex && convert -size 16x16 xc:none assets/ui/gem.png")), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ("read inputs, then went straight to work without restating", gem_run(say(("assistant", "Reading the palette.\nTool calls:\n" + calls("shell", "cat inputs/palette.hex")), ("tool", "{\"exit\": 0, \"output\": \"1a1c2c\"}"), ("assistant", "Drawing now.\nTool calls:\n" + calls("shell", "python3 tools/make_gem.py")), ("tool", "{\"exit\": 0}"))), {"restated"}),
+      ("a redirect to a file is writing, not looking", gem_run(say(("assistant", "Copying the palette.\nTool calls:\n" + calls("shell", "cat inputs/palette.hex > masters/palette.txt")), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      # one defect per way a 'read-only' command can still write
+      ('process substitution runs a command', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'cat <(convert -size 16x16 xc:none assets/ui/gem.png)')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ('a lone & backgrounds a writer', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'cat inputs/palette.hex & convert -size 16x16 xc:none assets/ui/gem.png')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ('tree -o writes a file', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'tree -o masters/listing.txt inputs')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ('find -fls writes a file', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'find inputs -fls masters/listing.txt')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ('find -fprint0 writes a file', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'find inputs -fprint0 masters/listing.bin')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ('file -C compiles a magic file', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'file -C -m masters/magic')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ('identify +write writes an image', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'identify +write assets/ui/gem.png inputs/palette.png')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"}),
+      ('identify -write writes an image', gem_run(say(("assistant", "Looking.\nTool calls:\n" + calls("shell", 'identify -write assets/ui/gem.png inputs/palette.png')), ("tool", "{\"exit\": 0}"), ("assistant", RESTATE_TEXT))), {"restated"})])
 
 THREE = say(("assistant", "You haven't said what the swamp should feel like, so before I draw anything here are three directions:\n1. Murky green dusk: low sun, dark water, a few fireflies, calm and eerie.\n2. Toxic neon bog: bright acid greens and purples, glowing pools, loud and gamey.\n3. Overgrown ruins: mossy stone half under water, warm light through the trees.\nTell me which one, or mix them, and I will make the background."))
 case("all-1b-directions-before-art", "all-1", "T",
