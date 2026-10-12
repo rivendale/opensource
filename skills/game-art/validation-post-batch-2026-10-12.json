@@ -1,9 +1,9 @@
 {
-  "date_utc": "2026-10-12T21:51:40.997433+00:00",
+  "date_utc": "2026-10-12T22:18:25.055439+00:00",
   "scope": "post-batch builder checks only; no independent acceptance or provider calls",
   "active_file_sha256": {
-    "skills/game-art/scripts/art.py": "1bf79ad5161b799311773264b6c6064b2215523bb00f35a021271928e78134a8",
-    "skills/game-art/SKILL.md": "7f5265933af4d193f3aa105bee4c9ad487702d3ac1c79fcc7cdb4dd63bd2129d"
+    "skills/game-art/scripts/art.py": "bdf4daa551a0b03a388ba5868a6698ed72c764f74b92432d16f0171e6a75c8dd",
+    "skills/game-art/SKILL.md": "d69578f591e916e61bcaeca776b3fa5ab07b40039fe25b20192485a626025a21"
   },
   "observations": [
     {
@@ -12,7 +12,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/transparent-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/transparent-no-matte.png",
         "--size",
         "5",
         "5",
@@ -59,7 +59,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/opaque-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/opaque-no-matte.png",
         "--size",
         "5",
         "5",
@@ -106,7 +106,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/interior-partial-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/interior-partial-no-matte.png",
         "--size",
         "5",
         "5",
@@ -153,7 +153,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/edge-partial-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/edge-partial-no-matte.png",
         "--size",
         "5",
         "5",
@@ -200,7 +200,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/residual-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/residual-matte.png",
         "--size",
         "5",
         "5",

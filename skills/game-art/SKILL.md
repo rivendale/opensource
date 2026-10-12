@@ -5,6 +5,16 @@ description: Make and revise game sprites, tiles, UI, backgrounds, key art and t
 
 # Game art
 
+## Quality bar
+
+Always improve the graphics, regardless of how the original game looks. Accept
+an asset only when its silhouette reads as the intended subject at 1x on both
+mid-grey and light backgrounds, it uses one dark outline colour, its stated
+light direction is visible in the artwork, and no elements lie outside the body.
+Treat these as visual acceptance checks alongside the brief; name and repair
+misses before delivery. Pixel dimensions and palette compliance alone do not
+establish this quality.
+
 Turn the brief into engine-ready art. Read [2D art](../../art/2d.md) for drawing and
 exports, [Blender](../../art/blender.md) for 3D or rendered sprites, and
 [AI graphics](../../ai/graphics.md) for tool setup and provenance. Follow their
@@ -158,11 +168,16 @@ When constructing ImageMagick calls in Python, pass an argument list to
 `subprocess.run` rather than embedding extra shell quotes in a command string.
 For deterministic PNG exports, exclude variable date/time chunks (ImageMagick
 `-define png:exclude-chunks=date,time`); keep the same recorded export options.
+ImageMagick 6 can write an indexed palette PNG after remapping; export RGBA with
+Pillow or force `PNG32:output.png` (the helper forces PNG32). Check the resulting
+file format rather than assuming remap retained RGBA.
 The rebuild script creates its own output folders. Verify it from an EMPTY copy
 of the project root with only `inputs/` present. Invoke the retained rebuild script
 from its saved location, with its editable source available there; the fresh tree
 is its output project root. Do not copy existing output folders or exports.
-Rerun under a new folder inside the project root (the studio runner's `/tmp` is
+Keep the rebuild self-contained: resolve its own source paths, accept an output
+project root and create all required output folders without relying on an earlier
+export or shell working directory. Rerun under a new folder inside the project root (the studio runner's `/tmp` is
 read-only), then compare deterministic exports byte-for-byte. Record the exact
 rebuild and comparison commands and their results. For model output, apply SPEC-studio's stated size/format
 and measurement tolerances; do not promise byte reproduction from a seed alone.
@@ -171,7 +186,8 @@ and measurement tolerances; do not promise byte reproduction from a seed alone.
 
 Write one row per export in `assets/MANIFEST.json` using the shared
 [schema](../studio/manifest.schema.json). The helper reads a complete row JSON,
-validates the whole manifest and project paths with the existing
+or `--rows FILE` containing a nonempty JSON array of rows, validates the whole
+manifest and project paths with the existing
 [validator](../studio/validate_manifest.py), then replaces or adds that file's row
 atomically. In a reference checkout it uses the adjacent shared validator. In the
 studio runner, where this skill is mounted at `/skill`, it uses the runner's hashed,
@@ -197,9 +213,20 @@ entries contain exact `string` and `font` values. Do not put dimensions, frames
 or palette in the row: those belong in the measured report, not schema fields.
 Use null only where the schema permits it, not for required tool/date fields. It
 refuses masters/scripts within import paths and paths escaping the project.
-For a new set, create all rows before placing all exports in the final folder,
-or validate a complete manifest with the shared validator; the helper refuses
-any existing unlisted export rather than hiding it.
+`--exports` names the project-relative folder where `MANIFEST.json` is written,
+not an individual image or the project root. For a new set with exports already
+present, build each row from `manifest --template`, save them as a JSON array,
+and submit all rows together:
+
+```sh
+python3 /skill/scripts/art.py manifest --root . --rows masters/rows.json --exports assets --import-path assets
+python3 /skill/scripts/art.py credits assets/MANIFEST.json
+```
+
+The helper atomically adds or replaces all submitted rows, preserves unrelated
+existing rows and refuses duplicate paths, invalid rows or any unlisted export.
+A failed batch leaves the existing manifest unchanged. Do not bypass the helper
+because the set contains several exports.
 
 Record tool versions, model and weights terms, seed/parameters, source/license,
 reference role, date, master and rebuild script. Keep evidence of reference rights

@@ -57,7 +57,7 @@ def write_png(path, w, h, data):
     if not w or not h or w * h > MAX_PIXELS:
         raise ValueError('output exceeds the 16M-pixel limit')
     out = im(['-size', f'{w}x{h}', '-depth', '8', 'rgba:-', '-strip',
-              '-define', 'png:exclude-chunks=date,time', 'png:-'], data)
+              '-define', 'png:exclude-chunks=date,time', 'PNG32:-'], data)
     with Path(path).open('xb') as f:
         f.write(out)
 
@@ -263,22 +263,32 @@ def manifest(a):
     exports = contained(a.exports)
     for ip in a.import_path:
         contained(ip)
-    row = json.loads(Path(a.row).read_text())
-    if isinstance(row, dict):
+    loaded = json.loads(Path(a.rows or a.row).read_text())
+    incoming = loaded if a.rows else [loaded]
+    if not isinstance(incoming, list) or not incoming:
+        raise ValueError('--rows must contain a nonempty JSON array of row objects')
+    today = datetime.now(timezone.utc).date().isoformat()
+    for row in incoming:
+        if not isinstance(row, dict):
+            raise ValueError('each manifest row must be an object')
         if any(isinstance(v, str) and v.startswith('REPLACE_WITH_') for v in row.values()):
             raise ValueError('replace every template placeholder with measured project evidence')
-        row['date'] = datetime.now(timezone.utc).date().isoformat()
+        row['date'] = today
+    errs = validator.validate({'manifest_version': 1, 'assets': incoming})
+    if errs:
+        raise ValueError(f'incoming rows invalid: {errs}')
     target = exports / 'MANIFEST.json'
     if target.is_symlink():
         raise ValueError('manifest must not be a symlink')
     m = json.loads(target.read_text()) if target.exists() else {'manifest_version': 1, 'assets': []}
-    if not isinstance(row, dict) or not isinstance(m, dict) or not isinstance(m.get('assets'), list):
-        raise ValueError('row and manifest must be objects with valid asset lists')
+    if not isinstance(m, dict) or not isinstance(m.get('assets'), list):
+        raise ValueError('manifest must be an object with a valid asset list')
     old_errors = validator.validate(m)
     if old_errors:
         raise ValueError(f'existing manifest invalid: {old_errors}')
-    rows = [r for r in m['assets'] if r['file'] != row.get('file')]
-    candidate = {'manifest_version': m['manifest_version'], 'assets': rows + [row]}
+    replaced = {row['file'] for row in incoming}
+    rows = [r for r in m['assets'] if r['file'] not in replaced]
+    candidate = {'manifest_version': m['manifest_version'], 'assets': rows + incoming}
     errs = validator.validate(candidate)
     if errs:
         raise ValueError(f'manifest invalid: {errs}')
@@ -346,15 +356,19 @@ def main():
     for name in ('before', 'after', 'mask'): c.add_argument(name)
     c.set_defaults(run=revision)
     c = sub.add_parser('manifest'); c.add_argument('--root')
-    c.add_argument('--row'); c.add_argument('--template', action='store_true'); c.add_argument('--exports', default='assets')
+    source = c.add_mutually_exclusive_group()
+    source.add_argument('--row', help='JSON object for one export')
+    source.add_argument('--rows', help='JSON array of all new or replacement export rows')
+    c.add_argument('--template', action='store_true')
+    c.add_argument('--exports', default='assets', help='project-relative folder containing MANIFEST.json and exports')
     c.add_argument('--import-path', action='append'); c.set_defaults(run=manifest)
     c = sub.add_parser('credits'); c.add_argument('input'); c.set_defaults(run=credits)
     a = p.parse_args()
     if a.command == 'manifest':
         if a.template:
             print(json.dumps(manifest_template(), indent=2)); return 0
-        if not a.root or not a.row or not a.import_path:
-            p.error('manifest requires --root, --row and --import-path, or --template')
+        if not a.root or not (a.row or a.rows) or not a.import_path:
+            p.error('manifest requires --root, --row or --rows, and --import-path, or --template')
     try:
         report = a.run(a)
         if report is not None:
