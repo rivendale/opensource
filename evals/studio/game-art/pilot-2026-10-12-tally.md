@@ -49,7 +49,7 @@ Every one recovered within one to six turns and none changed a verdict. They are
 | `check --alpha transparent` refused without `--matte` when the brief names no matte | 2 of the 3 `all-1a` runs that checked (the third skipped the check) | 4, 6 |
 | a report line that claims a measurement that was never run (a rebuild, a transparency check) | 2 | 1, 5 |
 | ImageMagick 6 wrote a palette-mode PNG when remapping, about eight turns lost | 1 | 6 |
-| build script does not create its own output folder, so a rebuild test in a clean directory failed | 3 | 5, 6, 13 (and run 10's script would fail from an empty root) |
+| build script does not create its own output folder, so a rebuild test in a clean directory failed | 2 failed, 1 latent | 5, 13 failed; 10 passed only because its test tree already had the folder |
 
 ## Grader changes this pilot produced
 
