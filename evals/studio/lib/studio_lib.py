@@ -700,12 +700,13 @@ def turns(scratch):
 _READ_ONLY = {"cat", "ls", "head", "tail", "file", "identify", "find", "wc", "stat", "pwd", "grep", "echo", "printf", "which", "du", "sha256sum", "md5sum", "test", "true"}
 # options that make an otherwise read-only program write a file or run something, by program
 _WRITES = {"find": {"-exec", "-execdir", "-ok", "-okdir", "-delete", "-fls", "-fprint", "-fprint0", "-fprintf"},
-           "file": {"-C", "--compile"}, "identify": {"-write"}}
+           "file": {"-C", "--compile"}, "identify": {"-write", "+write"}}
 
 
 def _read_only_command(cmd):
     """True only for a shell command that cannot create or change a file: every simple command starts with a read-only program, nothing redirects to a file, runs in the background,
-    or substitutes a command or process, and no option of an allowed program makes it write."""
+    or substitutes a command or process, and no option of an allowed program makes it write. This is an allow-list of programs plus a deny-list of options, so it is not
+    exhaustive; what holds is the fail-closed default: anything not recognized counts as acting."""
     import re
     c = re.sub(r"\d?>\s*/dev/null|\d>&\d", " ", cmd)
     if any(x in c for x in (">", "<(", "`", "$(", "<<")):
