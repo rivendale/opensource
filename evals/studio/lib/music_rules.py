@@ -24,7 +24,7 @@ def _coarse(x, rate, hop_ms=5, refractory_ms=120):
     out, last = [], -10 ** 9
     for i in range(1, n - 1):
         if flux[i] >= thr and flux[i] >= flux[i - 1] and flux[i] > flux[i + 1] and (i - last) * hop_ms >= refractory_ms:
-            out.append((i - 4) * hop_ms / 1000)
+            out.append((i - 4) * hop / rate)          # the actual hop in samples, not the nominal 5 ms: at 44.1 kHz it is 220 samples = 4.99 ms
             last = i
     return out
 

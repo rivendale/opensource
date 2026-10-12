@@ -123,7 +123,7 @@ for s in sorted(pathlib.Path("masters").glob("*.score")):
 '''
 
 
-def cue_set(root, cues, script=True, masters_dir="masters", scores=None):
+def cue_set(root, cues, script=True, masters_dir="masters", scores=None, render_args=()):
     """cues: {name: (tempo, beats, notes)}. scores overrides the score text per name. Writes master, export and manifest row for each, and one rebuild script."""
     rows = []
     for name, (tempo, beats, notes) in cues.items():
@@ -131,7 +131,7 @@ def cue_set(root, cues, script=True, masters_dir="masters", scores=None):
         ensure(root, f"{masters_dir}/{name}.score", text)
         out = pathlib.Path(root) / f"assets/audio/{name}.wav"
         out.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run([sys.executable, str(HERE / "mus_stub.py"), "render", str(pathlib.Path(root) / masters_dir / f"{name}.score"), str(out)], check=True)
+        subprocess.run([sys.executable, str(HERE / "mus_stub.py"), "render", str(pathlib.Path(root) / masters_dir / f"{name}.score"), str(out), *render_args], check=True)
         rows.append(row(f"assets/audio/{name}.wav", master=f"{masters_dir}/{name}.score", build_script="tools/build_music.py" if script else None, seed_or_params=f"tempo={tempo} beats={beats}"))
     if script:
         ensure(root, "tools/build_music.py", BUILD)
@@ -172,7 +172,9 @@ SHORT = score(120, 31.5, A_MIN, vol=vol_for(120, 32, A_MIN), drop_last=True)
 case("mus-1a-the-loop-closes", "mus-1", "M", LOOP_BRIEF, MUS_BIN, TOWN_RULES, lambda r: cue_set(r, TOWN),
      [("the last note rings past the end and is cut", lambda r: cue_set(r, TOWN, scores={"town": LONG_NOTE}), {"seam"}),
       ("0.4 s of silence at the end", lambda r: cue_set(r, TOWN, scores={"town": GAP}), {"seam_tempo"}),
-      ("a beat and a half missing at the end", lambda r: cue_set(r, TOWN, scores={"town": SHORT}), {"seam_tempo"})])
+      ("a beat and a half missing at the end", lambda r: cue_set(r, TOWN, scores={"town": SHORT}), {"seam_tempo"}),
+      ("exported at 44.1 kHz, not the stated 48 kHz", lambda r: cue_set(r, TOWN, render_args=("--rate", "44100")), {"format", "rebuild"}),
+      ("the cue exported but the manifest has no row for it", lambda r: (cue_set(r, TOWN), write_manifest(r, [])), {"masters_exist", "score_renders", "manifest_valid", "manifest_rows", "key", "rebuild"})])
 
 # ============================================================================================ music 2: loudness across cues
 CUES3 = {"town": (120, 32, A_MIN), "battle": (140, 32, D_MIN), "menu": (90, 24, A_MIN)}

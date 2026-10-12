@@ -239,6 +239,16 @@ def make_video(root, clips=(("harbor", 6), ("market", 6)), music="theme_cc0", so
         (root / "tools/build_video.sh").unlink()
 
 
+def moved_cuts(root):
+    root = pathlib.Path(root)
+    shutil.move(str(root / "masters/trailer.cuts.txt"), str(root / "assets/video/trailer.cuts.txt"))
+    m = json.loads((root / "assets/MANIFEST.json").read_text())
+    for r in m["assets"]:
+        if r.get("master") == "masters/trailer.cuts.txt":
+            r["master"] = "assets/video/trailer.cuts.txt"
+    (root / "assets/MANIFEST.json").write_text(json.dumps(m, indent=2))
+
+
 def reference(**kw):
     def go(root):
         make_video(root, **kw)
@@ -275,7 +285,8 @@ ALT_ADD = SCRIPT + " Coming soon to all platforms."
 case("vid-1a-narration-matches-the-script", "vid-1", "M", BRIEF_HEAD.format(body=BODY_PLAIN), video_inputs("harbor", "market"), vrules(), reference(),
      [("the last sentence missing", reference(narration_text=ALT_DROP), {"narration"}),
       ("two words wrong (friends became fire, treasure became dragons: 2 of 22 is over 5%)", reference(narration_text=ALT_SWAP), {"narration"}),
-      ("a line added that is not in the script", reference(narration_text=ALT_ADD), {"narration"})])
+      ("a line added that is not in the script", reference(narration_text=ALT_ADD), {"narration"}),
+      ("both files exported but the manifest has no rows", lambda r: (reference()(r), write_manifest(r, [])), {"manifest_valid", "manifest_rows"})])
 
 # ============================================================================================ video 2: loudness and clipping
 case("vid-2a-platform-loudness", "vid-2", "M", BRIEF_HEAD.format(body=BODY_PLAIN), video_inputs("harbor", "market"), vrules(fmt=False, wer=False) + manifest_rules([])[:0], reference(),
@@ -331,7 +342,9 @@ REPRO_RULES = vrules(fmt=False, loud=False, wer=False) + [
     {"id": "masters_out", "type": "masters_outside_import_path", "import_paths": ["assets"]}]
 case("vid-7a-render-reproducible", "vid-7", "M", BRIEF_HEAD.format(body=BODY_PLAIN + " The composer will rerun the build later, so keep what it takes."), video_inputs("harbor", "market"), REPRO_RULES, reference(),
      [("no build script: made by hand", reference(script=False), {"rebuild"}),
-      ("a script that builds an 8 s video", reference(build_total=8.0), {"rebuild"})])
+      ("a script that builds an 8 s video", reference(build_total=8.0), {"rebuild"}),
+      ("the project file (the cut list) not kept", lambda r: (reference()(r), (pathlib.Path(r) / "masters/trailer.cuts.txt").unlink()), {"masters", "manifest_valid"}),
+      ("the cut list kept under assets/video, which the web build serves", lambda r: (reference()(r), moved_cuts(r)), {"masters", "masters_out", "manifest_valid"})])
 
 # ============================================================================================ controls
 case("vid-c1-plain-trailer", "control", "M", BRIEF_HEAD.format(body=BODY_PLAIN), video_inputs("harbor", "market"), vrules() + [{"id": "rebuild", "type": "rebuild_equivalent", "file": "assets/video/trailer.mp4"}], reference(),

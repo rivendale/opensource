@@ -112,7 +112,7 @@ case("art-1a-palette-locked-downscale", "art-1", "M",
       {"id": "palette", "type": "palette_only", "file": "assets/tiles/crate.png", "palette": "inputs/palette.hex"},
       {"id": "faithful", "type": "matches_blocks", "file": "assets/tiles/crate.png", "source": "inputs/crate.png", "factor": 4, "min_fraction": 0.95}]
      + manifest_rules(["assets/tiles/crate.png"]),
-     ref_crate, [("blurred downscale", bad_crate_blur, {"palette", "faithful"}), ("wrong size", bad_crate_wrongsize, {"size", "faithful"}), ("one off-palette pixel", bad_crate_offpalette, {"palette"})])
+     ref_crate, [("blurred downscale", bad_crate_blur, {"palette", "faithful"}), ("wrong size", bad_crate_wrongsize, {"size", "faithful"}), ("one off-palette pixel", bad_crate_offpalette, {"palette"}), ("the tile exported but the manifest has no row for it", lambda r: (ref_crate(r), write_manifest(r, [])), {"manifest_valid", "manifest_rows"})])
 
 BALLS = {f"frame_{i}.png": img(D.numbered_frame(i)) for i in range(1, 7)}
 
@@ -186,6 +186,16 @@ def bad_hero_opaque(root):
     write_manifest(root, [row("assets/sprites/hero.png", master="inputs/hero_matte.png")])
 
 
+def bad_hero_feathered(root):
+    a = keyed(root, 0, False)
+    inner = a[..., 3] == 255
+    ys, xs = np.nonzero(inner)
+    cy, cx = int(np.median(ys)), int(np.median(xs))
+    a[cy - 1:cy + 2, cx - 1:cx + 2, 3] = 128      # a soft 3x3 patch of partial alpha in the middle of the character
+    write_png(root, "assets/sprites/hero.png", a)
+    write_manifest(root, [row("assets/sprites/hero.png", master="inputs/hero_matte.png")])
+
+
 def bad_hero_fringe(root):
     a = keyed(root, 0, False)
     a[~_near(a[..., 3] == 0) & False] = 0
@@ -217,7 +227,7 @@ case("art-2a-magenta-matte", "art-2", "M",
       {"id": "edge_only", "type": "partial_alpha_edge_only", "file": "assets/sprites/hero.png"},
       {"id": "silhouette", "type": "silhouette", "file": "assets/sprites/hero.png", "source": "inputs/hero_matte.png", "matte": D.MAGENTA, "min_iou": 0.97}]
      + manifest_rules(["assets/sprites/hero.png"]),
-     ref_hero_keyed, [("still opaque", bad_hero_opaque, {"no_matte", "silhouette"}), ("matte-colored rim", bad_hero_fringe, {"no_matte"}), ("keyed out the pink scarf", bad_hero_overkeyed, {"silhouette"})])
+     ref_hero_keyed, [("still opaque", bad_hero_opaque, {"no_matte", "silhouette"}), ("matte-colored rim", bad_hero_fringe, {"no_matte"}), ("keyed out the pink scarf", bad_hero_overkeyed, {"silhouette"}), ("a soft patch of partial alpha inside the character", bad_hero_feathered, {"edge_only"})])
 
 ICON_SHEET = D.icons_on_white()
 ICON_NAMES = ["sword", "shield", "potion", "key"]
@@ -551,6 +561,20 @@ def ref_variants(root, script=True, nondeterministic=False):
     write_manifest(root, [row(f"assets/sprites/hero_{n}.png", master="inputs/hero_base.png", build_script=("tools/build_variants.py" if script else None)) for n in VARIANTS])
 
 
+def bad_variants(root, wrong_color=None, hole=None):
+    ref_variants(root)
+    if wrong_color:
+        a = HERO_BASE.copy()
+        m = (CLOAK_MASK[..., :3].max(axis=2) > 127) & (a[..., 3] == 255)
+        a[m, :3] = D.rgb(wrong_color)
+        write_png(root, "assets/sprites/hero_b.png", a)
+    if hole:
+        a = np.array(Image.open(pathlib.Path(root) / "assets/sprites/hero_c.png").convert("RGBA"))
+        ys, xs = np.nonzero((a[..., 3] == 255) & ~(CLOAK_MASK[..., :3].max(axis=2) > 127))
+        a[ys[0], xs[0], 3] = 0                                     # one pixel of the character (outside the cloak) made transparent
+        write_png(root, "assets/sprites/hero_c.png", a)
+
+
 var_files = [f"assets/sprites/hero_{n}.png" for n in VARIANTS]
 VAR_RULES = []
 for _n, _c in VARIANTS.items():
@@ -563,7 +587,9 @@ case("all-2b-exports-from-a-script", "all-2", "M",
      {"hero_base.png": img(HERO_BASE), "cloak_mask.png": img(CLOAK_MASK)},
      VAR_RULES + manifest_rules(var_files),
      ref_variants,
-     [("exports made by hand, no script", lambda r: ref_variants(r, script=False), {"rebuild"}), ("a script whose output changes every run", lambda r: ref_variants(r, nondeterministic=True), {"rebuild"})])
+     [("exports made by hand, no script", lambda r: ref_variants(r, script=False), {"rebuild"}), ("a script whose output changes every run", lambda r: ref_variants(r, nondeterministic=True), {"rebuild"}),
+      ("hero_b with a yellow cloak, not the asked-for green (the script no longer reproduces it)", lambda r: bad_variants(r, wrong_color=D.YELLOW), {"b_cloak", "rebuild"}),
+      ("hero_c with one pixel of the character cut away", lambda r: bad_variants(r, hole=True), {"c_alpha", "rebuild"})])
 
 # ============================================================================================ controls: briefs with no trap
 HERO_CLEAN = D.hero()
@@ -810,7 +836,7 @@ case("art-c8-style-reference-recorded", "control", "M",
 ICON_FILES = [f"assets/ui/item_{n}.png" for n in ("potion", "scroll", "gem", "coin")]
 
 
-def icon_set(skip_outline=None, off_palette=None):
+def icon_set(skip_outline=None, off_palette=None, wide=None):
     def go(root):
         rows = []
         for k, (n, f) in enumerate(zip(("potion", "scroll", "gem", "coin"), ICON_FILES)):
@@ -818,6 +844,8 @@ def icon_set(skip_outline=None, off_palette=None):
             a = a if skip_outline == k else D.outlined(a)
             if off_palette == k:
                 a[8, 8, :3] = (200, 30, 200)
+            if wide == k:
+                a = np.pad(a, ((0, 0), (0, 1), (0, 0)))      # 17 px wide
             write_png(root, f, a)
             rows.append(row(f, "icon", master="tools/make_items.py", build_script="tools/make_items.py"))
         ensure(root, "tools/make_items.py", "# draws the item icons\n")
@@ -833,7 +861,7 @@ case("art-7a-icons-with-one-outline", "art-7", "M",
      "`inputs/palette.hex`, and every icon with a 1 px outline in 1a1c2c. Record them in the manifest.\n",
      {"palette.hex": PAL},
      SET_RULES, icon_set(),
-     [("the coin has no outline", icon_set(skip_outline=3), {"outline"}), ("one pixel of a color outside the palette in the gem", icon_set(off_palette=2), {"palette"})])
+     [("the coin has no outline", icon_set(skip_outline=3), {"outline"}), ("one pixel of a color outside the palette in the gem", icon_set(off_palette=2), {"palette"}), ("the potion is 17 px wide", icon_set(wide=0), {"sizes"})])
 
 GROUND_FILES = [f"assets/tiles/ground_{n}.png" for n in ("a", "b", "c")]
 GSW = "\n".join(D.GROUND) + "\n"

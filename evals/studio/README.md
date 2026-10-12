@@ -146,6 +146,12 @@ Controls: a page that does all three; a page without `viewport-fit=cover` and co
 
 A project with no assets needs no manifest. Copied code is found by shared runs of substantive lines (4 against the study-only project, 6 against the scaffold).
 
+## The must-fail gate
+
+A full `selfcheck.py` run (no case prefix) fails unless every rule TYPE in use in the set is failed by at least one defect somewhere in that set; a rule type that nothing makes fail may not be able to fail. `--coverage` reports it for a partial run, `--no-coverage` skips it. The first run of the gate found five art rule types (`manifest_rows`, `partial_alpha_edge_only`, `set_sizes`, `alpha_equals`, `mask_color`), two music (`audio_format`, `manifest_rows`) and four video (`manifest_rows`, `manifest_valid`, `masters_exist`, `masters_outside_import_path`) that no defect failed, and each got a defect. Two real checker bugs came out of adding them: the music onset timing used a nominal 5 ms hop (wrong at 44.1 kHz: a good loop read as broken), and the master-under-the-import-path rule recognised files by suffix, so it could never fail for a video cut list; it now also reads the manifest's own `master` and `build_script` paths.
+
+What the gate does not cover: a denying probe in the runner (a check that an operation is REFUSED) can pass because the target never exists, which no defect tree shows. That needs a run in a deliberately permissive sandbox in which the probe must fail (a permissive twin), and that needs the container, so it belongs to the runner.
+
 ## How the checkers were checked
 
 `python3 evals/studio/game-art/build/selfcheck.py` builds, for every case, a correct output tree and several defective ones (a blurred resize, a magenta rim, a
