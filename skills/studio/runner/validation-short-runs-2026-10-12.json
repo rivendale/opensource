@@ -1,0 +1,73 @@
+{
+  "fixtures": [
+    {
+      "scenario": "questions",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "final-scratch-snapshot"
+    },
+    {
+      "scenario": "capture-error",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "checker-error",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "preflight-error",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "invalid-key-quote",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "invalid-key-backslash",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    }
+  ],
+  "diagnostic_redaction": "passed",
+  "pattern_scan_suppression": "passed",
+  "real_provider_calls": 0,
+  "date": "2026-10-12",
+  "base_commit": "61af783f4f1f5e1b0705433dd8233c7b42084153",
+  "image": "localhost/studio-runner@sha256:a9d142c18396d7fe748ef1d64ca37486fcc017853d94cffac147e1f8f17fc8ca",
+  "baseline": "one-response questions already pass; injected capture failure loses .run and exception details on the merged runner",
+  "original_pilot_root_cause": "not reproduced; no new paid run",
+  "mandatory_isolation_selftest": "passed",
+  "runner_sha256": "e161d906b50e29a7c61ca44978fcb6b3283f4c4d3dc52656dd4942104b3ba1b6",
+  "test_sha256": "38d855e846b286ce591232eeb7090b7f43b6c1515a54bab12cb7e2f09a52fbf4",
+  "relative_links": {
+    "checked": 441,
+    "problems": 0
+  },
+  "syntax_and_whitespace": "passed",
+  "skill_score_published": false,
+  "exact_key_tool_echo_suppression": "passed",
+  "diagnostic_formatting_fallback": "passed",
+  "exact_key_mutant_sensitivity": "passed: removing the exact-key scan publishes the synthetic tool echo, violating the new fixture assertion",
+  "FD_quoted_and_backslashed_keys": "refused before provider calls"
+}

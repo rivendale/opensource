@@ -181,7 +181,30 @@ The final snapshot is scanned again before publication. If `.run/` contains an A
 value or recognizable pattern, or a proxy response contains a key, the result is a failed incident:
 no scratch tree is kept, the reason is recorded without the secret, and the operator is told to
 rotate the key. Result directories are private by default and are never overwritten. Ordinary
-safe agent failures may keep their captured tree. Unsafe archives are refused rather than extracted.
+safe agent failures keep scanned evidence. Exceptions record their type, a bounded message
+with exact keys and recognizable key patterns redacted before truncation (or
+`message: unavailable` if formatting fails), and source filenames,
+functions and line numbers without host paths. FD keys containing quotes or backslashes
+are refused, so JSON encoding cannot escape an accepted key. Other encoded or split keys
+are not redacted; the scanner does not claim detection of arbitrary encodings. Unsafe archives are refused rather than extracted.
+
+If the container fails before a complete capture arrives, the host retains the events it has
+received in `.run/` and scans them before retaining anything. `capture_scope` distinguishes
+`host-received-events-only` from `drained-scratch-snapshot`; the former proves neither drain
+nor a complete output tree. A failed scan suppresses the tree; an unavailable scan is explicitly
+`not_completed`, never a clean scan. Checker answers still require the existing successful drain
+and snapshot scan. A successful agent response that ends in questions can reach the checker
+without producing exports or making tool calls.
+
+After a fresh isolation selftest, run the local regression fixture with the same immutable image:
+
+```sh
+python3 skills/studio/runner/tests/short_runs.py --store /tmp/studio-store --image localhost/studio-runner@sha256:YOUR_LOADED_DIGEST --selftest /tmp/studio-selftest/result.json --output /tmp/studio-short-runs
+```
+
+This uses an in-process synthetic provider, never a real credential or external API. It checks
+one-response questions, capture transport failure, checker failure, preflight failure, redacted
+diagnostics and pattern-scan suppression. Its outputs are runner regressions, not skill scores.
 
 ## Fixture replay
 
