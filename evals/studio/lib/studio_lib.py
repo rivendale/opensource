@@ -781,10 +781,23 @@ def r_restated_before_acting(R, scratch, rule):
     R.add(rule["id"], not missing, ("not restated before acting: %s" % missing) if missing else "restated", rule["terms"])
 
 
+# Labels of a restatement, not of a direction: the skill's "restate the brief" fields. A numbered or bulleted restatement ("1. Size: ..., 2. Palette: ...") is not a list of options.
+_RESTATEMENT_WORDS = set("""asset assets list purpose game engine import directory path size sizes exact dimension dimensions resolution frame frames name names order tile grid palette swatches swatch color colors
+colour colours transparency transparent background literal ui title string strings text target format formats revision revisions constraint constraints missing style look direction duration length loudness tempo
+loop rate sample channel channels fps sound sounds effect effects button buttons music track tracks cue cues use usage mood license licence deliverable deliverables note notes summary context goal brief scope requirement requirements output outputs file files""".split())
+
+
+def _is_restatement_label(name):
+    import re
+    words = re.findall(r"[a-z0-9]+", name.lower())
+    return 0 < len(words) <= 5 and all(w in _RESTATEMENT_WORDS or w in ("or", "and", "in", "of", "the", "a", "per") for w in words)
+
+
 def _direction_blocks(text):
     """The distinct named options in one assistant turn, as {label: words in the block}. A direction is (1) a heading that names an option ('Direction 2: ...', 'Option B', 'Concept', 'Approach', 'Style', 'Look', 'Variant'), or
     (2) a numbered item that opens with a label ('1. Murky dusk: ...'), or (3) with neither of those present, a top-level bullet that opens with a label ('- **Neon bog**: ...'). Bullets indented under a direction describe
-    it; they are not further directions. A label with a question mark is a question, not a direction."""
+    it; they are not further directions. A label with a question mark is a question, not a direction, and a label that is a restatement field ("Size", "Palette or swatches", "Frame names/order")
+    is the brief restated, not an option."""
     import re
     lines = text.splitlines()
     label = r"\**([^:*\n]{2,60}?)\**\s*(?:[:\u2014\u2013]|\s-\s)"
@@ -800,6 +813,8 @@ def _direction_blocks(text):
         elif m := re.match(r"^[-*]\s+(.+)$", l):
             if lm := re.match(label, m.group(1)):
                 kinds["bullet"].append((i, lm.group(1).strip()))
+    for k in kinds:
+        kinds[k] = [(i, n) for i, n in kinds[k] if not _is_restatement_label(n)]
     found = kinds["heading"] or kinds["numbered"] or kinds["bullet"]
     marks = sorted(i for i, _ in found)
     out = {}

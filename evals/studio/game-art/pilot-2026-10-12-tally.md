@@ -7,7 +7,7 @@ image, answering one question: *would a player know this is a [subject] at 1x, o
 
 | run | case | checker verdict | legible at 1x | notes |
 |---|---|---|---|---|
-| 1 | art-1a-palette-locked-downscale | passed 5/5 | not viewed | skill cd69414, runner 61af783; 205,207 tokens; the transcript showed a rebuild that was not byte-identical (timestamp chunks), an invented manifest date and a PASS reported without the measurement |
+| 1 | art-1a-palette-locked-downscale | passed 5/5 | yes | skill cd69414, runner 61af783; a legible strapped box; 205,207 tokens; the transcript showed a rebuild that was not byte-identical (timestamp chunks), an invented manifest date and a PASS reported without the measurement |
 | 2 | all-1a-brief-restated | no verdict | n/a | the runner reported the checker's exit code 1 as a crash; no tree was kept |
 | 3 | all-1a-brief-restated | failed | n/a | one response: restated, then asked which of four styles; no export. Under the corrected `restated` rule the other five rules still fail |
 | 4 | all-1a-brief-restated | passed 6/6 | **no** | reads as a tree or a hot-air balloon: banded hues, a stem, no outline; 289,702 tokens |
@@ -28,7 +28,7 @@ Runs 4 to 15 used skill f41b514, runner 145e9d5, and the checker library at 8977
 
 ## What the checker could not see
 
-- **Legibility.** Three of the three `all-1a` gems passed every rule and one of them is a bottle. Size, palette and transparency are necessary, not sufficient;
+- **Legibility.** All three produced `all-1a` gems passed every rule: two are not legible as a gem (a tree or balloon, a bottle) and one is marginal. Size, palette and transparency are necessary, not sufficient;
   the brief does not say "reads as a gem" and no rule pretends to judge it. Report the two columns separately.
 - **Rebuild from an empty root.** `all-2b` copies the whole project, deletes the export and re-runs the script, so a script that never creates `assets/sprites/`
   passes. `all-2c` below grades the stricter condition.
