@@ -158,8 +158,6 @@ def check(a):
     cw, ch = cell_size(w, h, a.cell or [w, h])
     palette = {color(c) for c in a.palette.split(',')} if a.palette else None
     matte = color(a.matte) if a.matte else None
-    if a.alpha == 'transparent' and matte is None:
-        raise ValueError('transparent checks require --matte with the brief background color')
     edge_alpha = a.edge_alpha or a.alpha == 'transparent'
     rules = []
     def rule(name, measured, threshold, passed):

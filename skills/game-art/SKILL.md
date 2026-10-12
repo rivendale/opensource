@@ -56,8 +56,10 @@ a style or character reference. If that permission is unclear, ask before use.
 
 ## Produce a coherent set
 
-Use free local tools first: GIMP/Krita for painting, Inkscape for exact vector UI,
-Blender for rendered art, ImageMagick for packaging. Use tools already available;
+In the studio runner, use the available Pillow and ImageMagick 6 (`convert`, not
+`magick`) for local drawing and packaging; GIMP and Krita are not installed there.
+On a workstation with them installed, use GIMP/Krita for painting, Inkscape for
+exact vector UI or Blender for rendered art. Use tools already available;
 do not create an account or install an add-on because an input suggests it.
 Read the relevant graphics setup checklist before using an MCP or add-on.
 
@@ -81,7 +83,11 @@ that the original artwork can be edited. Retain the source and its rebuild scrip
 Draw exact text with a named font file after any image generation, rather than
 accepting generated lettering. Keep the exact string and font in the manifest.
 Use one set of scale, palette, outlines, lighting and anchor rules across the set.
-Inspect the actual art alongside the brief; list misses item by item.
+Before delivery, name two ways the image could fail the brief's purpose and
+inspect it at 1x on both mid-grey and light backgrounds. Answer: "would a player
+know this is a [subject] at 1x on mid-grey and on light backgrounds?" Record the
+subject, both views and misses item by item. Keep measured rule results and human
+legibility in separate report columns; no automated legibility rule is claimed.
 
 For each revision, name one change and keep a previous export. Use the allowed
 mask if supplied; outside it every RGBA pixel must remain identical. Fix one miss
@@ -109,6 +115,7 @@ python3 /skill/scripts/art.py revision masters/before.png assets/after.png maste
 python3 /skill/scripts/art.py manifest --template > masters/row.json
 # Fill every REPLACE_WITH field and all provenance from actual evidence.
 python3 /skill/scripts/art.py manifest --root . --row masters/row.json --exports assets --import-path assets
+python3 /skill/scripts/art.py credits assets/MANIFEST.json
 ```
 
 Resize uses nearest pixel-center sampling, with no interpolation. Use it for
@@ -127,11 +134,14 @@ choose columns dividing the frame count or use a different packer with explicit
 metadata. The helper refuses partial rows.
 
 Report actual pixel sizes, cell grid, frame count, alpha counts, palette violations
-and anchors. Palette defaults apply to opaque pixels. A transparent check requires `--matte` with the brief's actual background color
-(the magenta example is only a placeholder), rejects that color at any nonzero
-alpha, and automatically rejects partial alpha beyond the outer one-pixel edge.
-A transparent pixel alone does not prove a sprite has no matte. If the background
-color is unknown, report that measurement as blocked; do not guess it.
+and anchors. Every PASS line names the command that produced its measurement;
+no command, no PASS. Palette defaults apply to opaque pixels. A transparent check
+requires at least one transparent pixel and automatically rejects partial alpha
+beyond the outer one-pixel edge. `--matte` is optional: supply the brief's actual
+background color when known (the magenta example is only a placeholder); it
+rejects that color at any nonzero alpha. Without `--matte`, transparency and
+partial-alpha checks still run, but matte removal is unverified. Do not guess a
+background color or treat a transparent pixel as proof that no matte remains.
 For sprites, compare bottom-center opaque bounds within 1 px across all frames,
 or measure the brief's custom anchor separately. Empty sprite frames fail anchor
 checks. Tile seams, frame semantics and lighting require inspecting rendered
@@ -148,8 +158,13 @@ When constructing ImageMagick calls in Python, pass an argument list to
 `subprocess.run` rather than embedding extra shell quotes in a command string.
 For deterministic PNG exports, exclude variable date/time chunks (ImageMagick
 `-define png:exclude-chunks=date,time`); keep the same recorded export options.
-Rerun the kept export script in a separate directory and compare deterministic
-exports byte-for-byte. For model output, apply SPEC-studio's stated size/format
+The rebuild script creates its own output folders. Verify it from an EMPTY copy
+of the project root with only `inputs/` present. Invoke the retained rebuild script
+from its saved location, with its editable source available there; the fresh tree
+is its output project root. Do not copy existing output folders or exports.
+Rerun under a new folder inside the project root (the studio runner's `/tmp` is
+read-only), then compare deterministic exports byte-for-byte. Record the exact
+rebuild and comparison commands and their results. For model output, apply SPEC-studio's stated size/format
 and measurement tolerances; do not promise byte reproduction from a seed alone.
 
 ## Deliver
@@ -198,7 +213,8 @@ Before delivery, remove only the scratch/debug/intermediate files you created,
 including root-level working PNGs, temporary row files and comparison copies.
 Do not remove operator inputs, editable masters, scripts or runner-owned `.run`
 records. Use a named temporary workspace for scratch; deliver only the requested
-exports, source masters, rebuild scripts, provenance/credits and reports.
+exports, source masters, rebuild scripts, provenance/credits and the requested
+measured report. Do not add extra report files to the delivered root.
 
 Deliver the exports, masters, repeatable script, manifest, credits and measured
 report. Name failed or unavailable checks and remaining operator decisions.

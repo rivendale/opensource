@@ -1,0 +1,253 @@
+{
+  "date_utc": "2026-10-12T21:51:40.997433+00:00",
+  "scope": "post-batch builder checks only; no independent acceptance or provider calls",
+  "active_file_sha256": {
+    "skills/game-art/scripts/art.py": "1bf79ad5161b799311773264b6c6064b2215523bb00f35a021271928e78134a8",
+    "skills/game-art/SKILL.md": "7f5265933af4d193f3aa105bee4c9ad487702d3ac1c79fcc7cdb4dd63bd2129d"
+  },
+  "observations": [
+    {
+      "name": "transparent-no-matte",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/transparent-no-matte.png",
+        "--size",
+        "5",
+        "5",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 0,
+      "report": {
+        "pass": true,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              5,
+              5
+            ],
+            "threshold": [
+              5,
+              5
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": true,
+            "measured": {
+              "transparent": 1,
+              "partial": 0
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "opaque-no-matte",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/opaque-no-matte.png",
+        "--size",
+        "5",
+        "5",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 1,
+      "report": {
+        "pass": false,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              5,
+              5
+            ],
+            "threshold": [
+              5,
+              5
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": false,
+            "measured": {
+              "transparent": 0,
+              "partial": 0
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "interior-partial-no-matte",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/interior-partial-no-matte.png",
+        "--size",
+        "5",
+        "5",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 1,
+      "report": {
+        "pass": false,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              5,
+              5
+            ],
+            "threshold": [
+              5,
+              5
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": true,
+            "measured": {
+              "transparent": 1,
+              "partial": 1
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": false,
+            "measured": 1,
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "edge-partial-no-matte",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/edge-partial-no-matte.png",
+        "--size",
+        "5",
+        "5",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 0,
+      "report": {
+        "pass": true,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              5,
+              5
+            ],
+            "threshold": [
+              5,
+              5
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": true,
+            "measured": {
+              "transparent": 1,
+              "partial": 1
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "residual-matte",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-3ip34o23/residual-matte.png",
+        "--size",
+        "5",
+        "5",
+        "--alpha",
+        "transparent",
+        "--matte",
+        "#0a141e"
+      ],
+      "exit": 1,
+      "report": {
+        "pass": false,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              5,
+              5
+            ],
+            "threshold": [
+              5,
+              5
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": true,
+            "measured": {
+              "transparent": 1,
+              "partial": 0
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "matte",
+            "pass": false,
+            "measured": 24,
+            "threshold": 0
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          }
+        ]
+      }
+    }
+  ]
+}
