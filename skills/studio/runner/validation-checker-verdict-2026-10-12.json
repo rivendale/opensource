@@ -1,0 +1,169 @@
+{
+  "fixtures": [
+    {
+      "scenario": "questions",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "final-scratch-snapshot"
+    },
+    {
+      "scenario": "capture-error",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "checker-error",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "preflight-error",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "invalid-key-quote",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "invalid-key-backslash",
+      "passed": true,
+      "mock_requests": 0,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "host-received-events-only"
+    },
+    {
+      "scenario": "fail-verdict",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "final-scratch-snapshot"
+    },
+    {
+      "scenario": "checker-exit-2",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "stderr-redaction",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "final-scratch-snapshot"
+    },
+    {
+      "scenario": "checker-crash-exit-1",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "invalid-stdout-exit-1",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "exit-1-passing-rules",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "exit-0-failing-rules",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "drained-scratch-snapshot"
+    },
+    {
+      "scenario": "stderr-shortened",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "final-scratch-snapshot"
+    },
+    {
+      "scenario": "stderr-long",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "passed",
+      "capture_scope": "final-scratch-snapshot"
+    },
+    {
+      "scenario": "incident-cleanup",
+      "passed": true,
+      "mock_requests": 1,
+      "real_requests": 0,
+      "key_scan": "incident",
+      "capture_scope": "suppressed"
+    }
+  ],
+  "diagnostic_redaction": "passed",
+  "pattern_scan_suppression": "passed",
+  "exact_key_tool_echo_suppression": "passed",
+  "diagnostic_formatting_fallback": "passed",
+  "real_provider_calls": 0,
+  "date": "2026-10-12",
+  "base_commit": "c0df228f65a15903696efe55aa291c01b5199066",
+  "image": "localhost/studio-runner@sha256:f9c17f1a35c8aa9eb023d84ac07bf700819f712fe76a350a40a551fcd71fe40f",
+  "source_files_sha256": {
+    "skills/studio/runner/run.py": "2d528a84ec9db653f3c4af72acb77cf147c1ea39e4ec7343ff4b51436ac1d524",
+    "skills/studio/runner/supervisor.py": "fc7d3f61930b0a9544022e050696d11b0250d07e69a2e611c7a15ad45f9dd130",
+    "skills/studio/runner/tests/short_runs.py": "dfc74d9ddf86c51404a79a1e9565131745f1ea32328a537f84004159a8a36bc2"
+  },
+  "isolation_selftest": "passed",
+  "baseline": "merged runner turns the same exit-1/no-output fixture into checker failed; candidate completes with failing verdict and per-rule measurements",
+  "validation": {
+    "fixtures_passed": 16,
+    "stderr_exit_2_retained": "passed",
+    "stderr_exact_key_and_pattern_redaction": "passed",
+    "python_syntax_and_whitespace": "passed",
+    "relative_links_checked": 441,
+    "relative_link_problems": 0,
+    "checker_crash_exit_1": "passed",
+    "invalid_stdout_exit_1": "passed",
+    "exit_rule_consistency_both_directions": "passed",
+    "stderr_truncation_after_redaction": "passed",
+    "incident_checker_fields_suppressed": "passed"
+  },
+  "live_result_contract": {
+    "status": "completed for both normal verdicts",
+    "verdict": "passed or failed",
+    "host_exit": "0 for completed; 1 for runner errors"
+  },
+  "stderr_limit_bytes": 65536,
+  "result_stderr_limit_bytes": 2048,
+  "pilot_runs_consumed": 3,
+  "skill_scores_published": false
+}

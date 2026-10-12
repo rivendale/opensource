@@ -297,22 +297,23 @@ def main():
             path = Path(folder) / name
             if not str(path).startswith("/scratch/.run/") and path.name != "brief.md":
                 os.chown(path, 1001, 1001)
-    with Path("/audit/checker.out").open("wb") as output:
+    with Path("/audit/checker.out").open("wb") as output, Path("/audit/checker.err").open("wb") as errors:
         checker_env = {**clean_env("/home/checker"), "STUDIO_LIB": "/audit/lib", "PYTHONPATH": "/audit/lib"}
         process = subprocess.Popen(["python3", "/audit/answers/check.py", "/scratch", "/audit/answers/expected.json"],
                                    cwd="/scratch", env=checker_env, preexec_fn=unprivileged(1001),
-                                   stdout=output, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+                                   stdout=output, stderr=errors, stdin=subprocess.DEVNULL)
         deadline = time.monotonic() + 120
         while process.poll() is None:
-            if time.monotonic() > deadline or output.tell() > 1024 * 1024:
+            if time.monotonic() > deadline or output.tell() > 1024 * 1024 or errors.tell() > 65536:
                 raise RuntimeError("checker time or output limit")
             time.sleep(0.05)
     code = process.returncode
     drain()
     content = Path("/audit/checker.out").read_bytes()
-    if len(content) > 1024 * 1024:
+    stderr = Path("/audit/checker.err").read_bytes()
+    if len(content) > 1024 * 1024 or len(stderr) > 65536:
         raise RuntimeError("checker output too large")
-    send("checker", code=code, output=content.decode("utf-8"), limits_hit=limits_hit())
+    send("checker", code=code, output=content.decode("utf-8"), stderr=stderr.decode("utf-8", "replace"), limits_hit=limits_hit())
     snapshot()
     send("done")
     return 0

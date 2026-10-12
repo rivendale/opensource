@@ -43,7 +43,14 @@ def test(args, mode):
         def close(self): pass
     saved_upstream = proxy.http.client.HTTPSConnection
     saved_capture, saved_checker, saved_runtime = run.capture, run.checker_result, run.Runtime
+    saved_archive = run.archive
     proxy.http.client.HTTPSConnection = Upstream
+    if mode == 'incident-cleanup':
+        def tainted(frames, destination, limit):
+            scratch = saved_archive(frames,destination,limit)
+            if destination.name=='after': (scratch/'.run/synthetic-echo.txt').write_bytes(KEY)
+            return scratch
+        run.archive = tainted
     if mode == 'preflight-error':
         def refused(*_): raise RuntimeError('synthetic preflight failure')
         run.Runtime = refused
@@ -60,7 +67,26 @@ def test(args, mode):
             (case/'brief.md').write_text('Synthetic question-ending runner transport fixture.\n')
             (case/'SKILL.md').write_text('Ask which size and palette, then wait for answers.\n')
             (case/'expected.json').write_text('{}')
-            (case/'check.py').write_text(CHECKER)
+            checker = CHECKER
+            if mode == 'fail-verdict':
+                checker = checker.replace("'pass':not (p/'assets').exists()", "'pass':(p/'assets').exists()") + "\nsys.exit(1)\n"
+            if mode == 'checker-crash-exit-1':
+                checker = "raise RuntimeError('synthetic checker crash')\n"
+            if mode == 'invalid-stdout-exit-1':
+                checker = "import sys\nprint('invalid-json')\nsys.exit(1)\n"
+            if mode == 'exit-1-passing-rules':
+                checker += "\nsys.exit(1)\n"
+            if mode == 'exit-0-failing-rules':
+                checker = checker.replace("'pass':not (p/'assets').exists()", "'pass':(p/'assets').exists()")
+            if mode == 'stderr-shortened':
+                checker += "\nsys.stderr.write('SYNTHETIC-NOT-A-CREDENTIAL'*100)\n"
+            if mode == 'stderr-long':
+                checker += "\nsys.stderr.write('safe diagnostic '*300)\n"
+            if mode == 'checker-exit-2':
+                checker = "import sys\nsys.stderr.write('synthetic checker traceback\\n')\nsys.exit(2)\n"
+            if mode == 'stderr-redaction':
+                checker += "\nsys.stderr.write('synthetic ' + 'SYNTHETIC-NOT-A-CREDENTIAL' + ' ' + 'sk-' + 'x'*20)\n"
+            (case/'check.py').write_text(checker)
             fd, writer = os.pipe()
             fd_key = KEY + (b'"' if mode == 'invalid-key-quote' else b'\\' if mode == 'invalid-key-backslash' else b'')
             os.write(writer, fd_key); os.close(writer)
@@ -73,6 +99,11 @@ def test(args, mode):
             try: code = run.main()
             finally: os.close(fd)
             result = json.loads((output/'result.json').read_text())
+            if mode == 'incident-cleanup':
+                assert code==1 and result['incident'] and result['key_scan']=='incident'
+                assert not (output/'scratch').exists()
+                assert all(k not in result for k in ['checker','checker_exit','checker_stderr','checker_stderr_truncated','verdict','usage'])
+                return {'scenario':mode,'passed':True,'mock_requests':len(calls),'real_requests':0,'key_scan':'incident','capture_scope':'suppressed'}
             capture = json.loads((output/'scratch/.run/run.json').read_text())
             if mode.startswith('invalid-key-'):
                 assert code == 1 and not calls and result['key_scan'] == 'passed'
@@ -90,19 +121,43 @@ def test(args, mode):
             assert all((output/'scratch/.run'/name).is_file() for name in
                        ['transcript.md','run.json','usage.json','proxy.log'])
             assert KEY not in b''.join(p.read_bytes() for p in (output/'scratch/.run').iterdir())
-            if mode == 'questions':
-                assert code == 0 and result['status'] == 'passed' and all(r['pass'] for r in result['checker']['rules'])
+            if mode in ('questions', 'stderr-redaction','stderr-shortened','stderr-long'):
+                assert code == 0 and result['status'] == 'completed' and result['verdict'] == 'passed' and all(r['pass'] for r in result['checker']['rules'])
+            elif mode == 'fail-verdict':
+                assert code == 0 and result['status'] == 'completed' and result['verdict'] == 'failed'
+                assert result['checker_exit'] == 1 and not all(r['pass'] for r in result['checker']['rules'])
+                assert 'exception' not in result and 'capture_scope' not in result
+            elif mode in ('checker-crash-exit-1','invalid-stdout-exit-1'):
+                assert code == 1 and result['status']=='failed' and result['checker_exit']==1
+                assert 'verdict' not in result and 'checker' not in result
+                if mode=='checker-crash-exit-1':
+                    assert 'Traceback' in result['checker_stderr'] and 'synthetic checker crash' in result['checker_stderr']
+            elif mode in ('exit-1-passing-rules','exit-0-failing-rules'):
+                assert code==1 and result['status']=='failed' and 'verdict' not in result
+                assert result['exception']['message']=='checker exit code disagrees with its rules'
+            elif mode == 'checker-exit-2':
+                assert code == 1 and result['status'] == 'failed' and result['checker_exit'] == 2
+                assert 'synthetic checker traceback' in result['checker_stderr']
+                assert result['exception']['message'] == 'checker error'
             else:
                 assert code == 1 and result['status'] == 'failed'
                 assert result['exception']['type'] == ('RuntimeError' if mode=='capture-error' else 'ValueError')
                 assert 'synthetic' in result['exception']['message']
                 assert capture['exception'] == result['exception']
                 assert result['capture_scope'] == ('host-received-events-only' if mode=='capture-error' else 'drained-scratch-snapshot')
+            if mode == 'stderr-shortened':
+                assert not result['checker_stderr_truncated'] and len(result['checker_stderr'])==1000
+            if mode == 'stderr-long':
+                assert result['checker_stderr_truncated'] and len(result['checker_stderr'].encode())==2048
+            if mode == 'stderr-redaction':
+                assert KEY.decode() not in result['checker_stderr'] and 'sk-' not in result['checker_stderr']
+                assert '[REDACTED]' in result['checker_stderr']
             return {'scenario':mode,'passed':True,'mock_requests':len(calls),'real_requests':0,
                     'key_scan':result['key_scan'],'capture_scope':result.get('capture_scope','final-scratch-snapshot')}
     finally:
         proxy.http.client.HTTPSConnection = saved_upstream
         run.capture, run.checker_result, run.Runtime = saved_capture, saved_checker, saved_runtime
+        run.archive = saved_archive
 
 
 def main():
@@ -129,7 +184,7 @@ def main():
         def __str__(self): raise RuntimeError('synthetic formatting failure')
     assert run.exception_receipt(BrokenString(),[]) == {'type':'BrokenString','message':'unavailable'}
     assert run.exception_receipt(ValueError('test'),['wrong-type'])['message']=='unavailable'
-    results=[test(args,mode) for mode in ['questions','capture-error','checker-error','preflight-error','invalid-key-quote','invalid-key-backslash']]
+    results=[test(args,mode) for mode in ['questions','capture-error','checker-error','preflight-error','invalid-key-quote','invalid-key-backslash','fail-verdict','checker-exit-2','stderr-redaction','checker-crash-exit-1','invalid-stdout-exit-1','exit-1-passing-rules','exit-0-failing-rules','stderr-shortened','stderr-long','incident-cleanup']]
     (args.output/'receipt.json').write_text(json.dumps({'fixtures':results,'diagnostic_redaction':'passed',
         'pattern_scan_suppression':'passed','exact_key_tool_echo_suppression':'passed','diagnostic_formatting_fallback':'passed','real_provider_calls':0},indent=2)+'\n')
     print(json.dumps({'fixtures_passed':len(results),'real_provider_calls':0}))

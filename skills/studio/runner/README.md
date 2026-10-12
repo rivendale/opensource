@@ -286,3 +286,21 @@ snapshot used for scoring remain operator choices. No studio skill has been scor
 Token usage is accumulated from validated assistant response events as they arrive, and retained in `result.json`, `.run/usage.json` and `.run/run.json` when a later tool or turn limit fails the run. A final cumulative event does not add those tokens a second time. Runs failing before any reported response retain an empty usage object.
 
 The [2026-10-12 follow-up receipt](validation-followup-2026-10-12.json) records the failed-run usage regression, fresh self-test and additional phone replays with a current checker bundle. The [provider transport receipt](validation-provider-2026-10-12.json) covers one real response; its one-call cap deliberately stopped the evaluation, so it is not a completed skill score.
+
+## Completed verdicts and checker errors
+
+Live runs that reach the checker finish with `status: completed` and a separate
+`verdict: passed` or `verdict: failed`. Both completed verdicts return host exit 0;
+`checker_exit` and all per-rule measurements are retained. Checker exit 1 means
+a failing verdict, including a run that asks questions and produces no exports.
+Exit 1 requires valid checker JSON and failing rules. Empty/invalid stdout, or
+a disagreement between the exit code and the rules, is a runner error.
+Exit 2 or any other checker exit is a runner error, `status: failed`, with host exit 1.
+Probe and replay status conventions remain unchanged.
+
+Checker stderr is captured separately under root-owned `/audit`, bounded to 64 KiB,
+and sent only after the agent is drained. The host records a redacted, bounded
+`checker_stderr` (up to 2,048 bytes) and `checker_stderr_truncated` measured after redaction in the result,
+including on checker exit 2. It uses the same exact-key/pattern redaction and safe
+formatting fallback as exception diagnostics. Unredacted stderr is not retained
+in the delivered scratch tree. Encoded or split secrets remain outside that guarantee.
