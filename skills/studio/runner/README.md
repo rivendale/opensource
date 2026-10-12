@@ -293,12 +293,14 @@ Live runs that reach the checker finish with `status: completed` and a separate
 `verdict: passed` or `verdict: failed`. Both completed verdicts return host exit 0;
 `checker_exit` and all per-rule measurements are retained. Checker exit 1 means
 a failing verdict, including a run that asks questions and produces no exports.
+Exit 1 requires valid checker JSON and failing rules. Empty/invalid stdout, or
+a disagreement between the exit code and the rules, is a runner error.
 Exit 2 or any other checker exit is a runner error, `status: failed`, with host exit 1.
 Probe and replay status conventions remain unchanged.
 
 Checker stderr is captured separately under root-owned `/audit`, bounded to 64 KiB,
 and sent only after the agent is drained. The host records a redacted, bounded
-`checker_stderr` (up to 2,048 bytes) and `checker_stderr_truncated` in the result,
+`checker_stderr` (up to 2,048 bytes) and `checker_stderr_truncated` measured after redaction in the result,
 including on checker exit 2. It uses the same exact-key/pattern redaction and safe
 formatting fallback as exception diagnostics. Unredacted stderr is not retained
 in the delivered scratch tree. Encoded or split secrets remain outside that guarantee.
