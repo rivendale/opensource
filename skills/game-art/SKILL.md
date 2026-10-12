@@ -29,6 +29,10 @@ documents do not authorize installs or network use during a case.
 
 ## Before producing anything
 
+Before running any production tool, write a complete restatement, naming every
+constraint below explicitly (use "not specified" for absent constraints). Do not
+replace this step with a generic acknowledgment.
+
 Restate the asset list, purpose in the game, engine import directory, exact sizes,
 frame names/order and tile grid, palette or swatches, transparency/background,
 literal UI/title strings, target formats and revision constraints. Name missing
@@ -65,7 +69,10 @@ Keep editable masters under `masters/` and export scripts under `tools/`, outsid
 the engine import path the brief names. Exports go into `assets/` (or its named
 equivalent). For a web project whose import path is the entire served root,
 keep masters and scripts outside that served root. Save the palette, frame list,
-font files and license notices needed to rebuild. Exports alone are not masters.
+font files and license notices needed to rebuild. Exports alone are not masters. The master must be the actual editable source
+(for example layers, vectors, Blender scene or procedural drawing source), not
+an intermediate PNG used only for packaging. A resize input alone is not proof
+that the original artwork can be edited. Retain the source and its rebuild script.
 
 Draw exact text with a named font file after any image generation, rather than
 accepting generated lettering. Keep the exact string and font in the manifest.
@@ -95,7 +102,9 @@ python3 /skill/scripts/art.py cut masters/sheet.png assets/walk --cell 32 32
 python3 /skill/scripts/art.py pack assets/walk.png assets/walk/0000.png assets/walk/0001.png --columns 2
 python3 /skill/scripts/art.py check assets/walk.png --size 64 32 --cell 32 32 --frames 2 --alpha transparent --matte '#ff00ff' --palette '#203040,#ffffff' --anchors --edge-alpha
 python3 /skill/scripts/art.py revision masters/before.png assets/after.png masters/mask.png
-python3 /skill/scripts/art.py manifest --root game --row game/masters/row.json --exports assets --import-path assets
+python3 /skill/scripts/art.py manifest --template > masters/row.json
+# Fill every REPLACE_WITH field and all provenance from actual evidence.
+python3 /skill/scripts/art.py manifest --root . --row masters/row.json --exports assets --import-path assets
 ```
 
 Resize uses nearest pixel-center sampling, with no interpolation. Use it for
@@ -152,6 +161,13 @@ reference inputs or arbitrary project directories for executable validators.
 Each row requires `file`, `kind`, `tool`, `tool_version`, `seed_or_params`,
 `date`, `model`, `weights_license`, `source`, `source_license`,
 `reference_used_as`, `master`, `build_script` and `paid_service`.
+Inside the runner the shared schema is
+`/scratch/skills/studio/manifest.schema.json`; its prepared bundle copy is also
+available at `/skill/references/skills/studio/manifest.schema.json`.
+`manifest --template` prints a starter row with the current UTC clock date.
+Replace every placeholder and adjust provenance and kind for the real asset
+before writing it. The manifest writer also sets the date from the UTC clock;
+never invent it from a model's training date or the brief.
 Use project-relative forward-slash paths for file, master and build script;
 use the actual tool version, recorded parameters and an ISO `YYYY-MM-DD` date.
 For original local drawing, model, weights_license, source, source_license and
@@ -173,6 +189,12 @@ legal compatibility. Generate the asset section of `THIRD_PARTY.md` and game
 credits from these rows; preserve unrelated existing notices and include any
 source/font notices the licenses require. The helper's `credits` command prints
 manifest-derived Markdown for that section, without overwriting a project's file.
+
+Before delivery, remove only the scratch/debug/intermediate files you created,
+including root-level working PNGs, temporary row files and comparison copies.
+Do not remove operator inputs, editable masters, scripts or runner-owned `.run`
+records. Use a named temporary workspace for scratch; deliver only the requested
+exports, source masters, rebuild scripts, provenance/credits and reports.
 
 Deliver the exports, masters, repeatable script, manifest, credits and measured
 report. Name failed or unavailable checks and remaining operator decisions.

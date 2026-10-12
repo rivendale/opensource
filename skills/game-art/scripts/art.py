@@ -5,6 +5,7 @@ Requires ImageMagick convert (6) or magick (7); never installs or downloads.
 Inputs are forced through the PNG decoder. Output files/directories must be new.
 """
 import argparse
+from datetime import datetime, timezone
 import importlib.util
 import json
 import os
@@ -240,6 +241,17 @@ def manifest_validator():
     return module
 
 
+def manifest_template():
+    return {'file': 'REPLACE_WITH_EXPORT_PATH', 'kind': 'sprite',
+            'tool': 'REPLACE_WITH_TOOL', 'tool_version': 'REPLACE_WITH_ACTUAL_VERSION',
+            'seed_or_params': 'REPLACE_WITH_REBUILD_PARAMETERS',
+            'date': datetime.now(timezone.utc).date().isoformat(),
+            'model': None, 'weights_license': None, 'source': None,
+            'source_license': None, 'reference_used_as': 'none',
+            'master': 'REPLACE_WITH_EDITABLE_SOURCE_PATH',
+            'build_script': 'REPLACE_WITH_BUILD_SCRIPT_PATH', 'paid_service': None}
+
+
 def manifest(a):
     validator = manifest_validator()
     root = Path(a.root).resolve(strict=True)
@@ -254,6 +266,10 @@ def manifest(a):
     for ip in a.import_path:
         contained(ip)
     row = json.loads(Path(a.row).read_text())
+    if isinstance(row, dict):
+        if any(isinstance(v, str) and v.startswith('REPLACE_WITH_') for v in row.values()):
+            raise ValueError('replace every template placeholder with measured project evidence')
+        row['date'] = datetime.now(timezone.utc).date().isoformat()
     target = exports / 'MANIFEST.json'
     if target.is_symlink():
         raise ValueError('manifest must not be a symlink')
@@ -331,11 +347,16 @@ def main():
     c = sub.add_parser('revision')
     for name in ('before', 'after', 'mask'): c.add_argument(name)
     c.set_defaults(run=revision)
-    c = sub.add_parser('manifest'); c.add_argument('--root', required=True)
-    c.add_argument('--row', required=True); c.add_argument('--exports', default='assets')
-    c.add_argument('--import-path', action='append', required=True); c.set_defaults(run=manifest)
+    c = sub.add_parser('manifest'); c.add_argument('--root')
+    c.add_argument('--row'); c.add_argument('--template', action='store_true'); c.add_argument('--exports', default='assets')
+    c.add_argument('--import-path', action='append'); c.set_defaults(run=manifest)
     c = sub.add_parser('credits'); c.add_argument('input'); c.set_defaults(run=credits)
     a = p.parse_args()
+    if a.command == 'manifest':
+        if a.template:
+            print(json.dumps(manifest_template(), indent=2)); return 0
+        if not a.root or not a.row or not a.import_path:
+            p.error('manifest requires --root, --row and --import-path, or --template')
     try:
         report = a.run(a)
         if report is not None:
