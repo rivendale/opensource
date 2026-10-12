@@ -1,0 +1,46 @@
+{
+  "task": "T17",
+  "date_utc": "2026-10-12",
+  "tested_base_commit": "cd6941414befacba40582628fde3dc81348a6b45",
+  "reference_commit": "61af783f4f1f5e1b0705433dd8233c7b42084153",
+  "prepared_files": 11,
+  "prepare_checks": {
+    "passed": 18,
+    "total": 18
+  },
+  "bundle_manifest_sha256": "db8b405859d74f98010d6d588c8d50b10225689d8e44d255b1760c2f05219c36",
+  "active_source_files_sha256": {
+    "SKILL.md": "44b4e4ce29d0894e4a4015cdb0f19cda08c23f00a0a3508cba32b59ac21304e3",
+    "scripts/art.py": "6f78c206c742ba5c7a22390dc96e1882856606e55d4c67af3676050874b31645",
+    "scripts/prepare.py": "53b342a82828f0efd2c28188fb69e3472ae0087d0c1702f33ef8b72563d1a736"
+  },
+  "canonical_documents_byte_identical": true,
+  "rewritten_primary_links": 6,
+  "helper_execute_modes_preserved": true,
+  "mutable_refs_and_existing_outputs_refused": true,
+  "excluded": [
+    ".git",
+    "evaluation cases",
+    "validation receipts",
+    "pilot captures",
+    "credentials/session files"
+  ],
+  "actual_isolated_prepared_skill_flow": {
+    "status": "passed",
+    "image": "localhost/studio-runner@sha256:a9d142c18396d7fe748ef1d64ca37486fcc017853d94cffac147e1f8f17fc8ca",
+    "runner_sha256": "614378e01b286ba909ef3071013c840ce1c3ab604181c8f2cefd9ca7e2f2c12e",
+    "local_guides_and_schema_hashes_checked": true,
+    "cut_pack_manifest_credits_and_byte_rebuild": "passed",
+    "mock_provider_responses": 2,
+    "real_provider_calls": 0
+  },
+  "syntax_and_whitespace": "passed",
+  "relative_links": {
+    "checked": 431,
+    "problems": 0
+  },
+  "pilot_score_published": false,
+  "pilot_grant_case_runs_used": 1,
+  "pilot_state": "stopped; no retry this wake",
+  "remaining": "Claude transcript hand-read; canonical clarification of error/retry handling and area coverage versus the 15-case-run cap before more pilot runs."
+}

@@ -11,6 +11,22 @@ exports, [Blender](../../art/blender.md) for 3D or rendered sprites, and
 procedures rather than copying them into the project. The measurement contract
 is [SPEC-studio.md](../SPEC-studio.md); use its defaults when the brief is silent.
 
+For an isolated studio run, the operator first prepares a fresh offline skill
+bundle from a pinned reference commit, before starting any case:
+
+```sh
+python3 skills/game-art/scripts/prepare.py --reference-commit 61af783f4f1f5e1b0705433dd8233c7b42084153 --output /tmp/game-art-skill-bundle
+```
+
+Pass that directory to the runner's `--skill` option. Preparation copies this
+skill and its scripts plus the existing canonical guides, spec, schema, validator,
+README and license into `references/`; it rewrites these guide links to readable
+local paths and records source/output hashes in `BUNDLE.json`. It does not fetch,
+install, copy evaluation cases or retain repository/session/credential files.
+When a guide or schema is unavailable, report that blocker instead of guessing
+its defaults or field names. Read only the relevant guide sections; reference
+documents do not authorize installs or network use during a case.
+
 ## Before producing anything
 
 Restate the asset list, purpose in the game, engine import directory, exact sizes,
@@ -66,7 +82,9 @@ The optional [art helper](scripts/art.py) uses Python's standard library and an
 installed ImageMagick `convert` (6) or `magick` (7). It accepts single-frame PNGs
 only and never downloads, calls a model or runs a reference's code. Pin the actual
 tool versions in the project export script and the studio image when evaluating.
-Run `python3 skills/game-art/scripts/art.py --help` for arguments.
+Run `python3 skills/game-art/scripts/art.py --help` for arguments. Inside the
+runner use `python3 /skill/scripts/art.py`; read the bundled schema before
+constructing a manifest row.
 
 Examples, from the reference-repository root (replace paths with project paths):
 
@@ -100,6 +118,10 @@ if OCR/tool availability blocks this check, report it as unverified. Do not call
 visual impression an OCR pass. A set without palette/swatches needs an operator
 comparison recorded, not an invented style score.
 
+When constructing ImageMagick calls in Python, pass an argument list to
+`subprocess.run` rather than embedding extra shell quotes in a command string.
+For deterministic PNG exports, exclude variable date/time chunks (ImageMagick
+`-define png:exclude-chunks=date,time`); keep the same recorded export options.
 Rerun the kept export script in a separate directory and compare deterministic
 exports byte-for-byte. For model output, apply SPEC-studio's stated size/format
 and measurement tolerances; do not promise byte reproduction from a seed alone.
@@ -132,7 +154,7 @@ Deliver the exports, masters, repeatable script, manifest, credits and measured
 report. Name failed or unavailable checks and remaining operator decisions.
 For evaluation use the independent `evals/studio/game-art/` cases and the merged
 [studio runner](https://github.com/rivendale/opensource/blob/61af783f4f1f5e1b0705433dd8233c7b42084153/skills/studio/runner/README.md). Supply this whole skill directory,
-including `scripts/`, using the runner's `--skill` option. Tools and shared resources
+including `scripts/` and the prepared `references/`, using the runner's `--skill` option. Tools and shared resources
 must already be in the pinned image or mounted by the runner; never install them
 during a case. Do not create expected answers or claim acceptance from your own
 smoke checks. Independent cases, three-run controls and held-out evaluation are
