@@ -1,0 +1,210 @@
+{
+  "runner": "studio-runner/0.1.0",
+  "runner_sha256": "7a4b248d67d8c3a85e1f2bd4bae5844127ca629955536a7ffccf81d9d3d896e5",
+  "status": "passed",
+  "runtime": {
+    "podman": "4.9.3",
+    "oci_runtime": "crun version 1.14.1",
+    "cgroup_version": "v2",
+    "controllers": [
+      "cpu",
+      "memory",
+      "pids"
+    ],
+    "rootless": true,
+    "seccomp": true
+  },
+  "image": {
+    "reference": "localhost/studio-runner@sha256:3414a455086f0983c50be26dc87644fa1c1f5e16f0da372d18e406bc35593c27",
+    "id": "c0b0dce5a53e0636949f6403d5ec3dcb5af2be854950c760d4533a3616eea56b",
+    "sources": {
+      "supervisor.py": "df3eb8a33a0c38abd2e7a2df7cc646b80ab961a2574a715849d23deeb64a6d5e",
+      "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+      "probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
+      "agent.py": "1644ab438ed8ac043d4a1572be2562a9e0964bbb444e46986ebecc18f14da371",
+      "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+      "proxy.py": "0862a905b818d184ed878942221877a5d548ab5835f46c54562013ae48b15bef",
+      "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+    }
+  },
+  "tools": {
+    "python": "3.11.2",
+    "agent": "studio-runner/0.1.0",
+    "ffmpeg": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+    "tesseract": "tesseract 5.3.0",
+    "strace": "strace -- version 6.1",
+    "node": "v22.23.3",
+    "chrome": "Google Chrome for Testing 150.0.7871.46 ",
+    "puppeteer_core": "25.3.0",
+    "pillow": "9.4.0",
+    "fonttools": "4.38.0",
+    "numpy": "1.24.2"
+  },
+  "limits": {
+    "cpus": 4,
+    "memory": 8589934592,
+    "scratch": 2147483648,
+    "processes": 256
+  },
+  "probes": {
+    "network": true,
+    "root-write": true,
+    "empty-home": true,
+    "clean-env": true,
+    "executable-input": true,
+    "unprivileged": true,
+    "no-agent-capabilities": true,
+    "capture-protected": true,
+    "inputs-read-only": true
+  },
+  "checker": {
+    "case": "runner-selftest",
+    "rules": [
+      {
+        "id": "network-denial-audited",
+        "pass": true,
+        "measured": 1,
+        "threshold": "at least one denied connection"
+      },
+      {
+        "id": "captures-before-checker",
+        "pass": true,
+        "measured": "capture files",
+        "threshold": "all four"
+      },
+      {
+        "id": "answers-after-drain",
+        "pass": true,
+        "measured": "after-drain",
+        "threshold": "after-drain"
+      }
+    ]
+  },
+  "mounts": [
+    {
+      "destination": "/scratch/inputs",
+      "read_only": true
+    },
+    {
+      "destination": "/scratch/brief.md",
+      "read_only": true
+    },
+    {
+      "destination": "/skill",
+      "read_only": true
+    },
+    {
+      "destination": "/egress",
+      "read_only": true
+    },
+    {
+      "destination": "/scratch/skills/studio",
+      "read_only": true
+    }
+  ],
+  "agent_exit": 0,
+  "limits_hit": [],
+  "studio_resources": {
+    "manifest.schema.json": "c0199001255a9c5e50e974ed3a4c03d28d2c4de15e7ba329978c660316585e86",
+    "validate_manifest.py": "39a69c7c1f956350baa94b34c9360b8c7aa08ddd70799e31a54e8da6e47c4640"
+  },
+  "checker_lib_files": {},
+  "skill_files": {
+    "SKILL.md": "ae65dd9d8e6b68cb53c2f5be60f07a10d1d7a80afbad31dfb329ca039bfea9d2"
+  },
+  "checked_on": "2026-10-11",
+  "scope": "Synthetic runner integration only; not studio skill scoring or independent acceptance",
+  "tool_image": "localhost/studio-tools@sha256:abe27d4506f82bd61c2bcc35e88cbc761d8a8e1c289cc4dfa8d758441c50ffce",
+  "host_checks": {
+    "passed": 41,
+    "total": 41
+  },
+  "no_real_models_or_credentials": true,
+  "synthetic_agent_flow": {
+    "status": "passed",
+    "model_calls": 2,
+    "checker_rules_passed": 3,
+    "skill_helper_executed": true,
+    "schema_path_visible": true,
+    "library_hidden_until_checker": true,
+    "checker_library_imported": true,
+    "checker_scratch_copy_completed_outside_scratch": true,
+    "harness_supplied_skill_rules_removed": true,
+    "chrome_mobile_screenshot_dimensions": [
+      390,
+      844
+    ],
+    "chrome_coarse_pointer": true,
+    "pillow_image_read": true,
+    "fonttools_import": true
+  },
+  "paid_cap_refusal": {
+    "expected_status": "failed",
+    "observed_status": "failed",
+    "reason": "limit hit: paid route calls or bytes",
+    "checker_not_run": true,
+    "scratch_kept": true,
+    "paid_routes": [
+      {
+        "host": "paid.example.test",
+        "path": "/generate",
+        "max_calls": 1,
+        "max_bytes": 1024,
+        "calls": 1,
+        "bytes": 13
+      }
+    ]
+  },
+  "key_response_refusal": {
+    "expected_status": "failed",
+    "observed_status": "failed",
+    "reason": "API key incident in .run; tree excluded; operator must rotate key",
+    "checker_not_run": true,
+    "scratch_kept": false,
+    "incident": true
+  },
+  "probe_correction": {
+    "removed": [
+      "credential-file",
+      "credential-sentinel",
+      "early-answer-mount"
+    ],
+    "reason": "Absent paths could pass without demonstrating protection; no longer counted as invariants",
+    "remaining": 9,
+    "bind_source_receipt_enforced": true
+  },
+  "pending": [
+    "Independent checker bundle and reference/defect replay",
+    "Real-service model and paid-route acceptance"
+  ],
+  "render_overhead": {
+    "measurements": [
+      {
+        "traced": false,
+        "wall_seconds": 47.371140373987146,
+        "video_seconds": 300,
+        "dimensions": [
+          1920,
+          1080
+        ],
+        "video_bytes": 200607207,
+        "trace_bytes": 0
+      },
+      {
+        "traced": true,
+        "wall_seconds": 51.89373438502662,
+        "video_seconds": 300,
+        "dimensions": [
+          1920,
+          1080
+        ],
+        "video_bytes": 200607207,
+        "trace_bytes": 40737
+      }
+    ],
+    "ratio": 1.0954715038594038,
+    "scope": "One synthetic five-minute 1080p30 x264 render pair; not a general overhead bound",
+    "image": "localhost/studio-runner@sha256:3414a455086f0983c50be26dc87644fa1c1f5e16f0da372d18e406bc35593c27"
+  },
+  "write_tracing_decision": "Retained to detect failed ENOSPC writes even if the agent deletes files before drain. One measured render pair took 9.55 percent more wall time; not a bound for other workloads."
+}

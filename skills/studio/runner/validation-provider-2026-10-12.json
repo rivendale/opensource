@@ -1,0 +1,58 @@
+{
+  "task": "T18",
+  "date_utc": "2026-10-12",
+  "tested_commit": "c69f6e6f88efd7a1f3435fc81b2fa97146edc849",
+  "grant_commit": "2785069",
+  "grant_file_blob": "d22a39f6f45c9fb3e88c0addf7066ba3f01923e2",
+  "grant_expires": "2026-10-14",
+  "max_calls": 5,
+  "calls_used": 1,
+  "calls_remaining": 4,
+  "skill_set": "game-art",
+  "model_requested": "claude-sonnet-4-5-20250929",
+  "destination": {
+    "host": "api.anthropic.com",
+    "path": "/v1/chat/completions"
+  },
+  "image": "localhost/studio-runner@sha256:a9d142c18396d7fe748ef1d64ca37486fcc017853d94cffac147e1f8f17fc8ca",
+  "runner_sha256": "9b6cb46c67abba4a620a2c09d07341e8fd39478ede61b501cbff58668f379682",
+  "transport_status": "passed",
+  "http_statuses": [
+    200
+  ],
+  "assistant_turns": 1,
+  "tool_turns": 2,
+  "usage": {
+    "completion_tokens": 132,
+    "prompt_tokens": 2754,
+    "total_tokens": 2886
+  },
+  "usage_source": "assistant event in captured run.json; failed-run result.json omitted usage",
+  "cost_reported": null,
+  "run_status": "failed",
+  "run_reason": "turn limit",
+  "call_cap": 1,
+  "key_scan": {
+    "exact_value_and_pattern": "passed",
+    "incident": false,
+    "performed_by": "unchanged runner before admitting captured scratch"
+  },
+  "provider_adapter_errors": [],
+  "skill_score": null,
+  "acceptance_complete": false,
+  "missing_skill_files_on_main": [
+    "skills/game-sfx/SKILL.md",
+    "skills/game-music/SKILL.md",
+    "skills/game-video/SKILL.md",
+    "skills/game-prototype/SKILL.md"
+  ],
+  "remaining": "Four skill-set calls need their implemented skills. Full evaluation was deliberately stopped by the one-call cap; independent review remains.",
+  "capture_hashes": {
+    "run.json": "2c7ac9a654d2ed5c5c10d9b22ce931ed801e6a506de22cb68445ef7a3fe9b954",
+    "transcript.md": "a0e4eb81d3d7609cb41cd77100698fdeecc57ae0a474c56f546948861877a8b7",
+    "proxy.log": "7e525c0552e55548cfc8305bf486d0cd80b6f2d90c20883c223f163d3563966c",
+    "usage.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "no_relay_or_case_changes": true,
+  "no_key_in_receipt": true
+}

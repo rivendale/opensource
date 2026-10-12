@@ -1,0 +1,285 @@
+{
+  "schema": "studio-runner-validation-1",
+  "measured_on": "2026-10-11",
+  "task": "T18",
+  "task_file_blob": "a1b3247257641066712ab00a9ed341472abe4e7d",
+  "runner_sha256": "9b6cb46c67abba4a620a2c09d07341e8fd39478ede61b501cbff58668f379682",
+  "image": {
+    "reference": "localhost/studio-runner@sha256:a9d142c18396d7fe748ef1d64ca37486fcc017853d94cffac147e1f8f17fc8ca",
+    "id": "f2d9af6fec6953bb9e9da12ffc481452376cd4c447ea4dec63dd7f51ca0214d8",
+    "sources": {
+      "supervisor.py": "36890de0cedd26269d704473d5ae0486726d13d15704785f38c93190b1fb42ab",
+      "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+      "replay.py": "dde3e0deb5ca9135d9076209b3e9f3f654623b373183ae9c80e1df3fb73ef45d",
+      "probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
+      "agent.py": "08a04ec37e285e105cc658562440a2abe1bfc5e4088680c7fb853b3dfd082563",
+      "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+      "proxy.py": "0862a905b818d184ed878942221877a5d548ab5835f46c54562013ae48b15bef",
+      "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+    }
+  },
+  "runtime": {
+    "podman": "4.9.3",
+    "oci_runtime": "crun version 1.14.1",
+    "cgroup_version": "v2",
+    "controllers": [
+      "cpu",
+      "memory",
+      "pids"
+    ],
+    "rootless": true,
+    "seccomp": true
+  },
+  "tools": {
+    "python": "3.11.2",
+    "agent": "studio-runner/0.1.0",
+    "ffmpeg": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+    "tesseract": "tesseract 5.3.0",
+    "strace": "strace -- version 6.1",
+    "node": "v22.23.3",
+    "chrome": "Google Chrome for Testing 150.0.7871.46 ",
+    "puppeteer_core": "25.3.0",
+    "pillow": "9.4.0",
+    "fonttools": "4.38.0",
+    "numpy": "1.24.2"
+  },
+  "limits": {
+    "cpus": 4,
+    "memory": 8589934592,
+    "scratch": 2147483648,
+    "processes": 256
+  },
+  "selftest": {
+    "status": "passed",
+    "probes": {
+      "network": true,
+      "root-write": true,
+      "empty-home": true,
+      "clean-env": true,
+      "executable-input": true,
+      "unprivileged": true,
+      "no-agent-capabilities": true,
+      "capture-protected": true,
+      "inputs-read-only": true
+    },
+    "checker": {
+      "case": "runner-selftest",
+      "rules": [
+        {
+          "id": "network-denial-audited",
+          "pass": true,
+          "measured": 1,
+          "threshold": "at least one denied connection"
+        },
+        {
+          "id": "captures-before-checker",
+          "pass": true,
+          "measured": "capture files",
+          "threshold": "all four"
+        },
+        {
+          "id": "answers-after-drain",
+          "pass": true,
+          "measured": "after-drain",
+          "threshold": "after-drain"
+        }
+      ]
+    }
+  },
+  "mock_image_flow": {
+    "status": "passed",
+    "model_requests": 3,
+    "assistant_turns": 3,
+    "tool_turns": 2,
+    "image_tool": "view_image",
+    "image_bytes_verified_at_mock_upstream": true,
+    "checker_library_files": {
+      "BUNDLE.json": "d443505afdf13942968a101e62a0689a03c8acdeddb3ae986651b9e4d7161034",
+      "audio_rules.py": "3d7fb2d5381ad6f907d5506503f8fd4024e7a30487ced33b48b4ee28d1ff6616",
+      "manifest.schema.json": "c0199001255a9c5e50e974ed3a4c03d28d2c4de15e7ba329978c660316585e86",
+      "music_rules.py": "0d65ae978d29812ae37d4cdc6f18b7e69f5a82e7e54fbb3119f1c1f7f156de48",
+      "net_trap.js": "9e4bc33b80f202eee66f67882ce0150edaa2647179d9b4ee7932a88afc5b9526",
+      "proto_rules.py": "9c630e7d2ad239dad4b481fbc388fbae2d4f0609ee280fd25c55b6a837baa418",
+      "studio_lib.py": "bc7de4f9763c447567aaa3b546c862fa3cc6c1e0290d5cefb8e3e83e1083338a",
+      "validate_manifest.py": "39a69c7c1f956350baa94b34c9360b8c7aa08ddd70799e31a54e8da6e47c4640",
+      "video_rules.py": "188290781b3eef1666d122da2a7fa409ea851cb795899ee96463a4279a4d3bce",
+      "web_probe.mjs": "f668bba409b88d3b4029f21fb396776e0d2b5b15226e7d7f1c01f6bd900ed269",
+      "web_rules.py": "f51a8580814de9158c94adc9e8b1d31994f0c3d6d3a39259eb330e94d38970f1"
+    },
+    "checker": {
+      "case": "host-identifier-must-not-leak",
+      "rules": [
+        {
+          "id": "marker",
+          "pass": true,
+          "measured": "runner-flow-ok",
+          "threshold": "runner-flow-ok"
+        },
+        {
+          "id": "turns",
+          "pass": true,
+          "measured": [
+            3,
+            2
+          ],
+          "threshold": [
+            3,
+            2
+          ]
+        },
+        {
+          "id": "relay",
+          "pass": true,
+          "measured": 3,
+          "threshold": 3
+        }
+      ]
+    }
+  },
+  "host_checks": {
+    "passed": 41,
+    "total": 41
+  },
+  "replay_archive_probes": [
+    {
+      "variant": "large",
+      "expected_result_verified": true,
+      "runner_status": "passed",
+      "checker_ran": true
+    },
+    {
+      "variant": "mismatch",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": true
+    },
+    {
+      "variant": "traversal",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "absolute",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "symlink",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "hardlink",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "fifo",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "duplicate",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "capture",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "inputs",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    },
+    {
+      "variant": "resource",
+      "expected_result_verified": true,
+      "runner_status": "failed",
+      "checker_ran": false
+    }
+  ],
+  "replay_credential_refusal": {
+    "expected_refusal": true,
+    "credential_fd_read": false,
+    "output_created": false
+  },
+  "replay_source_main": "78ceb3470edce6d5aa1e24138cbf350cc7cdfd1e",
+  "actual_model_calls": 0,
+  "actual_paid_service_calls": 0,
+  "actual_credentials_used": false,
+  "studio_cases_edited": false,
+  "skill_scored": false,
+  "remaining": [
+    "Independent Claude follow-up review",
+    "Operator provider TLS/model/paid-service acceptance",
+    "GPU admission is not implemented"
+  ],
+  "studio_case_files_displayed_to_author": false,
+  "case_execution": "Independent builders and checkers executed inside containers; aggregate results and diagnostic logs were inspected.",
+  "timezone": "UTC",
+  "replay": {
+    "status": "passed",
+    "matched": 262,
+    "total": 262,
+    "case_count": 88,
+    "sets": [
+      {
+        "set": "game-art",
+        "cases": 34,
+        "trees": 101,
+        "host_selfcheck": "passed"
+      },
+      {
+        "set": "game-sfx",
+        "cases": 15,
+        "trees": 40,
+        "host_selfcheck": "passed"
+      },
+      {
+        "set": "game-music",
+        "cases": 10,
+        "trees": 30,
+        "host_selfcheck": "passed"
+      },
+      {
+        "set": "game-video",
+        "cases": 11,
+        "trees": 34,
+        "host_selfcheck": "passed"
+      },
+      {
+        "set": "game-prototype",
+        "cases": 18,
+        "trees": 57,
+        "host_selfcheck": "passed"
+      }
+    ],
+    "evidence_manifest_sha256": "416813a474ff14f3f2a99db630af1c38308de7761629d5989eccd513ac04b840",
+    "extraction_uid": 1000,
+    "real_model_calls": 0
+  },
+  "preparation_diagnostics": {
+    "first_prototype_full_generation": "Failed with empty checker stdout/JSON decode error before writing metadata; original resource-event counters were not recorded.",
+    "retry": "Passed with PID-1 child reaping; evaluation limits unchanged.",
+    "retry_events": {
+      "generation_pids_events": "max 0",
+      "generation_memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+    },
+    "initial_single_case_path_error": "Corrected the preparation PATH to include /usr/local/bin for Node."
+  },
+  "verification": {
+    "python_compile": "passed",
+    "whitespace": "passed",
+    "relative_links": "checked before publication"
+  }
+}
