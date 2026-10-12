@@ -697,20 +697,26 @@ def turns(scratch):
     return out
 
 
-_READ_ONLY = {"cat", "ls", "head", "tail", "file", "identify", "find", "wc", "stat", "pwd", "grep", "echo", "printf", "which", "tree", "du", "sha256sum", "md5sum", "test", "true"}
+_READ_ONLY = {"cat", "ls", "head", "tail", "file", "identify", "find", "wc", "stat", "pwd", "grep", "echo", "printf", "which", "du", "sha256sum", "md5sum", "test", "true"}
+# options that make an otherwise read-only program write a file or run something, by program
+_WRITES = {"find": {"-exec", "-execdir", "-ok", "-okdir", "-delete", "-fls", "-fprint", "-fprint0", "-fprintf"},
+           "file": {"-C", "--compile"}, "identify": {"-write"}}
 
 
 def _read_only_command(cmd):
-    """True only for a shell command that cannot create or change a file: every simple command starts with a read-only program, nothing redirects to a file or substitutes."""
+    """True only for a shell command that cannot create or change a file: every simple command starts with a read-only program, nothing redirects to a file, runs in the background,
+    or substitutes a command or process, and no option of an allowed program makes it write."""
     import re
     c = re.sub(r"\d?>\s*/dev/null|\d>&\d", " ", cmd)
-    if any(x in c for x in (">", "`", "$(", "<<")):
+    if any(x in c for x in (">", "<(", "`", "$(", "<<")):
+        return False
+    if "&" in c.replace("&&", " "):      # a lone & backgrounds a command, and the next one runs unchecked
         return False
     for seg in re.split(r"&&|\|\||[;|\n]", c):
         words = seg.split()
         if not words:
             continue
-        if words[0] not in _READ_ONLY or (words[0] == "find" and any(w in ("-exec", "-execdir", "-delete", "-fprint", "-fprintf", "-ok") for w in words)):
+        if words[0] not in _READ_ONLY or any(w in _WRITES.get(words[0], ()) for w in words):
             return False
     return True
 
