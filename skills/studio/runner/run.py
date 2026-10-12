@@ -547,13 +547,18 @@ def run(args):
             frame = frames.next()
         if frame["type"] != "checker":
             raise RuntimeError("checker failed")
+        result["checker_exit"] = frame["code"]
+        stderr = frame.get("stderr", "")
+        if not isinstance(stderr, str):
+            raise ValueError("invalid checker stderr")
+        result["checker_stderr"] = exception_receipt(ValueError(stderr), key_values)["message"]
+        result["checker_stderr_truncated"] = len(stderr.encode('utf-8')) > 2048
         if frame["limits_hit"]:
             result["limits_hit"] = frame["limits_hit"]
             result["reason"] = "limit hit: " + ", ".join(frame["limits_hit"])
             raise RuntimeError("checker resource limit")
-        if frame["code"] != 0 and not (replay_tree is not None and frame["code"] == 1):
-            raise RuntimeError("checker failed")
-        result["checker_exit"] = frame["code"]
+        if type(frame["code"]) is not int or frame["code"] not in (0, 1):
+            raise RuntimeError("checker error")
         result["checker"] = checker_result(json.loads(frame["output"]), args.case_id)
         if frames.next()["type"] != "archive-start":
             raise RuntimeError("missing final archive")
@@ -570,8 +575,9 @@ def run(args):
         if frames.next()["type"] != "done" or process.wait(timeout=5) != 0:
             raise RuntimeError("supervisor did not finish")
         shutil.copytree(after, args.output / "scratch")
-        result["status"] = "passed" if all(r["pass"] for r in result["checker"]["rules"]) else "failed"
-        result["reason"] = None if result["status"] == "passed" else "checker rules failed"
+        result["verdict"] = "passed" if all(r["pass"] for r in result["checker"]["rules"]) else "failed"
+        result["status"] = "completed" if args.mode == "run" else result["verdict"]
+        result["reason"] = None if result["verdict"] == "passed" else "checker rules failed"
         if replay_tree is not None:
             got = {r["id"]: r["pass"] for r in result["checker"]["rules"]}
             matched = got == result["replay"]["expected"]
@@ -623,7 +629,7 @@ def run(args):
                 result['reason'] = result['reason'] or 'relay cleanup unverified'
         if thread:
             thread.join(timeout=5)
-        if result['status'] != 'passed':
+        if result['status'] not in ('passed', 'completed'):
             try:
                 failed_capture(root, args.output, result, events, transcript,
                                log or (list(relay.log) if relay else []), key_values,
@@ -639,6 +645,8 @@ def run(args):
             shutil.rmtree(args.output / "scratch", ignore_errors=True)
             # Avoid returning token usage or checker measurements from a tainted run.
             result.pop("checker", None)
+            result.pop("checker_stderr", None)
+            result.pop("verdict", None)
             result.pop("usage", None)
             result.pop("exception", None)
             result.pop("capture_exception", None)
@@ -646,7 +654,7 @@ def run(args):
                 result.pop(field, None)
         (args.output / "result.json").write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
     print(json.dumps({"status": result["status"], "reason": result["reason"], "result": str(args.output / "result.json")}))
-    return 0 if result["status"] == "passed" else 1
+    return 0 if result["status"] in {"passed", "completed"} else 1
 
 
 def main():

@@ -60,7 +60,14 @@ def test(args, mode):
             (case/'brief.md').write_text('Synthetic question-ending runner transport fixture.\n')
             (case/'SKILL.md').write_text('Ask which size and palette, then wait for answers.\n')
             (case/'expected.json').write_text('{}')
-            (case/'check.py').write_text(CHECKER)
+            checker = CHECKER
+            if mode == 'fail-verdict':
+                checker = checker.replace("'pass':not (p/'assets').exists()", "'pass':(p/'assets').exists()") + "\nsys.exit(1)\n"
+            if mode == 'checker-exit-2':
+                checker = "import sys\nsys.stderr.write('synthetic checker traceback\\n')\nsys.exit(2)\n"
+            if mode == 'stderr-redaction':
+                checker += "\nsys.stderr.write('synthetic ' + 'SYNTHETIC-NOT-A-CREDENTIAL' + ' ' + 'sk-' + 'x'*20)\n"
+            (case/'check.py').write_text(checker)
             fd, writer = os.pipe()
             fd_key = KEY + (b'"' if mode == 'invalid-key-quote' else b'\\' if mode == 'invalid-key-backslash' else b'')
             os.write(writer, fd_key); os.close(writer)
@@ -90,14 +97,25 @@ def test(args, mode):
             assert all((output/'scratch/.run'/name).is_file() for name in
                        ['transcript.md','run.json','usage.json','proxy.log'])
             assert KEY not in b''.join(p.read_bytes() for p in (output/'scratch/.run').iterdir())
-            if mode == 'questions':
-                assert code == 0 and result['status'] == 'passed' and all(r['pass'] for r in result['checker']['rules'])
+            if mode in ('questions', 'stderr-redaction'):
+                assert code == 0 and result['status'] == 'completed' and result['verdict'] == 'passed' and all(r['pass'] for r in result['checker']['rules'])
+            elif mode == 'fail-verdict':
+                assert code == 0 and result['status'] == 'completed' and result['verdict'] == 'failed'
+                assert result['checker_exit'] == 1 and not all(r['pass'] for r in result['checker']['rules'])
+                assert 'exception' not in result and 'capture_scope' not in result
+            elif mode == 'checker-exit-2':
+                assert code == 1 and result['status'] == 'failed' and result['checker_exit'] == 2
+                assert 'synthetic checker traceback' in result['checker_stderr']
+                assert result['exception']['message'] == 'checker error'
             else:
                 assert code == 1 and result['status'] == 'failed'
                 assert result['exception']['type'] == ('RuntimeError' if mode=='capture-error' else 'ValueError')
                 assert 'synthetic' in result['exception']['message']
                 assert capture['exception'] == result['exception']
                 assert result['capture_scope'] == ('host-received-events-only' if mode=='capture-error' else 'drained-scratch-snapshot')
+            if mode == 'stderr-redaction':
+                assert KEY.decode() not in result['checker_stderr'] and 'sk-' not in result['checker_stderr']
+                assert '[REDACTED]' in result['checker_stderr']
             return {'scenario':mode,'passed':True,'mock_requests':len(calls),'real_requests':0,
                     'key_scan':result['key_scan'],'capture_scope':result.get('capture_scope','final-scratch-snapshot')}
     finally:
@@ -129,7 +147,7 @@ def main():
         def __str__(self): raise RuntimeError('synthetic formatting failure')
     assert run.exception_receipt(BrokenString(),[]) == {'type':'BrokenString','message':'unavailable'}
     assert run.exception_receipt(ValueError('test'),['wrong-type'])['message']=='unavailable'
-    results=[test(args,mode) for mode in ['questions','capture-error','checker-error','preflight-error','invalid-key-quote','invalid-key-backslash']]
+    results=[test(args,mode) for mode in ['questions','capture-error','checker-error','preflight-error','invalid-key-quote','invalid-key-backslash','fail-verdict','checker-exit-2','stderr-redaction']]
     (args.output/'receipt.json').write_text(json.dumps({'fixtures':results,'diagnostic_redaction':'passed',
         'pattern_scan_suppression':'passed','exact_key_tool_echo_suppression':'passed','diagnostic_formatting_fallback':'passed','real_provider_calls':0},indent=2)+'\n')
     print(json.dumps({'fixtures_passed':len(results),'real_provider_calls':0}))
