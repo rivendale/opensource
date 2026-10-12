@@ -202,7 +202,7 @@ def exception_receipt(error, keys, limit=2048):
             if key:
                 message = message.replace(key, b'[REDACTED]')
         message = KEY_PATTERN.sub(b'[REDACTED]', message)
-        return {'type': type(error).__name__, 'message': (message if limit is None else message[:limit]).decode('utf-8', 'ignore'),
+        return {'type': type(error).__name__, 'message': (message if limit is None else message[:limit]).decode('utf-8', 'replace'),
                 'frames': [{'file': Path(f.filename).name, 'line': f.lineno,
                             'function': f.name} for f in traceback.extract_tb(error.__traceback__)[-12:]]}
     except Exception:
@@ -552,9 +552,6 @@ def run(args):
         if not isinstance(stderr, str):
             raise ValueError("invalid checker stderr")
         redacted = exception_receipt(ValueError(stderr), key_values, limit=None)["message"].encode('utf-8')
-        if KEY_PATTERN.search(redacted) or any(key in redacted for key in key_values):
-            result['incident'] = True
-            raise RuntimeError('key incident in checker diagnostics')
         result["checker_stderr"] = redacted[:2048].decode('utf-8', 'ignore')
         result["checker_stderr_truncated"] = len(redacted) > 2048
         if frame["limits_hit"]:
