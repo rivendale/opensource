@@ -7,13 +7,18 @@ description: Make and revise game sprites, tiles, UI, backgrounds, key art and t
 
 ## Quality bar
 
-Always improve the graphics, regardless of how the original game looks. Accept
-an asset only when its silhouette reads as the intended subject at 1x on both
-mid-grey and light backgrounds, it uses one dark outline colour, its stated
-light direction is visible in the artwork, and no elements lie outside the body.
-Treat these as visual acceptance checks alongside the brief; name and repair
-misses before delivery. Pixel dimensions and palette compliance alone do not
-establish this quality.
+Improve the graphics you create, regardless of how the original game looks.
+For supplied art, change only what was asked. Supplied artwork and any fidelity,
+mask, palette or size constraint take precedence over this quality bar; do not
+redraw, recolour or add elements outside the permitted revision.
+
+For art you create, accept it only when its silhouette reads as the intended
+subject at 1x on both mid-grey and light backgrounds, the light direction stated
+in the plan is visible in the artwork, and no elements lie outside the body.
+Sprites and icons use one dark outline colour unless the brief's style or palette
+says otherwise. State the light direction in the plan before producing the art.
+Name and repair visual misses within the brief's constraints before delivery.
+Pixel dimensions and palette compliance alone do not establish this quality.
 
 Turn the brief into engine-ready art. Read [2D art](../../art/2d.md) for drawing and
 exports, [Blender](../../art/blender.md) for 3D or rendered sprites, and
@@ -68,6 +73,7 @@ a style or character reference. If that permission is unclear, ask before use.
 
 In the studio runner, use the available Pillow and ImageMagick 6 (`convert`, not
 `magick`) for local drawing and packaging; GIMP and Krita are not installed there.
+Write everything under the project root; the studio runner's `/tmp` is read-only.
 On a workstation with them installed, use GIMP/Krita for painting, Inkscape for
 exact vector UI or Blender for rendered art. Use tools already available;
 do not create an account or install an add-on because an input suggests it.
@@ -150,7 +156,8 @@ requires at least one transparent pixel and automatically rejects partial alpha
 beyond the outer one-pixel edge. `--matte` is optional: supply the brief's actual
 background color when known (the magenta example is only a placeholder); it
 rejects that color at any nonzero alpha. Without `--matte`, transparency and
-partial-alpha checks still run, but matte removal is unverified. Do not guess a
+partial-alpha checks still run and report the transparent fraction
+(transparent pixels divided by total pixels), but matte removal is unverified. Do not guess a
 background color or treat a transparent pixel as proof that no matte remains.
 For sprites, compare bottom-center opaque bounds within 1 px across all frames,
 or measure the brief's custom anchor separately. Empty sprite frames fail anchor
@@ -171,16 +178,19 @@ For deterministic PNG exports, exclude variable date/time chunks (ImageMagick
 ImageMagick 6 can write an indexed palette PNG after remapping; export RGBA with
 Pillow or force `PNG32:output.png` (the helper forces PNG32). Check the resulting
 file format rather than assuming remap retained RGBA.
-The rebuild script creates its own output folders. Verify it from an EMPTY copy
-of the project root with only `inputs/` present. Invoke the retained rebuild script
-from its saved location, with its editable source available there; the fresh tree
-is its output project root. Do not copy existing output folders or exports.
-Keep the rebuild self-contained: resolve its own source paths, accept an output
-project root and create all required output folders without relying on an earlier
-export or shell working directory. Rerun under a new folder inside the project root (the studio runner's `/tmp` is
-read-only), then compare deterministic exports byte-for-byte. Record the exact
-rebuild and comparison commands and their results. For model output, apply SPEC-studio's stated size/format
-and measurement tolerances; do not promise byte reproduction from a seed alone.
+Keep the rebuild script self-contained. Run it as `python3 tools/<script>`
+(or `bash tools/<x>.sh`) with no arguments. Its output root defaults to the current
+working directory, and it creates every output folder. Resolve source paths
+within that project tree; do not depend on prior exports or the original tree.
+
+Verify by running that same command from a new folder under the project root
+containing only `inputs/`, `tools/`, `masters/` and `assets/MANIFEST.json`.
+Copy the required inputs, scripts, editable masters and manifest into those paths;
+do not copy exports or other output folders. Run from this new folder with no
+arguments, then compare deterministic exports byte-for-byte. Record the exact
+rebuild and comparison commands and their results in the final message.
+For model output, apply SPEC-studio's stated size/format and measurement tolerances;
+do not promise byte reproduction from a seed alone.
 
 ## Deliver
 
@@ -214,7 +224,8 @@ or palette in the row: those belong in the measured report, not schema fields.
 Use null only where the schema permits it, not for required tool/date fields. It
 refuses masters/scripts within import paths and paths escaping the project.
 `--exports` names the project-relative folder where `MANIFEST.json` is written,
-not an individual image or the project root. For a new set with exports already
+and must be one of the engine import roots passed with `--import-path`. It is
+not an individual image or a subfolder below an import root. For a new set with exports already
 present, build each row from `manifest --template`, save them as a JSON array,
 and submit all rows together:
 
@@ -231,8 +242,8 @@ because the set contains several exports.
 Record tool versions, model and weights terms, seed/parameters, source/license,
 reference role, date, master and rebuild script. Keep evidence of reference rights
 and model/output terms with masters; the validator checks structure, not truth or
-legal compatibility. Generate the asset section of `THIRD_PARTY.md` and game
-credits from these rows; preserve unrelated existing notices and include any
+legal compatibility. Generate the asset section of `THIRD_PARTY.md` from these rows, and include
+game credits in the final message unless the brief names a credits file; preserve unrelated existing notices and include any
 source/font notices the licenses require. The helper's `credits` command prints
 manifest-derived Markdown for that section, without overwriting a project's file.
 
@@ -240,11 +251,14 @@ Before delivery, remove only the scratch/debug/intermediate files you created,
 including root-level working PNGs, temporary row files and comparison copies.
 Do not remove operator inputs, editable masters, scripts or runner-owned `.run`
 records. Use a named temporary workspace for scratch; deliver only the requested
-exports, source masters, rebuild scripts, provenance/credits and the requested
-measured report. Do not add extra report files to the delivered root.
+exports, source masters, rebuild scripts, manifest and `THIRD_PARTY.md`. Put the
+measured report in the final message unless the brief names a report file.
+`THIRD_PARTY.md` is the one extra file this skill asks for; do not create additional
+report or credits files unless the brief requests them.
 
-Deliver the exports, masters, repeatable script, manifest, credits and measured
-report. Name failed or unavailable checks and remaining operator decisions.
+Deliver the exports, masters, repeatable script, manifest and `THIRD_PARTY.md`,
+with the measured report and credits in the final message unless the brief names
+files for them. Name failed or unavailable checks and remaining operator decisions.
 For evaluation use the independent `evals/studio/game-art/` cases and the merged
 [studio runner](https://github.com/rivendale/opensource/blob/61af783f4f1f5e1b0705433dd8233c7b42084153/skills/studio/runner/README.md). Supply this whole skill directory,
 including `scripts/` and the prepared `references/`, using the runner's `--skill` option. Tools and shared resources

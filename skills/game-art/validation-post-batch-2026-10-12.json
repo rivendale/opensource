@@ -1,9 +1,9 @@
 {
-  "date_utc": "2026-10-12T22:18:25.055439+00:00",
+  "date_utc": "2026-10-13T10:24:16.524347+00:00",
   "scope": "post-batch builder checks only; no independent acceptance or provider calls",
   "active_file_sha256": {
-    "skills/game-art/scripts/art.py": "bdf4daa551a0b03a388ba5868a6698ed72c764f74b92432d16f0171e6a75c8dd",
-    "skills/game-art/SKILL.md": "d69578f591e916e61bcaeca776b3fa5ab07b40039fe25b20192485a626025a21"
+    "skills/game-art/scripts/art.py": "5a2a078429085823c2f57edc43bc6ec01ef3bd22f1ad525e9519b60a267c5444",
+    "skills/game-art/SKILL.md": "286afc4b6c632a6c63a8cabb900c8b1e83a70e0ca2d8bdf669c1a5b0cfec3ef4"
   },
   "observations": [
     {
@@ -12,7 +12,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/transparent-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-5t_0mv3j/transparent-no-matte.png",
         "--size",
         "5",
         "5",
@@ -40,7 +40,8 @@
             "pass": true,
             "measured": {
               "transparent": 1,
-              "partial": 0
+              "partial": 0,
+              "transparent_fraction": 0.04
             },
             "threshold": "at least one transparent pixel"
           },
@@ -59,7 +60,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/opaque-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-5t_0mv3j/opaque-no-matte.png",
         "--size",
         "5",
         "5",
@@ -87,7 +88,8 @@
             "pass": false,
             "measured": {
               "transparent": 0,
-              "partial": 0
+              "partial": 0,
+              "transparent_fraction": 0.0
             },
             "threshold": "at least one transparent pixel"
           },
@@ -106,7 +108,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/interior-partial-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-5t_0mv3j/interior-partial-no-matte.png",
         "--size",
         "5",
         "5",
@@ -134,7 +136,8 @@
             "pass": true,
             "measured": {
               "transparent": 1,
-              "partial": 1
+              "partial": 1,
+              "transparent_fraction": 0.04
             },
             "threshold": "at least one transparent pixel"
           },
@@ -153,7 +156,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/edge-partial-no-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-5t_0mv3j/edge-partial-no-matte.png",
         "--size",
         "5",
         "5",
@@ -181,7 +184,8 @@
             "pass": true,
             "measured": {
               "transparent": 1,
-              "partial": 1
+              "partial": 1,
+              "transparent_fraction": 0.04
             },
             "threshold": "at least one transparent pixel"
           },
@@ -200,7 +204,7 @@
         "python3",
         "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
         "check",
-        "/tmp/opensource-game-art-t17-validation/post-batch-checks-pkrfnjnv/residual-matte.png",
+        "/tmp/opensource-game-art-t17-validation/post-batch-checks-5t_0mv3j/residual-matte.png",
         "--size",
         "5",
         "5",

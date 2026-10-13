@@ -1,0 +1,177 @@
+{
+  "date_utc": "2026-10-13T10:24:15.944379+00:00",
+  "scope": "review A-G builder checks only; zero provider calls; no independent acceptance",
+  "active_file_sha256": {
+    "skills/game-art/scripts/art.py": "5a2a078429085823c2f57edc43bc6ec01ef3bd22f1ad525e9519b60a267c5444",
+    "skills/game-art/SKILL.md": "286afc4b6c632a6c63a8cabb900c8b1e83a70e0ca2d8bdf669c1a5b0cfec3ef4"
+  },
+  "observations": [
+    {
+      "name": "reject-export-subfolder",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/masters/rows.json",
+        "--exports",
+        "assets/ui",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"MANIFEST.json belongs at the import root: --exports assets\"}\n"
+    },
+    {
+      "name": "accept-import-root",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/masters/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "name": "reject-non-import-folder",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/masters/rows.json",
+        "--exports",
+        "masters",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"MANIFEST.json belongs at the import root: --exports assets\"}\n"
+    },
+    {
+      "name": "accept-nested-import-root",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/masters/rows.json",
+        "--exports",
+        "assets/ui",
+        "--import-path",
+        "assets/ui"
+      ],
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "name": "accept-one-of-two-import-roots",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/masters/rows.json",
+        "--exports",
+        "assets/ui",
+        "--import-path",
+        "assets",
+        "--import-path",
+        "assets/ui"
+      ],
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "name": "half-transparent",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/half-transparent.png",
+        "--size",
+        "2",
+        "2",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 0,
+      "alpha": {
+        "id": "alpha",
+        "pass": true,
+        "measured": {
+          "transparent": 2,
+          "partial": 0,
+          "transparent_fraction": 0.5
+        },
+        "threshold": "at least one transparent pixel"
+      }
+    },
+    {
+      "name": "fully-transparent",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/fully-transparent.png",
+        "--size",
+        "2",
+        "2",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 0,
+      "alpha": {
+        "id": "alpha",
+        "pass": true,
+        "measured": {
+          "transparent": 4,
+          "partial": 0,
+          "transparent_fraction": 1.0
+        },
+        "threshold": "at least one transparent pixel"
+      }
+    },
+    {
+      "name": "opaque",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/review-round1-6ab1ls9j/opaque.png",
+        "--size",
+        "2",
+        "2",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 1,
+      "alpha": {
+        "id": "alpha",
+        "pass": false,
+        "measured": {
+          "transparent": 0,
+          "partial": 0,
+          "transparent_fraction": 0.0
+        },
+        "threshold": "at least one transparent pixel"
+      }
+    }
+  ]
+}

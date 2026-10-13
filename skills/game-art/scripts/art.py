@@ -170,8 +170,10 @@ def check(a):
     transparent = sum(data[i] == 0 for i in range(3, len(data), 4))
     partial = sum(0 < data[i] < 255 for i in range(3, len(data), 4))
     if a.alpha == 'transparent':
-        rule('alpha', {'transparent': transparent, 'partial': partial},
-             'at least one transparent pixel', transparent > 0)
+        measured = {'transparent': transparent, 'partial': partial}
+        if matte is None:
+            measured['transparent_fraction'] = transparent / (w * h)
+        rule('alpha', measured, 'at least one transparent pixel', transparent > 0)
     elif a.alpha == 'opaque':
         rule('alpha', transparent + partial, 0, transparent + partial == 0)
     if palette is not None:
@@ -261,8 +263,9 @@ def manifest(a):
             raise ValueError(f'path escapes project root: {s!r}')
         return path
     exports = contained(a.exports)
-    for ip in a.import_path:
-        contained(ip)
+    import_roots = [contained(ip) for ip in a.import_path]
+    if exports not in import_roots:
+        raise ValueError('MANIFEST.json belongs at the import root: --exports assets')
     loaded = json.loads(Path(a.rows or a.row).read_text())
     incoming = loaded if a.rows else [loaded]
     if not isinstance(incoming, list) or not incoming:
