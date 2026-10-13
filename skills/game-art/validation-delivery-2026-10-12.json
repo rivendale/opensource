@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-12",
+  "task": "game-art delivery completion",
+  "reference_and_runner_commit": "61af783f4f1f5e1b0705433dd8233c7b42084153",
+  "files_sha256": {
+    "skills/game-art/SKILL.md": "a17b62f6f587d1e07d3cb95a393543a1435479252db8ff52d6df11e38ab30936",
+    "skills/game-art/scripts/art.py": "6c570d337df2693936a125076a88c47fbbb52b29840f68c319388527042bf01c"
+  },
+  "changes": [
+    "manifest --template lists all required fields and refuses unfilled placeholders",
+    "template and writer use actual UTC clock date",
+    "runner schema path, actual editable masters, scratch cleanup and full restatement documented"
+  ],
+  "validation": {
+    "existing_helper_observations": 17,
+    "template_fields_and_UTC_dates": "passed",
+    "missing_arguments_and_unfilled_template_refusal": "passed",
+    "rejected_template_preserves_manifest": "passed",
+    "prepared_isolated_mock_runner_flow": "passed",
+    "mock_provider_responses": 2,
+    "real_provider_calls": 0,
+    "relative_links_checked": 431,
+    "link_problems": 0,
+    "syntax_and_whitespace": "passed"
+  },
+  "acceptance_claimed": false,
+  "independent_review": "pending",
+  "scores_published": false
+}

@@ -1,0 +1,230 @@
+{
+  "date_utc": "2026-10-13T10:24:16.322144+00:00",
+  "scope": "synthetic builder checks, not independent evaluation; zero provider calls",
+  "active_file_sha256": {
+    "skills/game-art/scripts/art.py": "5a2a078429085823c2f57edc43bc6ec01ef3bd22f1ad525e9519b60a267c5444",
+    "skills/game-art/SKILL.md": "286afc4b6c632a6c63a8cabb900c8b1e83a70e0ca2d8bdf669c1a5b0cfec3ef4"
+  },
+  "forced_png32_color_type": 6,
+  "observations": [
+    {
+      "name": "partial-new-set-refused",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"manifest invalid: [('assets', \\\"'assets/b.png' is in assets/ and has no manifest row\\\"), ('assets', \\\"'assets/c.png' is in assets/ and has no manifest row\\\")]\"}\n"
+    },
+    {
+      "name": "three-existing-exports-one-batch",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 0,
+      "stdout": "{\"pass\": true, \"manifest\": \"/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/assets/MANIFEST.json\", \"rows\": 3}\n",
+      "stderr": ""
+    },
+    {
+      "name": "single-row-compatible-preserves-other-rows",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--row",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 0,
+      "stdout": "{\"pass\": true, \"manifest\": \"/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/assets/MANIFEST.json\", \"rows\": 3}\n",
+      "stderr": ""
+    },
+    {
+      "name": "duplicate-submission-refused-atomically",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"incoming rows invalid: [('assets[1].file', 'duplicates assets[0]: one row per file')]\"}\n"
+    },
+    {
+      "name": "empty-batch-refused-atomically",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"--rows must contain a nonempty JSON array of row objects\"}\n"
+    },
+    {
+      "name": "non-array-refused-atomically",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"--rows must contain a nonempty JSON array of row objects\"}\n"
+    },
+    {
+      "name": "non-object-row-refused-atomically",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"each manifest row must be an object\"}\n"
+    },
+    {
+      "name": "placeholder-refused-atomically",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"replace every template placeholder with measured project evidence\"}\n"
+    },
+    {
+      "name": "unsafe-source-refused-atomically",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"incoming rows invalid: [('assets[0].master', 'must not contain a .. segment')]\"}\n"
+    },
+    {
+      "name": "imported-master-refused-atomically",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "{\"pass\": false, \"error\": \"master resolves inside engine import path\"}\n"
+    },
+    {
+      "name": "multi-row-replacement-preserves-unmentioned",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/rows.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 0,
+      "stdout": "{\"pass\": true, \"manifest\": \"/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/assets/MANIFEST.json\", \"rows\": 3}\n",
+      "stderr": ""
+    },
+    {
+      "name": "documented-credits-command",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17/skills/game-art/scripts/art.py",
+        "credits",
+        "/tmp/opensource-game-art-t17-validation/multi-check-6z3srl9x/assets/MANIFEST.json"
+      ],
+      "exit": 0
+    }
+  ]
+}

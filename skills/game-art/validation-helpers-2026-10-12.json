@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-12",
+  "task": "game-art local helper completion",
+  "reference_and_runner_commit": "61af783f4f1f5e1b0705433dd8233c7b42084153",
+  "source_files_sha256": {
+    "skills/game-art/SKILL.md": "48fedb06620873ebbb061617c273ac441d01238a7e0af25bf287441d030b5822",
+    "skills/game-art/scripts/art.py": "7706990ee9b401e3ca12ea08f6ec159a8d7ba8f6aafd27b59454f53548ef7b42",
+    "skills/game-art/scripts/prepare.py": "53b342a82828f0efd2c28188fb69e3472ae0087d0c1702f33ef8b72563d1a736"
+  },
+  "changes": [
+    "nearest pixel-center resize and deterministic opaque RGB palette snap",
+    "transparent alpha checks require actual matte color and automatically enforce partial-alpha edge check",
+    "runner examples use /skill and manifest fields are explicit"
+  ],
+  "validation": {
+    "existing_helper_observations": 17,
+    "new_boundary_observations": 11,
+    "pixel_alpha_tie_and_byte_rebuild_assertions": "passed",
+    "prepared_bundle_hash_check": "passed",
+    "isolated_merged_runner_helper_flow": "passed",
+    "mock_provider_responses": 2,
+    "real_provider_calls": 0,
+    "relative_links_checked": 431,
+    "relative_link_problems": 0,
+    "manifest_fixture_self_check": "passed",
+    "syntax_and_whitespace": "passed"
+  },
+  "acceptance_claimed": false,
+  "independent_review": "pending",
+  "pilot": "remains stopped; no scores published; no credential use for this change"
+}
