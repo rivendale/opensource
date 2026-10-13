@@ -54,7 +54,8 @@
   ],
   "human_view": {
     "subject": "key",
-    "question": "would a player know this is a key at 1x, on mid-grey and on a light background?",
-    "note": "the checker does not judge this; a reviewer answers it for every run and reports it beside the verdict"
+    "question": "before looking at the brief, name what this icon depicts at 1x, on mid-grey and on a light background (do not be told the subject)",
+    "scoring": "a name that matches 'key' is yes; a near-miss is marginal; anything else is no",
+    "note": "the checker does not judge this; two readers answer it for every run and report it beside the verdict"
   }
 }

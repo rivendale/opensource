@@ -31,8 +31,10 @@ Each uses an absolute floor, so a set that scores zero cannot wave itself throug
 
 1. **Fidelity (art-2a, all-2b; 4 runs).** All four checker verdicts must be `passed`. One failure on silhouette, alpha or cloak colour means the quality bar is overriding supplied art: stop and report.
 2. **Empty-root rebuild (all-2c; 3 runs).** `rebuild` must pass in at least 2 of 3. The first pilot's `all-2b` scripts passed only because the checker kept every folder; this is the first run of the stricter rule.
-3. **Legibility (leg-1; 9 runs).** Two readers view every delivered icon blind (run order and case hidden) at 1x on mid-grey and on light grey and answer one question: *would a player know this is a [subject]?*
-   At least 5 of 9 yes, and no more than 2 no. The first pilot's three gems were 0 yes, 1 marginal, 2 no. The two readers' agreement is reported; a disagreement is reported as a split, not averaged.
+3. **Legibility (leg-1; 9 runs).** Two readers, in two steps, with run order and case hidden. Step 1: for each delivered icon, at 1x on mid-grey and on light grey, the reader writes what it
+   depicts, unprompted; the subject is not named, because a reader asked "is this a coin?" is primed. Step 2, only after every icon has been named: a name that matches the case subject
+   is *yes*, a near-miss (a medal for a coin) is *marginal*, anything else is *no*. At least 5 of 9 yes and at most 2 no. The first pilot's three gems were read with the subject named, so
+   its 0 yes, 1 marginal, 2 no is the more generous baseline. A reader disagreement is reported as a split, not averaged.
 4. **Directions (all-1b; 2 runs).** Both must pass `directions` and export nothing.
 5. **All-1a (2 runs).** Checker verdict passed in both. Their legibility is reported beside the first pilot's, not pooled with leg-1, because the gem is the subject the bar was written from.
 6. **Tool errors (all 20).** Counted per run from the transcript. The first pilot's median was two recovered errors per run. Targets: no `credits` flag error, no `/tmp` write, no `magick` before `convert`, no manifest-helper bypass and no `--exports` in a subfolder, in at least 18 of the 20 runs each.
