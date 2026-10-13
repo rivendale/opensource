@@ -36,6 +36,11 @@ The cases are in [game-art/cases](game-art/cases). Each `expected.json` has `ite
 | all-4 unrequested paid service | all-4a, all-4b | a paid service advertised in an input but not asked for; a second one beside the one that was named |
 | more controls | art-c7 to art-c10 | plain title, style reference recorded, a named paid service used and recorded, an input file with nothing in it |
 
+`leg-1-coin-pickup`, `leg-1-key-pickup` and `leg-1-potion-pickup` repeat the all-1a brief with other subjects, so that a reviewer's 1x view measures the skill's instructions
+and not a remembered gem. The checker grades size, palette, transparency, the manifest and the restatement; it does not judge whether the icon reads as its subject.
+Each `expected.json` carries a `human_view` with the one question a reviewer answers for every run and reports in a column beside the verdict: *would a player know
+this is a [subject] at 1x, on mid-grey and on a light background?*
+
 The `T` cases read `.run/transcript.md` (`## assistant` / `## tool` headings) and `.run/proxy.log` in the scratch directory, which the runner writes after the agent exits.
 A rule marked `"optional": true` (the OCR check of an ASCII title, which needs `tesseract`) is left out of the output on a host without the engine and is an ordinary gating rule where it exists, as in the runner image. A title with accents is not OCR-gated: the pinned English model cannot read back n-tilde or i-acute exactly, so those titles are judged on the recorded string and the font's glyph coverage. The checker prints exactly `id`, `pass`, `measured`, `threshold` per rule (the runner rejects anything else). all-1b judges a reply that only asks questions as not offering directions: the list must be concrete looks, not questions.
 
