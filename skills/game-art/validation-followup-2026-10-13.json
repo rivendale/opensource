@@ -1,0 +1,282 @@
+{
+  "date_utc": "2026-10-13T12:29:58.401995+00:00",
+  "scope": "synthetic builder checks for three T17 follow-up fixes; zero provider calls; not independent acceptance",
+  "active_file_sha256": {
+    "skills/game-art/scripts/art.py": "82c75c9a4d9fe776d5a98d4ff1b5add8779b99989063256527a4f1f0507d48e6",
+    "skills/game-art/SKILL.md": "646883dba2b6bf4d7bf8f5249f479f185c2b44f737a8932c3282296640f45612"
+  },
+  "observations": [
+    {
+      "name": "wrong-folder-names-real-root",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/masters/rows.json",
+        "--exports",
+        "ui/icons",
+        "--import-path",
+        "ui"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"MANIFEST.json belongs at the import root: --exports ui\"}\n"
+    },
+    {
+      "name": "wrong-folder-names-all-roots",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/masters/rows.json",
+        "--exports",
+        "ui/icons",
+        "--import-path",
+        "ui",
+        "--import-path",
+        "sprites"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"MANIFEST.json belongs at the import root: --exports ui or --exports sprites\"}\n"
+    },
+    {
+      "name": "missing-import-root-clear-error",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/masters/rows.json",
+        "--exports",
+        "missing",
+        "--import-path",
+        "missing"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"import root folder does not exist: missing\"}\n"
+    },
+    {
+      "name": "file-is-not-import-folder",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/masters/rows.json",
+        "--exports",
+        "not-folder",
+        "--import-path",
+        "not-folder"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"import root folder does not exist: not-folder\"}\n"
+    },
+    {
+      "name": "valid-custom-import-root",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/masters/rows.json",
+        "--exports",
+        "ui",
+        "--import-path",
+        "ui"
+      ],
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "name": "failed-update-preserves-manifest",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2",
+        "--rows",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/masters/rows.json",
+        "--exports",
+        "ui",
+        "--import-path",
+        "ui",
+        "--import-path",
+        "missing"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"import root folder does not exist: missing\"}\n"
+    },
+    {
+      "name": "fraction-None",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/ui/icons/a.png",
+        "--size",
+        "2",
+        "2",
+        "--alpha",
+        "transparent"
+      ],
+      "exit": 0,
+      "report": {
+        "pass": true,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              2,
+              2
+            ],
+            "threshold": [
+              2,
+              2
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": true,
+            "measured": {
+              "transparent": 2,
+              "partial": 0,
+              "transparent_fraction": 0.5
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "fraction-#ff00ff",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/ui/icons/a.png",
+        "--size",
+        "2",
+        "2",
+        "--alpha",
+        "transparent",
+        "--matte",
+        "#ff00ff"
+      ],
+      "exit": 0,
+      "report": {
+        "pass": true,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              2,
+              2
+            ],
+            "threshold": [
+              2,
+              2
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": true,
+            "measured": {
+              "transparent": 2,
+              "partial": 0,
+              "transparent_fraction": 0.5
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "matte",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "fraction-#0a141e",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-followup/skills/game-art/scripts/art.py",
+        "check",
+        "/tmp/opensource-game-art-t17-validation/followup-check-rf2lapv2/ui/icons/a.png",
+        "--size",
+        "2",
+        "2",
+        "--alpha",
+        "transparent",
+        "--matte",
+        "#0a141e"
+      ],
+      "exit": 1,
+      "report": {
+        "pass": false,
+        "rules": [
+          {
+            "id": "size",
+            "pass": true,
+            "measured": [
+              2,
+              2
+            ],
+            "threshold": [
+              2,
+              2
+            ]
+          },
+          {
+            "id": "alpha",
+            "pass": true,
+            "measured": {
+              "transparent": 2,
+              "partial": 0,
+              "transparent_fraction": 0.5
+            },
+            "threshold": "at least one transparent pixel"
+          },
+          {
+            "id": "matte",
+            "pass": false,
+            "measured": 2,
+            "threshold": 0
+          },
+          {
+            "id": "partial-alpha-edge",
+            "pass": true,
+            "measured": 0,
+            "threshold": 0
+          }
+        ]
+      }
+    }
+  ]
+}

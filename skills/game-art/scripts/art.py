@@ -171,8 +171,7 @@ def check(a):
     partial = sum(0 < data[i] < 255 for i in range(3, len(data), 4))
     if a.alpha == 'transparent':
         measured = {'transparent': transparent, 'partial': partial}
-        if matte is None:
-            measured['transparent_fraction'] = transparent / (w * h)
+        measured['transparent_fraction'] = transparent / (w * h)
         rule('alpha', measured, 'at least one transparent pixel', transparent > 0)
     elif a.alpha == 'opaque':
         rule('alpha', transparent + partial, 0, transparent + partial == 0)
@@ -264,8 +263,12 @@ def manifest(a):
         return path
     exports = contained(a.exports)
     import_roots = [contained(ip) for ip in a.import_path]
+    for ip, imported in zip(a.import_path, import_roots):
+        if not imported.is_dir():
+            raise ValueError(f'import root folder does not exist: {ip}')
     if exports not in import_roots:
-        raise ValueError('MANIFEST.json belongs at the import root: --exports assets')
+        choices = ' or '.join(f'--exports {ip}' for ip in a.import_path)
+        raise ValueError(f'MANIFEST.json belongs at the import root: {choices}')
     loaded = json.loads(Path(a.rows or a.row).read_text())
     incoming = loaded if a.rows else [loaded]
     if not isinstance(incoming, list) or not incoming:

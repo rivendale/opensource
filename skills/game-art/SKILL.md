@@ -155,9 +155,9 @@ no command, no PASS. Palette defaults apply to opaque pixels. A transparent chec
 requires at least one transparent pixel and automatically rejects partial alpha
 beyond the outer one-pixel edge. `--matte` is optional: supply the brief's actual
 background color when known (the magenta example is only a placeholder); it
-rejects that color at any nonzero alpha. Without `--matte`, transparency and
-partial-alpha checks still run and report the transparent fraction
-(transparent pixels divided by total pixels), but matte removal is unverified. Do not guess a
+rejects that color at any nonzero alpha. Transparent checks report the transparent fraction (transparent pixels divided
+by total pixels) with or without `--matte`. Without `--matte`, transparency and
+partial-alpha checks still run, but matte removal is unverified. Do not guess a
 background color or treat a transparent pixel as proof that no matte remains.
 For sprites, compare bottom-center opaque bounds within 1 px across all frames,
 or measure the brief's custom anchor separately. Empty sprite frames fail anchor
