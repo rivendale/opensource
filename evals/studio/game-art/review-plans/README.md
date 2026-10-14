@@ -26,4 +26,4 @@ the runner as a host file, and nothing under `skills/` may quote it. It names th
 calibration (a model call, under its own grant); a disagreement there is a finding about a question or about the reviewer, read by a person.
 
 `python3 check_plans.py` checks the plans without a model call (shape, no subject word in any question, a primed question is refused, expectations name real calibration images) and applies the runner's
-`validate_plan` when `skills/studio/runner/reviewer.py` is present.
+`validate_plan` from `skills/studio/runner/reviewer.py`; a missing reviewer, an import failure, or a run that applied the validator to fewer plans than exist is a failure.

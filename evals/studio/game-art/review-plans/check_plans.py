@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Checks the operator review plans without a model call: each plan is well formed, no question holds a subject word (casefolded, NFKC, common Greek and Cyrillic lookalikes, prefix match), the
-plan is accepted by the runner's own validate_plan when that module is present, a primed question is refused (a negative control), and every expectation names a real calibration image."""
+plan is accepted by the runner's own validate_plan (a missing or unimportable reviewer is a failure, never a skip, and the check fails if validate_plan was applied to fewer plans than exist), a primed question is refused (a negative control), and every expectation names a real calibration image."""
 import json, pathlib, re, sys, unicodedata
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -22,12 +22,15 @@ def check(ok, text):
     bad += not ok
 
 
+RUNNER = HERE.parents[3] / "skills/studio/runner"      # HERE is <repo>/evals/studio/game-art/review-plans
+sys.path.insert(0, str(RUNNER))
+reviewer, applied = None, 0
+check((RUNNER / "reviewer.py").is_file(), "the runner's reviewer.py exists at %s" % RUNNER.relative_to(HERE.parents[3]))
 try:
-    sys.path.insert(0, str(HERE.parents[2] / "skills/studio/runner"))
     import reviewer
-except Exception:   # the runner's reviewer is merged separately; the local checks below still run
-    reviewer = None
-check(True, "runner reviewer module %s" % ("present: validate_plan will be applied" if reviewer else "absent: only the local checks run"))
+    check(pathlib.Path(reviewer.__file__).resolve() == (RUNNER / "reviewer.py").resolve(), "the module imported is that file")
+except ImportError as e:
+    check(False, "the runner's reviewer cannot be imported (%s): validate_plan would not be applied" % e)
 images = {r["file"] for r in json.loads((HERE.parent / "review-calibration/answers.json").read_text())["images"]}
 exp = json.loads((HERE / "expectations.json").read_text())["plans"]
 for path in sorted(HERE.glob("leg-1-*.json")):
@@ -43,6 +46,7 @@ for path in sorted(HERE.glob("leg-1-*.json")):
     if reviewer:
         try:
             reviewer.validate_plan(plan)
+            applied += 1
             check(True, "%s: accepted by the runner's validate_plan" % path.name)
         except reviewer.ReviewError as e:
             check(False, "%s: refused by validate_plan: %s" % (path.name, e))
@@ -55,5 +59,6 @@ for path in sorted(HERE.glob("leg-1-*.json")):
     check(rows and all(r["image"] in images for r in rows), "%s: %d expectations, each naming a real calibration image" % (path.name, len(rows)))
     check(any(r["accept"] for r in rows) and any(not r["accept"] for r in rows), "%s: the expectations include accepted and rejected images" % path.name)
 check(set(exp) == {p.name for p in HERE.glob("leg-1-*.json")}, "expectations exist for exactly the three plans")
+check(reviewer is not None and applied == len(exp), "validate_plan was applied to every plan (%d of %d): a check that applied nothing has not run" % (applied, len(exp)))
 print("check_plans:", "all hold" if not bad else "FAILED (%d)" % bad)
 sys.exit(1 if bad else 0)
