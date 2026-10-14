@@ -22,12 +22,14 @@ def check():
         with patch.object(supervisor, 'review_snapshot', side_effect=error):
             assert 'error' in supervisor.candidate_snapshots(['assets/unsafe.png'])[0]
     with patch.object(supervisor, 'review_snapshot', return_value=b'original'), \
-            patch.object(supervisor, 'container_views', return_value=[b'grey', b'light']):
+            patch.object(supervisor, 'container_views', return_value=[b'grey', b'light']), \
+            patch.object(supervisor, 'view_metadata', return_value={'source_dimensions':[16,16],'scale':8,'dimensions':[128,128]}):
         snapshots = supervisor.candidate_snapshots(['assets/render.png'])
         assert 'data' not in snapshots[0] and len(snapshots[0]['views']) == 2
         assert len(snapshots[0]['sha256']) == 64
     with patch.object(supervisor, 'review_snapshot', return_value=b'original'), \
-            patch.object(supervisor, 'container_views', return_value=[b'x' * (512 * 1024)] * 2):
+            patch.object(supervisor, 'container_views', return_value=[b'x' * (512 * 1024)] * 2), \
+            patch.object(supervisor, 'view_metadata', return_value={'source_dimensions':[16,16],'scale':8,'dimensions':[128,128]}):
         snapshots = supervisor.candidate_snapshots(['assets/a.png', 'assets/b.png'])
         assert len(snapshots) == 2 and all(s['error'] == 'review snapshot frame exceeds limit' for s in snapshots)
         assert len(supervisor.encode({'type': 'review-snapshots', 'snapshots': snapshots})) < 1024

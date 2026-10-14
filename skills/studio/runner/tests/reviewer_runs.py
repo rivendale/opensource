@@ -71,6 +71,13 @@ def test(args, mode):
         def close(self): pass
     saved = proxy.http.client.HTTPSConnection
     saved_run = subprocess.run
+    saved_next = run.Frames.next
+    def next_frame(frames):
+        frame = saved_next(frames)
+        if mode == 'wrong-scale' and frame.get('type') == 'review-snapshots':
+            frame['snapshots'][0]['scale'] = 4
+        return frame
+    run.Frames.next = next_frame
     def host_process(command, *positional, **keywords):
         if isinstance(command, (list, tuple)) and Path(str(command[0])).name in ('convert', 'magick'):
             raise AssertionError('host must not decode agent-written artwork')
@@ -120,6 +127,7 @@ def test(args, mode):
                     assert len(calls) == expected_calls and result['usage']['total_tokens'] == expected_calls * 3
                     assert len(feature_calls) == (2 if mode == 'redraw' else 1)
                     assert capture['review_records'] == result['review_records']
+                    assert all(r['scale'] == 8 and r['source_dimensions'] == [4,4] and r['dimensions'] == [32,32] for r in result['review_records'])
                     if mode.startswith('fenced'):
                         names = [r['text'] for r in result['review_records'] if r['phase'] == 'blind-name']
                         features = [r['text'] for r in result['review_records'] if r['phase'] == 'features']
@@ -136,9 +144,10 @@ def test(args, mode):
                     else:
                         assert code == 0 and result['status'] == 'completed' and result['verdict'] == 'passed', result
                         assert result['review_accepted'] is False and result['review_gate'] is False
-                    expected_calls = {'miss': 8, 'malformed': 3, 'symlink': 2, 'budget': 0, 'tamper': 4, 'text-only': 1, 'http-error': 3, 'oversized-frame': 2}[mode]
+                    expected_calls = {'miss': 8, 'malformed': 3, 'symlink': 2, 'budget': 0, 'tamper': 4, 'text-only': 1, 'http-error': 3, 'oversized-frame': 2, 'wrong-scale': 2}[mode]
                     assert len(calls) == expected_calls, (mode, len(calls), result)
                     if calls: assert result['usage']['total_tokens'] == (6 if mode == 'http-error' else expected_calls * 3), result
+                    if mode == 'wrong-scale': assert result['review_error']['message'] == 'invalid supervisor view scale or dimensions'
                     if mode == 'http-error': assert result['review_error']['type'] == 'HTTPException'
                     if mode == 'oversized-frame': assert result['review_error']['message'] == 'review snapshot frame exceeds limit'
                     if mode == 'tamper':
@@ -148,6 +157,7 @@ def test(args, mode):
     finally:
         proxy.http.client.HTTPSConnection = saved
         subprocess.run = saved_run
+        run.Frames.next = saved_next
 
 
 def main():
@@ -155,7 +165,7 @@ def main():
     p.add_argument('--store', type=Path, required=True); p.add_argument('--image', required=True)
     p.add_argument('--selftest', type=Path, required=True); p.add_argument('--output', type=Path, required=True)
     args = p.parse_args(); args.output.mkdir()
-    results = [test(args, mode) for mode in ['accept', 'fenced-name', 'fenced-features', 'fenced-both', 'redraw', 'miss', 'malformed', 'symlink', 'budget', 'tamper', 'text-only', 'http-error', 'oversized-frame', 'key-echo']]
+    results = [test(args, mode) for mode in ['accept', 'fenced-name', 'fenced-features', 'fenced-both', 'redraw', 'miss', 'malformed', 'symlink', 'budget', 'tamper', 'text-only', 'http-error', 'oversized-frame', 'wrong-scale', 'key-echo']]
     (args.output / 'receipt.json').write_text(json.dumps({'fixtures': results, 'real_provider_calls': 0}, indent=2) + '\n')
     print(json.dumps({'fixtures_passed': len(results), 'real_provider_calls': 0}))
 

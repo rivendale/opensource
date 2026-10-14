@@ -13,7 +13,7 @@ import tempfile
 import time
 
 from common import VERSION, encode, read_frame
-from reviewer import neutral_views, ReviewError
+from reviewer import neutral_views, view_metadata, ReviewError
 
 
 def send(kind, **values):
@@ -239,7 +239,8 @@ def candidate_snapshots(files):
             # Decode untrusted artwork only inside this isolated container.
             views = container_views(data)
             snapshots.append({'file': file, 'sha256': hashlib.sha256(data).hexdigest(),
-                              'views': [base64.b64encode(v).decode('ascii') for v in views]})
+                              'views': [base64.b64encode(v).decode('ascii') for v in views],
+                              **view_metadata(data)})
         except FileNotFoundError:
             snapshots.append({'file': file, 'error': 'export not present'})
         except (OSError, ReviewError, subprocess.TimeoutExpired):

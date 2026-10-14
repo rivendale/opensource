@@ -145,10 +145,13 @@ listed regular files using directory FDs, refusing symlinks and special files. T
 uses the pinned container ImageMagick `convert` as UID 1002 with dropped groups
 and capabilities to strip PNG metadata and composite
 mid-grey and light backgrounds, then enlarges each view by an integer factor of
-8 with nearest-neighbor filtering (`-filter point -resize 800%`). A 16×16 source
+up to 8 with nearest-neighbor filtering. The trusted operator policy is
+`max(1, min(8, 512 // max(width, height)))`; the writer cannot set it. A 16×16 source
 becomes a 128×128 attachment; every composited pixel occupies an exact 8×8 block,
 with no interpolation or edits to delivered source pixels. Sources remain bounded
-to 512×512; generated views allow up to 4096×4096. Both retain the 512 KiB PNG
+to 512×512, including generated views. A 256-pixel export gets 2× and a
+512-pixel export 1×. Source dimensions, chosen factor and enlarged dimensions
+are recorded beside each source hash and validated before review. Both retain the 512 KiB PNG
 byte limit, decoder resource limits and existing relay/frame limits. Larger or
 unreviewable views still become error entries and preserve the checker verdict. PNG chunk names, lengths, CRCs and the end marker are checked
 before conversion. The host receives only neutral views and snapshot hash receipts;
@@ -199,8 +202,10 @@ subject. Feature booleans control redraws; `review_gate: false` keeps uncalibrat
 model review out of acceptance decisions and human columns. Calibration is required
 before any later change enables an acceptance gate. The native 16×16 view batch
 failed calibration; the 8× display requires a new batch with the same questions,
-floors, request wording and response parser for comparison. Request wording stays
-pinned to that earlier batch; only the image display size changes. Enlargement
+floors and response parser for comparison. This batch changes the view size and
+one descriptive prompt sentence, which now identifies enlarged views and pixel
+blocks. Model settings, feature questions, the data-not-instructions instruction
+and bare-JSON wording remain unchanged. Enlargement
 does not guarantee human-equivalent presentation by the provider; no live vision accuracy,
 human agreement, latency or paid-pilot acceptance is claimed by the synthetic tests.
 Runs without a review plan retain prior behavior and have no model review evidence.

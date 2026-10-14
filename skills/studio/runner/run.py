@@ -247,7 +247,7 @@ def failed_capture(root, output, result, events, transcript, log, keys, snapshot
     shutil.copytree(candidate, output / 'scratch')
 
 
-from reviewer import validate_plan, review, ReviewError
+from reviewer import validate_plan, review, png_dimensions, MAX_DIMENSION, VIEW_SCALE, ReviewError
 
 
 def run(args):
@@ -487,13 +487,25 @@ def run(args):
                         if not isinstance(snapshot.get('views'), list) or len(snapshot['views']) != 2:
                             raise ReviewError('invalid supervisor neutral views')
                         views = [base64.b64decode(v, validate=True) for v in snapshot['views']]
+                        source_dimensions = snapshot.get('source_dimensions')
+                        scale = snapshot.get('scale')
+                        dimensions = snapshot.get('dimensions')
+                        if (not isinstance(source_dimensions, list) or len(source_dimensions) != 2 or
+                                any(type(d) is not int or not 1 <= d <= MAX_DIMENSION for d in source_dimensions) or
+                                type(scale) is not int or not isinstance(dimensions, list) or
+                                len(dimensions) != 2 or any(type(d) is not int for d in dimensions) or
+                                scale != max(1, min(VIEW_SCALE, MAX_DIMENSION // max(source_dimensions))) or
+                                dimensions != [d * scale for d in source_dimensions] or
+                                any(list(png_dimensions(v)) != dimensions for v in views)):
+                            raise ReviewError('invalid supervisor view scale or dimensions')
                         def record(phase, text, reported):
                             nonlocal usage
                             for key, value in reported.items():
                                 usage[key] = usage.get(key, 0) + value
                             result['usage'] = dict(usage)
                             review_records.append({'round': review_round, 'file': item['file'],
-                                'sha256': snapshot['sha256'], 'phase': phase, 'text': text,
+                                'sha256': snapshot['sha256'], 'scale': scale, 'dimensions': dimensions,
+                                'source_dimensions': source_dimensions, 'phase': phase, 'text': text,
                                 'usage': reported})
                             result['review_records'] = list(review_records)
                         def transport(messages, max_tokens):

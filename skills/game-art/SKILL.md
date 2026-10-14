@@ -107,7 +107,8 @@ for a mushroom: a domed cap, spots and a stem; for a boot: a shaft, a toe and
 a sole. These are illustrations; list the features of your own subject.
 Before delivery, inspect those required visible features at 1x on
 both mid-grey and light backgrounds for redraw diagnostics. Never grade your own
-legibility. Fresh-context model review first sees only those renders,
+legibility. Fresh-context model review first sees only those renders, enlarged
+by a bounded integer factor for display with each source pixel shown as a block,
 without the brief, filename, subject word or your explanation, and names what it
 sees in one line. Only after that name is recorded does it receive one subject-free
 yes/no question per required feature. A missing feature returns the art for redraw

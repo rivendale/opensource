@@ -1,22 +1,22 @@
 {
   "date": "2026-10-14",
-  "source_base": "ebaf585bf330edd07cc9e3100364a76e3abe01a3",
+  "source_parent": "c247f6ae5fb3a8c91d4c7e75c7b013c35929eb40",
   "image": {
-    "reference": "localhost/studio-runner@sha256:3825a1507189cf8489d1640fbd5e4fd9ed9a4e6b9930ce2a51d1097efed6a1e9",
-    "id": "eb69cbbc35b422880db6f64ca576eebb10d7f5de9a7d8d4d26f4224628ac0678",
+    "reference": "localhost/studio-runner@sha256:5bab130f772fa2739aac8af8fb9582ad38a302c5c51835723321670bec6636f0",
+    "id": "ea4da3f46d22bbc2b6749b84aafe4a46ee6d1e93f2f3599fffc798c28429d096",
     "sources": {
-      "supervisor.py": "df7a7249ca60266c18cb9940eae59ce6f910318c15321534101cb7deb5df0d57",
+      "supervisor.py": "77782d5b8f874f526f42bd382ed0e6ae0768877869154f0ba045283a3ef83b4b",
       "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
       "replay.py": "dde3e0deb5ca9135d9076209b3e9f3f654623b373183ae9c80e1df3fb73ef45d",
       "probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
-      "reviewer.py": "6faa0f7568fe74158702bfbaad6781cdbd8e8ba114154781e7c9cc9f981fa12e",
+      "reviewer.py": "e61416861ca1468b21b4b4da41562bfd959720bb122706ba53acfa3a70867c1e",
       "agent.py": "564baa11e7a38ae49153fae35fea57ed64785df635e697839a12ba56f81e0cda",
       "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
       "proxy.py": "9187abb3555a8880468385326d7bc85062223fa99e0299b0410ba322bcd8c46a",
       "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
     }
   },
-  "host_runner_sha256": "53cf428851ef182286e25c6fdddd2d35220059d5fb39eabbc6a645e1236b7060",
+  "host_runner_sha256": "43ead9c405f353711ea0e70ff6180354d85a8164039744b6f6bd641e8efed1ba",
   "selftest_status": "passed",
   "isolation_probes": {
     "network": true,
@@ -39,10 +39,16 @@
       128,
       128
     ],
-    "large_rendered_view": [
-      520,
-      520
+    "non_square": [
+      128,
+      192
     ],
+    "partial_alpha_and_one_pixel_shape": true,
+    "bounded_factors": {
+      "65": 7,
+      "256": 2,
+      "512": 1
+    },
     "real_provider_calls": 0
   },
   "mutations": [
@@ -52,7 +58,17 @@
       "error": "AssertionError"
     },
     {
-      "mutant": "interpolated",
+      "mutant": "bilinear",
+      "refused": true,
+      "error": "AssertionError"
+    },
+    {
+      "mutant": "four-times",
+      "refused": true,
+      "error": "AssertionError"
+    },
+    {
+      "mutant": "one-pixel-shift",
       "refused": true,
       "error": "AssertionError"
     }
@@ -164,6 +180,14 @@
         "host_decoder_guard": true
       },
       {
+        "scenario": "wrong-scale",
+        "passed": true,
+        "mock_requests": 2,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
         "scenario": "key-echo",
         "passed": true,
         "mock_requests": 3,
@@ -183,13 +207,18 @@
   },
   "compilation_and_whitespace": "passed",
   "source_pixel_edits": false,
-  "model_prompts_and_parser_changed": false,
+  "batch_changes": [
+    "bounded integer view enlargement",
+    "one descriptive prompt sentence"
+  ],
+  "response_parser_changed": false,
+  "feature_questions_and_model_settings_changed": false,
   "real_credentials_used": false,
   "real_provider_calls": 0,
   "review_gate": false,
-  "limitations": [
-    "Nearest-neighbor display enlargement only; live accuracy is unmeasured.",
-    "New calibration still requires reviewed merge, fresh merged-host isolation and explicit operator go.",
-    "Source dimensions remain512; trusted generated views allow4096 while PNG-byte, decoder, relay and frame limits remain unchanged."
+  "limits": [
+    "Sources and generated views retain the512px and512KiB limits, with existing decoder/frame/relay limits.",
+    "Chosen factor/source dimensions/generated dimensions are protected supervisor metadata checked and recorded on the host.",
+    "Live calibration requires reviewed merge, fresh merged-host isolation and separate explicit go."
   ]
 }
