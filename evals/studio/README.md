@@ -43,6 +43,8 @@ Each `expected.json` carries a `human_view`: a reviewer first names what each ic
 
 [game-art/review-calibration](game-art/review-calibration) is a control set for a model reviewer of game-art deliveries: 14 images with answers that do not come from a model, a scorer with absolute floors, and a selfcheck with known-bad reviewers. It makes no model call.
 
+[game-art/review-plans](game-art/review-plans) holds the trusted operator plans (subject-free feature questions) for the leg-1 model review, with the author's expectations on the calibration images; they must never be visible to a writer.
+
 The `T` cases read `.run/transcript.md` (`## assistant` / `## tool` headings) and `.run/proxy.log` in the scratch directory, which the runner writes after the agent exits.
 A rule marked `"optional": true` (the OCR check of an ASCII title, which needs `tesseract`) is left out of the output on a host without the engine and is an ordinary gating rule where it exists, as in the runner image. A title with accents is not OCR-gated: the pinned English model cannot read back n-tilde or i-acute exactly, so those titles are judged on the recorded string and the font's glyph coverage. The checker prints exactly `id`, `pass`, `measured`, `threshold` per rule (the runner rejects anything else). all-1b judges a reply that only asks questions as not offering directions: the list must be concrete looks, not questions.
 

@@ -1,0 +1,17 @@
+[
+  {
+    "file": "assets/ui/key.png",
+    "subject_words": [
+      "key",
+      "keys",
+      "wand"
+    ],
+    "features": [
+      "Is there a rounded head at one end of a long, narrow shape?",
+      "Does a straight, narrow shaft run from that head to the opposite end?",
+      "Does the end opposite the head have one or more small blocks or notches sticking out to the side?",
+      "Is the whole shape surrounded by a dark outline?",
+      "Is one side of the shape lighter and the opposite side darker?"
+    ]
+  }
+]
