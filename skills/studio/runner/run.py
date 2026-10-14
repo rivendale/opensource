@@ -21,6 +21,8 @@ import uuid
 
 from common import KEY_PATTERN, VERSION, MAX_FRAME, checker_result, encode, leak_reason, plain_tree, sha256
 from proxy import Relay
+from agent import system_text
+from cache_api import FIELDS, usage as checked_usage, receipt as usage_receipt
 
 CAPTURE_RESERVE = 32 * 1024 * 1024
 
@@ -254,7 +256,10 @@ def run(args):
     result = {"runner": VERSION, "status": "failed", "reason": "runner preflight or isolation failure",
               "runner_sha256": sha256(__file__),
               "case": args.case_id, "agent": VERSION, "model": args.model, "limits": args.limits,
-              "usage": {}}
+              "usage": {}, "prompt_cache": {"enabled": args.prompt_cache,
+                  "policy": "operator-system-and-brief-only" if args.prompt_cache else "off",
+                  "sampling": "provider-default" if args.prompt_cache else "temperature-zero-seed-zero",
+                  "thinking": "provider-default-lossless-roundtrip" if args.prompt_cache else "compatibility"}}
     # No overwritten results and no mixed case runs.
     args.output.mkdir(parents=True, exist_ok=False)
     os.chmod(args.output, 0o700)
@@ -408,7 +413,8 @@ def run(args):
                 if args.ca_file.stat().st_size > 1024 * 1024 or b"PRIVATE KEY" in args.ca_file.read_bytes():
                     raise ValueError("CA file must contain public certificates only")
                 result["ca_sha256"] = sha256(args.ca_file)
-            relay = Relay(egress / "api.sock", routes, keys, args.model, args.turns, args.ca_file)
+            prefix = {'system': system_text((skill/'SKILL.md').read_text()), 'brief': (seed/'brief.md').read_text()} if args.prompt_cache else None
+            relay = Relay(egress / "api.sock", routes, keys, args.model, args.turns, args.ca_file, cache_prefix=prefix)
             thread = threading.Thread(target=relay.serve_forever, daemon=True)
             thread.start()
         launched = time.monotonic()
@@ -460,12 +466,13 @@ def run(args):
                     transcript.append("## tool\n\nSynthetic isolation probe completed.\n")
                 if event["type"] == "assistant":
                     reported = event.get("usage")
-                    fields = ("prompt_tokens", "completion_tokens", "total_tokens")
+                    fields = FIELDS
+                    reported = checked_usage(reported)
                     if not isinstance(reported, dict) or any(type(reported.get(k)) is not int or reported[k] < 0 for k in fields):
                         raise ValueError("invalid assistant token usage")
                     usage = {k: usage.get(k, 0) + reported[k] for k in fields}
                     # Retain paid usage even if a later event, tool or drain fails.
-                    result["usage"] = dict(usage)
+                    result["usage"] = usage_receipt(usage, args.model)
                 if len(encode({"events": events})) > MAX_FRAME - 65536:
                     raise ValueError("event capture size limit")
             elif frame["type"] == 'review-snapshots':
@@ -491,7 +498,7 @@ def run(args):
                             nonlocal usage
                             for key, value in reported.items():
                                 usage[key] = usage.get(key, 0) + value
-                            result['usage'] = dict(usage)
+                            result['usage'] = usage_receipt(usage, args.model)
                             review_records.append({'round': review_round, 'file': item['file'],
                                 'sha256': snapshot['sha256'], 'phase': phase, 'text': text,
                                 'usage': reported})
@@ -556,10 +563,10 @@ def run(args):
                                      for (host, path), budget in sorted(relay.budgets.items())]
             if relay.limit_hit:
                 result["limits_hit"].append("paid route calls or bytes")
-        result["usage"] = usage
+        result["usage"] = usage_receipt(usage, args.model)
         capture(process, {"transcript.md": "\n".join(transcript),
                           "proxy.log": "".join(json.dumps(v, sort_keys=True) + "\n" for v in log),
-                          "usage.json": json.dumps(usage),
+                          "usage.json": json.dumps(usage_receipt(usage, args.model)),
                           "run.json": json.dumps({**result, "events": events}, sort_keys=True)})
         if frames.next()["type"] != "archive-start":
             raise RuntimeError("missing capture archive")
@@ -741,6 +748,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model", default="synthetic-probe")
     parser.add_argument("--host", default="api.example.test")
+    parser.add_argument("--prompt-cache", action="store_true", help="Native Messages caching of the fixed operator prefix only")
     parser.add_argument("--api-path", default="/v1/chat/completions")
     parser.add_argument("--key-fds", default="{}", help='JSON mapping exact host to inherited key FD; no key values')
     parser.add_argument("--paid-routes", default="[]", help='JSON routes: name, host, path, max_calls, max_bytes; bytes count requests plus responses')
@@ -755,6 +763,10 @@ def main():
     parser.add_argument('--review-plan', type=Path, help='Trusted operator plan: file, subject_words, feature questions; never checker answers')
     parser.add_argument('--review-rounds', type=int, default=2, help='Maximum blind review/redraw rounds, shared run budget')
     args = parser.parse_args()
+    if args.prompt_cache:
+        if args.mode != 'run' or args.host != 'api.anthropic.com' or args.api_path not in ('/v1/chat/completions','/v1/messages'):
+            parser.error('prompt cache requires native Anthropic run mode')
+        args.api_path = '/v1/messages'
     if not 1 <= args.review_rounds <= 4:
         parser.error('review-rounds must be 1-4')
     args.limits = {k: getattr(args, k) for k in ["cpus", "memory", "scratch", "processes"]}

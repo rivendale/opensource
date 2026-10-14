@@ -1,7 +1,7 @@
 # Native prompt caching: feasibility and build plan
 
-Documentation checked October 14, 2026. Implementation is pending; no live cache
-hit or cost saving has been measured.
+Documentation checked October 14, 2026. The implementation is opt-in; no live cache hit or cost saving has been
+measured. Compatibility behavior has not been empirically probed with a real key.
 
 The OpenAI-compatible endpoint does not support prompt caching. Anthropic's
 [compatibility documentation](https://platform.claude.com/docs/en/cli-sdks-libraries/libraries/openai-sdk)
@@ -9,7 +9,9 @@ explicitly lists this limitation. Native `/v1/messages` on `api.anthropic.com`
 is required for this change.
 
 [Native caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
-supports automatic five-minute ephemeral caching with `cache_control`. Cache
+supports five-minute ephemeral caching with `cache_control`. This runner uses
+explicit markers only on the operator-owned system/skill and initial brief,
+not automatic breakpoints on growing writer history. Cache
 reuse depends on a matching prefix and minimum length: 1,024 tokens for Sonnet
 4.5 and 512 for Opus 5.5. Zero cache counters must still complete normally.
 Native total input is uncached input plus cache creation plus cache reads.

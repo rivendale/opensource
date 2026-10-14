@@ -1,0 +1,381 @@
+{
+  "date": "2026-10-14",
+  "scope": "Opt-in native Messages caching and usage accounting; synthetic validation only",
+  "base_commit": "70726450a4621ee7b03147ed66f1501c8de4a203",
+  "feasibility_report_completed_before_build": true,
+  "image": {
+    "reference": "localhost/studio-runner@sha256:31615a00a49000f5588061e6ab7a64ffdecead1d672761d6664bea2792ab8ad2",
+    "id": "c34736fb5c772191190a08968146405a852370d40df18ba1ccbad705f991aae2",
+    "sources": {
+      "supervisor.py": "df7a7249ca60266c18cb9940eae59ce6f910318c15321534101cb7deb5df0d57",
+      "cache_api.py": "24dde027e6414a95d337605286022f4445bc27fd908a4fccaabc46fcdc690e44",
+      "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+      "replay.py": "dde3e0deb5ca9135d9076209b3e9f3f654623b373183ae9c80e1df3fb73ef45d",
+      "probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
+      "reviewer.py": "443cac881287982d697cfe6a9d1302f776e3cd3242bb93e5445db98e2709ff75",
+      "agent.py": "3622748c58d094047b87c1f2ad6b122f7f839cdf5c5af15a0a2b49424a2a9935",
+      "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+      "proxy.py": "e5ca25e1d5ba93736c71db0d8e412db324c4976b60ae13ed164a325e32af0dad",
+      "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+    }
+  },
+  "runtime": {
+    "podman": "4.9.3",
+    "oci_runtime": "crun version 1.14.1",
+    "cgroup_version": "v2",
+    "controllers": [
+      "cpu",
+      "memory",
+      "pids"
+    ],
+    "rootless": true,
+    "seccomp": true
+  },
+  "host_runner_sha256": "3bf6785f3fd2b2616839c999987d0e3a39c2c95b16a6bd61a30ade46080933f3",
+  "selftest": {
+    "status": "passed",
+    "verdict": "passed",
+    "key_scan": "passed",
+    "rules": [
+      {
+        "id": "network-denial-audited",
+        "pass": true,
+        "measured": 1,
+        "threshold": "at least one denied connection"
+      },
+      {
+        "id": "captures-before-checker",
+        "pass": true,
+        "measured": "capture files",
+        "threshold": "all four"
+      },
+      {
+        "id": "answers-after-drain",
+        "pass": true,
+        "measured": "after-drain",
+        "threshold": "after-drain"
+      }
+    ],
+    "receipt_sha256": "0c79ace66043b6305a14bc38a925196c650776033c943a7e08167060774928f7"
+  },
+  "native_fixtures": [
+    {
+      "scenario": "hit",
+      "passed": true,
+      "mock_requests": 2,
+      "real_provider_calls": 0
+    },
+    {
+      "scenario": "opus-hit",
+      "passed": true,
+      "mock_requests": 2,
+      "real_provider_calls": 0
+    },
+    {
+      "scenario": "ignored",
+      "passed": true,
+      "mock_requests": 2,
+      "real_provider_calls": 0
+    },
+    {
+      "scenario": "review",
+      "passed": true,
+      "mock_requests": 4,
+      "real_provider_calls": 0
+    },
+    {
+      "scenario": "bad-role",
+      "passed": true,
+      "mock_requests": 1,
+      "real_provider_calls": 0
+    },
+    {
+      "scenario": "bad-model",
+      "passed": true,
+      "mock_requests": 1,
+      "real_provider_calls": 0
+    },
+    {
+      "scenario": "key-echo",
+      "passed": true,
+      "mock_requests": 1,
+      "real_provider_calls": 0
+    }
+  ],
+  "default_fixtures": {
+    "fixtures": [
+      {
+        "scenario": "questions",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "capture-error",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "checker-error",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "preflight-error",
+        "passed": true,
+        "mock_requests": 0,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "invalid-key-quote",
+        "passed": true,
+        "mock_requests": 0,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "invalid-key-backslash",
+        "passed": true,
+        "mock_requests": 0,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "fail-verdict",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "checker-exit-2",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "stderr-redaction",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "checker-crash-exit-1",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "invalid-stdout-exit-1",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "exit-1-passing-rules",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "exit-0-failing-rules",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "stderr-shortened",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "stderr-long",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "incident-cleanup",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "incident",
+        "capture_scope": "suppressed"
+      }
+    ],
+    "diagnostic_redaction": "passed",
+    "pattern_scan_suppression": "passed",
+    "exact_key_tool_echo_suppression": "passed",
+    "diagnostic_formatting_fallback": "passed",
+    "real_provider_calls": 0
+  },
+  "default_review_fixtures": {
+    "fixtures": [
+      {
+        "scenario": "accept",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "fenced-name",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "fenced-features",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "fenced-both",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "redraw",
+        "passed": true,
+        "mock_requests": 8,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "miss",
+        "passed": true,
+        "mock_requests": 8,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "malformed",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "symlink",
+        "passed": true,
+        "mock_requests": 2,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "budget",
+        "passed": true,
+        "mock_requests": 0,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "tamper",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "text-only",
+        "passed": true,
+        "mock_requests": 1,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "http-error",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "oversized-frame",
+        "passed": true,
+        "mock_requests": 2,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "key-echo",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "incident",
+        "host_decoder_guard": true
+      }
+    ],
+    "real_provider_calls": 0
+  },
+  "offline_checks": {
+    "cache_usage_prefix_signed_history_and_failure_checks": "passed",
+    "unix_socket_relay_headers_route_key_scan_and_off_byte_identity": "passed",
+    "off_request_sha256": "a4580870e45bbb8d62f83cb026b0ff165d70f8b54ac89b03d7a2eaa829ade8e1",
+    "reviewer_checks": "passed",
+    "reviewer_json_fixtures": 86,
+    "reviewer_protocol": "passed",
+    "relative_links": 452,
+    "link_checker_selftest": "33/33",
+    "compile": "passed",
+    "whitespace": "passed"
+  },
+  "real_provider_calls": 0,
+  "credential_accessed": false,
+  "provider_compatibility_probe": "Not measured; documentation says unsupported. No specific credential authorization for the empirical probe was present.",
+  "live_cache_hits_or_savings_measured": false,
+  "rates_date": "2026-10-14",
+  "remaining": [
+    "Independent review and owner merge",
+    "Any empirical paid probe requires its own current authorization",
+    "Future paid calibration/comparison requires a preregistered exact transport, image, cost projection and operator go"
+  ]
+}
