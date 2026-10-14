@@ -47,14 +47,16 @@ def test(args, mode):
                 assert len(payload['messages'][1]['content']) == 2
                 message['content'] = '{"name":"a colored square"}'
                 if mode == 'malformed': message['content'] = 'not JSON'
+                if mode in ('fenced-name', 'fenced-both'): message['content'] = '```json\n' + message['content'] + '\n```'
                 if mode == 'key-echo': message['content'] = KEY.decode()
             else:
                 feature_calls.append(payload)
                 assert payload['max_tokens'] == 256 and 'tools' not in payload
-                assert payload['messages'][2]['content'] == '{"name":"a colored square"}'
+                assert payload['messages'][2]['content'] == ('```json\n{"name":"a colored square"}\n```' if mode in ('fenced-name', 'fenced-both') else '{"name":"a colored square"}')
                 assert 'dark edge' in json.dumps(payload['messages'])
                 accepted = mode != 'miss' and (mode != 'redraw' or len(feature_calls) > 1)
                 message['content'] = json.dumps({'features': [accepted]})
+                if mode in ('fenced-features', 'fenced-both'): message['content'] = '```\n' + message['content'] + '\n```'
             return json.dumps({'model': MODEL, 'choices': [{'finish_reason': 'stop', 'message': message}],
                 'usage': {'prompt_tokens': 2, 'completion_tokens': 1, 'total_tokens': 3}}).encode()
     class Upstream:
@@ -112,12 +114,18 @@ def test(args, mode):
                 assert result['key_scan'] == 'passed', result
                 capture = json.loads((output / 'scratch/.run/run.json').read_text())
                 assert KEY not in b''.join(p.read_bytes() for p in (output / 'scratch/.run').iterdir())
-                if mode in ('accept', 'redraw'):
+                if mode in ('accept', 'redraw', 'fenced-name', 'fenced-features', 'fenced-both'):
                     assert code == 0 and result['verdict'] == 'passed' and result['review_accepted'], result
-                    expected_calls = 4 if mode == 'accept' else 8
+                    expected_calls = 8 if mode == 'redraw' else 4
                     assert len(calls) == expected_calls and result['usage']['total_tokens'] == expected_calls * 3
-                    assert len(feature_calls) == (1 if mode == 'accept' else 2)
+                    assert len(feature_calls) == (2 if mode == 'redraw' else 1)
                     assert capture['review_records'] == result['review_records']
+                    if mode.startswith('fenced'):
+                        names = [r['text'] for r in result['review_records'] if r['phase'] == 'blind-name']
+                        features = [r['text'] for r in result['review_records'] if r['phase'] == 'features']
+                        assert names and features
+                        assert names[0].startswith('```') == (mode in ('fenced-name', 'fenced-both'))
+                        assert features[0].startswith('```') == (mode in ('fenced-features', 'fenced-both'))
                     if mode == 'redraw':
                         assert 'Fresh-context model review' in json.dumps(writer_calls[2]['messages'])
                         hashes = {r['sha256'] for r in result['review_records']}
@@ -147,7 +155,7 @@ def main():
     p.add_argument('--store', type=Path, required=True); p.add_argument('--image', required=True)
     p.add_argument('--selftest', type=Path, required=True); p.add_argument('--output', type=Path, required=True)
     args = p.parse_args(); args.output.mkdir()
-    results = [test(args, mode) for mode in ['accept', 'redraw', 'miss', 'malformed', 'symlink', 'budget', 'tamper', 'text-only', 'http-error', 'oversized-frame', 'key-echo']]
+    results = [test(args, mode) for mode in ['accept', 'fenced-name', 'fenced-features', 'fenced-both', 'redraw', 'miss', 'malformed', 'symlink', 'budget', 'tamper', 'text-only', 'http-error', 'oversized-frame', 'key-echo']]
     (args.output / 'receipt.json').write_text(json.dumps({'fixtures': results, 'real_provider_calls': 0}, indent=2) + '\n')
     print(json.dumps({'fixtures_passed': len(results), 'real_provider_calls': 0}))
 
