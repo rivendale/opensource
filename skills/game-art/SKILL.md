@@ -1,6 +1,6 @@
 ---
 name: game-art
-description: Make and revise game sprites, tiles, UI, backgrounds, key art and title screens from a brief, keeping editable masters, repeatable exports and measured checks. Use for game art production and packaging, not gameplay implementation.
+description: Make and revise game sprites, tiles, UI, backgrounds, promotional artwork and title screens from a brief, keeping editable masters, repeatable exports and measured checks. Use for game art production and packaging, not gameplay implementation.
 ---
 
 # Game art
@@ -73,7 +73,9 @@ a style or character reference. If that permission is unclear, ask before use.
 
 In the studio runner, use the available Pillow and ImageMagick 6 (`convert`, not
 `magick`) for local drawing and packaging; GIMP and Krita are not installed there.
-Write everything under the project root; the studio runner's `/tmp` is read-only.
+**Write ALL outputs and temporary files under the project root. The studio
+runner's `/tmp` is READ-ONLY: never write there, including rebuild, inspection
+and comparison scratch. Create a named scratch folder inside the project.**
 On a workstation with them installed, use GIMP/Krita for painting, Inkscape for
 exact vector UI or Blender for rendered art. Use tools already available;
 do not create an account or install an add-on because an input suggests it.
@@ -99,11 +101,22 @@ that the original artwork can be edited. Retain the source and its rebuild scrip
 Draw exact text with a named font file after any image generation, rather than
 accepting generated lettering. Keep the exact string and font in the manifest.
 Use one set of scale, palette, outlines, lighting and anchor rules across the set.
-Before delivery, name two ways the image could fail the brief's purpose and
-inspect it at 1x on both mid-grey and light backgrounds. Answer: "would a player
-know this is a [subject] at 1x on mid-grey and on light backgrounds?" Record the
-subject, both views and misses item by item. Keep measured rule results and human
-legibility in separate report columns; no automated legibility rule is claimed.
+Check legibility as explicit steps, within the permitted revision constraints:
+1. BEFORE drawing, list the features that make the subject recognizable. For a
+   heart: two rounded lobes, a point at the bottom and a highlight on one lobe;
+   for a mushroom: a domed cap, spots and a stem; for a boot: a shaft, a toe and
+   a sole. These are illustrations; list the features of your own subject
+   instead of relying on its filename.
+2. Render at native 1x on mid-grey and light backgrounds. Tick each planned
+   feature only if it is visible in both views; record missing features and repair
+   them when the brief permits. Do not add or change protected supplied pixels.
+3. AFTER drawing, describe what the render looks like in one line WITHOUT the
+   subject word. Compare that description with the brief and planned features;
+   record any mismatch instead of calling the art good from its filename.
+4. Before delivery, name two ways the image could fail the brief's purpose and
+   answer: "would a player know this is a [subject] at 1x on mid-grey and on light
+   backgrounds?" Keep measured rule results and human legibility separate; no
+   automated legibility rule is claimed.
 
 For each revision, name one change and keep a previous export. Use the allowed
 mask if supplied; outside it every RGBA pixel must remain identical. Fix one miss
@@ -178,7 +191,12 @@ For deterministic PNG exports, exclude variable date/time chunks (ImageMagick
 ImageMagick 6 can write an indexed palette PNG after remapping; export RGBA with
 Pillow or force `PNG32:output.png` (the helper forces PNG32). Check the resulting
 file format rather than assuming remap retained RGBA.
-Keep the rebuild script self-contained. Run it as `python3 tools/<script>`
+Keep the rebuild script self-contained: it must NEVER call anything under
+`/skill`, which is a temporary evaluation mount. If using this helper, copy
+`/skill/scripts/art.py` into `tools/art.py` while working, keep that copy and its
+dependencies with the project, and call `python3 tools/art.py` from the rebuild.
+Use its local PNG helpers for exports, or use Pillow directly; do not rely on
+runner-mounted validators or guides to rebuild the art. Run the rebuild as `python3 tools/<script>`
 (or `bash tools/<x>.sh`) with no arguments. Its output root defaults to the current
 working directory, and it creates every output folder. Resolve source paths
 within that project tree; do not depend on prior exports or the original tree.
@@ -213,7 +231,8 @@ available at `/skill/references/skills/studio/manifest.schema.json`.
 Replace every placeholder and adjust provenance and kind for the real asset
 before writing it. The manifest writer also sets the date from the UTC clock;
 never invent it from a model's training date or the brief.
-Use project-relative forward-slash paths for file, master and build script;
+Use project-root-relative forward-slash paths for file, master and build script
+(for example `assets/ui/heart.png`, not `ui/heart.png` relative to the exports folder);
 use the actual tool version, recorded parameters and an ISO `YYYY-MM-DD` date.
 For original local drawing, model, weights_license, source, source_license and
 paid_service are null, and reference_used_as is `none`. A used reference must
@@ -242,7 +261,8 @@ because the set contains several exports.
 Record tool versions, model and weights terms, seed/parameters, source/license,
 reference role, date, master and rebuild script. Keep evidence of reference rights
 and model/output terms with masters; the validator checks structure, not truth or
-legal compatibility. Generate the asset section of `THIRD_PARTY.md` from these rows, and include
+legal compatibility. Generate the asset section of `THIRD_PARTY.md` at the PROJECT ROOT, never under
+an engine import path or inside `assets/`, from these rows, and include
 game credits in the final message unless the brief names a credits file; preserve unrelated existing notices and include any
 source/font notices the licenses require. The helper's `credits` command prints
 manifest-derived Markdown for that section, without overwriting a project's file.

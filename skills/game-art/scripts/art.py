@@ -299,6 +299,12 @@ def manifest(a):
         for key in ('file', 'master', 'build_script', 'consent_record'):
             if r.get(key) is not None:
                 resolved = contained(r[key])
+                if key == 'file' and not resolved.is_file():
+                    prefixed = contained(f'{a.exports}/{r[key]}')
+                    if prefixed.is_file():
+                        suggested = prefixed.relative_to(root).as_posix()
+                        raise ValueError(f"file {r[key]!r} does not exist under the project root; "
+                                         f"use project-root-relative file {suggested!r}")
                 if key in ('master', 'build_script'):
                     for ip in a.import_path:
                         imported = contained(ip)

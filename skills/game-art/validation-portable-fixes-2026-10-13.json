@@ -1,0 +1,102 @@
+{
+  "date_utc": "2026-10-14T13:41:33.272552+00:00",
+  "scope": "Canonical T17 skill examples correction; synthetic path checks only, zero provider calls",
+  "active_file_sha256": {
+    "skills/game-art/scripts/art.py": "dd9cd3c12cca8dbb70d6b1f119c81189d2f3e54e90fce97308dcf4dfcb02f026",
+    "skills/game-art/SKILL.md": "66b316f8b372d58a61c5e6e4877c3ca1d0413557013d4d3f7516c96dbcfd02ce"
+  },
+  "observations": [
+    {
+      "name": "relative-export-path-hint",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-fixes/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/t17-neutral-path-2tfhu4h8",
+        "--row",
+        "/tmp/t17-neutral-path-2tfhu4h8/masters/row.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"file 'ui/heart.png' does not exist under the project root; use project-root-relative file 'assets/ui/heart.png'\"}\n"
+    },
+    {
+      "name": "root-relative-path-accepted",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-fixes/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/t17-neutral-path-2tfhu4h8",
+        "--row",
+        "/tmp/t17-neutral-path-2tfhu4h8/masters/row.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "name": "bad-path-preserves-manifest",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-fixes/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/t17-neutral-path-2tfhu4h8",
+        "--row",
+        "/tmp/t17-neutral-path-2tfhu4h8/masters/row.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"file 'ui/heart.png' does not exist under the project root; use project-root-relative file 'assets/ui/heart.png'\"}\n"
+    },
+    {
+      "name": "missing-file-no-false-hint",
+      "command": [
+        "python3",
+        "/tmp/opensource-game-art-t17-fixes/skills/game-art/scripts/art.py",
+        "manifest",
+        "--root",
+        "/tmp/t17-neutral-path-2tfhu4h8",
+        "--row",
+        "/tmp/t17-neutral-path-2tfhu4h8/masters/row.json",
+        "--exports",
+        "assets",
+        "--import-path",
+        "assets"
+      ],
+      "exit": 2,
+      "stderr": "{\"pass\": false, \"error\": \"manifest invalid: [('assets[1].file', \\\"'absent.png' does not exist under the project root\\\")]\"}\n"
+    }
+  ],
+  "historical_rebuild_observation": {
+    "source_commit": "230470c1b69b77837bfbbec3c75ef83deb3b069c",
+    "date_utc": "2026-10-13T16:39:25.034527+00:00",
+    "observation": {
+      "name": "portable-no-argument-empty-tree-rebuild",
+      "command": [
+        "python3",
+        "tools/export.py"
+      ],
+      "cwd": "/tmp/opensource-game-art-t17-validation/portable-fixes-0f0psed4/rebuild",
+      "exit": 0,
+      "byte_identical": true,
+      "skill_mount_dependency": false
+    },
+    "rerun_in_this_change": false
+  },
+  "caveat": "The drawing model description is a diagnostic prompt, not independent legibility measurement. Independent reading remains required.",
+  "held_out_case_contents_read": false,
+  "illustrations_absent_from_cases": "Reported by the independent reviewer; not independently checked by the builder.",
+  "receipt_history": "Original full receipt remains in parent commit; current path observations were rerun with a neutral illustrative filename."
+}
