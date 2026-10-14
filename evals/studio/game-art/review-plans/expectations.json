@@ -1,0 +1,92 @@
+{
+  "note": "The author's expectation of each plan on calibration-set images, from looking at them; not ground truth and not a calibration result. A live run records the reviewer's per-question answers beside these. A disagreement is a finding about the question or the reviewer, to be read by a person; it does not by itself fail either.",
+  "images_are_in": "../review-calibration/",
+  "plans": {
+    "leg-1-coin-pickup.json": [
+      {
+        "image": "images/e62f4a63.png",
+        "accept": true,
+        "why": "round, outlined, a mark on the face, lit from one side, clear of the edge"
+      },
+      {
+        "image": "images/31834029.png",
+        "accept": false,
+        "why": "no mark on the face (the humans read it as a ball)"
+      },
+      {
+        "image": "images/b288076c.png",
+        "accept": false,
+        "why": "fills and is cropped by the picture; no outline on the cut sides"
+      },
+      {
+        "image": "images/bd99ccf4.png",
+        "accept": false,
+        "why": "not a circular disc"
+      },
+      {
+        "image": "images/67c058dd.png",
+        "accept": false,
+        "why": "no shape"
+      },
+      {
+        "image": "images/5f70bf18.png",
+        "accept": false,
+        "why": "no shape"
+      }
+    ],
+    "leg-1-key-pickup.json": [
+      {
+        "image": "images/a397f5be.png",
+        "accept": true,
+        "why": "head, shaft, side teeth, outline, shaded"
+      },
+      {
+        "image": "images/2fd20bc9.png",
+        "accept": true,
+        "why": "the humans read it as a key; head, shaft, forked end"
+      },
+      {
+        "image": "images/729152ee.png",
+        "accept": false,
+        "why": "a stick with a knob and no teeth (the humans did not read it as a key)"
+      },
+      {
+        "image": "images/244e9266.png",
+        "accept": false,
+        "why": "a bottle: no shaft with side teeth"
+      },
+      {
+        "image": "images/b5f7cab6.png",
+        "accept": false,
+        "why": "no shape"
+      }
+    ],
+    "leg-1-potion-pickup.json": [
+      {
+        "image": "images/244e9266.png",
+        "accept": true,
+        "why": "neck, cork, reflection streak, outline, widest below"
+      },
+      {
+        "image": "images/f87d4fa3.png",
+        "accept": true,
+        "why": "the humans read it as a potion bottle"
+      },
+      {
+        "image": "images/955cb439.png",
+        "accept": false,
+        "why": "widest at the top, no neck"
+      },
+      {
+        "image": "images/87c4c0d8.png",
+        "accept": false,
+        "why": "no neck or stopper"
+      },
+      {
+        "image": "images/67c058dd.png",
+        "accept": false,
+        "why": "no shape"
+      }
+    ]
+  }
+}

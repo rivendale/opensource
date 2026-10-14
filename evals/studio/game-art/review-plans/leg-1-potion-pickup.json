@@ -1,0 +1,18 @@
+[
+  {
+    "file": "assets/ui/potion.png",
+    "subject_words": [
+      "potion",
+      "bottle",
+      "flask",
+      "vial"
+    ],
+    "features": [
+      "Is there a narrow neck at the top above a wider, rounded body?",
+      "Is there a cap or stopper at the very top of the neck, in a different colour from the body?",
+      "Is there a lighter streak or spot on one side of the body that looks like a reflection?",
+      "Is the whole shape surrounded by a dark outline?",
+      "Is the body widest in its lower half?"
+    ]
+  }
+]

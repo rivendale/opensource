@@ -1,0 +1,18 @@
+[
+  {
+    "file": "assets/ui/coin.png",
+    "subject_words": [
+      "coin",
+      "coins",
+      "medal",
+      "token"
+    ],
+    "features": [
+      "Is the main shape a single, nearly circular disc?",
+      "Is the disc surrounded all the way round by an unbroken dark outline?",
+      "Is there a distinct mark or emblem on the face of the disc?",
+      "Is the disc lighter on one side and darker on the opposite side?",
+      "Is the whole disc visible, with some empty space between it and the edge of the picture on every side?"
+    ]
+  }
+]
