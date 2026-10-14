@@ -53,5 +53,22 @@ def check():
   for text in texts:
    for wrap in wrappers[:3]:
     ok,_,_,_=run(wrap(text) if stage=='name' else name,wrap(text) if stage=='features' else features);assert not ok,(stage,text);count+=1
+ # This control must fail at the parser, before any reply schema is checked.
+ try:reviewer.reply_json('{"a":["```"]}')
+ except reviewer.ReviewError:pass
+ else:raise AssertionError('inner fence in array accepted')
+ count+=1
+ # Use the standard-library Python scanner to make deep recursion portable:
+ # the optimized scanner's depth boundary differs across Python releases.
+ scanner=json.scanner.make_scanner
+ json.scanner.make_scanner=json.scanner.py_make_scanner
+ try:
+  deep='['*1500+'0'+']'*1500
+  assert len(deep)<=8192
+  try:reviewer.reply_json(deep)
+  except reviewer.ReviewError:pass
+  else:raise AssertionError('deep-array recursion accepted')
+ finally:json.scanner.make_scanner=scanner
+ count+=1
  print(json.dumps({'fixtures_passed':count,'real_provider_calls':0}))
 if __name__=='__main__':check()

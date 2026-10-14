@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-14",
+  "source_base": "3b5488da27b587f34f14019e0a6b8c0117ff2918",
+  "image": {
+    "reference": "localhost/studio-runner@sha256:52de03b3da7acd3f7285cc338f9fd1e71de84ece15fff9a53ec682036649f467",
+    "id": "e518834908f4d372fb225762a2a3000cf029c6ed044545e35e51f3088d70fd7d",
+    "sources": {
+      "supervisor.py": "df7a7249ca60266c18cb9940eae59ce6f910318c15321534101cb7deb5df0d57",
+      "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+      "replay.py": "dde3e0deb5ca9135d9076209b3e9f3f654623b373183ae9c80e1df3fb73ef45d",
+      "probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
+      "reviewer.py": "f24be53cd9f2b486d99f9746ce9bcd4af4e7bd0cc43e474a60cf246a241a3ee8",
+      "agent.py": "564baa11e7a38ae49153fae35fea57ed64785df635e697839a12ba56f81e0cda",
+      "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+      "proxy.py": "9187abb3555a8880468385326d7bc85062223fa99e0299b0410ba322bcd8c46a",
+      "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+    }
+  },
+  "host_runner_sha256": "53cf428851ef182286e25c6fdddd2d35220059d5fb39eabbc6a645e1236b7060",
+  "selftest_status": "passed",
+  "probes": {
+    "network": true,
+    "root-write": true,
+    "empty-home": true,
+    "clean-env": true,
+    "executable-input": true,
+    "unprivileged": true,
+    "no-agent-capabilities": true,
+    "capture-protected": true,
+    "inputs-read-only": true
+  },
+  "host_parser_fixtures": 86,
+  "container_parser_fixtures": {
+    "fixtures_passed": 86,
+    "real_provider_calls": 0
+  },
+  "mutations": [
+    {
+      "mutant": "remove-body-fence-check",
+      "rejected_by_fixtures": true,
+      "error": "AssertionError"
+    },
+    {
+      "mutant": "remove-recursion-catch",
+      "rejected_by_fixtures": true,
+      "error": "RecursionError"
+    }
+  ],
+  "offline_context_and_protocol_checks": "passed",
+  "relative_links": {
+    "checked": 451,
+    "problems": 0,
+    "selftest_passed": 33
+  },
+  "compilation_and_whitespace": "passed",
+  "real_credentials_used": false,
+  "real_provider_calls": 0,
+  "limits": [
+    "Deep-array fixture uses the standard-library Python scanner because optimized scanner depth limits differ across Python releases.",
+    "Paid calibration is a separate operator run pinned to the already merged reviewer; this change does not alter that in-progress run."
+  ]
+}

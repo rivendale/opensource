@@ -196,7 +196,7 @@ def reply_json(text):
 
     try:
         return json.loads(body, object_pairs_hook=pairs, parse_constant=constant)
-    except ValueError:
+    except (ValueError, RecursionError):
         raise ReviewError('review reply must be strict JSON') from None
 
 
