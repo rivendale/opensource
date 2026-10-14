@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-14",
+  "source_base": "b10a40b0455c81da1ef4a82cb39fe563aeb9a2fb",
+  "image": {
+    "reference": "localhost/studio-runner@sha256:18b98d8803c2f7df0c0ea6bead83d3d2e88772ae70545e02f2525526d724d980",
+    "id": "49c6c656b5337bc6e7a123f98814b852bed704e755e450f19193fa46ab38078e",
+    "sources": {
+      "supervisor.py": "df7a7249ca60266c18cb9940eae59ce6f910318c15321534101cb7deb5df0d57",
+      "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+      "replay.py": "dde3e0deb5ca9135d9076209b3e9f3f654623b373183ae9c80e1df3fb73ef45d",
+      "probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
+      "reviewer.py": "d6332277a467f7cb880318c4e6d0875a2bed2ebfbdfabb2dec074a2014f268ff",
+      "agent.py": "564baa11e7a38ae49153fae35fea57ed64785df635e697839a12ba56f81e0cda",
+      "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+      "proxy.py": "9187abb3555a8880468385326d7bc85062223fa99e0299b0410ba322bcd8c46a",
+      "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+    }
+  },
+  "host_runner_sha256": "53cf428851ef182286e25c6fdddd2d35220059d5fb39eabbc6a645e1236b7060",
+  "selftest_status": "passed",
+  "isolation_probes": {
+    "network": true,
+    "root-write": true,
+    "empty-home": true,
+    "clean-env": true,
+    "executable-input": true,
+    "unprivileged": true,
+    "no-agent-capabilities": true,
+    "capture-protected": true,
+    "inputs-read-only": true
+  },
+  "actual_container_fixtures": {
+    "fixtures": [
+      {
+        "scenario": "accept",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "fenced-name",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "fenced-features",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "fenced-both",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "redraw",
+        "passed": true,
+        "mock_requests": 8,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "miss",
+        "passed": true,
+        "mock_requests": 8,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "malformed",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "symlink",
+        "passed": true,
+        "mock_requests": 2,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "budget",
+        "passed": true,
+        "mock_requests": 0,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "tamper",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "text-only",
+        "passed": true,
+        "mock_requests": 1,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "http-error",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "oversized-frame",
+        "passed": true,
+        "mock_requests": 2,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "key-echo",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "incident",
+        "host_decoder_guard": true
+      }
+    ],
+    "real_provider_calls": 0
+  },
+  "offline_reply_boundary_fixtures": 84,
+  "offline_context_and_protocol_checks": "passed",
+  "mutations": {
+    "mutation_checks": [
+      {
+        "mutant": "accept-anything",
+        "rejected_by_fixtures": true,
+        "error_type": "AssertionError"
+      },
+      {
+        "mutant": "strip-every-fence",
+        "rejected_by_fixtures": true,
+        "error_type": "AssertionError"
+      }
+    ],
+    "operator_receipt_safe_reason_and_redaction": true,
+    "real_credentials_used": false
+  },
+  "relative_links": {
+    "checked": 451,
+    "problems": 0,
+    "selftest_passed": 33
+  },
+  "whitespace_check": "passed",
+  "real_credentials_used": false,
+  "real_provider_calls": 0,
+  "review_gate": false,
+  "limitations": [
+    "Synthetic replies only; live calibration remains stopped until reviewed merge and a new operator go.",
+    "Operator error receipt call corrected locally to pass a list of key bytes; synthetic error keeps its reason and redacts the marker."
+  ]
+}

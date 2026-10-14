@@ -158,6 +158,14 @@ no writer history, skill, brief, filename, subject word or feature questions. It
 the one-line name before a second request asks the feature questions in that review
 conversation. Replies must match the pinned model, finish normally, report consistent
 token usage and return strict JSON with a name followed by one boolean per feature.
+Both replies accept a bare JSON object or exactly one outer backtick fence,
+with an optional `json` tag, surrounding ASCII whitespace and CRLF line ends.
+A bare fence has no tag (spaces or tabs before its line break are allowed);
+quoted empty tags such as `""` are refused. Prose, inner or nested fences,
+multiple blocks, other tags, tilde fences and fences without line breaks are
+refused. Duplicate JSON keys, nonfinite numbers and existing schema violations
+still fail. The 8192-character limit applies before unwrapping. Raw replies
+remain in the record and review conversation, with usage recorded first.
 The writer receives the recorded name and answers as data for redraw, never as new scope.
 
 A false feature answer retries within the configured rounds. Invalid replies, missing
