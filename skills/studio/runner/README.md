@@ -147,7 +147,8 @@ and capabilities to strip PNG metadata and composite
 mid-grey and light views at the original pixel dimensions, bounded to 512×512 and
 512 KiB per image. PNG chunk names, lengths, CRCs and the end marker are checked
 before conversion. The host receives only neutral views and snapshot hash receipts;
-it never decodes agent-written artwork with ImageMagick. IM6 temporary files live
+it never decodes agent-written artwork with ImageMagick. Oversized snapshot frames
+become compact error entries instead of crashing the supervisor. IM6 temporary files live
 in a disposable private folder under scratch, removed before checking; the decoder
 UID differs from both the writer and checker and cannot write their private homes.
 
@@ -160,7 +161,7 @@ token usage and return strict JSON with a name followed by one boolean per featu
 The writer receives the recorded name and answers as data for redraw, never as new scope.
 
 A false feature answer retries within the configured rounds. Invalid replies, missing
-exports or the last failed round end the model review with `review_accepted: false`;
+exports, HTTP protocol errors or the last failed round end model review with `review_accepted: false`;
 they preserve the checker verdict in its separate column. After the agent is drained,
 the supervisor verifies final files against the last accepted snapshot. A mismatch
 invalidates model review acceptance but still preserves the checker verdict. Request

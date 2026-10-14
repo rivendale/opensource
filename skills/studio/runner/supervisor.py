@@ -244,6 +244,10 @@ def candidate_snapshots(files):
             snapshots.append({'file': file, 'error': 'export not present'})
         except (OSError, ReviewError, subprocess.TimeoutExpired):
             snapshots.append({'file': file, 'error': 'export cannot be safely reviewed'})
+    try:
+        encode({'type': 'review-snapshots', 'snapshots': snapshots})
+    except ValueError:
+        return [{'file': file, 'error': 'review snapshot frame exceeds limit'} for file in files]
     return snapshots
 
 

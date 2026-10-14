@@ -34,6 +34,8 @@ def test(args, mode):
                         command += '; mv assets/coin.png assets/source.png; ln -s source.png assets/coin.png'
                     if mode == 'tamper':
                         command += '; (sleep 1; convert -size 4x4 xc:blue PNG32:assets/coin.png) >/dev/null 2>&1 &'
+                    if mode == 'oversized-frame':
+                        command += "; python3 -c \"from PIL import Image; import random; r=random.Random(0); [Image.frombytes('RGB',(320,320),r.randbytes(320*320*3)).save('assets/'+n+'.png') for n in ('a','b','c')]\""
                     message['tool_calls'] = [{'id': 'draw-' + str(len(writer_calls)), 'type': 'function',
                         'function': {'name': 'shell', 'arguments': json.dumps({'command': command})}}]
             elif payload['max_tokens'] == 128:
@@ -60,7 +62,10 @@ def test(args, mode):
         def request(self, method, path, payload, headers):
             assert headers['Authorization'] == 'Bearer ' + KEY.decode()
             calls.append(json.loads(payload))
-        def getresponse(self): return Response()
+        def getresponse(self):
+            if mode == 'http-error' and 'tools' not in calls[-1]:
+                raise proxy.http.client.HTTPException('synthetic reviewer protocol error')
+            return Response()
         def close(self): pass
     saved = proxy.http.client.HTTPSConnection
     saved_run = subprocess.run
@@ -83,6 +88,9 @@ def test(args, mode):
             plan = case / 'operator-plan.json'
             plan.write_text(json.dumps([{'file': 'assets/coin.png', 'subject_words': ['coin'],
                 'features': ['Is there a dark edge?']}]))
+            if mode == 'oversized-frame':
+                plan.write_text(json.dumps([{'file': 'assets/' + n + '.png', 'subject_words': ['orb'],
+                    'features': ['Is there a dark edge?']} for n in ('a', 'b', 'c')]))
             fd, writer = os.pipe()
             os.write(writer, KEY); os.close(writer)
             output = args.output / mode
@@ -92,6 +100,7 @@ def test(args, mode):
                 '--host', 'api.example.test', '--key-fds', json.dumps({'api.example.test': fd}),
                 '--review-plan', str(plan), '--review-rounds', '2', '--turns', '8']
             if mode == 'budget': sys.argv[-1] = '4'
+            if mode == 'oversized-frame': sys.argv[-1] = '16'
             try: code = run.main()
             finally: os.close(fd)
             result = json.loads((output / 'result.json').read_text())
@@ -119,9 +128,11 @@ def test(args, mode):
                     else:
                         assert code == 0 and result['status'] == 'completed' and result['verdict'] == 'passed', result
                         assert result['review_accepted'] is False and result['review_gate'] is False
-                    expected_calls = {'miss': 8, 'malformed': 3, 'symlink': 2, 'budget': 0, 'tamper': 4, 'text-only': 1}[mode]
+                    expected_calls = {'miss': 8, 'malformed': 3, 'symlink': 2, 'budget': 0, 'tamper': 4, 'text-only': 1, 'http-error': 3, 'oversized-frame': 2}[mode]
                     assert len(calls) == expected_calls, (mode, len(calls), result)
-                    if calls: assert result['usage']['total_tokens'] == expected_calls * 3, result
+                    if calls: assert result['usage']['total_tokens'] == (6 if mode == 'http-error' else expected_calls * 3), result
+                    if mode == 'http-error': assert result['review_error']['type'] == 'HTTPException'
+                    if mode == 'oversized-frame': assert result['review_error']['message'] == 'review snapshot frame exceeds limit'
                     if mode == 'tamper':
                         assert result['agent_exit'] == 0 and not result['review_accepted']
             return {'scenario': mode, 'passed': True, 'mock_requests': len(calls),
@@ -136,7 +147,7 @@ def main():
     p.add_argument('--store', type=Path, required=True); p.add_argument('--image', required=True)
     p.add_argument('--selftest', type=Path, required=True); p.add_argument('--output', type=Path, required=True)
     args = p.parse_args(); args.output.mkdir()
-    results = [test(args, mode) for mode in ['accept', 'redraw', 'miss', 'malformed', 'symlink', 'budget', 'tamper', 'text-only', 'key-echo']]
+    results = [test(args, mode) for mode in ['accept', 'redraw', 'miss', 'malformed', 'symlink', 'budget', 'tamper', 'text-only', 'http-error', 'oversized-frame', 'key-echo']]
     (args.output / 'receipt.json').write_text(json.dumps({'fixtures': results, 'real_provider_calls': 0}, indent=2) + '\n')
     print(json.dumps({'fixtures_passed': len(results), 'real_provider_calls': 0}))
 

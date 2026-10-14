@@ -3,6 +3,7 @@
 import argparse
 import base64
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -504,7 +505,7 @@ def run(args):
                         feedback.append({'file': item['file'], **verdict})
                     accepted = all(item['accepted'] for item in feedback)
                     stop = not accepted and review_round >= args.review_rounds
-                except (ReviewError, ValueError, OSError, TimeoutError) as error:
+                except (ReviewError, ValueError, OSError, TimeoutError, http.client.HTTPException) as error:
                     stop = True
                     result['review_error'] = exception_receipt(error, key_values)
                     feedback = [{'error': 'fresh-context model review failed; no acceptance'}]
