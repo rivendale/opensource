@@ -1,0 +1,390 @@
+{
+  "questions": [
+    "Is the whole shape surrounded by a dark outline?",
+    "Does any part of the shape touch the edge of the picture?",
+    "Does the shape use at least three colours other than its dark outline colour?",
+    "Is the lower-right half of the shape darker than its upper-left half?",
+    "Is the picture a single flat colour?",
+    "Is the shape a left-to-right mirror image of itself?"
+  ],
+  "words": {
+    "coin": [
+      [
+        "coin",
+        "coins"
+      ],
+      [
+        "medal",
+        "token",
+        "disc",
+        "disk"
+      ]
+    ],
+    "key": [
+      [
+        "key",
+        "keys"
+      ],
+      [
+        "wand",
+        "skeleton"
+      ]
+    ],
+    "potion": [
+      [
+        "potion",
+        "bottle",
+        "flask",
+        "vial"
+      ],
+      [
+        "jar",
+        "vase"
+      ]
+    ],
+    "heart": [
+      [
+        "heart"
+      ],
+      [
+        "valentine"
+      ]
+    ],
+    "mushroom": [
+      [
+        "mushroom",
+        "toadstool"
+      ],
+      [
+        "umbrella"
+      ]
+    ],
+    "boot": [
+      [
+        "boot",
+        "shoe"
+      ],
+      [
+        "sock",
+        "slipper"
+      ]
+    ]
+  },
+  "images": [
+    {
+      "file": "images/e62f4a63.png",
+      "kind": "reference",
+      "intended": "coin",
+      "canonical_name": "a coin",
+      "truth": [
+        true,
+        false,
+        true,
+        true,
+        false,
+        true
+      ],
+      "yes_words": [
+        "coin",
+        "coins"
+      ],
+      "near_words": [
+        "medal",
+        "token",
+        "disc",
+        "disk"
+      ],
+      "human": "yes"
+    },
+    {
+      "file": "images/a397f5be.png",
+      "kind": "reference",
+      "intended": "key",
+      "canonical_name": "a key",
+      "truth": [
+        true,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "yes_words": [
+        "key",
+        "keys"
+      ],
+      "near_words": [
+        "wand",
+        "skeleton"
+      ],
+      "human": "yes"
+    },
+    {
+      "file": "images/244e9266.png",
+      "kind": "reference",
+      "intended": "potion",
+      "canonical_name": "a potion bottle",
+      "truth": [
+        true,
+        false,
+        true,
+        true,
+        false,
+        true
+      ],
+      "yes_words": [
+        "potion",
+        "bottle",
+        "flask",
+        "vial"
+      ],
+      "near_words": [
+        "jar",
+        "vase"
+      ],
+      "human": "yes"
+    },
+    {
+      "file": "images/bd99ccf4.png",
+      "kind": "non-subject",
+      "intended": "heart",
+      "canonical_name": "a heart",
+      "truth": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "yes_words": [
+        "heart"
+      ],
+      "near_words": [
+        "valentine"
+      ],
+      "human": "yes"
+    },
+    {
+      "file": "images/955cb439.png",
+      "kind": "non-subject",
+      "intended": "mushroom",
+      "canonical_name": "a mushroom",
+      "truth": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "yes_words": [
+        "mushroom",
+        "toadstool"
+      ],
+      "near_words": [
+        "umbrella"
+      ],
+      "human": "yes"
+    },
+    {
+      "file": "images/87c4c0d8.png",
+      "kind": "non-subject",
+      "intended": "boot",
+      "canonical_name": "a boot",
+      "truth": [
+        true,
+        false,
+        true,
+        true,
+        false,
+        false
+      ],
+      "yes_words": [
+        "boot",
+        "shoe"
+      ],
+      "near_words": [
+        "sock",
+        "slipper"
+      ],
+      "human": "yes"
+    },
+    {
+      "file": "images/67c058dd.png",
+      "kind": "wrong",
+      "intended": null,
+      "canonical_name": "a flat blue square",
+      "truth": [
+        false,
+        true,
+        false,
+        false,
+        true,
+        true
+      ],
+      "human": "no"
+    },
+    {
+      "file": "images/5f70bf18.png",
+      "kind": "wrong",
+      "intended": null,
+      "canonical_name": "an empty picture",
+      "truth": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "human": "no"
+    },
+    {
+      "file": "images/b5f7cab6.png",
+      "kind": "wrong",
+      "intended": null,
+      "canonical_name": "random coloured noise",
+      "truth": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+      ],
+      "human": "no"
+    },
+    {
+      "file": "images/2fd20bc9.png",
+      "kind": "packet",
+      "intended": "key",
+      "canonical_name": "a key",
+      "truth": [
+        true,
+        false,
+        false,
+        true,
+        false,
+        false
+      ],
+      "yes_words": [
+        "key",
+        "keys"
+      ],
+      "near_words": [
+        "wand",
+        "skeleton"
+      ],
+      "human": "yes",
+      "human_name": "a key",
+      "source_sha256": "86e2e332858838dfac2fbbd526aa7e1b82882b9bbe144d45312d000c0973d6cf"
+    },
+    {
+      "file": "images/31834029.png",
+      "kind": "packet",
+      "intended": "coin",
+      "canonical_name": "an orange ball",
+      "truth": [
+        true,
+        false,
+        true,
+        true,
+        false,
+        true
+      ],
+      "yes_words": [
+        "coin",
+        "coins"
+      ],
+      "near_words": [
+        "medal",
+        "token",
+        "disc",
+        "disk"
+      ],
+      "human": "no",
+      "human_name": "an orange ball",
+      "source_sha256": "ec9ea3b8ef2288ff6c7ee19385e7a1146a73cbef03093af51008ffbcd646babd"
+    },
+    {
+      "file": "images/f87d4fa3.png",
+      "kind": "packet",
+      "intended": "potion",
+      "canonical_name": "a potion bottle",
+      "truth": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "yes_words": [
+        "potion",
+        "bottle",
+        "flask",
+        "vial"
+      ],
+      "near_words": [
+        "jar",
+        "vase"
+      ],
+      "human": "yes",
+      "human_name": "a potion bottle",
+      "source_sha256": "7f588bf7799043c5f8844f12d380d0b4ac30bd24b7768373c7029d5259729d77"
+    },
+    {
+      "file": "images/729152ee.png",
+      "kind": "packet",
+      "intended": "key",
+      "canonical_name": "a stick or a wand, not a key",
+      "truth": [
+        true,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "yes_words": [
+        "key",
+        "keys"
+      ],
+      "near_words": [
+        "wand",
+        "skeleton"
+      ],
+      "human": "no",
+      "human_name": "a stick or a wand, not a key",
+      "source_sha256": "7d41bc62e328839cd2515040b647c983207aa67f9f5af6dec2a54315700b6551"
+    },
+    {
+      "file": "images/b288076c.png",
+      "kind": "packet",
+      "intended": "coin",
+      "canonical_name": "a large orange disc cropped by the picture, an orange or a sun",
+      "truth": [
+        false,
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "yes_words": [
+        "coin",
+        "coins"
+      ],
+      "near_words": [
+        "medal",
+        "token",
+        "disc",
+        "disk"
+      ],
+      "human": "no",
+      "human_name": "a large orange disc cropped by the picture, an orange or a sun",
+      "source_sha256": "2ebff1de8c8c40b4f4bc35741a0127e7adff3f6adb9e350ecaf278d3e43b2764"
+    }
+  ]
+}
