@@ -4,6 +4,8 @@ import json
 import os
 from pathlib import Path
 import signal
+import stat
+import hashlib
 import subprocess
 import sys
 import tarfile
@@ -11,6 +13,7 @@ import tempfile
 import time
 
 from common import VERSION, encode, read_frame
+from reviewer import neutral_views, ReviewError
 
 
 def send(kind, **values):
@@ -191,6 +194,59 @@ def receive_library():
         path.chmod(0o555 if frame.get("executable") else 0o444)
 
 
+def review_snapshot(relative):
+    """Walk beneath scratch by directory FDs; refuse links and special files."""
+    parts = relative.split('/')
+    if any(p in {'', '.', '..', '.run'} for p in parts) or relative.startswith('/'):
+        raise ValueError('unsafe review snapshot path')
+    directory = os.open('/scratch', os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        for part in parts[:-1]:
+            next_dir = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory)
+            os.close(directory); directory = next_dir
+        fd = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
+        try:
+            info = os.fstat(fd)
+            if not stat.S_ISREG(info.st_mode) or info.st_size > 512 * 1024:
+                raise ValueError('unsafe review snapshot file')
+            data = os.read(fd, 512 * 1024 + 1)
+            if len(data) > 512 * 1024 or len(data) != info.st_size:
+                raise ValueError('review snapshot changed during read')
+            return data
+        finally:
+            os.close(fd)
+    finally:
+        os.close(directory)
+
+
+def container_views(data):
+    # IM6 requires a temporary file even for PNG stdout. Keep it private to a
+    # decoder UID distinct from both the writer and the later checker.
+    with tempfile.TemporaryDirectory(prefix='.reviewer-', dir='/scratch') as temp:
+        os.chown(temp, 1002, 1002)
+        os.chmod(temp, 0o700)
+        environment = {'PATH': '/usr/bin:/bin', 'HOME': temp, 'TMPDIR': temp,
+                       'LANG': 'C.UTF-8'}
+        return neutral_views(data, preexec_fn=unprivileged(1002), env=environment)
+
+
+def candidate_snapshots(files):
+    """Missing/unsafe exports are review observations, not supervisor crashes."""
+    snapshots = []
+    for file in files:
+        try:
+            data = review_snapshot(file)
+            # Decode untrusted artwork only inside this isolated container.
+            views = container_views(data)
+            snapshots.append({'file': file, 'sha256': hashlib.sha256(data).hexdigest(),
+                              'views': [base64.b64encode(v).decode('ascii') for v in views]})
+        except FileNotFoundError:
+            snapshots.append({'file': file, 'error': 'export not present'})
+        except (OSError, ReviewError, subprocess.TimeoutExpired):
+            snapshots.append({'file': file, 'error': 'export cannot be safely reviewed'})
+    return snapshots
+
+
 def main():
     if os.getpid() != 1 or os.getuid() != 0:
         raise RuntimeError("supervisor must be PID 1 as container root")
@@ -212,12 +268,16 @@ def main():
                 "--host", start["host"], "--path", start["path"], "--turns", str(start["turns"])])
     if start["mode"] == "replay":
         command = ["python3", "/opt/studio/replay.py", "--limit", str(start["replay_limit"])]
+    review_files = start.get("review_files", [])
+    if review_files:
+        command.append("--review-feedback")
+    reviewed_hashes = {}
     send("ready", versions=versions)
     # Root tracer owns the audit file; -u launches the program with no root caps.
     process = subprocess.Popen(["strace", "-D", "-f", "-e", "trace=connect,sendto,sendmsg,write,writev,pwrite64,truncate,ftruncate",
                                 "-e", "raw=sendto,sendmsg,write,writev,pwrite64", "-o", "/audit/network.trace",
                                 "-u", "studio", *command], cwd="/scratch", env=clean_env("/home/studio"),
-                               stdin=subprocess.PIPE if start["mode"] == "replay" else subprocess.DEVNULL, stdout=subprocess.PIPE,
+                               stdin=subprocess.PIPE if start["mode"] == "replay" or review_files else subprocess.DEVNULL, stdout=subprocess.PIPE,
                                stderr=None if start["mode"] == "probe" else subprocess.DEVNULL)
     if start["mode"] == "replay":
         total = 0
@@ -245,11 +305,35 @@ def main():
         if event.get("pid") != process.pid:
             raise RuntimeError("agent process identity mismatch")
         send("event", event=event)
+        if event["type"] == "candidate":
+            if not review_files:
+                raise ValueError('review candidate without review plan')
+            snapshots = candidate_snapshots(review_files)
+            send('review-snapshots', snapshots=snapshots)
+            feedback = read_frame(sys.stdin.buffer)
+            if (feedback.get('type') != 'review-feedback' or type(feedback.get('accepted')) is not bool
+                    or type(feedback.get('stop')) is not bool or not isinstance(feedback.get('feedback'), str)):
+                raise ValueError('invalid host review feedback')
+            if feedback['accepted']:
+                reviewed_hashes = {r['file']: r['sha256'] for r in snapshots}
+            else:
+                reviewed_hashes = {}
+            process.stdin.write((json.dumps({'accepted': feedback['accepted'],
+                                             'feedback': feedback['feedback'], 'stop': feedback['stop']}) + '\n').encode())
+            process.stdin.flush()
         if event["type"] in {"finished", "failed", "probe"}:
             break
     code = process.wait(timeout=5)
     drain()
-    send("agent-exit", code=code, audit=audit_records(), limits_hit=limits_hit())
+    review_integrity = True
+    if review_files:
+        try:
+            review_integrity = (set(reviewed_hashes) == set(review_files) and
+                all(hashlib.sha256(review_snapshot(f)).hexdigest() == reviewed_hashes[f] for f in review_files))
+        except (OSError, ValueError):
+            review_integrity = False
+    send("agent-exit", code=code, audit=audit_records(), limits_hit=limits_hit(),
+         review_integrity=review_integrity)
     capture = read_frame(sys.stdin.buffer)
     if capture["type"] != "capture":
         raise ValueError("expected capture frame")

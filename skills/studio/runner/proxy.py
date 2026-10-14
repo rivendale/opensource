@@ -67,6 +67,40 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         super().__init__(str(path), Handler)
         os.chmod(path, 0o666)
 
+    def review_request(self, messages, max_tokens, timeout=60):
+        """Host-owned tool-free reviewer request; unreachable from HTTP callers."""
+        model_routes = [route for route, name in self.routes.items() if name == 'model']
+        if len(model_routes) != 1 or type(max_tokens) is not int or not 1 <= max_tokens <= 256:
+            raise ValueError('invalid trusted reviewer transport')
+        host, path = model_routes[0]
+        payload = json.dumps({'model': self.model, 'messages': messages, 'stream': False,
+                              'temperature': 0, 'seed': 0, 'max_tokens': max_tokens},
+                             allow_nan=False).encode()
+        if len(payload) > MAX_BODY:
+            raise ValueError('review request exceeds relay body limit')
+        with self.lock:
+            if self.incident or self.calls >= self.turn_limit:
+                self.limit_hit = True
+                raise ValueError('shared model request limit')
+            self.calls += 1
+        connection = http.client.HTTPSConnection(host, 443, timeout=timeout, context=self.context)
+        try:
+            headers = {'Content-Type': 'application/json',
+                       'Authorization': 'Bearer ' + self.keys[host].decode('ascii')}
+            connection.request('POST', path, payload, headers)
+            response = connection.getresponse()
+            body = response.read(MAX_BODY + 1)
+            if any(key in body for key in self.keys.values()) or KEY_PATTERN.search(body):
+                self.incident = True
+                self.record(host, 'POST', 502, 0)
+                raise ValueError('key incident in reviewer response')
+            self.record(host, 'POST', response.status, len(body))
+            if response.status != 200 or len(body) > MAX_BODY:
+                raise ValueError('reviewer model route failed')
+            return json.loads(body)
+        finally:
+            connection.close()
+
     def process_request(self, request, client_address):
         if not self.slots.acquire(blocking=False):
             request.close()

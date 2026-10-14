@@ -12,7 +12,7 @@ For supplied art, change only what was asked. Supplied artwork and any fidelity,
 mask, palette or size constraint take precedence over this quality bar; do not
 redraw, recolour or add elements outside the permitted revision.
 
-For art you create, accept it only when its silhouette reads as the intended
+For art you create, human review must establish that its silhouette reads as the intended
 subject at 1x on both mid-grey and light backgrounds, the light direction stated
 in the plan is visible in the artwork, and no elements lie outside the body.
 Sprites and icons use one dark outline colour unless the brief's style or palette
@@ -101,22 +101,24 @@ that the original artwork can be edited. Retain the source and its rebuild scrip
 Draw exact text with a named font file after any image generation, rather than
 accepting generated lettering. Keep the exact string and font in the manifest.
 Use one set of scale, palette, outlines, lighting and anchor rules across the set.
-Check legibility as explicit steps, within the permitted revision constraints:
-1. BEFORE drawing, list the features that make the subject recognizable. For a
-   heart: two rounded lobes, a point at the bottom and a highlight on one lobe;
-   for a mushroom: a domed cap, spots and a stem; for a boot: a shaft, a toe and
-   a sole. These are illustrations; list the features of your own subject
-   instead of relying on its filename.
-2. Render at native 1x on mid-grey and light backgrounds. Tick each planned
-   feature only if it is visible in both views; record missing features and repair
-   them when the brief permits. Do not add or change protected supplied pixels.
-3. AFTER drawing, describe what the render looks like in one line WITHOUT the
-   subject word. Compare that description with the brief and planned features;
-   record any mismatch instead of calling the art good from its filename.
-4. Before delivery, name two ways the image could fail the brief's purpose and
-   answer: "would a player know this is a [subject] at 1x on mid-grey and on light
-   backgrounds?" Keep measured rule results and human legibility separate; no
-   automated legibility rule is claimed.
+Before drawing, list the features that make the subject recognizable. For a
+heart: two rounded lobes, a point at the bottom and a highlight on one lobe;
+for a mushroom: a domed cap, spots and a stem; for a boot: a shaft, a toe and
+a sole. These are illustrations; list the features of your own subject.
+Before delivery, inspect those required visible features at 1x on
+both mid-grey and light backgrounds for redraw diagnostics. Never grade your own
+legibility. Fresh-context model review first sees only those renders,
+without the brief, filename, subject word or your explanation, and names what it
+sees in one line. Only after that name is recorded does it receive one subject-free
+yes/no question per required feature. A missing feature returns the art for redraw
+within the original brief and permitted revision. Record both views, the recorded
+name and feature answers item by item. With the studio runner, return a provisional
+delivery to trigger its operator-supplied review plan; the runner returns misses
+within the same run budget. Without human review, report human legibility as
+unreviewed. Keep measured rule results, model review and human legibility in separate
+report columns; the same model in a fresh context is not an independent human
+reader. Uncalibrated model review controls redraws but never acceptance; the checker
+verdict remains separate when model review rejects a render.
 
 For each revision, name one change and keep a previous export. Use the allowed
 mask if supplied; outside it every RGBA pixel must remain identical. Fix one miss
