@@ -1,6 +1,6 @@
 ---
 name: game-art
-description: Make and revise game sprites, tiles, UI, backgrounds, key art and title screens from a brief, keeping editable masters, repeatable exports and measured checks. Use for game art production and packaging, not gameplay implementation.
+description: Make and revise game sprites, tiles, UI, backgrounds, promotional artwork and title screens from a brief, keeping editable masters, repeatable exports and measured checks. Use for game art production and packaging, not gameplay implementation.
 ---
 
 # Game art
@@ -103,9 +103,10 @@ accepting generated lettering. Keep the exact string and font in the manifest.
 Use one set of scale, palette, outlines, lighting and anchor rules across the set.
 Check legibility as explicit steps, within the permitted revision constraints:
 1. BEFORE drawing, list the features that make the subject recognizable. For a
-   coin: rim ring or edge thickness, a face mark and a highlight; for a key: ring
-   bow, shaft and teeth; for a potion: cork, neck and liquid. For another subject,
-   name its distinguishing features instead of relying on its filename.
+   heart: two rounded lobes, a point at the bottom and a highlight on one lobe;
+   for a mushroom: a domed cap, spots and a stem; for a boot: a shaft, a toe and
+   a sole. These are illustrations; list the features of your own subject
+   instead of relying on its filename.
 2. Render at native 1x on mid-grey and light backgrounds. Tick each planned
    feature only if it is visible in both views; record missing features and repair
    them when the brief permits. Do not add or change protected supplied pixels.
@@ -231,7 +232,7 @@ Replace every placeholder and adjust provenance and kind for the real asset
 before writing it. The manifest writer also sets the date from the UTC clock;
 never invent it from a model's training date or the brief.
 Use project-root-relative forward-slash paths for file, master and build script
-(for example `assets/ui/key.png`, not `ui/key.png` relative to the exports folder);
+(for example `assets/ui/heart.png`, not `ui/heart.png` relative to the exports folder);
 use the actual tool version, recorded parameters and an ISO `YYYY-MM-DD` date.
 For original local drawing, model, weights_license, source, source_license and
 paid_service are null, and reference_used_as is `none`. A used reference must
