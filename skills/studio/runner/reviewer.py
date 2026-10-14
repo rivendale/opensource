@@ -16,6 +16,8 @@ import zlib
 PNG = b'\x89PNG\r\n\x1a\n'
 MAX_IMAGE_BYTES = 512 * 1024
 MAX_DIMENSION = 512
+VIEW_SCALE = 8
+MAX_VIEW_DIMENSION = MAX_DIMENSION * VIEW_SCALE
 MAX_FEATURES = 12
 PNG_CHUNKS = {b'IHDR', b'IDAT', b'IEND', b'PLTE', b'tRNS', b'gAMA', b'cHRM',
               b'sRGB', b'bKGD', b'pHYs', b'tIME', b'tEXt', b'iTXt', b'zTXt'}
@@ -61,13 +63,14 @@ def validate_plan(plan):
     return copy.deepcopy(plan)
 
 
-def png_dimensions(data):
+def png_dimensions(data, *, rendered=False):
     if (not isinstance(data, bytes) or len(data) > MAX_IMAGE_BYTES or len(data) < 33
             or data[:8] != PNG or data[12:16] != b'IHDR'):
         raise ReviewError('review snapshot must be a PNG under 512 KiB')
     width, height = struct.unpack('>II', data[16:24])
-    if not 1 <= width <= MAX_DIMENSION or not 1 <= height <= MAX_DIMENSION:
-        raise ReviewError('review snapshot exceeds native-size dimension limit')
+    dimension_limit = MAX_VIEW_DIMENSION if rendered else MAX_DIMENSION
+    if not 1 <= width <= dimension_limit or not 1 <= height <= dimension_limit:
+        raise ReviewError('review snapshot exceeds dimension limit')
     offset = 8
     seen_header = False
     seen_data = False
@@ -105,20 +108,20 @@ def neutral_views(data, preexec_fn=None, env=None):
         process = subprocess.run(['convert', '-limit', 'memory', '64MiB', '-limit', 'map',
                                   '64MiB', '-limit', 'disk', '0', '-limit', 'thread', '1',
                                   'png:-', '-background', background, '-alpha', 'remove',
-                                  '-alpha', 'off', '-strip', '-define', 'png:exclude-chunks=date,time',
+                                  '-alpha', 'off', '-filter', 'point', '-resize', str(VIEW_SCALE * 100) + '%', '-strip', '-define', 'png:exclude-chunks=date,time',
                                   'PNG32:-'], input=data, stdout=subprocess.PIPE,
                                  stderr=subprocess.DEVNULL, timeout=15, check=False,
                                  preexec_fn=preexec_fn, env=env)
-        if process.returncode or png_dimensions(process.stdout) != dimensions:
-            raise ReviewError('neutral native-size rendering failed')
+        if process.returncode or png_dimensions(process.stdout, rendered=True) != tuple(d * VIEW_SCALE for d in dimensions):
+            raise ReviewError('neutral enlarged-view rendering failed')
         views.append(process.stdout)
     return views
 
 
 def content(views):
     if not isinstance(views, list) or len(views) != 2:
-        raise ReviewError('two native-size background views required')
-    dimensions = [png_dimensions(v) for v in views]
+        raise ReviewError('two enlarged background views required')
+    dimensions = [png_dimensions(v, rendered=True) for v in views]
     if dimensions[0] != dimensions[1]:
         raise ReviewError('review background dimensions differ')
     return [{'type': 'image_url', 'image_url': {
@@ -136,7 +139,7 @@ def request_record(messages):
                     value = item['image_url']['url']
                     data = base64.b64decode(value.split(',', 1)[1], validate=True)
                     item['image_url'] = {'sha256': hashlib.sha256(data).hexdigest(),
-                        'bytes': len(data), 'dimensions': png_dimensions(data),
+                        'bytes': len(data), 'dimensions': png_dimensions(data, rendered=True),
                         'detail': item['image_url'].get('detail')}
     return json.dumps(recorded)
 

@@ -144,8 +144,13 @@ A provisional writer completion pauses the agent. The root supervisor snapshots 
 listed regular files using directory FDs, refusing symlinks and special files. The supervisor
 uses the pinned container ImageMagick `convert` as UID 1002 with dropped groups
 and capabilities to strip PNG metadata and composite
-mid-grey and light views at the original pixel dimensions, bounded to 512×512 and
-512 KiB per image. PNG chunk names, lengths, CRCs and the end marker are checked
+mid-grey and light backgrounds, then enlarges each view by an integer factor of
+8 with nearest-neighbor filtering (`-filter point -resize 800%`). A 16×16 source
+becomes a 128×128 attachment; every composited pixel occupies an exact 8×8 block,
+with no interpolation or edits to delivered source pixels. Sources remain bounded
+to 512×512; generated views allow up to 4096×4096. Both retain the 512 KiB PNG
+byte limit, decoder resource limits and existing relay/frame limits. Larger or
+unreviewable views still become error entries and preserve the checker verdict. PNG chunk names, lengths, CRCs and the end marker are checked
 before conversion. The host receives only neutral views and snapshot hash receipts;
 it never decodes agent-written artwork with ImageMagick. Oversized snapshot frames
 become compact error entries instead of crashing the supervisor. IM6 temporary files live
@@ -192,8 +197,11 @@ The reviewer is the same pinned model in a fresh context, not an independent hum
 reader. Its blind name is evidence, not an automatic semantic match to the intended
 subject. Feature booleans control redraws; `review_gate: false` keeps uncalibrated
 model review out of acceptance decisions and human columns. Calibration is required
-before any later change enables an acceptance gate. Native image dimensions
-do not guarantee a provider presents pixels at human 1x scale; no live vision accuracy,
+before any later change enables an acceptance gate. The native 16×16 view batch
+failed calibration; the 8× display requires a new batch with the same questions,
+floors, request wording and response parser for comparison. Request wording stays
+pinned to that earlier batch; only the image display size changes. Enlargement
+does not guarantee human-equivalent presentation by the provider; no live vision accuracy,
 human agreement, latency or paid-pilot acceptance is claimed by the synthetic tests.
 Runs without a review plan retain prior behavior and have no model review evidence.
 
