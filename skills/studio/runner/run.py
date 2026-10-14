@@ -3,6 +3,7 @@
 import argparse
 import base64
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -246,6 +247,9 @@ def failed_capture(root, output, result, events, transcript, log, keys, snapshot
     shutil.copytree(candidate, output / 'scratch')
 
 
+from reviewer import validate_plan, review, ReviewError
+
+
 def run(args):
     result = {"runner": VERSION, "status": "failed", "reason": "runner preflight or isolation failure",
               "runner_sha256": sha256(__file__),
@@ -267,6 +271,18 @@ def run(args):
     scanned_snapshot = None
     root = Path(tempfile.mkdtemp(prefix="studio-private-"))
     try:
+        review_plan = []
+        if args.review_plan:
+            if args.mode != 'run' or args.review_plan.stat().st_size > 65536:
+                raise ValueError('review plan requires live-run mode and a small trusted plan')
+            review_plan = validate_plan(json.loads(args.review_plan.read_text()))
+        reserve = 2 * len(review_plan) * args.review_rounds
+        if reserve >= args.turns:
+            raise ValueError('turn budget cannot reserve requested reviewer rounds')
+        review_round = 0
+        review_records = []
+        review_ok = not review_plan
+        result['review_gate'] = False  # Uncalibrated model review is a separate observation.
         runtime = Runtime(args.store, root)
         try:
             result["runtime"] = runtime_identity(runtime)
@@ -401,7 +417,8 @@ def run(args):
                                    stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         frames = Frames(process, launched + args.wall)
         process.stdin.write(encode({"type": "start", "mode": args.mode, "model": args.model,
-                                   "host": args.host, "path": args.api_path, "turns": args.turns,
+                                   "host": args.host, "path": args.api_path, "turns": args.turns - reserve,
+                                   "review_files": [item["file"] for item in review_plan],
                                    "limits": args.limits,
                                    "replay_limit": args.scratch - CAPTURE_RESERVE - input_bytes}))
         process.stdin.flush()
@@ -451,6 +468,51 @@ def run(args):
                     result["usage"] = dict(usage)
                 if len(encode({"events": events})) > MAX_FRAME - 65536:
                     raise ValueError("event capture size limit")
+            elif frame["type"] == 'review-snapshots':
+                review_round += 1
+                snapshots = frame.get('snapshots')
+                accepted = False
+                stop = False
+                feedback = []
+                try:
+                    if (not review_plan or review_round > args.review_rounds or
+                            not isinstance(snapshots, list) or
+                            [s.get('file') for s in snapshots] != [item['file'] for item in review_plan]):
+                        raise ReviewError('invalid review phase or asset set')
+                    for item, snapshot in zip(review_plan, snapshots):
+                        if snapshot.get('error'):
+                            raise ReviewError(snapshot['error'])
+                        if not re.fullmatch(r'[a-f0-9]{64}', snapshot.get('sha256', '')):
+                            raise ReviewError('invalid supervisor snapshot hash')
+                        if not isinstance(snapshot.get('views'), list) or len(snapshot['views']) != 2:
+                            raise ReviewError('invalid supervisor neutral views')
+                        views = [base64.b64decode(v, validate=True) for v in snapshot['views']]
+                        def record(phase, text, reported):
+                            nonlocal usage
+                            for key, value in reported.items():
+                                usage[key] = usage.get(key, 0) + value
+                            result['usage'] = dict(usage)
+                            review_records.append({'round': review_round, 'file': item['file'],
+                                'sha256': snapshot['sha256'], 'phase': phase, 'text': text,
+                                'usage': reported})
+                            result['review_records'] = list(review_records)
+                        def transport(messages, max_tokens):
+                            remaining = frames.deadline - time.monotonic()
+                            if remaining <= 0:
+                                raise TimeoutError('shared review wall time limit')
+                            return relay.review_request(messages, max_tokens, min(60, remaining))
+                        verdict = review(views, item, args.model, transport, record)
+                        feedback.append({'file': item['file'], **verdict})
+                    accepted = all(item['accepted'] for item in feedback)
+                    stop = not accepted and review_round >= args.review_rounds
+                except (ReviewError, ValueError, OSError, TimeoutError, http.client.HTTPException) as error:
+                    stop = True
+                    result['review_error'] = exception_receipt(error, key_values)
+                    feedback = [{'error': 'fresh-context model review failed; no acceptance'}]
+                review_ok = accepted
+                process.stdin.write(encode({'type': 'review-feedback', 'accepted': accepted,
+                    'stop': stop, 'feedback': json.dumps(feedback)}))
+                process.stdin.flush()
             elif frame["type"] == "drained":
                 drained = frame["processes"] == 0
             elif frame["type"] == "agent-exit":
@@ -463,6 +525,7 @@ def run(args):
             transfer.join(timeout=5)
             if transfer.is_alive() or transfer_errors:
                 raise RuntimeError("replay transfer failed")
+        result['review_accepted'] = review_ok and frame.get('review_integrity', not review_plan)
         result["agent_exit"] = frame["code"]
         result["limits_hit"] = frame["limits_hit"]
         result["agent_wall_seconds"] = time.monotonic() - launched
@@ -514,7 +577,8 @@ def run(args):
         result["key_scan"] = "passed"
         if frames.next() != {"type": "answers-ready", "processes": 0}:
             raise RuntimeError("answer phase not proved")
-        if result["limits_hit"] or result["agent_exit"] != 0 or (args.mode == "run" and not usage):
+        if (result["limits_hit"] or result["agent_exit"] != 0 or
+                (args.mode == "run" and not usage)):
             failed = next((e.get("reason") for e in events if e.get("type") == "failed"), None)
             result["reason"] = ("limit hit: " + ", ".join(result["limits_hit"]) if result["limits_hit"] else
                                 failed if failed in {"turn limit", "tool wall time limit", "tool output limit"} else
@@ -655,7 +719,8 @@ def run(args):
             result.pop("usage", None)
             result.pop("exception", None)
             result.pop("capture_exception", None)
-            for field in ['cleanup_exception', 'process_cleanup_exception', 'relay_cleanup_exception']:
+            for field in ['cleanup_exception', 'process_cleanup_exception', 'relay_cleanup_exception',
+                          'review_records', 'review_error', 'review_accepted']:
                 result.pop(field, None)
         (args.output / "result.json").write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
     print(json.dumps({"status": result["status"], "reason": result["reason"], "result": str(args.output / "result.json")}))
@@ -687,7 +752,11 @@ def main():
     parser.add_argument("--memory", type=int, default=8 * 1024**3)
     parser.add_argument("--scratch", type=int, default=2 * 1024**3)
     parser.add_argument("--processes", type=int, default=256)
+    parser.add_argument('--review-plan', type=Path, help='Trusted operator plan: file, subject_words, feature questions; never checker answers')
+    parser.add_argument('--review-rounds', type=int, default=2, help='Maximum blind review/redraw rounds, shared run budget')
     args = parser.parse_args()
+    if not 1 <= args.review_rounds <= 4:
+        parser.error('review-rounds must be 1-4')
     args.limits = {k: getattr(args, k) for k in ["cpus", "memory", "scratch", "processes"]}
     if any(v <= 0 for v in [*args.limits.values(), args.turns, args.wall]):
         parser.error("limits must be positive")

@@ -1,0 +1,294 @@
+{
+  "date_utc": "2026-10-14T16:20:09.445000+00:00",
+  "scope": "T17 final HTTPException and snapshot frame size fixes",
+  "parent_commit": "c38756f05633f20fd3b215945f7b126ea439a969",
+  "authority_commit": "32e2d37f1ef37dedec332e72076a589c722b40af",
+  "authority_task_blob": "2dd3ea7e4b1446e0c1d14c8b13c4a26b56ce53c8",
+  "active_file_sha256": {
+    "skills/studio/runner/run.py": "53cf428851ef182286e25c6fdddd2d35220059d5fb39eabbc6a645e1236b7060",
+    "skills/studio/runner/supervisor.py": "df7a7249ca60266c18cb9940eae59ce6f910318c15321534101cb7deb5df0d57",
+    "skills/studio/runner/tests/reviewer_protocol.py": "53fd42b92df5da8afbd5d069b40b8ee9597ec77022e5ca4e8fdac02a7cd373c2",
+    "skills/studio/runner/tests/reviewer_runs.py": "0ee88fcd7237b82c5740d7c80ce36fcf01ae4be5c5151c9974234449a39543f8",
+    "skills/studio/runner/README.md": "e276336d79b3755b6287a7997514d3d7a6cd68b6495546340a26af6f128b0ff8"
+  },
+  "image": {
+    "reference": "localhost/studio-runner@sha256:9d74430db36e9c09216e2cc222751f502f44fbdd790f7c65e3f9b7333cd6c1e9",
+    "id": "45c6c82f563479bd30a05834fe8d12228d0ee2f7d55538bc34dff296cbcc9eb7",
+    "sources": {
+      "supervisor.py": "df7a7249ca60266c18cb9940eae59ce6f910318c15321534101cb7deb5df0d57",
+      "build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+      "replay.py": "dde3e0deb5ca9135d9076209b3e9f3f654623b373183ae9c80e1df3fb73ef45d",
+      "probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
+      "reviewer.py": "e9404307977b49fa51ff2b8655153a2470538b048dde473ffeee8aec7e802b17",
+      "agent.py": "564baa11e7a38ae49153fae35fea57ed64785df635e697839a12ba56f81e0cda",
+      "selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+      "proxy.py": "9187abb3555a8880468385326d7bc85062223fa99e0299b0410ba322bcd8c46a",
+      "common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+    }
+  },
+  "runtime": {
+    "podman": "4.9.3",
+    "oci_runtime": "crun version 1.14.1",
+    "cgroup_version": "v2",
+    "controllers": [
+      "cpu",
+      "memory",
+      "pids"
+    ],
+    "rootless": true,
+    "seccomp": true
+  },
+  "selftest": {
+    "status": "passed",
+    "verdict": "passed",
+    "key_scan": "passed",
+    "sha256": "7c7efd8670d7a4db6784c44feeda535509b2d963a905e07d5874aea75b7ad587"
+  },
+  "review_fixtures": {
+    "fixtures": [
+      {
+        "scenario": "accept",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "redraw",
+        "passed": true,
+        "mock_requests": 8,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "miss",
+        "passed": true,
+        "mock_requests": 8,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "malformed",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "symlink",
+        "passed": true,
+        "mock_requests": 2,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "budget",
+        "passed": true,
+        "mock_requests": 0,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "tamper",
+        "passed": true,
+        "mock_requests": 4,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "text-only",
+        "passed": true,
+        "mock_requests": 1,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "http-error",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "oversized-frame",
+        "passed": true,
+        "mock_requests": 2,
+        "real_provider_calls": 0,
+        "key_scan": "passed",
+        "host_decoder_guard": true
+      },
+      {
+        "scenario": "key-echo",
+        "passed": true,
+        "mock_requests": 3,
+        "real_provider_calls": 0,
+        "key_scan": "incident",
+        "host_decoder_guard": true
+      }
+    ],
+    "real_provider_calls": 0
+  },
+  "default_run_fixtures": {
+    "fixtures": [
+      {
+        "scenario": "questions",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "capture-error",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "checker-error",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "preflight-error",
+        "passed": true,
+        "mock_requests": 0,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "invalid-key-quote",
+        "passed": true,
+        "mock_requests": 0,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "invalid-key-backslash",
+        "passed": true,
+        "mock_requests": 0,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "host-received-events-only"
+      },
+      {
+        "scenario": "fail-verdict",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "checker-exit-2",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "stderr-redaction",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "checker-crash-exit-1",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "invalid-stdout-exit-1",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "exit-1-passing-rules",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "exit-0-failing-rules",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "drained-scratch-snapshot"
+      },
+      {
+        "scenario": "stderr-shortened",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "stderr-long",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "passed",
+        "capture_scope": "final-scratch-snapshot"
+      },
+      {
+        "scenario": "incident-cleanup",
+        "passed": true,
+        "mock_requests": 1,
+        "real_requests": 0,
+        "key_scan": "incident",
+        "capture_scope": "suppressed"
+      }
+    ],
+    "diagnostic_redaction": "passed",
+    "pattern_scan_suppression": "passed",
+    "exact_key_tool_echo_suppression": "passed",
+    "diagnostic_formatting_fallback": "passed",
+    "real_provider_calls": 0
+  },
+  "offline_checks": [
+    "oversized frame returns bounded error entries",
+    "blind context, strict parsing, CRC and compact records",
+    "Python compilation",
+    "450 links: 0 problems",
+    "link-checker selftest 33/33",
+    "git diff --check"
+  ],
+  "real_provider_calls": 0,
+  "real_credentials_used": false,
+  "model_review_gate": false,
+  "calibration_claimed": false,
+  "local_evidence": "/tmp/opensource-studio-legibility-validation-20261014",
+  "remaining": [
+    "independent Claude re-read and owner merge",
+    "complete calibration-first preregistration, post-merge plan validation and owner go before paid work"
+  ]
+}

@@ -117,6 +117,78 @@ is a failed self-test, never evidence that those in-container probes passed.
 
 ## Case execution
 
+### Fresh-context model review
+
+For game-art runs, the operator can add `--review-plan /absolute/operator-plan.json`
+and `--review-rounds 2` (1–4). The plan is separate from frozen checker answers;
+the skill author must not derive it by reading an acceptance case. Its exact schema is:
+
+```json
+[
+  {
+    "file": "assets/icon.png",
+    "subject_words": ["coin"],
+    "features": ["Is there a dark outer edge?", "Is a bright spot visible at upper left?"]
+  }
+]
+```
+
+The trusted operator lists every export requiring review and all required features,
+and declares subject words that must be absent from the questions. Validation refuses
+unsafe or duplicate paths and questions beginning a word with a declared subject stem,
+including common Greek/Cyrillic lookalikes after Unicode normalization. This lexical
+check cannot prove that a question is unprimed or that every required feature was listed;
+those remain operator responsibilities. The writer cannot supply or alter this plan.
+
+A provisional writer completion pauses the agent. The root supervisor snapshots the
+listed regular files using directory FDs, refusing symlinks and special files. The supervisor
+uses the pinned container ImageMagick `convert` as UID 1002 with dropped groups
+and capabilities to strip PNG metadata and composite
+mid-grey and light views at the original pixel dimensions, bounded to 512×512 and
+512 KiB per image. PNG chunk names, lengths, CRCs and the end marker are checked
+before conversion. The host receives only neutral views and snapshot hash receipts;
+it never decodes agent-written artwork with ImageMagick. Oversized snapshot frames
+become compact error entries instead of crashing the supervisor. IM6 temporary files live
+in a disposable private folder under scratch, removed before checking; the decoder
+UID differs from both the writer and checker and cannot write their private homes.
+
+Each asset gets a new tool-free conversation on the same pinned model route. Its first
+request contains generic naming instructions and only the two render attachments:
+no writer history, skill, brief, filename, subject word or feature questions. It records
+the one-line name before a second request asks the feature questions in that review
+conversation. Replies must match the pinned model, finish normally, report consistent
+token usage and return strict JSON with a name followed by one boolean per feature.
+The writer receives the recorded name and answers as data for redraw, never as new scope.
+
+A false feature answer retries within the configured rounds. Invalid replies, missing
+exports, HTTP protocol errors or the last failed round end model review with `review_accepted: false`;
+they preserve the checker verdict in its separate column. After the agent is drained,
+the supervisor verifies final files against the last accepted snapshot. A mismatch
+invalidates model review acceptance but still preserves the checker verdict. Request
+records retain exact textual prompts and image hashes, sizes and dimensions instead
+of base64 payloads. Responses and reviewer usage also enter protected `run.json` and
+the existing key scan; a key incident still suppresses results and prevents checking.
+Unsafe scratch trees such as symlinks, resource-limit failures and other isolation
+errors still prevent checking under the existing runner boundary. A negative model
+opinion on an otherwise safely captured tree is separate from those failures.
+
+Two model requests per asset per round are reserved from `--turns` before the writer
+starts. The writer gets the remaining requests; the host relay enforces the original
+total across both roles, with the existing wall-time deadline and no fresh budget.
+For example, 3 assets × 2 rounds reserve 12 of a 50-request run, leaving 38 for drawing.
+All reviewer usage contributes to the run total, even when response parsing fails.
+This extra use requires whatever current credential grant governs the run; enabling
+the option creates no authorization to call a provider.
+
+The reviewer is the same pinned model in a fresh context, not an independent human
+reader. Its blind name is evidence, not an automatic semantic match to the intended
+subject. Feature booleans control redraws; `review_gate: false` keeps uncalibrated
+model review out of acceptance decisions and human columns. Calibration is required
+before any later change enables an acceptance gate. Native image dimensions
+do not guarantee a provider presents pixels at human 1x scale; no live vision accuracy,
+human agreement, latency or paid-pilot acceptance is claimed by the synthetic tests.
+Runs without a review plan retain prior behavior and have no model review evidence.
+
 The case supplies `brief.md`, `inputs/`, `expected.json`, and `check.py`. The skill author does
 not read or write studio acceptance cases. The runner stages only the brief and ordinary input
 files into read-only agent mounts. Execute bits under `inputs/bin/` are preserved; links, special
