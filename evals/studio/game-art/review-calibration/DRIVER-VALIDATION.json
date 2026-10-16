@@ -3,23 +3,26 @@
   "scope": "T34 partial implementation; draft only",
   "source_base": "8cf7b5c2319fc8405a9d4c85052b133e337f81a9",
   "source_hashes": {
-    "evals/studio/game-art/review-calibration/driver.py": "f87f12dc7deeac691bcd826efd74440ca1c397da8f3b7ca851b069be25a000d2",
+    "evals/studio/game-art/review-calibration/driver.py": "ab5740dc809c88aafd32e58f0809e02c8c6dfb65f09e69372ac8a6c58c512524",
     "skills/studio/runner/proxy.py": "fa5faf870abed263d7ca9c370d12fa3e46b6b0e28aa7de6650eed26644b90aa9",
     "evals/studio/game-art/review-calibration/tests/test_driver_plan.py": "83c821db854553d85bf93dbdb7fbae5b1d158896f2fde935cdbc4b6a2d9d8ab2",
-    "evals/studio/game-art/review-calibration/tests/test_driver_collect.py": "bd193fbd6214366b9a5e9a53da895f49de0f11701c2f35a9c9cebbfa14373f3c",
+    "evals/studio/game-art/review-calibration/tests/test_driver_collect.py": "077f62127e4d41dd583c4cb54bcfe63d3bbf296d1c43ae681c637817ab30745b",
     "evals/studio/game-art/review-calibration/tests/test_driver_fixture.py": "77f460001753bc6c87c7671f5952cb4ed5fd005dd9fbc43fa1d482ad269c2c06",
-    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "a2c004f8747054912a33efe23699fffaa24a99b9c8ce0c0b135bd856d128a14f"
+    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "010933c2032f01d0122d51b1b694c1a1805ef14eaa914606173555d35ff1aa8b",
+    "evals/studio/game-art/review-calibration/tests/test_driver_persist.py": "9fe9be834549c8af1ac4d684a048f832a1bfd8bfa1ab9cde7dd995681f312ddd"
   },
   "local_tests": {
     "planner_and_synthetic": 5,
-    "collector": 4,
+    "collector": 6,
     "full_mock_requests": 116,
     "rendering": "actual merged neutral_views with local ImageMagick",
     "existing_reviewer_json_fixtures": 86,
     "existing_reviewer_context_and_protocol": "pass",
     "external_fixture": "full hashes and exact reconstruction verified; original score exit 1 retained; same-batch compare exit 0",
     "links_checked": 451,
-    "link_checker_selftest": "33/33"
+    "link_checker_selftest": "33/33",
+    "persistence": 8,
+    "disk_consumers": "116-request mock writes records, plans and events; disk reconstruction matches; unchanged score stdout retained with exit1, explicit self-comparison exit0; partial/corrupt batches are not scored; key incident suppresses artifacts"
   },
   "mutations": {
     "mutants": [
@@ -58,13 +61,28 @@
       {
         "mutation": "mixed-batch-events",
         "behavioral_test_failed": true
+      },
+      {
+        "mutation": "output-scan",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "existing-output",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "disk-readback",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "missing-comparison",
+        "behavioral_test_failed": true
       }
     ],
-    "component_mutations": 9,
+    "component_mutations": 13,
     "renderer_dependent_mutations": "run",
     "remaining_contract": [
-      "complete output scanning and persistence",
-      "scorer and disk-consumer integration",
+      "final receipt and batch completion",
       "batch identity/credential entry point",
       "all ten full specification directions"
     ],
@@ -75,12 +93,11 @@
   "raw_run_files_in_branch": false,
   "ci": "structural checks and explicit renderer/fixture absence status; rendered mock and full mutation suite require a host with convert",
   "remaining": [
-    "Safe persistence and output scans for every file",
     "Run-ID versus strict-record-schema clarification",
     "Runner-owned credential entry integration; no key path added",
-    "Disk-read scorer/comparison and final receipt",
+    "Final receipt, batch identity and completion integration",
     "Complete all ten required stopping/mutation directions",
     "Independent review; owner live execution only"
   ],
-  "completion_status": "collection only; not a complete batch driver"
+  "completion_status": "Internal persistence and disk consumers implemented; final receipts and identity not integrated; draft remains incomplete"
 }

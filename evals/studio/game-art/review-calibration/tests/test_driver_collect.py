@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Real reviewer + trusted Relay method, fake HTTPS only; no socket/key/provider."""
-import hashlib,importlib.util,json,sys,threading,unittest
+import hashlib,importlib.util,json,sys,threading,unittest,tempfile,subprocess
 from pathlib import Path
 from unittest.mock import patch
 HERE=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('driver',HERE/'driver.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
@@ -37,10 +37,44 @@ class CollectTests(unittest.TestCase):
    def getresponse(self):return Response()
    def close(self):pass
   with patch.object(proxy.http.client,'HTTPSConnection',HTTPS):result=m.collect_pairs(relay)
+  self.relay=relay
   return result,calls
  def test_full_batch_116_requests_in_order(self):
   r,calls=self.collect();self.assertEqual(r['status'],'collected');self.assertEqual(len(calls),116);self.assertEqual(r['pairs_completed'],58);self.assertEqual(len(r['records']),42);self.assertEqual(len(r['plan_records']),16);self.assertEqual([c['max_tokens'] for c in calls],[128,256]*58)
   self.assertTrue(all(e['scale']==8 for e in r['events'] if e['kind'].endswith('-request')));self.assertEqual(r['spend_usd'],'0.00696')
+ def test_full_batch_persisted_and_consumed_from_disk(self):
+  result,_=self.collect()
+  with tempfile.TemporaryDirectory() as directory:
+   output=Path(directory)/'batch';stage=m.persist_collection(self.relay,result,output)
+   self.assertTrue(stage['disk_records_verified'])
+   original_bytes=(output/'records.json').read_bytes();(output/'records.json').write_bytes(original_bytes.replace(b'a synthetic geometric shape',b'changed shape'))
+   with patch.object(m.subprocess,'run',side_effect=AssertionError('corrupt disk batch was scored')):
+    refused=m.consume_written(self.relay,result,stage,output,output/'records.json')
+   self.assertEqual(refused['status'],'partial');self.assertIsNone(refused['score_exit']);(output/'records.json').write_bytes(original_bytes)
+   real_run=subprocess.run
+   with patch.object(m.subprocess,'run',wraps=real_run) as consumer_calls:
+    consumed=m.consume_written(self.relay,result,stage,output,output/'records.json')
+   self.assertEqual([Path(call.args[0][1]).name for call in consumer_calls.call_args_list],['score.py','compare_batches.py'])
+   self.assertEqual(consumed['status'],'consumed');self.assertEqual(consumed['score_exit'],1);self.assertEqual(consumed['compare_exit'],0)
+   expected=subprocess.run([sys.executable,str(HERE/'score.py'),str(output/'records.json')],capture_output=True,check=False)
+   self.assertEqual((output/'score.stdout.json').read_bytes(),expected.stdout)
+   self.assertEqual(hashlib.sha256((output/'score.stdout.json').read_bytes()).hexdigest(),consumed['sha256']['score.stdout.json'])
+   self.assertFalse(consumed['review_gate']);self.assertFalse((output/'receipt.json').exists())
+   # Existing scorer output must never be replaced on a repeat invocation.
+   again=m.consume_written(self.relay,result,stage,output,output/'records.json');self.assertEqual(again['status'],'partial')
+   self.assertEqual((output/'score.stdout.json').read_bytes(),expected.stdout)
+   incident_output=Path(directory)/'incident-batch';incident_stage=m.persist_collection(self.relay,result,incident_output)
+   poisoned=subprocess.CompletedProcess([],0,b'SYNTHETIC-CALIBRATION-MARKER',b'')
+   with patch.object(m.subprocess,'run',return_value=poisoned):
+    incident=m.consume_written(self.relay,result,incident_stage,incident_output,output/'records.json')
+   self.assertEqual(incident['status'],'incident');self.assertEqual(list(incident_output.iterdir()),[])
+ def test_partial_never_invokes_disk_consumers(self):
+  result,_=self.collect('late-schema')
+  with tempfile.TemporaryDirectory() as directory:
+   output=Path(directory)/'batch';stage=m.persist_collection(self.relay,result,output)
+   with patch.object(m.subprocess,'run',side_effect=AssertionError('partial batch was scored')):
+    consumed=m.consume_written(self.relay,result,stage,output,output/'records.json')
+   self.assertEqual(consumed['status'],'partial');self.assertIsNone(consumed['score_exit'])
  def test_bad_reply_http_usage_model_cost_stop_without_retry(self):
   for mode in ['bad-json','http','usage','model','cost','refusal','empty','schema']:
    with self.subTest(mode=mode):

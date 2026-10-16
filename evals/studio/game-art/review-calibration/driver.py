@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Frozen 8x calibration plan. Offline planning; batch execution added separately."""
-import argparse,copy,hashlib,json,re,sys
+"""Fixed 8x calibration components. Public CLI is offline planning only."""
+import argparse,copy,hashlib,json,re,sys,subprocess
 from decimal import Decimal
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
@@ -102,6 +102,100 @@ def collect_pairs(relay,settings=None,here=HERE):
  if status=='collected' and (requests!=116 or completed!=58):status='partial';reason='CountMismatch'
  if status=='incident':events=[];records=[];plans=[]
  return dict(status=status,reason=reason,requests_used=requests,pairs_completed=completed,records=records,plan_records=plans,events=events,prompt_tokens=prompt,completion_tokens=completion,spend_usd=str(spend),rates_date='2026-10-16',rates_source='https://platform.claude.com/docs/en/about-claude/pricing',usage_unverified=usage_unverified,spend_is_estimate=True,review_gate=False)
+
+def persist_collection(relay,result,output,here=HERE):
+ """Internal artifact stage, not a completed batch or public credential entry.
+
+ No receipt is written: batch identity, final receipts and disk consumers are
+ separate unfinished work. Even a collected batch remains partial here.
+ """
+ report=dict(status='partial',reason='ConsumersPending',artifacts_written=0,disk_records_verified=False,sha256={})
+ if type(relay) is not Relay:raise ValueError('runner-owned Relay required')
+ if relay.incident or result.get('status')=='incident':
+  report.update(status='incident',reason='KeyIncident');return report
+ created=[];output=Path(output)
+ try:
+  count=result['pairs_completed'];pairs=build_plan(here)
+  if type(count) is not int or not 0<=count<=len(pairs):raise ValueError('invalid completed pair count')
+  events=result['events'];records,plans=derive_records(events[:count*6],pairs[:count])
+  if records!=result['records'] or plans!=result['plan_records']:raise ValueError('records disagree with events')
+  payloads={
+   'records.json':(json.dumps(records,ensure_ascii=False,indent=2)+'\n').encode(),
+   'plan-records.json':(json.dumps(plans,ensure_ascii=False,indent=2)+'\n').encode(),
+   'events.jsonl':''.join(json.dumps(e,ensure_ascii=False)+'\n' for e in events).encode()}
+  # Scan ALL payloads before the first write; use the runner's existing policy.
+  for body in payloads.values():
+   if relay.output_has_key(body):
+    relay.incident=True;raise ValueError('key incident in output')
+  output.mkdir(mode=0o700,exist_ok=False)
+  for name,body in payloads.items():
+   path=output/name
+   with path.open('xb') as stream:
+    created.append(path);stream.write(body);stream.flush()
+   report['artifacts_written']+=1
+  written={name:(output/name).read_bytes() for name in payloads}
+  for body in written.values():
+   if relay.output_has_key(body):
+    relay.incident=True;raise ValueError('key incident in disk output')
+  if written!=payloads:raise ValueError('output bytes changed on disk')
+  disk_events=[json.loads(line) for line in written['events.jsonl'].splitlines()]
+  disk_records,disk_plans=derive_records(disk_events[:count*6],pairs[:count])
+  if disk_records!=json.loads(written['records.json']) or disk_plans!=json.loads(written['plan-records.json']):raise ValueError('disk records disagree with events')
+  report['disk_records_verified']=True
+  report['sha256']={name:hashlib.sha256(body).hexdigest() for name,body in written.items()}
+ except (OSError,ValueError,TypeError,KeyError) as error:
+  report['reason']=type(error).__name__
+  if relay.incident:
+   # Only paths created by this invocation can be removed. Existing trees are
+   # never touched, including an existing directory or symlink at output.
+   for path in created:path.unlink(missing_ok=True)
+   if created:output.rmdir()
+   report.update(status='incident',artifacts_written=0,sha256={},disk_records_verified=False)
+ return report
+
+def consume_written(relay,result,stage,output,baseline,here=HERE):
+ """Run unchanged disk consumers; never promote a failed score or set a gate.
+
+ Baseline is explicit. Self-comparison is useful only in offline tests, not
+ evidence of improvement. Final receipt and batch identity remain pending.
+ """
+ report=dict(status='partial',reason='IncompleteBatch',score_exit=None,compare_exit=None,review_gate=False,sha256={})
+ if type(relay) is not Relay:raise ValueError('runner-owned Relay required')
+ if relay.incident:report.update(status='incident',reason='KeyIncident');return report
+ if result.get('status')!='collected' or result.get('requests_used')!=116 or result.get('pairs_completed')!=58 or not stage.get('disk_records_verified'):return report
+ output=Path(output);here=Path(here);created=[]
+ try:
+  if (output/'score.stdout.json').exists():raise FileExistsError('scorer output already exists')
+  written={name:(output/name).read_bytes() for name in ('records.json','plan-records.json','events.jsonl')}
+  if {name:hashlib.sha256(body).hexdigest() for name,body in written.items()}!=stage['sha256']:raise ValueError('staged disk files changed')
+  records,plans=derive_records([json.loads(line) for line in written['events.jsonl'].splitlines()],build_plan(here))
+  if records!=json.loads(written['records.json']) or plans!=json.loads(written['plan-records.json']):raise ValueError('disk records disagree with events')
+  for body in written.values():
+   if relay.output_has_key(body):relay.incident=True;raise ValueError('key incident in disk input')
+  scored=subprocess.run([sys.executable,str(here/'score.py'),str(output/'records.json')],capture_output=True,timeout=30,check=False)
+  report['score_exit']=scored.returncode
+  compared=subprocess.run([sys.executable,str(here/'compare_batches.py'),str(Path(baseline)),str(output/'records.json')],capture_output=True,timeout=30,check=False)
+  report['compare_exit']=compared.returncode
+  for body in (scored.stdout,scored.stderr,compared.stdout,compared.stderr):
+   if relay.output_has_key(body):relay.incident=True;raise ValueError('key incident in consumer output')
+  if any((output/name).read_bytes()!=body for name,body in written.items()):raise ValueError('inputs changed during consumers')
+  with (output/'score.stdout.json').open('xb') as stream:
+   created.append(output/'score.stdout.json');stream.write(scored.stdout);stream.flush()
+  saved=(output/'score.stdout.json').read_bytes()
+  if relay.output_has_key(saved):relay.incident=True;raise ValueError('key incident in saved score')
+  if saved!=scored.stdout:raise ValueError('saved score differs')
+  report['sha256']={'score.stdout.json':hashlib.sha256(saved).hexdigest()}
+  # A floor failure is retained as exit 1. Execution errors or failed batch
+  # coverage remain partial. No acceptance interpretation is made here.
+  if scored.returncode in (0,1) and compared.returncode==0:report.update(status='consumed',reason='ReceiptPending')
+  else:report['reason']='ConsumerExit'
+ except (OSError,ValueError,TypeError,KeyError,subprocess.SubprocessError) as error:
+  report['reason']=type(error).__name__
+  if relay.incident:
+   for path in created:path.unlink(missing_ok=True)
+   for name in ('records.json','plan-records.json','events.jsonl'):(output/name).unlink(missing_ok=True)
+   report.update(status='incident',sha256={})
+ return report
 
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--dry-run',action='store_true',required=True);a=p.parse_args();validate_settings(SETTINGS);pairs=build_plan()

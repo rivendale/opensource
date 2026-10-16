@@ -25,6 +25,8 @@ jobs:
           persist-credentials: false
       - name: Fixed plan and synthetic event reconstruction
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_plan.py
+      - name: Exclusive persistence and disk corruption checks
+        run: python3 evals/studio/game-art/review-calibration/tests/test_driver_persist.py
       - name: Renderer availability (no dependency downloads)
         id: renderer
         run: |
