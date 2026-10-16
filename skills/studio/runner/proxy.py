@@ -11,6 +11,7 @@ import time
 from urllib.parse import urlsplit
 from common import KEY_PATTERN
 from agent import TOOLS
+from cache_api import native_request, native_response
 
 MAX_BODY = 1024 * 1024
 
@@ -30,7 +31,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
     daemon_threads = True
     block_on_close = False
 
-    def __init__(self, path, routes, keys, model, turn_limit, ca_file=None):
+    def __init__(self, path, routes, keys, model, turn_limit, ca_file=None, cache_prefix=None):
         self.routes = {}
         self.budgets = {}
         for route in routes:
@@ -54,6 +55,9 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
                                                    "max_bytes": route["max_bytes"], "calls": 0, "bytes": 0}
         if set(keys) != {host for host, _ in self.routes}:
             raise ValueError("each routed host needs its own explicit key")
+        self.cache_prefix = cache_prefix
+        if cache_prefix is not None and [route for route,name in self.routes.items() if name=='model'] != [('api.anthropic.com','/v1/messages')]:
+            raise ValueError('prompt cache requires the exact native route')
         self.keys, self.model, self.turn_limit = keys, model, turn_limit
         defaults = ssl.get_default_verify_paths()
         self.context = ssl.create_default_context(cafile=ca_file or defaults.openssl_cafile,
@@ -73,9 +77,11 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         if len(model_routes) != 1 or type(max_tokens) is not int or not 1 <= max_tokens <= 256:
             raise ValueError('invalid trusted reviewer transport')
         host, path = model_routes[0]
-        payload = json.dumps({'model': self.model, 'messages': messages, 'stream': False,
-                              'temperature': 0, 'seed': 0, 'max_tokens': max_tokens},
-                             allow_nan=False).encode()
+        request = {'model': self.model, 'messages': messages, 'stream': False,
+                   'temperature': 0, 'seed': 0, 'max_tokens': max_tokens}
+        if self.cache_prefix is not None:
+            request = native_request(request, {'system': messages[0]['content']}, max_tokens)
+        payload = json.dumps(request, allow_nan=False).encode()
         if len(payload) > MAX_BODY:
             raise ValueError('review request exceeds relay body limit')
         with self.lock:
@@ -85,8 +91,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             self.calls += 1
         connection = http.client.HTTPSConnection(host, 443, timeout=timeout, context=self.context)
         try:
-            headers = {'Content-Type': 'application/json',
-                       'Authorization': 'Bearer ' + self.keys[host].decode('ascii')}
+            headers = self.model_headers(host)
             connection.request('POST', path, payload, headers)
             response = connection.getresponse()
             body = response.read(MAX_BODY + 1)
@@ -97,9 +102,16 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             self.record(host, 'POST', response.status, len(body))
             if response.status != 200 or len(body) > MAX_BODY:
                 raise ValueError('reviewer model route failed')
-            return json.loads(body)
+            value = json.loads(body)
+            return native_response(value, self.model) if self.cache_prefix is not None else value
         finally:
             connection.close()
+
+    def model_headers(self, host):
+        if self.cache_prefix is not None:
+            return {'Content-Type': 'application/json', 'x-api-key': self.keys[host].decode('ascii'),
+                    'anthropic-version': '2023-06-01'}
+        return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + self.keys[host].decode('ascii')}
 
     def process_request(self, request, client_address):
         if not self.slots.acquire(blocking=False):
@@ -184,7 +196,15 @@ class Handler(BaseHTTPRequestHandler):
                     if self.server.calls >= self.server.turn_limit:
                         return self.reject_limit()
                     self.server.calls += 1
+            if self.server.cache_prefix is not None and self.server.routes[(host,target.path)] == 'model':
+                request = native_request(request, self.server.cache_prefix)
             payload = json.dumps(request, allow_nan=False).encode()
+            # Native conversion can grow the body. OFF keeps the prior relay
+            # behavior, including UTF-8 that expands under JSON normalization.
+            if (self.server.cache_prefix is not None
+                    and self.server.routes[(host, target.path)] == 'model'
+                    and len(payload) > MAX_BODY):
+                return self.reject(413)
         except (ValueError, TypeError, OSError):
             return self.reject(400)
         budget = self.server.budgets.get((host, target.path))
@@ -202,7 +222,7 @@ class Handler(BaseHTTPRequestHandler):
         connection = http.client.HTTPSConnection(host, 443, timeout=60, context=self.server.context)
         try:
             # Do not forward caller headers, cookies, authorization or Host overrides.
-            headers = {"Content-Type": "application/json", "Authorization": "Bearer " + self.server.keys[host].decode("ascii")}
+            headers = self.server.model_headers(host) if self.server.routes[(host,target.path)] == "model" else {"Content-Type":"application/json","Authorization":"Bearer " + self.server.keys[host].decode("ascii")}
             connection.request("POST", target.path, payload, headers)
             response = connection.getresponse()
             body = response.read(MAX_BODY + 1)
@@ -222,8 +242,12 @@ class Handler(BaseHTTPRequestHandler):
                 self.server.record(host, "POST", 502, 0)
                 return self.reply(502)
             self.server.record(host, "POST", response.status, len(body))
+            if self.server.cache_prefix is not None and self.server.routes[(host,target.path)] == 'model' and response.status == 200:
+                body = json.dumps(native_response(json.loads(body), self.server.model), allow_nan=False).encode()
+                if len(body) > MAX_BODY:
+                    return self.reply(502)
             self.reply(response.status, body)
-        except (OSError, http.client.HTTPException):
+        except (OSError, http.client.HTTPException, ValueError, TypeError, KeyError):
             self.server.record(host, "POST", 502, 0)
             self.reply(502)
         finally:

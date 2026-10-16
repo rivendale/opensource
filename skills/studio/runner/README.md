@@ -117,6 +117,50 @@ is a failed self-test, never evidence that those in-container probes passed.
 
 ## Case execution
 
+### Opt-in native prompt caching
+
+Add `--prompt-cache --host api.anthropic.com` to a run only when its current
+credential grant authorizes native `/v1/messages`. The flag selects that exact
+route; it does not authorize a provider call. Caching is off by default. With
+caching off, the relay preserves the existing compatibility request bytes and
+bearer headers. Paid evaluation still needs its operator go.
+
+The trusted relay converts the existing sandbox tool interface to native
+Messages. Native headers (`x-api-key`, `anthropic-version`) are set only on the
+host; the container never receives credentials. Response bytes pass the same
+exact-key and pattern scan before conversion. Fixed tool authority, response
+limits, redirect refusal, capture and redaction remain in force.
+
+Cache markers use the default five-minute ephemeral lifetime. They appear only
+on the host-verified system/skill and initial brief blocks. Later writer turns
+cannot add markers, including through native history metadata. The host-owned
+reviewer method caches only its system prefix. No automatic growing-history
+cache, extra warm-up calls or retries are enabled. A provider that reports no
+cache use still completes, with zero cache counters.
+
+Native signed thinking blocks and tool history roundtrip without changing their
+content. Opaque thinking metadata is kept in the conversation, with hashes in
+review request records. Native sampling fields are omitted because newer models
+reject the old temperature-zero setting. Thinking uses the provider default;
+receipts name that policy. The native writer output ceiling is 32,768 tokens;
+reviewer requests retain their existing 128/256-token ceilings. These protocol
+changes must be recorded when comparing models with earlier runs.
+
+Every usage receipt includes uncached input, cache creation and read counters,
+plus the five-minute/one-hour creation split. `prompt_tokens` includes all three
+input categories; `total_tokens` adds output. Cache reads therefore still count
+against the existing inclusive total-token post-run cap, preserving its meaning.
+The runner does not introduce an in-run token cap; the operator's existing
+between-run stop remains required.
+
+Protected usage and result receipts include an estimated USD cost using the
+dated per-model rates in `cache_api.py`. Unknown model rates remain unpriced,
+not zero. Reconcile the checkpoint from these receipts rather than multiplying
+all prompt tokens by the ordinary input price. This is an estimate, not an
+invoice or a claim of measured savings. See the [feasibility and failure plan](PROMPT-CACHE-PLAN.md).
+
+See [compatibility checks and remaining acceptance](CACHE-COMPATIBILITY.md) for the OFF-mode comparison and result-consumer inventory.
+
 ### Fresh-context model review
 
 For game-art runs, the operator can add `--review-plan /absolute/operator-plan.json`

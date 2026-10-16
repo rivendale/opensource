@@ -12,6 +12,7 @@ import subprocess
 import hashlib
 import unicodedata
 import zlib
+from cache_api import usage as checked_usage
 
 PNG = b'\x89PNG\r\n\x1a\n'
 MAX_IMAGE_BYTES = 512 * 1024
@@ -140,6 +141,9 @@ def request_record(messages):
     """Keep exact textual prompts, replacing image payloads with byte/hash receipts."""
     recorded = copy.deepcopy(messages)
     for message in recorded:
+        if '_native_content' in message:
+            native = json.dumps(message['_native_content'], sort_keys=True).encode()
+            message['_native_content'] = {'sha256': hashlib.sha256(native).hexdigest(), 'bytes': len(native)}
         if isinstance(message.get('content'), list):
             for item in message['content']:
                 if item.get('type') == 'image_url':
@@ -154,12 +158,10 @@ def request_record(messages):
 def reported_usage(reply):
     if not isinstance(reply, dict):
         raise ReviewError('review response invalid')
-    usage = reply.get('usage')
-    keys = ('prompt_tokens', 'completion_tokens', 'total_tokens')
-    if (not isinstance(usage, dict) or any(type(usage.get(k)) is not int or usage[k] < 0 for k in keys)
-            or usage['total_tokens'] != usage['prompt_tokens'] + usage['completion_tokens']):
-        raise ReviewError('review usage invalid')
-    return {k: usage[k] for k in keys}
+    try:
+        return checked_usage(reply.get('usage'))
+    except ValueError:
+        raise ReviewError('review usage invalid') from None
 
 
 def response(reply, expected_model):
@@ -232,7 +234,10 @@ def review(views, item, model, transport, record):
             or not named['name'].strip() or len(named['name']) > 240 or '\n' in named['name']):
         raise ReviewError('blind name must be one nonempty line')
     # The name is sealed by record before feature questions are revealed.
-    messages.append({'role': 'assistant', 'content': text})
+    previous = {'role': 'assistant', 'content': text}
+    if '_native_content' in first['choices'][0]['message']:
+        previous['_native_content'] = first['choices'][0]['message']['_native_content']
+    messages.append(previous)
     messages.append({'role': 'user', 'content':
                      'Answer each required-feature question from the images, in order. '
                      'False when missing, unclear or not visible on both backgrounds. '
