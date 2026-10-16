@@ -199,7 +199,11 @@ class Handler(BaseHTTPRequestHandler):
             if self.server.cache_prefix is not None and self.server.routes[(host,target.path)] == 'model':
                 request = native_request(request, self.server.cache_prefix)
             payload = json.dumps(request, allow_nan=False).encode()
-            if len(payload) > MAX_BODY:
+            # Native conversion can grow the body. OFF keeps the prior relay
+            # behavior, including UTF-8 that expands under JSON normalization.
+            if (self.server.cache_prefix is not None
+                    and self.server.routes[(host, target.path)] == 'model'
+                    and len(payload) > MAX_BODY):
                 return self.reject(413)
         except (ValueError, TypeError, OSError):
             return self.reject(400)

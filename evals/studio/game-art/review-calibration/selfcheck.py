@@ -108,5 +108,61 @@ bad_rec = copy.deepcopy(full); bad_rec[0]["features"] = [1, 0, 1, 0, 1, 0]
 run("features as 0/1, not booleans", bad_rec, ALL)
 unfailed = ALL - {"records"} - seen
 check(not unfailed, "every floor is failed by at least one known-bad reviewer (unfailed: %s)" % sorted(unfailed))
+# ---- 4. the batch comparison (compare_batches.py): written from what it promises, not from its code
+import compare_batches as CB   # noqa: E402
+old = records(perfect)
+rows0, sum0, prob0 = CB.compare(old, copy.deepcopy(old), KEY)
+check(not prob0 and sum0["same_class"] == 14 and not sum0["gained_yes"] and not sum0["lost_yes"], "compare: identical batches report no problem and no change")
+new = copy.deepcopy(old)
+for r in new:
+    if r["image"] == IM[0]["file"]:
+        r["name"] = "an orange ball"
+rows1, sum1, prob1 = CB.compare(old, new, KEY)
+check(not prob1 and sum1["lost_yes"] == [IM[0]["file"]] and sum1["same_class"] == 13, "compare: renaming one image in every repeat is reported as exactly one lost yes")
+new = copy.deepcopy(old)
+new[0]["name"] = "an orange ball"      # only repeat 0 of image 0 changes: the majority class does not
+rows2, sum2, prob2 = CB.compare(old, new, KEY)
+check(not prob2 and sum2["same_class"] == 14 and "an orange ball" in rows2[0]["new_names"], "compare: a one-of-three change leaves the class alone but shows in the names (the documented limit)")
+dup = copy.deepcopy(old) + [dict(copy.deepcopy(old[0]), repeat=0)]
+for label, batch in (("a repeat number used twice (0, 1, 2, 0)", dup),
+                     ("a repeat dropped (two repeats for one image)", [r for r in old if not (r["image"] == IM[0]["file"] and r["repeat"] == 2)]),
+                     ("a gap in the repeat numbers (0, 1, 3)", [dict(r, repeat=3) if (r["image"] == IM[0]["file"] and r["repeat"] == 2) else r for r in old]),
+                     ("a record for an image that is not in the key", old + [{"image": "images/ffffffff.png", "repeat": 0, "name": "x", "features": [True] * Q}]),
+                     ("an image with no records", [r for r in old if r["image"] != IM[0]["file"]])):
+    _, _, pr = CB.compare(old, batch, KEY)
+    check(bool(pr), "compare: %s is a problem (old vs it)" % label)
+    _, _, pr = CB.compare(batch, old, KEY)
+    check(bool(pr), "compare: %s is a problem (it vs old)" % label)
+import tempfile
+# the same bad batch on BOTH sides: the cross-batch line cannot see it, so only the within-batch checks can
+both_bad = {"a repeat number used twice (0, 1, 2, 0)": dup,
+            "a gap in the repeat numbers (0, 1, 3)": [dict(r, repeat=3) if (r["image"] == IM[0]["file"] and r["repeat"] == 2) else r for r in old],
+            "a record for an image that is not in the key": old + [{"image": "images/ffffffff.png", "repeat": 0, "name": "x", "features": [True] * Q}],
+            "an image with no records": [r for r in old if r["image"] != IM[0]["file"]]}
+for label, batch in both_bad.items():
+    _, _, pr = CB.compare(batch, copy.deepcopy(batch), KEY)
+    check(bool(pr), "compare: %s on BOTH sides is still a problem (only the within-batch check can say so)" % label)
+# and prove those cases can fail: take each within-batch check out of a copy of the tool; the matching both-sides case must then pass silently
+import importlib.util
+src = (HERE / "compare_batches.py").read_text()
+cuts = {"a repeat number used twice (0, 1, 2, 0)": '        elif ids != list(range(len(ids))):\n            problems.append("repeat numbers for %s are %s, not 0..%d" % (im["file"], ids, len(ids) - 1))\n',
+        "a gap in the repeat numbers (0, 1, 3)": '        elif ids != list(range(len(ids))):\n            problems.append("repeat numbers for %s are %s, not 0..%d" % (im["file"], ids, len(ids) - 1))\n',
+        "a record for an image that is not in the key": '            problems.append("record for an image not in answers.json: " + str(r["image"]))\n',
+        "an image with no records": '            problems.append("no records for " + im["file"])\n'}
+for label, cut in cuts.items():
+    check(cut in src, "mutant source: the check for %s is present to remove" % label)
+    mutated = src.replace(cut, "            pass\n" if ("not in answers" in cut or "no records" in cut) else "        elif False:\n            pass\n", 1)
+    mp = pathlib.Path(tempfile.mkdtemp()) / "compare_batches.py"
+    mp.write_text(mutated)
+    spec = importlib.util.spec_from_file_location("cb_mut", mp); mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    batch = both_bad[label]
+    _, _, pr = mod.compare(batch, copy.deepcopy(batch), KEY)
+    check(not pr, "mutant: with the within-batch check for %s removed, the both-sides batch passes silently (so the case above can fail)" % label)
+import subprocess
+d = pathlib.Path(tempfile.mkdtemp())
+(d / "a.json").write_text(json.dumps(old)); (d / "b.json").write_text(json.dumps(dup)); (d / "c.json").write_text(json.dumps(old))
+check(subprocess.run([sys.executable, str(HERE / "compare_batches.py"), str(d / "a.json"), str(d / "c.json")], capture_output=True).returncode == 0, "compare: exit 0 on a clean pair")
+check(subprocess.run([sys.executable, str(HERE / "compare_batches.py"), str(d / "a.json"), str(d / "b.json")], capture_output=True).returncode == 1, "compare: exit 1 on a duplicated repeat")
+check(subprocess.run([sys.executable, str(HERE / "compare_batches.py"), str(d / "a.json"), str(d / "nope.json")], capture_output=True).returncode == 2, "compare: exit 2 on an unreadable file")
 print("selfcheck:", "all hold" if not bad else "FAILED (%d)" % bad)
 sys.exit(1 if bad else 0)

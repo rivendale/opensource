@@ -6,7 +6,8 @@ import json
 FIELDS = ('prompt_tokens','completion_tokens','total_tokens','uncached_input_tokens',
           'cache_creation_input_tokens','cache_read_input_tokens',
           'cache_creation_5m_input_tokens','cache_creation_1h_input_tokens')
-RATES_DATE = '2026-10-14'
+RATES_DATE = '2026-10-16'
+RATES_SOURCE = 'https://platform.claude.com/docs/en/about-claude/pricing'
 # USD/MTok: uncached, 5m creation, 1h creation, read, output.
 RATES = {'claude-sonnet-4-5-20250929': (3,3.75,6,.30,15),
          'claude-opus-5-5': (4,5,8,.20,20)}
@@ -55,6 +56,7 @@ def receipt(value,model):
     result=usage(value)
     result['estimated_cost_usd']=estimate_cost(value,model)
     result['rates_date']=RATES_DATE if model in RATES else None
+    result['rates_source']=RATES_SOURCE if model in RATES else None
     return result
 
 
@@ -65,6 +67,7 @@ def blocks(content):
     result=[]
     for item in content:
         if not isinstance(item,dict): raise ValueError('invalid content block')
+        if 'cache_control' in item: raise ValueError('caller text cache marker refused')
         if item.get('type')=='text' and isinstance(item.get('text'),str):
             result.append({'type':'text','text':item['text']})
         elif item.get('type')=='image_url':

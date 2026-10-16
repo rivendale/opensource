@@ -1,6 +1,6 @@
 # Native prompt caching: feasibility and build plan
 
-Documentation checked October 14, 2026. The implementation is opt-in; no live cache hit or cost saving has been
+Documentation checked October 14, 2026; tariff table rechecked October 16, 2026. The implementation is opt-in; no live cache hit or cost saving has been
 measured. Compatibility behavior has not been empirically probed with a real key.
 
 The OpenAI-compatible endpoint does not support prompt caching. Anthropic's
@@ -20,10 +20,12 @@ Retain these categories separately instead of billing their sum at the base rate
 [Standard global rates](https://platform.claude.com/docs/en/about-claude/pricing),
 in USD per million tokens:
 
-| Model | Uncached input | Five-minute write | Read | Output |
-| --- | ---: | ---: | ---: | ---: |
-| Sonnet 4.5 | 3 | 3.75 | 0.30 | 15 |
-| Opus 5.5 | 4 | 5 | 0.20 | 20 |
+| Model | Uncached input | Five-minute write | One-hour write | Read | Output |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Sonnet 4.5 | 3 | 3.75 | 6 | 0.30 | 15 |
+| Opus 5.5 | 4 | 5 | 8 | 0.20 | 20 |
+
+The linked tariff lists one-hour writes at twice base input price. The runner requests only the default five-minute lifetime; it retains the one-hour counter for accurate accounting if returned. Receipts include the tariff URL and date.
 
 Estimated cost is the sum of each category multiplied by its own rate, divided
 by one million. Token limits still count all input categories and output.

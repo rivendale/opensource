@@ -15,7 +15,7 @@ def reply(text,**changes):
 
 def check():
  data=subprocess.check_output(['convert','-size','4x4','xc:none','-fill','#ffffff','-draw','point 1,1','PNG32:-'])
- views=reviewer.neutral_views(data);assert all(reviewer.png_dimensions(v)==(4,4) for v in views)
+ views=reviewer.neutral_views(data);assert all(reviewer.png_dimensions(v)==(32,32) for v in views)
  assert views[0]!=views[1]
  calls=[];records=[]
  def transport(messages,limit):
