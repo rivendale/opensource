@@ -6,14 +6,14 @@
     "evals/studio/game-art/review-calibration/driver.py": "ab5740dc809c88aafd32e58f0809e02c8c6dfb65f09e69372ac8a6c58c512524",
     "skills/studio/runner/proxy.py": "fa5faf870abed263d7ca9c370d12fa3e46b6b0e28aa7de6650eed26644b90aa9",
     "evals/studio/game-art/review-calibration/tests/test_driver_plan.py": "83c821db854553d85bf93dbdb7fbae5b1d158896f2fde935cdbc4b6a2d9d8ab2",
-    "evals/studio/game-art/review-calibration/tests/test_driver_collect.py": "077f62127e4d41dd583c4cb54bcfe63d3bbf296d1c43ae681c637817ab30745b",
+    "evals/studio/game-art/review-calibration/tests/test_driver_collect.py": "fb14d16056521e83eb145b45a0b7f73902130e85fae1c97956da37b32c8a106e",
     "evals/studio/game-art/review-calibration/tests/test_driver_fixture.py": "77f460001753bc6c87c7671f5952cb4ed5fd005dd9fbc43fa1d482ad269c2c06",
-    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "010933c2032f01d0122d51b1b694c1a1805ef14eaa914606173555d35ff1aa8b",
+    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "0f6c0c0fdd259527bb1b9c95c590de5b3b54a21206726eaa5bc8eb93803d3d75",
     "evals/studio/game-art/review-calibration/tests/test_driver_persist.py": "9fe9be834549c8af1ac4d684a048f832a1bfd8bfa1ab9cde7dd995681f312ddd"
   },
   "local_tests": {
     "planner_and_synthetic": 5,
-    "collector": 6,
+    "collector": 8,
     "full_mock_requests": 116,
     "rendering": "actual merged neutral_views with local ImageMagick",
     "existing_reviewer_json_fixtures": 86,
@@ -22,7 +22,8 @@
     "links_checked": 451,
     "link_checker_selftest": "33/33",
     "persistence": 8,
-    "disk_consumers": "116-request mock writes records, plans and events; disk reconstruction matches; unchanged score stdout retained with exit1, explicit self-comparison exit0; partial/corrupt batches are not scored; key incident suppresses artifacts"
+    "disk_consumers": "116-request mock writes records, plans and events; disk reconstruction matches; unchanged score stdout retained with exit1, explicit self-comparison exit0; partial/corrupt batches are not scored; key incident suppresses artifacts",
+    "added_stops": "inconsistent/negative/bool/cache-category usage; extra planned pair stops before request117; scorer/comparison errors and unwritable score stay partial"
   },
   "mutations": {
     "mutants": [
@@ -77,9 +78,21 @@
       {
         "mutation": "missing-comparison",
         "behavioral_test_failed": true
+      },
+      {
+        "mutation": "request-ceiling",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "scorer-exit-preserved",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "consumer-error-status",
+        "behavioral_test_failed": true
       }
     ],
-    "component_mutations": 13,
+    "component_mutations": 16,
     "renderer_dependent_mutations": "run",
     "remaining_contract": [
       "final receipt and batch completion",

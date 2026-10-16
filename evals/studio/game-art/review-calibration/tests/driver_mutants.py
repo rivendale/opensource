@@ -16,7 +16,10 @@ MUTANTS=[
  ('output-scan','driver.py',"if relay.output_has_key(body):","if False:",'test_driver_persist.py'),
  ('existing-output','driver.py',"output.mkdir(mode=0o700,exist_ok=False)","output.mkdir(mode=0o700,exist_ok=True)",'test_driver_persist.py'),
  ('disk-readback','driver.py',"written={name:(output/name).read_bytes() for name in payloads}","written=payloads",'test_driver_persist.py'),
- ('missing-comparison','driver.py',"compared=subprocess.run([sys.executable,str(here/'compare_batches.py'),str(Path(baseline)),str(output/'records.json')],capture_output=True,timeout=30,check=False)","compared=subprocess.CompletedProcess([],0,b'',b'')",'test_driver_collect.py')]
+ ('missing-comparison','driver.py',"compared=subprocess.run([sys.executable,str(here/'compare_batches.py'),str(Path(baseline)),str(output/'records.json')],capture_output=True,timeout=30,check=False)","compared=subprocess.CompletedProcess([],0,b'',b'')",'test_driver_collect.py'),
+ ('request-ceiling','driver.py',"if requests>=settings['requests'] or spend>=Decimal(settings['hard_stop_usd']):","if spend>=Decimal(settings['hard_stop_usd']):",'test_driver_collect.py'),
+ ('scorer-exit-preserved','driver.py',"report['score_exit']=scored.returncode","report['score_exit']=0",'test_driver_collect.py'),
+ ('consumer-error-status','driver.py',"if scored.returncode in (0,1) and compared.returncode==0:","if scored.returncode in (0,1,2) and compared.returncode==0:",'test_driver_collect.py')]
 def main():
  structural='--structural-only' in sys.argv
  selected=[m for m in MUTANTS if not structural or m[4] in ('test_driver_plan.py','test_driver_persist.py')]

@@ -2,6 +2,7 @@
 """Real reviewer + trusted Relay method, fake HTTPS only; no socket/key/provider."""
 import hashlib,importlib.util,json,sys,threading,unittest,tempfile,subprocess
 from pathlib import Path
+from contextlib import nullcontext
 from unittest.mock import patch
 HERE=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('driver',HERE/'driver.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 import proxy
@@ -21,6 +22,10 @@ class CollectTests(unittest.TestCase):
     if mode=='late-schema' and len(calls)==4:text='{"features":[1,0]}'
     if mode in ('key','decoded-key'):text=marker.decode()
     if mode=='usage':usage={}
+    if mode=='usage-total':usage['total_tokens']=11
+    if mode=='usage-negative':usage.update(prompt_tokens=-1,total_tokens=1)
+    if mode=='usage-bool':usage.update(prompt_tokens=True,total_tokens=3)
+    if mode=='usage-cache':usage['prompt_tokens_details']={'cached_tokens':1}
     if mode=='model':model='different-model'
     if mode=='cost':usage={'prompt_tokens':400000,'completion_tokens':2,'total_tokens':400002}
     data=json.dumps({'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
@@ -36,7 +41,10 @@ class CollectTests(unittest.TestCase):
     if mode=='http':raise OSError('synthetic network failure')
    def getresponse(self):return Response()
    def close(self):pass
-  with patch.object(proxy.http.client,'HTTPSConnection',HTTPS):result=m.collect_pairs(relay)
+  plan_context=nullcontext()
+  if mode=='overflow':
+   plan=m.build_plan();plan.append(dict(plan[-1],pair=58));plan_context=patch.object(m,'build_plan',return_value=plan)
+  with patch.object(proxy.http.client,'HTTPSConnection',HTTPS),plan_context:result=m.collect_pairs(relay)
   self.relay=relay
   return result,calls
  def test_full_batch_116_requests_in_order(self):
@@ -76,9 +84,26 @@ class CollectTests(unittest.TestCase):
     consumed=m.consume_written(self.relay,result,stage,output,output/'records.json')
    self.assertEqual(consumed['status'],'partial');self.assertIsNone(consumed['score_exit'])
  def test_bad_reply_http_usage_model_cost_stop_without_retry(self):
-  for mode in ['bad-json','http','usage','model','cost','refusal','empty','schema']:
+  for mode in ['bad-json','http','usage','usage-total','usage-negative','usage-bool','usage-cache','model','cost','refusal','empty','schema']:
    with self.subTest(mode=mode):
     r,calls=self.collect(mode);self.assertEqual(r['status'],'partial');self.assertEqual(len(calls),1);self.assertEqual(r['pairs_completed'],0)
+ def test_extra_planned_pair_stops_before_request_117(self):
+  r,calls=self.collect('overflow');self.assertEqual(r['status'],'partial');self.assertEqual(len(calls),116);self.assertEqual(r['requests_used'],116);self.assertEqual(r['pairs_completed'],58)
+ def test_consumer_errors_and_unwritable_score_never_finish(self):
+  result,_=self.collect()
+  with tempfile.TemporaryDirectory() as directory:
+   for label,score_exit,compare_exit in [('scorer-error',2,0),('comparison-error',1,1)]:
+    output=Path(directory)/label;stage=m.persist_collection(self.relay,result,output)
+    responses=[subprocess.CompletedProcess([],score_exit,b'whole stdout\n',b'error'),subprocess.CompletedProcess([],compare_exit,b'comparison output',b'')]
+    with patch.object(m.subprocess,'run',side_effect=responses):consumed=m.consume_written(self.relay,result,stage,output,output/'records.json')
+    self.assertEqual(consumed['status'],'partial');self.assertEqual(consumed['score_exit'],score_exit);self.assertEqual(consumed['compare_exit'],compare_exit)
+    self.assertEqual((output/'score.stdout.json').read_bytes(),b'whole stdout\n');self.assertFalse(consumed['review_gate'])
+   output=Path(directory)/'write-denied';stage=m.persist_collection(self.relay,result,output);original=Path.open
+   def deny(path,*args,**kwargs):
+    if path.name=='score.stdout.json':raise PermissionError('synthetic score write denial')
+    return original(path,*args,**kwargs)
+   with patch.object(Path,'open',deny):consumed=m.consume_written(self.relay,result,stage,output,output/'records.json')
+   self.assertEqual(consumed['status'],'partial');self.assertEqual(consumed['reason'],'PermissionError');self.assertFalse((output/'score.stdout.json').exists())
  def test_late_failure_preserves_only_completed_pairs_and_usage(self):
   r,calls=self.collect('late-schema');self.assertEqual(r['status'],'partial');self.assertEqual(len(calls),4);self.assertEqual(r['pairs_completed'],1);self.assertEqual(len(r['records']),1);self.assertEqual(r['prompt_tokens'],40);self.assertEqual(r['completion_tokens'],8)
  def test_key_incident_suppresses_records_and_events(self):
