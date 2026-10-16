@@ -133,7 +133,32 @@ for label, batch in (("a repeat number used twice (0, 1, 2, 0)", dup),
     check(bool(pr), "compare: %s is a problem (old vs it)" % label)
     _, _, pr = CB.compare(batch, old, KEY)
     check(bool(pr), "compare: %s is a problem (it vs old)" % label)
-import subprocess, tempfile
+import tempfile
+# the same bad batch on BOTH sides: the cross-batch line cannot see it, so only the within-batch checks can
+both_bad = {"a repeat number used twice (0, 1, 2, 0)": dup,
+            "a gap in the repeat numbers (0, 1, 3)": [dict(r, repeat=3) if (r["image"] == IM[0]["file"] and r["repeat"] == 2) else r for r in old],
+            "a record for an image that is not in the key": old + [{"image": "images/ffffffff.png", "repeat": 0, "name": "x", "features": [True] * Q}],
+            "an image with no records": [r for r in old if r["image"] != IM[0]["file"]]}
+for label, batch in both_bad.items():
+    _, _, pr = CB.compare(batch, copy.deepcopy(batch), KEY)
+    check(bool(pr), "compare: %s on BOTH sides is still a problem (only the within-batch check can say so)" % label)
+# and prove those cases can fail: take each within-batch check out of a copy of the tool; the matching both-sides case must then pass silently
+import importlib.util
+src = (HERE / "compare_batches.py").read_text()
+cuts = {"a repeat number used twice (0, 1, 2, 0)": '        elif ids != list(range(len(ids))):\n            problems.append("repeat numbers for %s are %s, not 0..%d" % (im["file"], ids, len(ids) - 1))\n',
+        "a gap in the repeat numbers (0, 1, 3)": '        elif ids != list(range(len(ids))):\n            problems.append("repeat numbers for %s are %s, not 0..%d" % (im["file"], ids, len(ids) - 1))\n',
+        "a record for an image that is not in the key": '            problems.append("record for an image not in answers.json: " + str(r["image"]))\n',
+        "an image with no records": '            problems.append("no records for " + im["file"])\n'}
+for label, cut in cuts.items():
+    check(cut in src, "mutant source: the check for %s is present to remove" % label)
+    mutated = src.replace(cut, "            pass\n" if ("not in answers" in cut or "no records" in cut) else "        elif False:\n            pass\n", 1)
+    mp = pathlib.Path(tempfile.mkdtemp()) / "compare_batches.py"
+    mp.write_text(mutated)
+    spec = importlib.util.spec_from_file_location("cb_mut", mp); mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    batch = both_bad[label]
+    _, _, pr = mod.compare(batch, copy.deepcopy(batch), KEY)
+    check(not pr, "mutant: with the within-batch check for %s removed, the both-sides batch passes silently (so the case above can fail)" % label)
+import subprocess
 d = pathlib.Path(tempfile.mkdtemp())
 (d / "a.json").write_text(json.dumps(old)); (d / "b.json").write_text(json.dumps(dup)); (d / "c.json").write_text(json.dumps(old))
 check(subprocess.run([sys.executable, str(HERE / "compare_batches.py"), str(d / "a.json"), str(d / "c.json")], capture_output=True).returncode == 0, "compare: exit 0 on a clean pair")
