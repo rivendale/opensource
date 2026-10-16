@@ -67,6 +67,10 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         super().__init__(str(path), Handler)
         os.chmod(path, 0o666)
 
+    def output_has_key(self, body):
+        """Existing exact-key/pattern policy, reusable before writing decoded output."""
+        return any(key in body for key in self.keys.values()) or bool(KEY_PATTERN.search(body))
+
     def review_request(self, messages, max_tokens, timeout=60):
         """Host-owned tool-free reviewer request; unreachable from HTTP callers."""
         model_routes = [route for route, name in self.routes.items() if name == 'model']
@@ -90,7 +94,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             connection.request('POST', path, payload, headers)
             response = connection.getresponse()
             body = response.read(MAX_BODY + 1)
-            if any(key in body for key in self.keys.values()) or KEY_PATTERN.search(body):
+            if self.output_has_key(body):
                 self.incident = True
                 self.record(host, 'POST', 502, 0)
                 raise ValueError('key incident in reviewer response')
@@ -206,7 +210,7 @@ class Handler(BaseHTTPRequestHandler):
             connection.request("POST", target.path, payload, headers)
             response = connection.getresponse()
             body = response.read(MAX_BODY + 1)
-            key_incident = any(key in body for key in self.server.keys.values()) or KEY_PATTERN.search(body)
+            key_incident = self.server.output_has_key(body)
             if budget:
                 with self.server.lock:
                     budget["bytes"] += len(body)

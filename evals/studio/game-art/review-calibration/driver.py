@@ -70,6 +70,8 @@ def collect_pairs(relay,settings=None,here=HERE):
     nonlocal prompt,completion,spend
     event=dict(kind=kind,pair=pair['pair'],content=content,usage=usage)
     if kind.endswith('-request'):event.update(metadata)
+    if relay.output_has_key(json.dumps(event,ensure_ascii=True).encode()):
+     relay.incident=True;raise ValueError('key incident in decoded output')
     events.append(event)
     if kind.endswith('-usage'):
      if (set(usage)!={'prompt_tokens','completion_tokens','total_tokens'} or any(type(v) is not int or v<0 for v in usage.values()) or usage['total_tokens']!=usage['prompt_tokens']+usage['completion_tokens']):raise ValueError('inconsistent recorded usage')
@@ -82,6 +84,7 @@ def collect_pairs(relay,settings=None,here=HERE):
     result=relay.review_request(messages,max_tokens)
     if not isinstance(result,dict) or not isinstance(result.get('usage'),dict) or set(result['usage'])!={'prompt_tokens','completion_tokens','total_tokens'}:
      usage_unverified=True;raise ValueError('missing or unpriced usage category')
+    if result.get('model')!=settings['model']:usage_unverified=True
     choices=result.get('choices')
     if isinstance(choices,list) and len(choices)==1 and isinstance(choices[0],dict) and isinstance(choices[0].get('message'),dict) and choices[0]['message'].get('refusal'):
      record('blind-name-usage' if requests%2 else 'features-usage',None,reviewer.reported_usage(result))
@@ -98,7 +101,7 @@ def collect_pairs(relay,settings=None,here=HERE):
   records=[];plans=[];status='partial';reason='RecordMismatch'
  if status=='completed' and (requests!=116 or completed!=58):status='partial';reason='CountMismatch'
  if status=='incident':events=[];records=[];plans=[]
- return dict(status=status,reason=reason,requests_used=requests,pairs_completed=completed,records=records,plan_records=plans,events=events,prompt_tokens=prompt,completion_tokens=completion,spend_usd=str(spend),rates_date='2026-10-16',rates_source='https://platform.claude.com/docs/en/about-claude/pricing',usage_unverified=usage_unverified,review_gate=False)
+ return dict(status=status,reason=reason,requests_used=requests,pairs_completed=completed,records=records,plan_records=plans,events=events,prompt_tokens=prompt,completion_tokens=completion,spend_usd=str(spend),rates_date='2026-10-16',rates_source='https://platform.claude.com/docs/en/about-claude/pricing',usage_unverified=usage_unverified,spend_is_estimate=True,review_gate=False)
 
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--dry-run',action='store_true',required=True);a=p.parse_args();validate_settings(SETTINGS);pairs=build_plan()

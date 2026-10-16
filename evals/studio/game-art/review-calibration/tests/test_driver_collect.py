@@ -19,11 +19,13 @@ class CollectTests(unittest.TestCase):
     if mode=='empty':text=''
     if mode=='schema':text='{"name":"shape","extra":true}'
     if mode=='late-schema' and len(calls)==4:text='{"features":[1,0]}'
-    if mode=='key':text=marker.decode()
+    if mode in ('key','decoded-key'):text=marker.decode()
     if mode=='usage':usage={}
     if mode=='model':model='different-model'
     if mode=='cost':usage={'prompt_tokens':400000,'completion_tokens':2,'total_tokens':400002}
-    return json.dumps({'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
+    data=json.dumps({'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
+    if mode=='decoded-key':data=data.replace(marker,b''.join(('\\u%04x'%c).encode() for c in marker))
+    return data
   class HTTPS:
    def __init__(self,host,port,**kwargs):assert(host,port)==('api.anthropic.com',443)
    def request(self,method,path,payload,headers):
@@ -46,5 +48,7 @@ class CollectTests(unittest.TestCase):
  def test_late_failure_preserves_only_completed_pairs_and_usage(self):
   r,calls=self.collect('late-schema');self.assertEqual(r['status'],'partial');self.assertEqual(len(calls),4);self.assertEqual(r['pairs_completed'],1);self.assertEqual(len(r['records']),1);self.assertEqual(r['prompt_tokens'],40);self.assertEqual(r['completion_tokens'],8)
  def test_key_incident_suppresses_records_and_events(self):
-  r,calls=self.collect('key');self.assertEqual(r['status'],'incident');self.assertEqual(len(calls),1);self.assertEqual(r['records'],[]);self.assertEqual(r['events'],[])
+  for mode in ('key','decoded-key'):
+   with self.subTest(mode=mode):
+    r,calls=self.collect(mode);self.assertEqual(r['status'],'incident');self.assertEqual(len(calls),1);self.assertEqual(r['records'],[]);self.assertEqual(r['events'],[])
 if __name__=='__main__':unittest.main()
