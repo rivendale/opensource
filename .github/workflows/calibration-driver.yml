@@ -25,5 +25,9 @@ jobs:
           persist-credentials: false
       - name: Fixed plan and synthetic event reconstruction
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_plan.py
+      - name: Local renderer available
+        run: convert -version
+      - name: Full mock batch and stop behavior
+        run: python3 evals/studio/game-art/review-calibration/tests/test_driver_collect.py
       - name: Explicit operator-fixture availability status
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_fixture.py
