@@ -7,7 +7,7 @@ from unittest.mock import patch
 HERE=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('driver',HERE/'driver.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 import proxy
 class CollectTests(unittest.TestCase):
- def collect(self,mode='valid'):
+ def collect(self,mode='valid',execute=None):
   calls=[];marker=b'SYNTHETIC-CALIBRATION-MARKER'
   relay=object.__new__(proxy.Relay);relay.model=m.SETTINGS['model'];relay.routes={(m.SETTINGS['host'],m.SETTINGS['path']):'model'};relay.keys={m.SETTINGS['host']:marker};relay.calls=0;relay.turn_limit=116;relay.context=None;relay.lock=threading.Lock();relay.log=[];relay.incident=False;relay.limit_hit=False
   class Response:
@@ -44,7 +44,7 @@ class CollectTests(unittest.TestCase):
   plan_context=nullcontext()
   if mode=='overflow':
    plan=m.build_plan();plan.append(dict(plan[-1],pair=58));plan_context=patch.object(m,'build_plan',return_value=plan)
-  with patch.object(proxy.http.client,'HTTPSConnection',HTTPS),plan_context:result=m.collect_pairs(relay)
+  with patch.object(proxy.http.client,'HTTPSConnection',HTTPS),plan_context:result=(execute or m.collect_pairs)(relay)
   self.relay=relay
   return result,calls
  def test_full_batch_116_requests_in_order(self):
@@ -87,6 +87,7 @@ class CollectTests(unittest.TestCase):
   for mode in ['bad-json','http','usage','usage-total','usage-negative','usage-bool','usage-cache','model','cost','refusal','empty','schema']:
    with self.subTest(mode=mode):
     r,calls=self.collect(mode);self.assertEqual(r['status'],'partial');self.assertEqual(len(calls),1);self.assertEqual(r['pairs_completed'],0)
+    if mode.startswith('usage') or mode in ('http','model'):self.assertTrue(r['usage_unverified'])
  def test_extra_planned_pair_stops_before_request_117(self):
   r,calls=self.collect('overflow');self.assertEqual(r['status'],'partial');self.assertEqual(len(calls),116);self.assertEqual(r['requests_used'],116);self.assertEqual(r['pairs_completed'],58)
  def test_consumer_errors_and_unwritable_score_never_finish(self):

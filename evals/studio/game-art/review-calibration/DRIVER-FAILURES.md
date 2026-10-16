@@ -15,4 +15,4 @@ Before implementation, prove these ten failure directions with independent guard
 9. Refuse existing outputs and mixed batches; preserve strict record schemas.
 10. Run scorer and batch comparison against files read back from disk, recording both exits.
 
-Full mock batch, each stop, ten removing-guard mutants, and unchanged first-batch scorer fixture are required. Fresh isolation/live execution belongs to the operator after independent review. Record-schema versus per-file run-ID wording and the runner-owned credential entry point have been raised for clarification; no key interface is being invented.
+Full mock batch, each stop, ten removing-guard mutants, and unchanged first-batch scorer fixture are required. Fresh isolation/live execution belongs to the operator after independent review. The canonical task clarified identity and intake on 2026-10-16: strict 4/6-key record rows; a new run-id directory; run_id in every event and the receipt; receipt hashes of every other output; a copied-in-file mutation; one factored inherited-FD helper shared with the runner. No second credential path.

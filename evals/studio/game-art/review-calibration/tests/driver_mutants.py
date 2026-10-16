@@ -19,10 +19,14 @@ MUTANTS=[
  ('missing-comparison','driver.py',"compared=subprocess.run([sys.executable,str(here/'compare_batches.py'),str(Path(baseline)),str(output/'records.json')],capture_output=True,timeout=30,check=False)","compared=subprocess.CompletedProcess([],0,b'',b'')",'test_driver_collect.py'),
  ('request-ceiling','driver.py',"if requests>=settings['requests'] or spend>=Decimal(settings['hard_stop_usd']):","if spend>=Decimal(settings['hard_stop_usd']):",'test_driver_collect.py'),
  ('scorer-exit-preserved','driver.py',"report['score_exit']=scored.returncode","report['score_exit']=0",'test_driver_collect.py'),
- ('consumer-error-status','driver.py',"if scored.returncode in (0,1) and compared.returncode==0:","if scored.returncode in (0,1,2) and compared.returncode==0:",'test_driver_collect.py')]
+ ('consumer-error-status','driver.py',"if scored.returncode in (0,1) and compared.returncode==0:","if scored.returncode in (0,1,2) and compared.returncode==0:",'test_driver_collect.py'),
+ ('copied-in-file','driver.py',"if hashlib.sha256(path.read_bytes()).hexdigest()!=digest:","if False:",'test_driver_batch.py'),
+ ('event-identity','driver.py',"if any(e.get('run_id')!=receipt['run_id'] for e in events):","if False:",'test_driver_batch.py'),
+ ('single-intake','driver.py',"read_key_fds(key_fds),SETTINGS['model']","{},SETTINGS['model']",'test_driver_entry.py'),
+ ('receipt-output-scan','driver.py',"if relay.output_has_key(body):\n  relay.incident=True\n  for name in ARTIFACT_NAMES:","if False:\n  relay.incident=True\n  for name in ARTIFACT_NAMES:",'test_driver_batch.py')]
 def main():
  structural='--structural-only' in sys.argv
- selected=[m for m in MUTANTS if not structural or m[4] in ('test_driver_plan.py','test_driver_persist.py')]
+ selected=[m for m in MUTANTS if not structural or m[4] in ('test_driver_plan.py','test_driver_persist.py','test_driver_entry.py')]
  for test in sorted({m[4] for m in selected}):
   result=subprocess.run([sys.executable,str(HERE/'tests'/test)],capture_output=True,timeout=30)
   if result.returncode:raise RuntimeError('unmodified baseline must pass: '+test)
@@ -38,5 +42,5 @@ def main():
    target.write_text(text.replace(old,new,1));result=subprocess.run([sys.executable,str(calib/'tests'/test)],capture_output=True,text=True,timeout=30)
    if result.returncode==0 or 'SyntaxError' in result.stderr or 'ImportError' in result.stderr:raise RuntimeError('mutation not killed by behavior: '+name)
    results.append(dict(mutation=name,behavioral_test_failed=True))
- print(json.dumps({'mutants':results,'component_mutations':len(results),'renderer_dependent_mutations':'not run' if structural else 'run','remaining_contract':['final receipt and batch completion','batch identity/credential entry point','all ten full specification directions'],'real_provider_calls':0},indent=2))
+ print(json.dumps({'mutants':results,'component_mutations':len(results),'renderer_dependent_mutations':'not run' if structural else 'run','remaining_contract':['independent review and operator execution; no live validation claimed'],'real_provider_calls':0},indent=2))
 if __name__=='__main__':main()

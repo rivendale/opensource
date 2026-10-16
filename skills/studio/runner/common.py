@@ -119,3 +119,16 @@ def checker_result(value, case_id):
 
 def sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def read_key_fds(key_fds):
+    """The runner's sole bounded inherited-FD credential intake; never log values."""
+    if not isinstance(key_fds, dict) or any(type(fd) is not int or fd < 3 for fd in key_fds.values()):
+        raise ValueError("key-fds must map hosts to inherited FDs >= 3")
+    keys = {}
+    for host, fd in key_fds.items():
+        data = os.read(fd, 4097).strip()
+        if not data or len(data) > 4096 or any(c < 33 or c > 126 or c in (34, 92) for c in data):
+            raise ValueError("invalid key input")
+        keys[host] = data
+    return keys

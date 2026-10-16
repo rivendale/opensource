@@ -19,7 +19,7 @@ import time
 import traceback
 import uuid
 
-from common import KEY_PATTERN, VERSION, MAX_FRAME, checker_result, encode, leak_reason, plain_tree, sha256
+from common import KEY_PATTERN, VERSION, MAX_FRAME, checker_result, encode, leak_reason, plain_tree, sha256, read_key_fds
 from proxy import Relay
 
 CAPTURE_RESERVE = 32 * 1024 * 1024
@@ -390,14 +390,8 @@ def run(args):
         egress = root / "egress"
         egress.mkdir(mode=0o755)
         if args.mode == "run":
-            keys = {}
             routes = [{"name": "model", "host": args.host, "path": args.api_path}]
-            # FD mappings are operator input, never environment credentials.
-            for host, fd in args.key_fds.items():
-                data = os.read(fd, 4097).strip()
-                if not data or len(data) > 4096 or any(c < 33 or c > 126 or c in (34, 92) for c in data):
-                    raise ValueError("invalid key input")
-                keys[host] = data
+            keys = read_key_fds(args.key_fds)
             for route in args.paid_routes:
                 if (not isinstance(route.get("name"), str) or not route["name"] or route["name"] == "model"
                         or route["name"].lower() not in (seed / "brief.md").read_text().lower()):

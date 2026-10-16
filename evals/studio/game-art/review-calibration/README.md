@@ -62,3 +62,43 @@ other subjects or larger art, or independence from the writer (the reviewer uses
 2. Write the answers as a list of `{"image": "images/<hex>.png", "repeat": n, "name": "...", "features": [six booleans]}` and run `python3 score.py records.json`.
    Exit 0 means every floor is met, 1 that a floor is missed, 2 that a file could not be read; the output is `{"case", "rules": [{"id","pass","measured","threshold"}]}`.
 3. `python3 selfcheck.py` (numpy and Pillow) checks the set and the scorer with no model call; `python3 build_set.py` regenerates `images/` and `answers.json` byte for byte.
+
+
+## Committed batch driver
+
+[driver.py](driver.py) implements the fixed 58-pair, 116-request [run list](RUN-LIST-8x.md).
+The [specification](DRIVER-SPEC.md) and [failure list](DRIVER-FAILURES.md) define its stops.
+Offline planning needs no credential or network:
+
+```sh
+python3 driver.py --dry-run
+```
+
+Live execution belongs to the operator after independent review and the separate paid-run approval.
+The operator supplies the existing runner's inherited descriptor mapping; the driver and runner
+share `common.read_key_fds`. Key values never belong in arguments. The following describes the
+interface only; FD 3 must already be inherited through the operator's approved credential lane:
+
+```sh
+python3 driver.py --run --output runs/calibration-20261016 --baseline previous/records.json --key-fds '{"api.anthropic.com":3}'
+python3 driver.py --verify runs/calibration-20261016
+```
+
+The parent output directory must exist; the run-id directory must be new. Execution requires committed,
+unchanged tracked runner/calibration sources. There is no resume or overwrite mode. Records retain their
+strict four- and six-key schemas. Each event and receipt carries the directory's run ID. The receipt hashes
+all other outputs; its own hash is returned separately because a file cannot contain its own SHA-256.
+Verification rejects a copied-in file, changed inventory, changed bytes or a foreign event run ID.
+
+`complete` means all 116 requests, disk reconstruction, unchanged scorer and batch comparison finished,
+and the receipt was verified. A missed scorer floor remains `score_exit: 1`; it does not become a pass.
+The driver always leaves `review_gate: false`. Partial batches are not scored. An incident suppresses
+records and events; an incident receipt contains only metadata. If even that metadata matches the key
+scan, no receipt is written. Write failures return a partial report and never claim completion.
+
+Run the offline checks in `tests/test_driver_plan.py`, `tests/test_driver_entry.py`,
+`tests/test_driver_persist.py`, `tests/test_driver_collect.py`, `tests/test_driver_batch.py`,
+and `tests/driver_mutants.py`. The last two rendered suites require the same ImageMagick `convert`
+used by the reviewer. `tests/test_driver_fixture.py --fixture PATH` checks the operator-held first batch
+without changing its scorer outcome; no path means an explicit `fixture absent` status.
+The small synthetic fixture and checksums are public; raw first-batch outputs remain operator-held.
