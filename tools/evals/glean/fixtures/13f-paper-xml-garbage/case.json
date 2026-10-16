@@ -1,0 +1,39 @@
+{
+ "id": "13f-paper-xml-garbage",
+ "spec_item": 13,
+ "tag": "principle",
+ "title": "an arXiv answer that is not XML is unresolved, not a crash",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": "not xml at all <<<"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unresolved"
+   }
+  ],
+  "stderr_not_contains": [
+   "Traceback"
+  ]
+ }
+}

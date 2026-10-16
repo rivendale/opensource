@@ -1,0 +1,36 @@
+{
+ "id": "13t-arxiv-doctype-refused",
+ "spec_item": 13,
+ "tag": "assumption",
+ "title": "an arXiv answer carrying a DOCTYPE/ENTITY declaration is refused outright",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": "<?xml version='1.0'?><!DOCTYPE f [<!ENTITY x 'y'>]><feed xmlns='http://www.w3.org/2005/Atom'><entry><id>http://arxiv.org/abs/2301.00001v2</id><title>t</title><summary>s</summary></entry></feed>"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unresolved"
+   }
+  ]
+ }
+}

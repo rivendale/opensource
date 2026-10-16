@@ -1,0 +1,29 @@
+{
+ "id": "14d-gh-api-error",
+ "spec_item": 14,
+ "tag": "spec",
+ "title": "gh api fails (404 for the repo): unresolved, exit 2",
+ "tool": "glean-resolve",
+ "servers": {},
+ "env": {},
+ "args": [
+  "o/gone",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unresolved"
+   }
+  ]
+ },
+ "fake_gh": {
+  "auth": true,
+  "api": {}
+ }
+}

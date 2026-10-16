@@ -1,0 +1,364 @@
+#!/usr/bin/env python3
+"""Resolve public repository or paper metadata without running source material."""
+import argparse
+from build_catalog import license_class as catalog_license_class
+import base64
+from datetime import datetime, timezone
+import http.client
+import ipaddress
+import json
+import os
+import re
+import socket
+import ssl
+import subprocess
+import sys
+import unicodedata
+import time
+from urllib.parse import quote, unquote, urlsplit
+import xml.etree.ElementTree as ET
+
+CAP = 1048576
+SHA = re.compile(r'[0-9a-fA-F]{40}')
+ARXIV = re.compile(r'(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?/\d{7})(?:v[1-9]\d*)?')
+DOI = re.compile(r'10\.\d{4,9}/\S+', re.I)
+INJECTION = re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|run this|execute this|system prompt|disable (?:the )?safety|^\s*(?:SYSTEM|ASSISTANT|DEVELOPER):|you are now|disable (?:the )?checks|new instructions', re.I | re.M)
+
+
+def clean(text):
+    text = re.sub(r'\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)', '', text)
+    text = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', text)
+    return ''.join(c for c in text if (ord(c) >= 32 and ord(c) != 127 and unicodedata.category(c) != 'Cf') or c in '\n\t')
+
+
+def sanitize(value):
+    if isinstance(value, str):
+        return clean(value)
+    if isinstance(value, list):
+        return [sanitize(v) for v in value]
+    if isinstance(value, dict):
+        return {clean(k): sanitize(v) for k, v in value.items()}
+    return value
+
+
+def now(value):
+    result = datetime.fromisoformat(value.replace('Z', '+00:00')) if value else datetime.now(timezone.utc)
+    if result.tzinfo is None or result.utcoffset() is None:
+        raise ValueError('--now requires a UTC offset')
+    return result.isoformat()
+
+
+def license_class(spdx):
+    # Use the existing catalog classifier; do not maintain a second license table.
+    return {'copy': 'copy', 'library': 'library use', 'study': 'study only',
+            'check': 'check first'}[catalog_license_class(spdx)]
+
+
+def unique_pairs(items):
+    result = {}
+    for key, value in items:
+        if key in result:
+            raise ValueError('duplicate metadata key')
+        result[key] = value
+    return result
+
+
+def reject_constant(value):
+    raise ValueError('nonfinite metadata value')
+
+
+def decode_json(value):
+    return json.loads(value, object_pairs_hook=unique_pairs, parse_constant=reject_constant)
+
+
+def gh(args):
+    try:
+        p = subprocess.Popen(['gh', *args], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    except OSError as e:
+        raise ValueError('CANNOT READ (gh)') from e
+    try:
+        # Bound output while reading, not after communicate has allocated it all.
+        import selectors
+        import time
+        with selectors.DefaultSelector() as selector:
+            selector.register(p.stdout, selectors.EVENT_READ)
+            deadline = time.monotonic() + 10
+            output = bytearray()
+            while selector.get_map():
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise ValueError('CANNOT READ (gh timeout)')
+                for key, _ in selector.select(min(remaining, 0.2)):
+                    chunk = os.read(key.fd, min(65536, CAP + 1 - len(output)))
+                    if not chunk:
+                        selector.unregister(key.fileobj)
+                    else:
+                        output.extend(chunk)
+                        if len(output) > CAP:
+                            raise ValueError('CANNOT READ (gh response over 1 MiB)')
+            if p.wait(timeout=max(0.01, deadline - time.monotonic())):
+                raise ValueError('CANNOT READ (gh)')
+            return decode_json(output.decode('utf-8')) if args[0] == 'api' else None
+    except (OSError, UnicodeError, json.JSONDecodeError, subprocess.TimeoutExpired) as e:
+        raise ValueError('CANNOT READ (gh)') from e
+    finally:
+        if p.poll() is None:
+            p.kill()
+        p.wait()
+        p.stdout.close()
+
+
+class PinnedHTTPS(http.client.HTTPSConnection):
+    def __init__(self, host, port, address):
+        super().__init__(host, port, timeout=10, context=ssl.create_default_context())
+        self.address = address
+
+    def connect(self):
+        sock = socket.create_connection((self.address, self.port), timeout=self.timeout)
+        try:
+            self.sock = self._context.wrap_socket(sock, server_hostname=self.host)
+        except BaseException:
+            sock.close()
+            raise
+
+
+def endpoint(name, default):
+    override = os.environ.get(name)
+    if override is None:
+        return default, False
+    print('WARNING: ' + name + ' is a test-only unauthenticated endpoint override', file=sys.stderr)
+    u = urlsplit(override)
+    if u.scheme != 'http' or u.hostname != '127.0.0.1' or u.port is None or u.username or u.password or u.query or u.fragment:
+        raise ValueError('invalid test endpoint: ' + name)
+    if not 1 <= u.port <= 65535:
+        raise ValueError('invalid test endpoint port')
+    return override.rstrip('/'), True
+
+
+def fetch_metadata(base, path, test=False, xml=False):
+    u = urlsplit(base + '/' + path.lstrip('/'))
+    if u.username or u.password or u.fragment:
+        raise ValueError('invalid metadata endpoint')
+    if test:
+        if u.scheme != 'http' or u.hostname != '127.0.0.1' or u.port is None:
+            raise ValueError('test endpoint escape refused')
+        connection = http.client.HTTPConnection('127.0.0.1', u.port, timeout=10)
+    else:
+        if u.scheme != 'https':
+            raise ValueError('metadata HTTPS required')
+        answers = socket.getaddrinfo(u.hostname, u.port or 443, type=socket.SOCK_STREAM)
+        ips = list(dict.fromkeys(a[4][0] for a in answers))
+        if not ips or any(not ipaddress.ip_address(ip).is_global for ip in ips):
+            raise ValueError('nonpublic metadata address refused')
+        connection = PinnedHTTPS(u.hostname, u.port or 443, ips[0])
+    try:
+        deadline = time.monotonic() + 10
+        connection.request('GET', u.path + ('?' + u.query if u.query else ''), headers={'User-Agent': 'opensource-glean/1.0 (+https://github.com/rivendale/opensource)', 'Accept': 'application/atom+xml' if xml else 'application/json'})
+        response = connection.getresponse()
+        if response.status != 200:
+            raise ValueError('metadata HTTP ' + str(response.status) + ' (redirects refused)')
+        body = bytearray()
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise ValueError('metadata response timeout')
+            if connection.sock is not None:
+                connection.sock.settimeout(remaining)
+            chunk = response.read1(min(65536, CAP + 1 - len(body)))
+            if not chunk:
+                break
+            body.extend(chunk)
+            if len(body) > CAP:
+                raise ValueError('metadata response over 1 MiB')
+        body = bytes(body)
+        return body if xml else decode_json(body.decode('utf-8'))
+    finally:
+        connection.close()
+
+
+def required_string(obj, key):
+    value = obj.get(key) if isinstance(obj, dict) else None
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError('invalid metadata field: ' + key)
+    return value
+
+
+def source_form(source):
+    if re.match(r'^(?:github\.com|gitlab\.com|(?:dx\.)?doi\.org|(?:www\.)?arxiv\.org)/', source, re.I):
+        source = 'https://' + source
+    if source.startswith('doi:'):
+        return 'doi', source[4:], None, None
+    if source.startswith('arxiv:'):
+        return 'arxiv', source[6:], None, None
+    u = urlsplit(source)
+    if u.scheme:
+        if u.scheme not in ('http', 'https') or u.username or u.password or u.query or u.fragment or u.port:
+            raise ValueError('unsupported source URL')
+        host = (u.hostname or '').lower()
+        path = unquote(u.path).strip('/')
+        if host in ('doi.org', 'dx.doi.org'):
+            return 'doi', path, None, None
+        if host in ('arxiv.org', 'www.arxiv.org') and path.startswith(('abs/', 'pdf/')):
+            return 'arxiv', re.sub(r'\.pdf$', '', path.split('/', 1)[1]), None, None
+        if host not in ('github.com', 'gitlab.com'):
+            raise ValueError('unsupported identity; supply a repository, DOI or arXiv ID')
+        bits = path.split('/')
+        if len(bits) < 2:
+            raise ValueError('repository owner and name required')
+        ref = None
+        if len(bits) > 2:
+            if bits[2] not in ('tree', 'blob', 'commit') or len(bits) < 4:
+                raise ValueError('unsupported repository source path')
+            ref = bits[3]
+        return 'github' if host == 'github.com' else 'gitlab', '/'.join(bits[:2]).removesuffix('.git'), ref, None
+    if re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', source):
+        return 'github', source, None, None
+    raise ValueError('unsupported identity; no guessed owner')
+
+
+def resolve(source, result):
+    kind, identity, ref, _ = source_form(source)
+    if kind in ('github', 'gitlab'):
+        if not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', identity) or any(p in ('.', '..') for p in identity.split('/')):
+            raise ValueError('invalid repository identity')
+        if kind == 'github':
+            base, test = endpoint('GLEAN_GH_API_BASE', 'https://api.github.com')
+            gh(['auth', 'status'])
+            get = lambda path: fetch_metadata(base, path, True) if test else gh(['api', '--method', 'GET', path])
+            prefix = 'repos/' + identity
+            repo = get(prefix)
+            if required_string(repo, 'full_name').lower() != identity.lower():
+                raise ValueError('repository identity mismatch; no substitute')
+            ref = ref or required_string(repo, 'default_branch')
+            commit = get(prefix + '/commits/' + quote(ref, safe=''))
+            sha = required_string(commit, 'sha')
+            if not SHA.fullmatch(sha):
+                raise ValueError('invalid resolved SHA')
+            lic = {'spdx': None, 'evidence_url': None, 'classification': 'check first'}
+            try:
+                evidence = get(prefix + '/license?ref=' + quote(sha, safe=''))
+                if not isinstance(evidence, dict):
+                    raise ValueError('invalid license metadata')
+                identified = evidence.get('license')
+                code = identified.get('spdx_id') if isinstance(identified, dict) else None
+                content = base64.b64decode(required_string(evidence, 'content'), validate=False)
+                if not content.strip() or len(content) > CAP:
+                    raise ValueError('license evidence missing or oversized')
+                if isinstance(code, str) and code not in ('Other', 'NOASSERTION', 'NONE'):
+                    lic = {'spdx': code, 'evidence_url': 'https://github.com/' + identity + '/blob/' + sha + '/' + required_string(evidence, 'path'), 'classification': license_class(code)}
+                result['findings'].extend(['INJECTED-INSTRUCTION'] if INJECTION.search(content.decode('utf-8', errors='replace')) else [])
+            except (ValueError, KeyError, TypeError):
+                result['findings'].append('NO LICENSE: pinned evidence unavailable or unidentified')
+            advisories = None
+            try:
+                candidate = get(prefix + '/security-advisories?state=published')
+                if not isinstance(candidate, list):
+                    raise ValueError('advisories answer is not a list')
+                else:
+                    advisories = [{key: row.get(key) for key in ('ghsa_id', 'html_url', 'summary', 'severity', 'published_at', 'withdrawn_at')} for row in candidate if isinstance(row, dict) and not row.get('withdrawn_at')]
+            except ValueError:
+                result['findings'].append('Security advisory access unavailable')
+            health = {'stars': repo.get('stargazers_count'), 'pushed_at': repo.get('pushed_at'), 'archived': repo.get('archived'), 'security_advisories': advisories}
+        else:
+            base, test = endpoint('GLEAN_GITLAB_API_BASE', 'https://gitlab.com/api/v4')
+            prefix = 'projects/' + quote(identity, safe='')
+            get = lambda path: fetch_metadata(base, path, test)
+            repo = get(prefix)
+            if required_string(repo, 'path_with_namespace').lower() != identity.lower():
+                raise ValueError('repository identity mismatch; no substitute')
+            ref = ref or required_string(repo, 'default_branch')
+            commit = get(prefix + '/repository/commits/' + quote(ref, safe=''))
+            sha = required_string(commit, 'id')
+            if not SHA.fullmatch(sha):
+                raise ValueError('invalid resolved SHA')
+            # No license identifier without file evidence and an authoritative identification.
+            lic = {'spdx': None, 'evidence_url': None, 'classification': 'check first'}
+            result['findings'].append('NO LICENSE: GitLab license not identified; verify pinned LICENSE before any reuse')
+            health = {'stars': repo.get('star_count'), 'pushed_at': repo.get('last_activity_at'), 'archived': repo.get('archived'), 'security_advisories': None}
+        if type(health['stars']) is not int or health['stars'] < 0:
+            health['stars'] = None
+        if type(health['archived']) is not bool:
+            health['archived'] = None
+        if not isinstance(health['pushed_at'], str):
+            health['pushed_at'] = None
+        if health['archived'] is True:
+            result['findings'].append('ARCHIVED')
+        result.update(identity={'kind': 'repo', 'canonical_url': 'https://' + ('github.com/' if kind == 'github' else 'gitlab.com/') + identity, 'sha': sha, 'doi': None, 'arxiv_id': None, 'version': None}, license=lic, health=health, code_available=True)
+        for value in (repo.get('description'),):
+            if isinstance(value, str) and INJECTION.search(value):
+                result['source_excerpt'] = value
+    elif kind == 'doi':
+        if not DOI.fullmatch(identity):
+            raise ValueError('invalid DOI')
+        base, test = endpoint('GLEAN_CROSSREF_API_BASE', 'https://api.crossref.org')
+        response = fetch_metadata(base, 'works/' + quote(identity, safe=''), test)
+        if not isinstance(response, dict):
+            raise ValueError('invalid Crossref metadata')
+        record = response.get('message')
+        doi = required_string(record, 'DOI')
+        if doi.lower() != identity.lower():
+            raise ValueError('DOI identity mismatch')
+        result['identity'] = {'kind': 'paper', 'canonical_url': 'https://doi.org/' + doi, 'sha': None, 'doi': doi, 'arxiv_id': None, 'version': None}
+        result['title'] = record.get('title', [])
+        result['code_available'] = False
+    else:
+        if not ARXIV.fullmatch(identity):
+            raise ValueError('invalid arXiv ID')
+        base, test = endpoint('GLEAN_ARXIV_API_BASE', 'https://export.arxiv.org/api')
+        raw = fetch_metadata(base, 'query?id_list=' + quote(identity, safe=''), test, xml=True)
+        if b'<!DOCTYPE' in raw.upper() or b'<!ENTITY' in raw.upper():
+            raise ValueError('XML declarations refused')
+        atom = '{http://www.w3.org/2005/Atom}'
+        entries = ET.fromstring(raw).findall(atom + 'entry')
+        if len(entries) != 1:
+            raise ValueError('arXiv paper unresolved')
+        entry = entries[0]
+        resolved = (entry.findtext(atom + 'id') or '').rsplit('/abs/', 1)[-1]
+        if not ARXIV.fullmatch(resolved) or not re.search(r'v[1-9]\d*$', resolved) or re.sub(r'v\d+$', '', resolved) != re.sub(r'v\d+$', '', identity) or ('v' in identity and resolved != identity):
+            raise ValueError('arXiv pinned version mismatch')
+        result['identity'] = {'kind': 'paper', 'canonical_url': 'https://arxiv.org/abs/' + resolved, 'sha': None, 'doi': None, 'arxiv_id': resolved, 'version': int(resolved.rsplit('v', 1)[1])}
+        result['title'] = entry.findtext(atom + 'title')
+        result['code_available'] = False
+    if result['identity']['kind'] == 'paper':
+        result['findings'].append('Paper metadata does not establish separately licensed code')
+    result['status'] = 'resolved'
+
+
+class JsonParser(argparse.ArgumentParser):
+    def error(self, message):
+        print(json.dumps({'schemaVersion': 1, 'status': 'unresolved',
+                          'retrieved_at': None, 'error': clean('invalid arguments: ' + message)},
+                         ensure_ascii=True))
+        raise SystemExit(2)
+
+
+def main():
+    parser = JsonParser(description=__doc__)
+    parser.add_argument('source')
+    parser.add_argument('--now')
+    args = parser.parse_args()
+    result = {'schemaVersion': 1, 'status': 'unresolved', 'retrieved_at': None, 'source': args.source, 'identity': None, 'license': {'spdx': None, 'evidence_url': None, 'classification': 'check first'}, 'health': {'stars': None, 'pushed_at': None, 'archived': None, 'security_advisories': None}, 'code_available': None, 'findings': [], 'error': None}
+    try:
+        result['retrieved_at'] = now(args.now)
+        resolve(args.source, result)
+    except (ValueError, OSError, TypeError, KeyError, ET.ParseError, http.client.HTTPException, RecursionError) as e:
+        result['error'] = str(e)[:500]
+        result['status'] = 'unresolved'
+    # Detection only labels known phrases; it never changes tool permissions.
+    def directives(value):
+        if isinstance(value, str):
+            return bool(INJECTION.search(value))
+        if isinstance(value, dict):
+            return any(directives(v) for k, v in value.items() if k != 'findings')
+        if isinstance(value, list):
+            return any(directives(v) for v in value)
+        return False
+    result = sanitize(result)
+    if directives(result) and 'INJECTED-INSTRUCTION' not in result['findings']:
+        result['findings'].append('INJECTED-INSTRUCTION')
+    print(json.dumps(result, ensure_ascii=True, allow_nan=False))
+    return 0 if result['status'] == 'resolved' else 2
+
+
+if __name__ == '__main__':
+    sys.exit(main())
