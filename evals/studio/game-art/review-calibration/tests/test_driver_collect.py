@@ -39,7 +39,7 @@ class CollectTests(unittest.TestCase):
   with patch.object(proxy.http.client,'HTTPSConnection',HTTPS):result=m.collect_pairs(relay)
   return result,calls
  def test_full_batch_116_requests_in_order(self):
-  r,calls=self.collect();self.assertEqual(r['status'],'completed');self.assertEqual(len(calls),116);self.assertEqual(r['pairs_completed'],58);self.assertEqual(len(r['records']),42);self.assertEqual(len(r['plan_records']),16);self.assertEqual([c['max_tokens'] for c in calls],[128,256]*58)
+  r,calls=self.collect();self.assertEqual(r['status'],'collected');self.assertEqual(len(calls),116);self.assertEqual(r['pairs_completed'],58);self.assertEqual(len(r['records']),42);self.assertEqual(len(r['plan_records']),16);self.assertEqual([c['max_tokens'] for c in calls],[128,256]*58)
   self.assertTrue(all(e['scale']==8 for e in r['events'] if e['kind'].endswith('-request')));self.assertEqual(r['spend_usd'],'0.00696')
  def test_bad_reply_http_usage_model_cost_stop_without_retry(self):
   for mode in ['bad-json','http','usage','model','cost','refusal','empty','schema']:

@@ -55,7 +55,7 @@ def collect_pairs(relay,settings=None,here=HERE):
  settings=copy.deepcopy(SETTINGS if settings is None else settings);validate_settings(settings)
  if type(relay) is not Relay or getattr(relay.review_request,'__func__',None) is not Relay.review_request:raise ValueError('runner-owned Relay method required')
  if (relay.model!=settings['model'] or relay.routes!={(settings['host'],settings['path']):'model'} or getattr(relay,'cache_prefix',None) is not None or relay.calls!=0 or relay.turn_limit!=116):raise ValueError('relay is not a fresh fixed-policy calibration relay')
- pairs=build_plan(here);events=[];views={};requests=0;completed=0;prompt=0;completion=0;spend=Decimal(0);status='completed';reason=None;usage_unverified=False
+ pairs=build_plan(here);events=[];views={};requests=0;completed=0;prompt=0;completion=0;spend=Decimal(0);status='collected';reason=None;usage_unverified=False
  try:
   for pair in pairs:
    image=pair['image']
@@ -99,7 +99,7 @@ def collect_pairs(relay,settings=None,here=HERE):
  try:records,plans=derive_records(events[:completed*6],pairs[:completed])
  except (ValueError,TypeError,KeyError):
   records=[];plans=[];status='partial';reason='RecordMismatch'
- if status=='completed' and (requests!=116 or completed!=58):status='partial';reason='CountMismatch'
+ if status=='collected' and (requests!=116 or completed!=58):status='partial';reason='CountMismatch'
  if status=='incident':events=[];records=[];plans=[]
  return dict(status=status,reason=reason,requests_used=requests,pairs_completed=completed,records=records,plan_records=plans,events=events,prompt_tokens=prompt,completion_tokens=completion,spend_usd=str(spend),rates_date='2026-10-16',rates_source='https://platform.claude.com/docs/en/about-claude/pricing',usage_unverified=usage_unverified,spend_is_estimate=True,review_gate=False)
 

@@ -1,0 +1,86 @@
+{
+  "checked_on": "2026-10-16",
+  "scope": "T34 partial implementation; draft only",
+  "source_base": "8cf7b5c2319fc8405a9d4c85052b133e337f81a9",
+  "source_hashes": {
+    "evals/studio/game-art/review-calibration/driver.py": "f87f12dc7deeac691bcd826efd74440ca1c397da8f3b7ca851b069be25a000d2",
+    "skills/studio/runner/proxy.py": "fa5faf870abed263d7ca9c370d12fa3e46b6b0e28aa7de6650eed26644b90aa9",
+    "evals/studio/game-art/review-calibration/tests/test_driver_plan.py": "83c821db854553d85bf93dbdb7fbae5b1d158896f2fde935cdbc4b6a2d9d8ab2",
+    "evals/studio/game-art/review-calibration/tests/test_driver_collect.py": "bd193fbd6214366b9a5e9a53da895f49de0f11701c2f35a9c9cebbfa14373f3c",
+    "evals/studio/game-art/review-calibration/tests/test_driver_fixture.py": "77f460001753bc6c87c7671f5952cb4ed5fd005dd9fbc43fa1d482ad269c2c06",
+    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "a2c004f8747054912a33efe23699fffaa24a99b9c8ce0c0b135bd856d128a14f"
+  },
+  "local_tests": {
+    "planner_and_synthetic": 5,
+    "collector": 4,
+    "full_mock_requests": 116,
+    "rendering": "actual merged neutral_views with local ImageMagick",
+    "existing_reviewer_json_fixtures": 86,
+    "existing_reviewer_context_and_protocol": "pass",
+    "external_fixture": "full hashes and exact reconstruction verified; original score exit 1 retained; same-batch compare exit 0",
+    "links_checked": 451,
+    "link_checker_selftest": "33/33"
+  },
+  "mutations": {
+    "mutants": [
+      {
+        "mutation": "settings",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "prompt-filename",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "retry",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "repeat-order",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "invented-record",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "incident-suppression",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "decoded-key-scan",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "wrong-rate",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "mixed-batch-events",
+        "behavioral_test_failed": true
+      }
+    ],
+    "component_mutations": 9,
+    "renderer_dependent_mutations": "run",
+    "remaining_contract": [
+      "complete output scanning and persistence",
+      "scorer and disk-consumer integration",
+      "batch identity/credential entry point",
+      "all ten full specification directions"
+    ],
+    "real_provider_calls": 0
+  },
+  "real_provider_calls": 0,
+  "real_credentials_used": false,
+  "raw_run_files_in_branch": false,
+  "ci": "structural checks and explicit renderer/fixture absence status; rendered mock and full mutation suite require a host with convert",
+  "remaining": [
+    "Safe persistence and output scans for every file",
+    "Run-ID versus strict-record-schema clarification",
+    "Runner-owned credential entry integration; no key path added",
+    "Disk-read scorer/comparison and final receipt",
+    "Complete all ten required stopping/mutation directions",
+    "Independent review; owner live execution only"
+  ],
+  "completion_status": "collection only; not a complete batch driver"
+}
