@@ -29,5 +29,7 @@ jobs:
         run: convert -version
       - name: Full mock batch and stop behavior
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_collect.py
+      - name: Implemented component guard mutations
+        run: python3 evals/studio/game-art/review-calibration/tests/driver_mutants.py
       - name: Explicit operator-fixture availability status
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_fixture.py
