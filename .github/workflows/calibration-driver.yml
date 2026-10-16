@@ -1,0 +1,29 @@
+name: Offline calibration driver checks
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/calibration-driver.yml'
+      - 'evals/studio/game-art/review-calibration/**'
+      - 'evals/studio/game-art/review-plans/**'
+      - 'skills/studio/runner/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calibration-driver.yml'
+      - 'evals/studio/game-art/review-calibration/**'
+      - 'evals/studio/game-art/review-plans/**'
+      - 'skills/studio/runner/**'
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Fixed plan and synthetic event reconstruction
+        run: python3 evals/studio/game-art/review-calibration/tests/test_driver_plan.py
+      - name: Explicit operator-fixture availability status
+        run: python3 evals/studio/game-art/review-calibration/tests/test_driver_fixture.py

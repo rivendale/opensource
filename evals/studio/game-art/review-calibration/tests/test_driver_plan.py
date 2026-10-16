@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Fixed-run-list tests written before the batch driver."""
-import copy,importlib.util,unittest
+import copy,importlib.util,json,unittest
 from pathlib import Path
 HERE=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('driver',HERE/'driver.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 class PlanTests(unittest.TestCase):
@@ -16,6 +16,10 @@ class PlanTests(unittest.TestCase):
   for field in m.SETTINGS:
    changed=copy.deepcopy(m.SETTINGS);changed[field]='wrong'
    with self.assertRaises(ValueError):m.validate_settings(changed)
+ def test_small_synthetic_fixture_reconstructs_and_refuses_reordering(self):
+  data=json.loads((HERE/'tests/fixtures/synthetic-pair.json').read_text());records,plans=m.derive_records(data['events'],[data['pair']]);self.assertEqual(records,[data['record']]);self.assertEqual(plans,[])
+  data['events'][0]['pair']=1
+  with self.assertRaises(ValueError):m.derive_records(data['events'],[data['pair']])
  def test_unknown_setting_refused(self):
   changed=dict(m.SETTINGS,extra='unreviewed')
   with self.assertRaises(ValueError):m.validate_settings(changed)
