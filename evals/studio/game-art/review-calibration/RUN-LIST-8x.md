@@ -36,7 +36,7 @@ Pair `p = 14 * r + i`. Each pair is the blind-name request followed by the six-q
 | 10 | `images/31834029.png` | packet | an orange ball |
 | 11 | `images/f87d4fa3.png` | packet | a potion bottle |
 | 12 | `images/729152ee.png` | packet | a stick or a wand, not a key |
-| 13 | `images/b288076c.png` | packet | a large orange disc cropped by the picture, an orange or a s |
+| 13 | `images/b288076c.png` | packet | a large orange disc cropped by the picture, an orange or a sun |
 
 ## Pairs 42 to 57: the leg-1 plan pairs (repeat 0; the plan's five questions instead of the six)
 
@@ -44,7 +44,7 @@ Pair `p = 14 * r + i`. Each pair is the blind-name request followed by the six-q
 |---|---|---|---|
 | 42 | `leg-1-coin-pickup.json` | `images/e62f4a63.png` | a coin |
 | 43 | `leg-1-coin-pickup.json` | `images/31834029.png` | an orange ball |
-| 44 | `leg-1-coin-pickup.json` | `images/b288076c.png` | a large orange disc cropped by the picture, an ora |
+| 44 | `leg-1-coin-pickup.json` | `images/b288076c.png` | a large orange disc cropped by the picture, an orange or a sun |
 | 45 | `leg-1-coin-pickup.json` | `images/bd99ccf4.png` | a heart |
 | 46 | `leg-1-coin-pickup.json` | `images/67c058dd.png` | a flat blue square |
 | 47 | `leg-1-coin-pickup.json` | `images/5f70bf18.png` | an empty picture |

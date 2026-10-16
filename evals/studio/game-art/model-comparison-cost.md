@@ -1,7 +1,8 @@
 # Model comparison: cost projection method and stop test
 
 Written before any run of the comparison in `model-comparison-plan.md`. It fixes how the cost is projected and when the $25 stop applies. It asserts no price: the rates come from the runner's dated
-table (`RATES`, with its `rates_date`), which is the operator's assumption of the provider's published list and is recorded in every receipt.
+table (`RATES` and `RATES_DATE` in `skills/studio/runner/cache_api.py`, lines 9 to 12, which lives in the prompt-caching change and is **not merged yet**; until it merges there is no rate table in the runner and the run list must carry its own dated copy of these numbers),
+which is the operator's assumption of the provider's published list and is recorded in every receipt.
 
 ## Cost of a run
 
@@ -14,9 +15,11 @@ The run list states three numbers per model, each computed from the receipts and
 
 | | how it is chosen |
 |---|---|
-| expected | median prompt tokens per run of the earlier pilots (264,000 over 11 runs; the minimum was 148,000) and the completion share they showed (about 2.3% of prompt tokens), at that model's rates |
+| expected | median prompt tokens per run of the earlier pilots (264,000 over the 11 runs listed below; the minimum was 148,000) and the completion share they showed (about 2.3% of prompt tokens, from the only run whose split was read: 4,671 of 205,207), at that model's rates |
 | high | the largest earlier run (459,000 prompt tokens) at the same completion share |
 | worst | the 600,000-token cap with the same completion share |
+
+The eleven runs behind the median (total tokens per run, prompt plus completion as the runner recorded them; the first three are in `pilot-2026-10-12-tally.md`, the other eight are the `usage.total_tokens` of the second pilot's `result.json` files, which the operator holds and the reading host copied; the tally lists no token count for them): 205,207 (art-1a); 289,702 and 297,428 (two all-1a gems); 186,117, 148,105 and 202,847 (the three empty-root rebuild runs); 257,406, 334,679, 263,738, 270,290 and 459,046 (coin, key, potion, coin, key). Sorted: 148,105; 186,117; 202,847; 205,207; 257,406; 263,738; 270,290; 289,702; 297,428; 334,679; 459,046. The median is the sixth, 263,738, shown as 264,000. These are totals, so the prompt share is slightly smaller than the figure used; the effect is under 3%.
 
 Total = 8 runs x model A + 8 runs x model B for each row. **A reading that needs Nick:** the run list goes to him before any run if the *expected* total exceeds $25. The *high* and *worst* totals are shown so the stop is not a surprise; they do not by themselves block the run list.
 

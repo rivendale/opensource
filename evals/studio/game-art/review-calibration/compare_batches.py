@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Compares two calibration batches over the same 14 images: per image, the name class (yes / near / no / object / unstable) in each batch and the question answers that changed.
-Usage: compare_batches.py OLD_RECORDS.json NEW_RECORDS.json [--json OUT]. Reported, never scored: the floors are score.py's. Exit 0 always unless a file cannot be read (2) or the two
-batches do not cover the same images and repeats (1)."""
+Usage: compare_batches.py OLD_RECORDS.json NEW_RECORDS.json [--json OUT]. Reported, never scored: the floors are score.py's. Exit 0 unless a file cannot be read (2) or the two batches do not
+cover the same images with the same repeat numbers (1): a record for an image that is not in answers.json, a repeat number used twice, a gap in the numbers, or different repeat numbers in the two batches.
+A majority answer over three repeats hides a change in one of them: the name lists per batch are printed so a one-of-three difference can be read, but the class and the answer columns are majorities."""
 import json, pathlib, sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -11,22 +12,32 @@ import score as S  # noqa: E402
 
 def per_image(records, key):
     all_yes = {S.stem(w) for words in key["words"].values() for w in words[0]}
-    by = {}
+    known = {im["file"] for im in key["images"]}
+    by, problems = {}, []
     for r in records:
+        if r["image"] not in known:
+            problems.append("record for an image not in answers.json: " + str(r["image"]))
+            continue
         by.setdefault(r["image"], []).append(r)
     out = {}
     for im in key["images"]:
         rs = sorted(by.get(im["file"], []), key=lambda r: r["repeat"])
+        ids = [r["repeat"] for r in rs]
+        if not rs:
+            problems.append("no records for " + im["file"])
+        elif ids != list(range(len(ids))):
+            problems.append("repeat numbers for %s are %s, not 0..%d" % (im["file"], ids, len(ids) - 1))
         classes = [S.classify(r["name"], im["intended"], im.get("yes_words", []), im.get("near_words", []), all_yes) for r in rs]
         feats = [sum(r["features"][q] for r in rs) * 2 > len(rs) for q in range(len(key["questions"]))] if rs else []
-        out[im["file"]] = {"repeats": len(rs), "class": S.majority(classes) if classes else "missing", "classes": classes, "features": feats,
+        out[im["file"]] = {"repeat_ids": ids, "class": S.majority(classes) if classes else "missing", "classes": classes, "features": feats,
                            "names": sorted({r["name"] for r in rs}), "truth": im["truth"], "kind": im["kind"], "canonical": im["canonical_name"]}
-    return out
+    return out, problems
 
 
 def compare(old, new, key):
-    a, b = per_image(old, key), per_image(new, key)
-    problems = [f for f in a if a[f]["repeats"] != b[f]["repeats"] or a[f]["repeats"] == 0]
+    (a, pa), (b, pb) = per_image(old, key), per_image(new, key)
+    problems = ["old batch: " + x for x in pa] + ["new batch: " + x for x in pb]
+    problems += ["repeat numbers differ between batches for " + f for f in a if a[f]["repeat_ids"] != b[f]["repeat_ids"]]
     rows = []
     for im in key["images"]:
         f = im["file"]
@@ -62,7 +73,7 @@ def main(argv):
     if "--json" in argv:
         pathlib.Path(argv[argv.index("--json") + 1]).write_text(json.dumps({"rows": rows, "summary": summary, "problems": problems}, indent=2) + "\n")
     if problems:
-        print("the batches do not cover the same images and repeats: " + ", ".join(problems), file=sys.stderr)
+        print("the batches do not cover the same images and repeats: " + "; ".join(problems), file=sys.stderr)
         return 1
     return 0
 
