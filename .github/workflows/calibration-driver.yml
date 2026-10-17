@@ -23,6 +23,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+      - name: Install ImageMagick from the runner Ubuntu archive
+        run: sudo apt-get install -y imagemagick
       - name: Fixed plan and synthetic event reconstruction
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_plan.py
       - name: Exclusive persistence and disk corruption checks

@@ -103,4 +103,4 @@ used by the reviewer. `tests/test_driver_fixture.py --fixture PATH` checks the o
 without changing its scorer outcome; no path means an explicit `fixture absent` status.
 The small synthetic fixture and checksums are public; raw first-batch outputs remain operator-held.
 
-CI requires the actual reviewer renderer and runs every rendered suite without an optional skip. A missing `convert` fails the job. No dependency download is configured in this offline workflow.
+CI requires the actual reviewer renderer and runs every rendered suite without an optional skip. A missing `convert` fails the job. CI setup installs ImageMagick from the runner Ubuntu archive. The tests use synthetic providers and make no outbound calls.

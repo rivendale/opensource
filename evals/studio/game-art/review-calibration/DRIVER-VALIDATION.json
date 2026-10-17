@@ -132,13 +132,12 @@
   "real_provider_calls": 0,
   "real_credentials_used": false,
   "raw_run_files_in_branch": false,
-  "ci": "No renderer skips remain; missing actual convert now fails CI. Full suites pass locally; required CI provisioning is not yet verified.",
+  "ci": "ImageMagick is installed from the runner Ubuntu archive during CI setup; convert remains mandatory and all rendered suites are unconditional. Awaiting this head CI result. Tests remain offline with synthetic providers.",
   "remaining": [
-    "CI requires convert; renderer provisioning under offline/no-network task scope awaiting clarification",
-    "Required rendered CI must pass before merge",
+    "Green CI exercising all rendered collection/batch/mutation suites",
     "Claude verification of review fixes and owner-held fixture check before live use"
   ],
-  "completion_status": "Review fixes implemented locally; rendered CI prerequisite remains open",
+  "completion_status": "Review fixes and authorized CI provisioning implemented; CI confirmation pending",
   "failure_direction_mutants": {
     "1-settings": [
       "settings"
