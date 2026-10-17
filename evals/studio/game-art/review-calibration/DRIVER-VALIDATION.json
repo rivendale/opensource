@@ -1,16 +1,16 @@
 {
-  "checked_on": "2026-10-16",
+  "checked_on": "2026-10-17",
   "scope": "T34 offline implementation; independent review pending",
   "source_base": "8cf7b5c2319fc8405a9d4c85052b133e337f81a9",
   "source_hashes": {
-    "evals/studio/game-art/review-calibration/driver.py": "0885353b13baf8050821841b60433e5126716f87e7801dc2dee220770e7ee06c",
+    "evals/studio/game-art/review-calibration/driver.py": "d79b054e076541f9642baab347ed6adfec9f1ab28594b1019e3624795eb01a31",
     "skills/studio/runner/proxy.py": "fa5faf870abed263d7ca9c370d12fa3e46b6b0e28aa7de6650eed26644b90aa9",
     "evals/studio/game-art/review-calibration/tests/test_driver_plan.py": "83c821db854553d85bf93dbdb7fbae5b1d158896f2fde935cdbc4b6a2d9d8ab2",
     "evals/studio/game-art/review-calibration/tests/test_driver_collect.py": "a49637600b654ce7e7bfcdd3d847a19025db6b78ce64f5517c148e4a8506a7b2",
     "evals/studio/game-art/review-calibration/tests/test_driver_fixture.py": "77f460001753bc6c87c7671f5952cb4ed5fd005dd9fbc43fa1d482ad269c2c06",
-    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "f70b66c041ce6062afa0f4925d9b94d4b826df6ec2f7c15dd4517ddfcf1be170",
+    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "4668aed872c74bfc07b107dbaf782c792c4f66bb7c06e8bc816f635d8c24fc17",
     "evals/studio/game-art/review-calibration/tests/test_driver_persist.py": "9fe9be834549c8af1ac4d684a048f832a1bfd8bfa1ab9cde7dd995681f312ddd",
-    "evals/studio/game-art/review-calibration/tests/test_driver_entry.py": "3a101e58977013d754e3b3c226b902de808db7b1d71df6065eaf037236e714e4",
+    "evals/studio/game-art/review-calibration/tests/test_driver_entry.py": "c94524298397a291b60fc86014e3cdc8cabfbcf00b84c58a315a4d55a9e63ce1",
     "evals/studio/game-art/review-calibration/tests/test_driver_batch.py": "32356a3110c879d91a5b4db0e1639d562176bc7bdd6a27939d3a8f5964fa12c8",
     "skills/studio/runner/common.py": "1d7c69efd792791e6245aef01b87332574c5ace8ea1a68a8b4bfb5f9db9a7e4d",
     "skills/studio/runner/run.py": "dda299c302479ecd8026fe65fb6233556b6e41e6b8f48d44f52a6500f883f6e4"
@@ -28,11 +28,12 @@
     "persistence": 8,
     "disk_consumers": "116-request mock writes records, plans and events; disk reconstruction matches; unchanged score stdout retained with exit1, explicit self-comparison exit0; partial/corrupt batches are not scored; key incident suppresses artifacts",
     "added_stops": "inconsistent/negative/bool/cache-category usage; extra planned pair stops before request117; scorer/comparison errors and unwritable score stay partial",
-    "entry": 3,
+    "entry": 5,
     "batch_receipt": 7,
-    "total": 31,
+    "total": 33,
     "batch_lifecycle": "Real reviewer/Relay with mocked HTTPS through run_batch;116 requests; strict42+16 rows; receipt verified; score1 preserved and comparison0; partial/incident/repeated/copied-in-file/readback cases",
-    "usage_uncertainty": "HTTP failures and inconsistent/missing/unpriced counters explicitly mark usage unverified; never imply verified zero charges"
+    "usage_uncertainty": "HTTP failures and inconsistent/missing/unpriced counters explicitly mark usage unverified; never imply verified zero charges",
+    "source_identity": "Tracked modifications and untracked importable source/bytecode refuse; subprocess proves rejection before runner module import"
   },
   "mutations": {
     "mutants": [
@@ -113,11 +114,15 @@
         "behavioral_test_failed": true
       },
       {
+        "mutation": "untracked-source",
+        "behavioral_test_failed": true
+      },
+      {
         "mutation": "receipt-output-scan",
         "behavioral_test_failed": true
       }
     ],
-    "component_mutations": 20,
+    "component_mutations": 21,
     "renderer_dependent_mutations": "run",
     "remaining_contract": [
       "independent review and operator execution; no live validation claimed"
@@ -127,12 +132,13 @@
   "real_provider_calls": 0,
   "real_credentials_used": false,
   "raw_run_files_in_branch": false,
-  "ci": "Structural/entry/persistence checks run without renderer; full rendered mock/batch/mutation suites run only if convert exists; explicit operator fixture absence status",
+  "ci": "No renderer skips remain; missing actual convert now fails CI. Full suites pass locally; required CI provisioning is not yet verified.",
   "remaining": [
-    "Independent Claude review and any resulting in-scope fixes",
-    "Owner-only live execution with inherited descriptor and current runner/image evidence"
+    "CI requires convert; renderer provisioning under offline/no-network task scope awaiting clarification",
+    "Required rendered CI must pass before merge",
+    "Claude verification of review fixes and owner-held fixture check before live use"
   ],
-  "completion_status": "Offline implementation and mutation checks complete; no acceptance gate set; not live validated",
+  "completion_status": "Review fixes implemented locally; rendered CI prerequisite remains open",
   "failure_direction_mutants": {
     "1-settings": [
       "settings"
@@ -172,5 +178,6 @@
     "10-disk-consumers": [
       "missing-comparison"
     ]
-  }
+  },
+  "preserved_runner_mode": "100755"
 }

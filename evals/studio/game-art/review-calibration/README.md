@@ -85,7 +85,7 @@ python3 driver.py --verify runs/calibration-20261016
 ```
 
 The parent output directory must exist; the run-id directory must be new. Execution requires committed,
-unchanged tracked runner/calibration sources. There is no resume or overwrite mode. Records retain their
+unchanged tracked runner/calibration sources, with no untracked importable code in those trees. The source preflight runs before runner imports; untracked bytecode also refuses. There is no resume or overwrite mode. Records retain their
 strict four- and six-key schemas. Each event and receipt carries the directory's run ID. The receipt hashes
 all other outputs; its own hash is returned separately because a file cannot contain its own SHA-256.
 Verification rejects a copied-in file, changed inventory, changed bytes or a foreign event run ID.
@@ -98,7 +98,9 @@ scan, no receipt is written. Write failures return a partial report and never cl
 
 Run the offline checks in `tests/test_driver_plan.py`, `tests/test_driver_entry.py`,
 `tests/test_driver_persist.py`, `tests/test_driver_collect.py`, `tests/test_driver_batch.py`,
-and `tests/driver_mutants.py`. The last two rendered suites require the same ImageMagick `convert`
+and `tests/driver_mutants.py`. The rendered suites require the same ImageMagick `convert`
 used by the reviewer. `tests/test_driver_fixture.py --fixture PATH` checks the operator-held first batch
 without changing its scorer outcome; no path means an explicit `fixture absent` status.
 The small synthetic fixture and checksums are public; raw first-batch outputs remain operator-held.
+
+CI requires the actual reviewer renderer and runs every rendered suite without an optional skip. A missing `convert` fails the job. No dependency download is configured in this offline workflow.

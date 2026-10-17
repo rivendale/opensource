@@ -23,6 +23,7 @@ MUTANTS=[
  ('copied-in-file','driver.py',"if hashlib.sha256(path.read_bytes()).hexdigest()!=digest:","if False:",'test_driver_batch.py'),
  ('event-identity','driver.py',"if any(e.get('run_id')!=receipt['run_id'] for e in events):","if False:",'test_driver_batch.py'),
  ('single-intake','driver.py',"read_key_fds(key_fds),SETTINGS['model']","{},SETTINGS['model']",'test_driver_entry.py'),
+ ('untracked-source','driver.py',"if any(Path(name).suffix.lower() in ('.py','.pyc','.pyo','.so','.pyd','.zip','.pth') for name in untracked if name):","if False:",'test_driver_entry.py'),
  ('receipt-output-scan','driver.py',"if relay.output_has_key(body):\n  relay.incident=True\n  for name in ARTIFACT_NAMES:","if False:\n  relay.incident=True\n  for name in ARTIFACT_NAMES:",'test_driver_batch.py')]
 def main():
  structural='--structural-only' in sys.argv

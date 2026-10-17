@@ -6,6 +6,20 @@ from decimal import Decimal
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[3]
+def source_identity(root=ROOT):
+ """Refuse changed or untracked importable sources before trusting runner imports."""
+ scopes=['evals/studio/game-art/review-calibration','skills/studio/runner']
+ commit=subprocess.run(['git','rev-parse','HEAD'],cwd=root,capture_output=True,check=True).stdout.decode().strip()
+ if not re.fullmatch(r'[0-9a-f]{40}',commit):raise ValueError('invalid source commit')
+ if subprocess.run(['git','diff','--quiet','HEAD','--',*scopes],cwd=root,capture_output=True,check=False).returncode:raise ValueError('modified tracked source')
+ untracked=subprocess.run(['git','ls-files','--others','-z','--',*scopes],cwd=root,capture_output=True,check=True).stdout.decode().split('\0')
+ if any(Path(name).suffix.lower() in ('.py','.pyc','.pyo','.so','.pyd','.zip','.pth') for name in untracked if name):raise ValueError('untracked importable source')
+ return commit
+SOURCE_COMMIT=None
+if __name__=='__main__' and '--run' in sys.argv:
+ try:SOURCE_COMMIT=source_identity()
+ except (OSError,ValueError,subprocess.SubprocessError) as error:
+  print(json.dumps({'status':'partial','reason':type(error).__name__}));sys.exit(2)
 sys.path.insert(0,str(ROOT/'skills/studio/runner'))
 import reviewer
 from proxy import Relay
@@ -327,9 +341,7 @@ def main():
    if args.key_fds is not None:raise ValueError('dry run cannot take descriptors')
    print(json.dumps({'settings':SETTINGS,'pairs':[{k:v for k,v in pair.items() if k!='item'} for pair in pairs],'requests':2*len(pairs),'provider_calls':0},indent=2));return 0
   if args.output is None or args.baseline is None or args.key_fds is None:raise ValueError('run requires output, baseline and inherited descriptors')
-  commit=subprocess.run(['git','rev-parse','HEAD'],cwd=ROOT,capture_output=True,check=True).stdout.decode().strip()
-  # A committed source identity cannot describe modified tracked source files.
-  if subprocess.run(['git','diff','--quiet','HEAD','--','evals/studio/game-art/review-calibration','skills/studio/runner'],cwd=ROOT,check=False).returncode:raise ValueError('commit source changes before operator execution')
+  commit=SOURCE_COMMIT or source_identity()
   with tempfile.TemporaryDirectory(prefix='calibration-relay-') as directory:
    relay=build_relay(Path(directory)/'api.sock',json.loads(args.key_fds))
    try:report=run_batch(relay,args.output,args.baseline,commit)

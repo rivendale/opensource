@@ -29,26 +29,17 @@ jobs:
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_persist.py
       - name: Shared inherited-descriptor entry checks
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_entry.py
-      - name: Renderer availability (no dependency downloads)
-        id: renderer
+      - name: Require the actual reviewer renderer
         run: |
-          if command -v convert >/dev/null; then
-            echo 'available=true' >> "$GITHUB_OUTPUT"
-            convert -version
-          else
-            echo 'available=false' >> "$GITHUB_OUTPUT"
-            echo 'Renderer absent: rendered mock tests require the approved operator host.'
-          fi
+          command -v convert
+          convert -version
       - name: Full mock batch and stop behavior
-        if: steps.renderer.outputs.available == 'true'
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_collect.py
       - name: Full mock disk batch and receipt identity
-        if: steps.renderer.outputs.available == 'true'
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_batch.py
       - name: Structural guard mutations
         run: python3 evals/studio/game-art/review-calibration/tests/driver_mutants.py --structural-only
       - name: Rendered component guard mutations
-        if: steps.renderer.outputs.available == 'true'
         run: python3 evals/studio/game-art/review-calibration/tests/driver_mutants.py
       - name: Explicit operator-fixture availability status
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_fixture.py
