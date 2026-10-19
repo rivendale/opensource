@@ -4,6 +4,7 @@ import json,shutil,subprocess,sys,tempfile
 from pathlib import Path
 HERE=Path(__file__).resolve().parents[1];ROOT=HERE.parents[3]
 MUTANTS=[
+ ('recorded-scale','driver.py',"if event.get('scale')!=SETTINGS['scale'] or type(event.get('scale')) is not int:","if False:",'test_driver_scale.py'),
  ('settings','driver.py',"if settings!=SETTINGS or any(type(settings[k]) is not type(v) for k,v in SETTINGS.items()):","if False:",'test_driver_plan.py'),
  ('prompt-filename','@reviewer',"Name what you see","images/e62f4a63.png Name what you see",'test_driver_collect.py'),
  ('retry','driver.py'," except Exception as error:\n"," except Exception as error:\n  if not getattr(relay,'_retried',False):\n   relay._retried=True;relay.calls=0;return collect_pairs(relay,settings,here)\n",'test_driver_collect.py'),

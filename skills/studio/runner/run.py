@@ -249,7 +249,7 @@ def failed_capture(root, output, result, events, transcript, log, keys, snapshot
     shutil.copytree(candidate, output / 'scratch')
 
 
-from reviewer import validate_plan, review, png_dimensions, MAX_DIMENSION, VIEW_SCALE, ReviewError
+from reviewer import validate_plan, review, png_dimensions, MAX_DIMENSION, ViewPolicy, ReviewError
 
 
 def event_usage(value, prompt_cache):
@@ -509,7 +509,7 @@ def run(args):
                                 any(type(d) is not int or not 1 <= d <= MAX_DIMENSION for d in source_dimensions) or
                                 type(scale) is not int or not isinstance(dimensions, list) or
                                 len(dimensions) != 2 or any(type(d) is not int for d in dimensions) or
-                                scale != max(1, min(VIEW_SCALE, MAX_DIMENSION // max(source_dimensions))) or
+                                scale != max(1, min(ViewPolicy.RUNNER.value, MAX_DIMENSION // max(source_dimensions))) or
                                 dimensions != [d * scale for d in source_dimensions] or
                                 any(list(png_dimensions(v)) != dimensions for v in views)):
                             raise ReviewError('invalid supervisor view scale or dimensions')

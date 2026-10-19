@@ -1,0 +1,162 @@
+{
+  "task": "T38",
+  "measured_on": "2026-10-19 UTC",
+  "base_main": "1fe0fbd647394a9e00243e6eaf2f8c34db99859f",
+  "base_tree": "1fbba5cf9414a5f71412e7e4bbfda0b141647ff2",
+  "registration_precedes_implementation": true,
+  "calibration_scale_cap": 16,
+  "ordinary_runner_scale_cap": 8,
+  "max_dimension": 512,
+  "dry_run": {
+    "pairs": 58,
+    "requests": 116,
+    "prompt_cache": false,
+    "provider_calls": 0
+  },
+  "calibration_tests": 36,
+  "behavioral_mutations": 22,
+  "existing_mutations_preserved": 21,
+  "scorer_answers_and_8x_registration_unchanged": true,
+  "historical_operator_fixture": "not supplied; fixture check explicitly reports absent",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/test_driver_plan.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/test_driver_persist.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/test_driver_entry.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/test_driver_collect.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/test_driver_batch.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/test_driver_scale.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/test_driver_fixture.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/driver_mutants.py",
+        "--structural-only"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "evals/studio/game-art/review-calibration/tests/driver_mutants.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "skills/studio/runner/tests/reviewer_json.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "skills/studio/runner/tests/reviewer_checks.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "skills/studio/runner/tests/reviewer_protocol.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "skills/studio/runner/tests/reviewer_views.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/check_links.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/check_links.py",
+        "--selftest"
+      ],
+      "exit": 0
+    }
+  ],
+  "new_regressions": [
+    "calibration policy16 and ordinary default8; numeric policy refuses",
+    "nearest-neighbor pixel blocks, two neutral backgrounds, non-square image and512 bound",
+    "wrong receipt settings and hash-consistent recorded request scale refuse"
+  ],
+  "baseline_sensitivity": "Corrected tests fail against unchanged main: absent calibration policy and wrong-scale acceptance",
+  "source_sha256": {
+    "skills/studio/runner/reviewer.py": "84303858cc45463c60a1c9e82ce88792f333acc2161977843d233c4dc8edca25",
+    "skills/studio/runner/run.py": "1ac8bef4ca1339392a081836e38652ff3eb08d96bf67da80db7373ac6f24fd50",
+    "evals/studio/game-art/review-calibration/driver.py": "a0af13b44fe44edc1bbea0b71a0043ed43cadd8baffcb73f0ccd122083071d1b",
+    "evals/studio/game-art/review-calibration/RUN-LIST-16x.md": "62eab11b9df546f0cbf23090bb2c5ccc58271487c7d0411185517cfac1a71d40",
+    "evals/studio/game-art/review-calibration/tests/test_driver_scale.py": "b7dafb50f4d6c613da4cb0868e5d57b1c7700db82e3fa0fb449b1367038ed878"
+  },
+  "real_provider_calls": 0,
+  "credentials_accessed": false,
+  "container_isolation_refreshed": false,
+  "independent_review": "pending; author never merges or self-reviews"
+}

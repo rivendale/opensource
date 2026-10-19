@@ -12,12 +12,21 @@ import subprocess
 import hashlib
 import unicodedata
 import zlib
+from enum import Enum
 from cache_api import usage as checked_usage
 
 PNG = b'\x89PNG\r\n\x1a\n'
 MAX_IMAGE_BYTES = 512 * 1024
 MAX_DIMENSION = 512
-VIEW_SCALE = 8
+VIEW_SCALE = 16
+
+
+class ViewPolicy(Enum):
+    # Only the fixed calibration policy changes; ordinary reviews remain at 8x.
+    RUNNER = 8
+    CALIBRATION = VIEW_SCALE
+
+
 MAX_FEATURES = 12
 PNG_CHUNKS = {b'IHDR', b'IDAT', b'IEND', b'PLTE', b'tRNS', b'gAMA', b'cHRM',
               b'sRGB', b'bKGD', b'pHYs', b'tIME', b'tEXt', b'iTXt', b'zTXt'}
@@ -101,15 +110,17 @@ def png_dimensions(data):
     return width, height
 
 
-def view_metadata(data):
+def view_metadata(data, *, policy=ViewPolicy.RUNNER):
+    if not isinstance(policy, ViewPolicy):
+        raise ReviewError('unknown view policy')
     width, height = png_dimensions(data)
-    scale = max(1, min(VIEW_SCALE, MAX_DIMENSION // max(width, height)))
+    scale = max(1, min(policy.value, MAX_DIMENSION // max(width, height)))
     return {'source_dimensions': [width, height], 'scale': scale,
             'dimensions': [width * scale, height * scale]}
 
 
-def neutral_views(data, preexec_fn=None, env=None):
-    metadata = view_metadata(data)
+def neutral_views(data, preexec_fn=None, env=None, *, policy=ViewPolicy.RUNNER):
+    metadata = view_metadata(data, policy=policy)
     scale = metadata['scale']
     views = []
     for background in ('#808080', '#dddddd'):
