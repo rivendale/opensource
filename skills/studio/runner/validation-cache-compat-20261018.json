@@ -105,11 +105,12 @@
   "real_credentials_used": false,
   "source_sha256": {
     "agent.py": "1d03f2e4503c358df2dbb897a28a1922c8cb28dd3fa8a42ebbc31f3eb3e2e74c",
-    "reviewer.py": "23e98ea947071c00cb0f3cab2e9bd5852d268a08bca8ebd8553db307f7a806b3",
+    "reviewer.py": "3f4bbe7b56bb8ec4e3925fe119a21edcf4de06c5b63ba899363c7ba3e2fdf29c",
     "proxy.py": "869afded4592c86c3291e7af630cb6834c7232abb6be6b025f310771a0bba8b4",
     "run.py": "f9a91bbc1e88e27ec88eb1d89fe3d785ac53ed3860b56c8db10322eb82b309b9",
     "cache_api.py": "c0ef156d2dc6f516f41cc6f6bba7a707a908fac11739da0da4183f8b8d84190c",
     "tests/cache_compat.py": "febf312ebeab17bd36f22d5e34a62eeb39c58b16c9056d3d72b22208793a1608",
-    "tests/cache_consumers.py": "e842f4432bca08a0476ca331f30b663c53886ad8271839c77714f49549fc324f"
-  }
+    "tests/cache_consumers.py": "1b806cd8e5ac53696306615c2a7252388e4081b895e178221db790482338d1a1"
+  },
+  "legacy_reviewer_unknown_usage_metadata": "stripped to three keys; native accounting selected by native response marker"
 }

@@ -40,6 +40,7 @@ def check():
   got=json.loads(subprocess.check_output([sys.executable,str(script),str(output/'scratch'),str(expected)]));assert all(r['pass'] for r in got['rules'])
  # Calibration's exact three-key contract and writer OFF validation both matter.
  assert reviewer.reported_usage({'usage':legacy})==legacy
+ assert reviewer.reported_usage({'usage':extended})==legacy
  assert run.event_usage(legacy,False)==legacy
  assert run.result_usage(legacy,MODEL,False)==legacy
  inconsistent=dict(legacy,total_tokens=99)

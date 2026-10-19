@@ -159,10 +159,12 @@ def reported_usage(reply):
     if not isinstance(reply, dict):
         raise ReviewError('review response invalid')
     usage = reply.get('usage')
-    # The relay adds these categories only on the opt-in native route.
-    if isinstance(usage, dict) and any(k in usage for k in (
-            'uncached_input_tokens', 'cache_creation_input_tokens', 'cache_read_input_tokens',
-            'cache_creation_5m_input_tokens', 'cache_creation_1h_input_tokens')):
+    # Use the relay's native response marker, not arbitrary provider usage keys.
+    choices = reply.get('choices')
+    native = (isinstance(choices, list) and len(choices) == 1
+              and isinstance(choices[0], dict) and isinstance(choices[0].get('message'), dict)
+              and '_native_content' in choices[0]['message'])
+    if native or reply.get('_native_error'):
         try:
             return checked_usage(usage)
         except ValueError:
