@@ -1,0 +1,182 @@
+{
+  "checked_on": "2026-10-17",
+  "scope": "T34 offline implementation; independent review pending",
+  "source_base": "8cf7b5c2319fc8405a9d4c85052b133e337f81a9",
+  "source_hashes": {
+    "evals/studio/game-art/review-calibration/driver.py": "d79b054e076541f9642baab347ed6adfec9f1ab28594b1019e3624795eb01a31",
+    "skills/studio/runner/proxy.py": "fa5faf870abed263d7ca9c370d12fa3e46b6b0e28aa7de6650eed26644b90aa9",
+    "evals/studio/game-art/review-calibration/tests/test_driver_plan.py": "83c821db854553d85bf93dbdb7fbae5b1d158896f2fde935cdbc4b6a2d9d8ab2",
+    "evals/studio/game-art/review-calibration/tests/test_driver_collect.py": "a49637600b654ce7e7bfcdd3d847a19025db6b78ce64f5517c148e4a8506a7b2",
+    "evals/studio/game-art/review-calibration/tests/test_driver_fixture.py": "77f460001753bc6c87c7671f5952cb4ed5fd005dd9fbc43fa1d482ad269c2c06",
+    "evals/studio/game-art/review-calibration/tests/driver_mutants.py": "4668aed872c74bfc07b107dbaf782c792c4f66bb7c06e8bc816f635d8c24fc17",
+    "evals/studio/game-art/review-calibration/tests/test_driver_persist.py": "9fe9be834549c8af1ac4d684a048f832a1bfd8bfa1ab9cde7dd995681f312ddd",
+    "evals/studio/game-art/review-calibration/tests/test_driver_entry.py": "c94524298397a291b60fc86014e3cdc8cabfbcf00b84c58a315a4d55a9e63ce1",
+    "evals/studio/game-art/review-calibration/tests/test_driver_batch.py": "32356a3110c879d91a5b4db0e1639d562176bc7bdd6a27939d3a8f5964fa12c8",
+    "skills/studio/runner/common.py": "1d7c69efd792791e6245aef01b87332574c5ace8ea1a68a8b4bfb5f9db9a7e4d",
+    "skills/studio/runner/run.py": "dda299c302479ecd8026fe65fb6233556b6e41e6b8f48d44f52a6500f883f6e4"
+  },
+  "local_tests": {
+    "planner_and_synthetic": 5,
+    "collector": 8,
+    "full_mock_requests": 116,
+    "rendering": "actual merged neutral_views with local ImageMagick",
+    "existing_reviewer_json_fixtures": 86,
+    "existing_reviewer_context_and_protocol": "pass",
+    "external_fixture": "full hashes and exact reconstruction verified; original score exit 1 retained; same-batch compare exit 0",
+    "links_checked": 455,
+    "link_checker_selftest": "33/33",
+    "persistence": 8,
+    "disk_consumers": "116-request mock writes records, plans and events; disk reconstruction matches; unchanged score stdout retained with exit1, explicit self-comparison exit0; partial/corrupt batches are not scored; key incident suppresses artifacts",
+    "added_stops": "inconsistent/negative/bool/cache-category usage; extra planned pair stops before request117; scorer/comparison errors and unwritable score stay partial",
+    "entry": 5,
+    "batch_receipt": 7,
+    "total": 33,
+    "batch_lifecycle": "Real reviewer/Relay with mocked HTTPS through run_batch;116 requests; strict42+16 rows; receipt verified; score1 preserved and comparison0; partial/incident/repeated/copied-in-file/readback cases",
+    "usage_uncertainty": "HTTP failures and inconsistent/missing/unpriced counters explicitly mark usage unverified; never imply verified zero charges",
+    "source_identity": "Tracked modifications and untracked importable source/bytecode refuse; subprocess proves rejection before runner module import"
+  },
+  "mutations": {
+    "mutants": [
+      {
+        "mutation": "settings",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "prompt-filename",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "retry",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "repeat-order",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "invented-record",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "incident-suppression",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "decoded-key-scan",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "wrong-rate",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "mixed-batch-events",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "output-scan",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "existing-output",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "disk-readback",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "missing-comparison",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "request-ceiling",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "scorer-exit-preserved",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "consumer-error-status",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "copied-in-file",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "event-identity",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "single-intake",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "untracked-source",
+        "behavioral_test_failed": true
+      },
+      {
+        "mutation": "receipt-output-scan",
+        "behavioral_test_failed": true
+      }
+    ],
+    "component_mutations": 21,
+    "renderer_dependent_mutations": "run",
+    "remaining_contract": [
+      "independent review and operator execution; no live validation claimed"
+    ],
+    "real_provider_calls": 0
+  },
+  "real_provider_calls": 0,
+  "real_credentials_used": false,
+  "raw_run_files_in_branch": false,
+  "ci": "ImageMagick is installed from the runner Ubuntu archive during CI setup; convert remains mandatory and all rendered suites are unconditional. Awaiting this head CI result. Tests remain offline with synthetic providers.",
+  "remaining": [
+    "Green CI exercising all rendered collection/batch/mutation suites",
+    "Claude verification of review fixes and owner-held fixture check before live use"
+  ],
+  "completion_status": "Review fixes and authorized CI provisioning implemented; CI confirmation pending",
+  "failure_direction_mutants": {
+    "1-settings": [
+      "settings"
+    ],
+    "2-prompt": [
+      "prompt-filename"
+    ],
+    "3-no-retry": [
+      "retry"
+    ],
+    "4-order-count": [
+      "repeat-order",
+      "request-ceiling"
+    ],
+    "5-record-events": [
+      "invented-record",
+      "disk-readback"
+    ],
+    "6-output-secrets": [
+      "decoded-key-scan",
+      "output-scan",
+      "receipt-output-scan",
+      "incident-suppression"
+    ],
+    "7-cost": [
+      "wrong-rate"
+    ],
+    "8-scorer-preserved": [
+      "scorer-exit-preserved",
+      "consumer-error-status"
+    ],
+    "9-batch-identity": [
+      "existing-output",
+      "copied-in-file",
+      "event-identity"
+    ],
+    "10-disk-consumers": [
+      "missing-comparison"
+    ]
+  },
+  "preserved_runner_mode": "100755"
+}

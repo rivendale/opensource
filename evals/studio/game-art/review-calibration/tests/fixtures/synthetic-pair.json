@@ -1,0 +1,71 @@
+{
+  "pair": {
+    "pair": 0,
+    "image": "images/synthetic.png",
+    "repeat": 0,
+    "plan": null,
+    "item": {
+      "file": "images/synthetic.png",
+      "subject_words": [
+        "synthetic-object"
+      ],
+      "features": [
+        "Is any shape visible?"
+      ]
+    }
+  },
+  "events": [
+    {
+      "pair": 0,
+      "kind": "blind-name-request",
+      "content": "synthetic request receipt; no pixels",
+      "usage": {}
+    },
+    {
+      "pair": 0,
+      "kind": "blind-name-usage",
+      "content": null,
+      "usage": {
+        "prompt_tokens": 2,
+        "completion_tokens": 1,
+        "total_tokens": 3
+      }
+    },
+    {
+      "pair": 0,
+      "kind": "blind-name",
+      "content": "{\"name\":\"a synthetic shape\"}",
+      "usage": {}
+    },
+    {
+      "pair": 0,
+      "kind": "features-request",
+      "content": "synthetic request receipt; no pixels",
+      "usage": {}
+    },
+    {
+      "pair": 0,
+      "kind": "features-usage",
+      "content": null,
+      "usage": {
+        "prompt_tokens": 2,
+        "completion_tokens": 1,
+        "total_tokens": 3
+      }
+    },
+    {
+      "pair": 0,
+      "kind": "features",
+      "content": "{\"features\":[true]}",
+      "usage": {}
+    }
+  ],
+  "record": {
+    "image": "images/synthetic.png",
+    "repeat": 0,
+    "name": "a synthetic shape",
+    "features": [
+      true
+    ]
+  }
+}

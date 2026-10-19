@@ -3,7 +3,7 @@
 import argparse,hashlib,io,json,subprocess,sys,tarfile,tempfile
 from pathlib import Path
 HERE=Path(__file__).resolve();ROOT=HERE.parents[4]
-BASELINE='6f727a790529b1e708a7f6a9bf4314c503f3bca2'
+BASELINE='350a45c62151c36ff310b5a513847386fcc1f6c9'
 MODEL='synthetic-pinned-model';KEY=b'SYNTHETIC-COMPATIBILITY-MARKER'
 def worker(root,handler_only=False):
  import http.client,socket,threading
@@ -20,7 +20,12 @@ def worker(root,handler_only=False):
  proxy.http.client.HTTPSConnection=Upstream
  def post(relay,payload):
   conn=agent.UnixHTTP('relay');conn.sock=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);conn.sock.connect(str(relay.server_address));conn.sock.settimeout(10)
-  conn.request('POST','https://api.anthropic.com/v1/chat/completions',payload,{'Content-Type':'application/json'})
+  try:
+   conn.request('POST','https://api.anthropic.com/v1/chat/completions',payload,{'Content-Type':'application/json'})
+  except BrokenPipeError:
+   # The bounded relay can reject headers (413) before consuming the body.
+   # Read that HTTP response; other failures still propagate.
+   pass
   r=conn.getresponse();body=r.read();conn.close();return r.status,json.loads(body)
  records=[]
  with tempfile.TemporaryDirectory() as tmp:

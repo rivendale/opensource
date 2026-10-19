@@ -158,10 +158,20 @@ def request_record(messages):
 def reported_usage(reply):
     if not isinstance(reply, dict):
         raise ReviewError('review response invalid')
-    try:
-        return checked_usage(reply.get('usage'))
-    except ValueError:
-        raise ReviewError('review usage invalid') from None
+    usage = reply.get('usage')
+    # The relay adds these categories only on the opt-in native route.
+    if isinstance(usage, dict) and any(k in usage for k in (
+            'uncached_input_tokens', 'cache_creation_input_tokens', 'cache_read_input_tokens',
+            'cache_creation_5m_input_tokens', 'cache_creation_1h_input_tokens')):
+        try:
+            return checked_usage(usage)
+        except ValueError:
+            raise ReviewError('review usage invalid') from None
+    keys = ('prompt_tokens', 'completion_tokens', 'total_tokens')
+    if (not isinstance(usage, dict) or any(type(usage.get(k)) is not int or usage[k] < 0 for k in keys)
+            or usage['total_tokens'] != usage['prompt_tokens'] + usage['completion_tokens']):
+        raise ReviewError('review usage invalid')
+    return {k: usage[k] for k in keys}
 
 
 def response(reply, expected_model):

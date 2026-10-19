@@ -71,6 +71,10 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         super().__init__(str(path), Handler)
         os.chmod(path, 0o666)
 
+    def output_has_key(self, body):
+        """Existing exact-key/pattern policy, reusable before writing decoded output."""
+        return any(key in body for key in self.keys.values()) or bool(KEY_PATTERN.search(body))
+
     def review_request(self, messages, max_tokens, timeout=60):
         """Host-owned tool-free reviewer request; unreachable from HTTP callers."""
         model_routes = [route for route, name in self.routes.items() if name == 'model']
@@ -79,7 +83,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         host, path = model_routes[0]
         request = {'model': self.model, 'messages': messages, 'stream': False,
                    'temperature': 0, 'seed': 0, 'max_tokens': max_tokens}
-        if self.cache_prefix is not None:
+        if getattr(self, 'cache_prefix', None) is not None:
             request = native_request(request, {'system': messages[0]['content']}, max_tokens)
         payload = json.dumps(request, allow_nan=False).encode()
         if len(payload) > MAX_BODY:
@@ -95,7 +99,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             connection.request('POST', path, payload, headers)
             response = connection.getresponse()
             body = response.read(MAX_BODY + 1)
-            if any(key in body for key in self.keys.values()) or KEY_PATTERN.search(body):
+            if self.output_has_key(body):
                 self.incident = True
                 self.record(host, 'POST', 502, 0)
                 raise ValueError('key incident in reviewer response')
@@ -103,12 +107,12 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             if response.status != 200 or len(body) > MAX_BODY:
                 raise ValueError('reviewer model route failed')
             value = json.loads(body)
-            return native_response(value, self.model) if self.cache_prefix is not None else value
+            return native_response(value, self.model) if getattr(self, 'cache_prefix', None) is not None else value
         finally:
             connection.close()
 
     def model_headers(self, host):
-        if self.cache_prefix is not None:
+        if getattr(self, 'cache_prefix', None) is not None:
             return {'Content-Type': 'application/json', 'x-api-key': self.keys[host].decode('ascii'),
                     'anthropic-version': '2023-06-01'}
         return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + self.keys[host].decode('ascii')}
@@ -226,7 +230,7 @@ class Handler(BaseHTTPRequestHandler):
             connection.request("POST", target.path, payload, headers)
             response = connection.getresponse()
             body = response.read(MAX_BODY + 1)
-            key_incident = any(key in body for key in self.server.keys.values()) or KEY_PATTERN.search(body)
+            key_incident = self.server.output_has_key(body)
             if budget:
                 with self.server.lock:
                     budget["bytes"] += len(body)

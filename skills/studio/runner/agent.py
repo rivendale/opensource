@@ -105,7 +105,7 @@ def main():
     brief = Path("/scratch/brief.md").read_text()
     messages = [{"role": "system", "content": system_text(skill)},
                 {"role": "user", "content": brief}]
-    tokens = {k: 0 for k in FIELDS}
+    tokens = {k: 0 for k in FIELDS[:3]}
     emit("identity", agent=VERSION, model=args.model)
     for turn in range(args.turns):
         payload = json.dumps({"model": args.model, "messages": messages, "tools": TOOLS,
@@ -121,7 +121,11 @@ def main():
                 return 1
             reply = json.loads(body)
             message = reply["choices"][0]["message"]
-            usage = checked_usage(reply.get("usage"))
+            usage = reply.get("usage")
+            if "_native_content" in message or reply.get("_native_error"):
+                usage = checked_usage(usage)
+                for key in FIELDS:
+                    tokens.setdefault(key, 0)
             if not isinstance(usage, dict) or any(type(usage.get(k)) is not int or usage[k] < 0 for k in tokens):
                 emit("failed", reason="model did not report token usage")
                 return 1

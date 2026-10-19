@@ -1,0 +1,115 @@
+{
+  "measured_on": "2026-10-18",
+  "upstream_main": "350a45c62151c36ff310b5a513847386fcc1f6c9",
+  "upstream_main_tree": "c0dc5ec289ad33afe214fdadfe7be444c9f7449f",
+  "baseline_archive_tree_verified_identical": true,
+  "direct_handler_off_comparisons": 6,
+  "legacy_and_native_consumer_checks": "passed",
+  "native_block_size_directions": 8,
+  "native_accounting_prefix_history": "passed",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/test_driver_plan.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/test_driver_persist.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/test_driver_entry.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/test_driver_collect.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/test_driver_batch.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/test_driver_fixture.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/driver_mutants.py",
+        "--structural-only"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evals/studio/game-art/review-calibration/tests/driver_mutants.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "skills/studio/runner/tests/reviewer_json.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "skills/studio/runner/tests/reviewer_checks.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "skills/studio/runner/tests/reviewer_protocol.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "skills/studio/runner/tests/reviewer_views.py"
+      ],
+      "exit": 0
+    }
+  ],
+  "calibration_tests": 33,
+  "component_mutations": 21,
+  "operator_first_batch_fixture": "not supplied; explicitly reported absent by fixture test",
+  "unix_bind": "previously refused; not retried",
+  "unix_413_client_fix": "catch BrokenPipeError during request, then read HTTP response; independent reviewer reported real Unix test passes",
+  "container_isolation": "not refreshed; required before paid native caching",
+  "external_untracked_consumers": "not supplied; not claimed",
+  "real_provider_calls": 0,
+  "real_credentials_used": false,
+  "source_sha256": {
+    "agent.py": "1d03f2e4503c358df2dbb897a28a1922c8cb28dd3fa8a42ebbc31f3eb3e2e74c",
+    "reviewer.py": "23e98ea947071c00cb0f3cab2e9bd5852d268a08bca8ebd8553db307f7a806b3",
+    "proxy.py": "869afded4592c86c3291e7af630cb6834c7232abb6be6b025f310771a0bba8b4",
+    "run.py": "f9a91bbc1e88e27ec88eb1d89fe3d785ac53ed3860b56c8db10322eb82b309b9",
+    "cache_api.py": "c0ef156d2dc6f516f41cc6f6bba7a707a908fac11739da0da4183f8b8d84190c",
+    "tests/cache_compat.py": "febf312ebeab17bd36f22d5e34a62eeb39c58b16c9056d3d72b22208793a1608",
+    "tests/cache_consumers.py": "e842f4432bca08a0476ca331f30b663c53886ad8271839c77714f49549fc324f"
+  }
+}

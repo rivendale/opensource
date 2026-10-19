@@ -19,7 +19,7 @@ import time
 import traceback
 import uuid
 
-from common import KEY_PATTERN, VERSION, MAX_FRAME, checker_result, encode, leak_reason, plain_tree, sha256
+from common import KEY_PATTERN, VERSION, MAX_FRAME, checker_result, encode, leak_reason, plain_tree, sha256, read_key_fds
 from proxy import Relay
 from agent import system_text
 from cache_api import FIELDS, usage as checked_usage, receipt as usage_receipt
@@ -252,14 +252,30 @@ def failed_capture(root, output, result, events, transcript, log, keys, snapshot
 from reviewer import validate_plan, review, png_dimensions, MAX_DIMENSION, VIEW_SCALE, ReviewError
 
 
+def event_usage(value, prompt_cache):
+    """Keep compatibility validation unchanged; native categories are strict."""
+    if prompt_cache:
+        return checked_usage(value)
+    fields = FIELDS[:3]
+    if not isinstance(value, dict) or any(type(value.get(k)) is not int or value[k] < 0 for k in fields):
+        raise ValueError("invalid assistant token usage")
+    return {k: value[k] for k in fields}
+
+
+def result_usage(value, model, prompt_cache):
+    return usage_receipt(value, model) if prompt_cache else dict(value)
+
+
 def run(args):
     result = {"runner": VERSION, "status": "failed", "reason": "runner preflight or isolation failure",
               "runner_sha256": sha256(__file__),
               "case": args.case_id, "agent": VERSION, "model": args.model, "limits": args.limits,
-              "usage": {}, "prompt_cache": {"enabled": args.prompt_cache,
-                  "policy": "operator-system-and-brief-only" if args.prompt_cache else "off",
-                  "sampling": "provider-default" if args.prompt_cache else "temperature-zero-seed-zero",
-                  "thinking": "provider-default-lossless-roundtrip" if args.prompt_cache else "compatibility"}}
+              "usage": {}}
+    if args.prompt_cache:
+        result["prompt_cache"] = {"enabled": True,
+            "policy": "operator-system-and-brief-only", "sampling": "provider-default",
+            "thinking": "provider-default-lossless-roundtrip"}
+    usage_result = lambda value: result_usage(value, args.model, args.prompt_cache)
     # No overwritten results and no mixed case runs.
     args.output.mkdir(parents=True, exist_ok=False)
     os.chmod(args.output, 0o700)
@@ -395,14 +411,8 @@ def run(args):
         egress = root / "egress"
         egress.mkdir(mode=0o755)
         if args.mode == "run":
-            keys = {}
             routes = [{"name": "model", "host": args.host, "path": args.api_path}]
-            # FD mappings are operator input, never environment credentials.
-            for host, fd in args.key_fds.items():
-                data = os.read(fd, 4097).strip()
-                if not data or len(data) > 4096 or any(c < 33 or c > 126 or c in (34, 92) for c in data):
-                    raise ValueError("invalid key input")
-                keys[host] = data
+            keys = read_key_fds(args.key_fds)
             for route in args.paid_routes:
                 if (not isinstance(route.get("name"), str) or not route["name"] or route["name"] == "model"
                         or route["name"].lower() not in (seed / "brief.md").read_text().lower()):
@@ -466,13 +476,11 @@ def run(args):
                     transcript.append("## tool\n\nSynthetic isolation probe completed.\n")
                 if event["type"] == "assistant":
                     reported = event.get("usage")
-                    fields = FIELDS
-                    reported = checked_usage(reported)
-                    if not isinstance(reported, dict) or any(type(reported.get(k)) is not int or reported[k] < 0 for k in fields):
-                        raise ValueError("invalid assistant token usage")
+                    fields = FIELDS if args.prompt_cache else FIELDS[:3]
+                    reported = event_usage(reported, args.prompt_cache)
                     usage = {k: usage.get(k, 0) + reported[k] for k in fields}
                     # Retain paid usage even if a later event, tool or drain fails.
-                    result["usage"] = usage_receipt(usage, args.model)
+                    result["usage"] = usage_result(usage)
                 if len(encode({"events": events})) > MAX_FRAME - 65536:
                     raise ValueError("event capture size limit")
             elif frame["type"] == 'review-snapshots':
@@ -509,7 +517,7 @@ def run(args):
                             nonlocal usage
                             for key, value in reported.items():
                                 usage[key] = usage.get(key, 0) + value
-                            result['usage'] = usage_receipt(usage, args.model)
+                            result['usage'] = usage_result(usage)
                             review_records.append({'round': review_round, 'file': item['file'],
                                 'sha256': snapshot['sha256'], 'scale': scale, 'dimensions': dimensions,
                                 'source_dimensions': source_dimensions, 'phase': phase, 'text': text,
@@ -575,10 +583,10 @@ def run(args):
                                      for (host, path), budget in sorted(relay.budgets.items())]
             if relay.limit_hit:
                 result["limits_hit"].append("paid route calls or bytes")
-        result["usage"] = usage_receipt(usage, args.model)
+        result["usage"] = usage_result(usage)
         capture(process, {"transcript.md": "\n".join(transcript),
                           "proxy.log": "".join(json.dumps(v, sort_keys=True) + "\n" for v in log),
-                          "usage.json": json.dumps(usage_receipt(usage, args.model)),
+                          "usage.json": json.dumps(usage_result(usage)),
                           "run.json": json.dumps({**result, "events": events}, sort_keys=True)})
         if frames.next()["type"] != "archive-start":
             raise RuntimeError("missing capture archive")
