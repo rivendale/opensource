@@ -24,8 +24,8 @@ sys.path.insert(0,str(ROOT/'skills/studio/runner'))
 import reviewer
 from proxy import Relay
 from common import read_key_fds
-SETTINGS={'model':'claude-sonnet-4-5-20250929','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':0,'seed':0,'prompt_cache':False,'scale':8,'requests':116,'hard_stop_usd':'1.00'}
-INPUT_SHA256={'answers.json': '4d4c488142564e85821f1414fde7d8bf67b3c3b5487fe0bb6acf66e2460c349a', 'RUN-LIST-8x.md': 'b358b326a02bef9f57e8bc601d2e13941ce454982e53c40dae6b7619d1cfbda3', 'images/244e9266.png': 'd738a0e7b2ebf8d65ce9b66484f3e236e65fb5c40090886a87b1b80589df20b2', 'images/2fd20bc9.png': 'fec3972c1bc662df2899672ff7fe6ebb58b38b9fb702767de2d4b74ec132d085', 'images/31834029.png': 'ec9ea3b8ef2288ff6c7ee19385e7a1146a73cbef03093af51008ffbcd646babd', 'images/5f70bf18.png': '50b068e07b4bf235705c19b77da49fdbbc7e98ddc0a46f1c6659cca98c963904', 'images/67c058dd.png': 'ecd7cf086f19da6079e24c0f0d8b3b9e017c7a82a4b306354ffc0dca3629bd4f', 'images/729152ee.png': '7d41bc62e328839cd2515040b647c983207aa67f9f5af6dec2a54315700b6551', 'images/87c4c0d8.png': 'b313a54b35964c976f62f8bc61da1d92aefa7217fc8ceeca8543f1a174ef88c7', 'images/955cb439.png': '5db57fc6e55561c5255fe07c0f9391d44a6fa72dba59878ccf966da671598242', 'images/a397f5be.png': '20c0f073ff99756789b51710d47b3d975dd06c099031e4c92e1af9af977ab1b4', 'images/b288076c.png': '2ebff1de8c8c40b4f4bc35741a0127e7adff3f6adb9e350ecaf278d3e43b2764', 'images/b5f7cab6.png': 'e160c5638526fa94b828f14b42f95daead27c30e5b3cbbc226a348794d2d2d94', 'images/bd99ccf4.png': '320c656f26ea17b94c5dee87f07d75040020e2e954ac863c2154feaa551bc70a', 'images/e62f4a63.png': '5c50ae700a920d0ee0ba3b2f08721f1cb5a3e1ca05413a76980d262039d1abfb', 'images/f87d4fa3.png': '33d223eef6729fd155afc852ffafaf302f0aa843d9b2d47a5964b3d644bf5b72', '../review-plans/leg-1-coin-pickup.json': '444efd1a8f1c7905c037c36ecb3d2e6602333b6a4f72cd6206bebc90aa9b0fb8', '../review-plans/leg-1-key-pickup.json': 'f52fc08da11bfd3244f79ac7ea512f44c0dde1802a81b795d76bbe7adae5c434', '../review-plans/leg-1-potion-pickup.json': '2aa8d2381cd18fe13ff054e955512fe4efd675592677502497a4f6d83b134222'}
+SETTINGS={'model':'claude-sonnet-4-5-20250929','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':0,'seed':0,'prompt_cache':False,'scale':16,'requests':116,'hard_stop_usd':'1.00'}
+INPUT_SHA256={'answers.json': '4d4c488142564e85821f1414fde7d8bf67b3c3b5487fe0bb6acf66e2460c349a', 'RUN-LIST-16x.md': '62eab11b9df546f0cbf23090bb2c5ccc58271487c7d0411185517cfac1a71d40', 'images/244e9266.png': 'd738a0e7b2ebf8d65ce9b66484f3e236e65fb5c40090886a87b1b80589df20b2', 'images/2fd20bc9.png': 'fec3972c1bc662df2899672ff7fe6ebb58b38b9fb702767de2d4b74ec132d085', 'images/31834029.png': 'ec9ea3b8ef2288ff6c7ee19385e7a1146a73cbef03093af51008ffbcd646babd', 'images/5f70bf18.png': '50b068e07b4bf235705c19b77da49fdbbc7e98ddc0a46f1c6659cca98c963904', 'images/67c058dd.png': 'ecd7cf086f19da6079e24c0f0d8b3b9e017c7a82a4b306354ffc0dca3629bd4f', 'images/729152ee.png': '7d41bc62e328839cd2515040b647c983207aa67f9f5af6dec2a54315700b6551', 'images/87c4c0d8.png': 'b313a54b35964c976f62f8bc61da1d92aefa7217fc8ceeca8543f1a174ef88c7', 'images/955cb439.png': '5db57fc6e55561c5255fe07c0f9391d44a6fa72dba59878ccf966da671598242', 'images/a397f5be.png': '20c0f073ff99756789b51710d47b3d975dd06c099031e4c92e1af9af977ab1b4', 'images/b288076c.png': '2ebff1de8c8c40b4f4bc35741a0127e7adff3f6adb9e350ecaf278d3e43b2764', 'images/b5f7cab6.png': 'e160c5638526fa94b828f14b42f95daead27c30e5b3cbbc226a348794d2d2d94', 'images/bd99ccf4.png': '320c656f26ea17b94c5dee87f07d75040020e2e954ac863c2154feaa551bc70a', 'images/e62f4a63.png': '5c50ae700a920d0ee0ba3b2f08721f1cb5a3e1ca05413a76980d262039d1abfb', 'images/f87d4fa3.png': '33d223eef6729fd155afc852ffafaf302f0aa843d9b2d47a5964b3d644bf5b72', '../review-plans/leg-1-coin-pickup.json': '444efd1a8f1c7905c037c36ecb3d2e6602333b6a4f72cd6206bebc90aa9b0fb8', '../review-plans/leg-1-key-pickup.json': 'f52fc08da11bfd3244f79ac7ea512f44c0dde1802a81b795d76bbe7adae5c434', '../review-plans/leg-1-potion-pickup.json': '2aa8d2381cd18fe13ff054e955512fe4efd675592677502497a4f6d83b134222'}
 def validate_settings(settings):
  if settings!=SETTINGS or any(type(settings[k]) is not type(v) for k,v in SETTINGS.items()):raise ValueError('fixed calibration settings differ')
 def build_plan(here=HERE):
@@ -39,7 +39,7 @@ def build_plan(here=HERE):
   for image in images:
    item={'file':image['file'],'subject_words':list(key['words']),'features':copy.deepcopy(questions)}
    reviewer.validate_plan([item]);pairs.append(dict(pair=len(pairs),image=image['file'],repeat=repeat,plan=None,item=item))
- text=(here/'RUN-LIST-8x.md').read_text()
+ text=(here/'RUN-LIST-16x.md').read_text()
  for match in re.finditer(r'^\| (\d+) \| `([^`]+\.json)` \| `([^`]+\.png)`',text,re.M):
   number=int(match[1]);plan=match[2];image=match[3]
   if number!=len(pairs) or number<42:raise ValueError('plan pair order differs')
@@ -76,9 +76,9 @@ def collect_pairs(relay,settings=None,here=HERE):
   for pair in pairs:
    image=pair['image']
    if image not in views:
-    data=(Path(here)/image).read_bytes();metadata=reviewer.view_metadata(data)
-    if metadata['scale']!=8:raise ValueError('fixed scale differs')
-    rendered=reviewer.neutral_views(data)
+    data=(Path(here)/image).read_bytes();metadata=reviewer.view_metadata(data,policy=reviewer.ViewPolicy.CALIBRATION)
+    if metadata['scale']!=settings['scale']:raise ValueError('fixed scale differs')
+    rendered=reviewer.neutral_views(data,policy=reviewer.ViewPolicy.CALIBRATION)
     if any(list(reviewer.png_dimensions(v))!=metadata['dimensions'] for v in rendered):raise ValueError('view dimensions differ')
     views[image]=(rendered,metadata)
    rendered,metadata=views[image]
@@ -227,11 +227,23 @@ def consume_written(relay,result,stage,output,baseline,here=HERE):
  return report
 
 ARTIFACT_NAMES=('records.json','plan-records.json','events.jsonl','score.stdout.json')
+def validate_recorded_scale(events):
+ """Current batch request receipts must match the pinned 16x list policy."""
+ for event in events:
+  if not event.get('kind','').endswith('-request'):continue
+  if event.get('scale')!=SETTINGS['scale'] or type(event.get('scale')) is not int:
+   raise ValueError('recorded scale differs from run list')
+  source=event.get('source_dimensions')
+  if not isinstance(source,list) or len(source)!=2 or any(type(d) is not int or not 1<=d<=reviewer.MAX_DIMENSION for d in source):raise ValueError('invalid recorded source dimensions')
+  if event.get('dimensions')!=[d*SETTINGS['scale'] for d in source] or max(event['dimensions'])>reviewer.MAX_DIMENSION:raise ValueError('recorded view dimensions differ')
+
+
 def verify_receipt(output):
  """Consuming check: directory identity, exact inventory, hashes, event identity."""
  output=Path(output)
  if output.is_symlink() or not output.is_dir() or (output/'receipt.json').is_symlink():raise ValueError('unsafe batch directory')
  receipt=json.loads((output/'receipt.json').read_bytes());validate_run_id(receipt['run_id'])
+ validate_settings(receipt['settings'])
  if receipt['run_id']!=output.name:raise ValueError('receipt directory identity differs')
  if receipt.get('status') not in ('partial','incident','complete') or receipt.get('review_gate') is not False:raise ValueError('invalid receipt status or gate')
  hashes=receipt['sha256']
@@ -243,6 +255,7 @@ def verify_receipt(output):
   if hashlib.sha256(path.read_bytes()).hexdigest()!=digest:raise ValueError('receipt hash differs')
  if 'events.jsonl' in hashes:
   events=[json.loads(line) for line in (output/'events.jsonl').read_bytes().splitlines()]
+  if receipt['status']=='complete':validate_recorded_scale(events)
   if any(e.get('run_id')!=receipt['run_id'] for e in events):raise ValueError('mixed batch identity')
  if receipt['status']=='complete':
   if set(hashes)!=set(ARTIFACT_NAMES) or receipt['requests_used']!=116 or receipt['pairs_completed']!=58 or receipt['score_exit'] not in (0,1) or receipt['compare_exit']!=0 or receipt['review_gate'] is not False:raise ValueError('incomplete receipt claims complete')
@@ -272,6 +285,7 @@ def finish_receipt(relay,result,stage,consumed,output,source_commit):
   expected=dict(stage['sha256'],**consumed['sha256'])
   if hashes!=expected:raise ValueError('batch changed before receipt')
   events=[json.loads(line) for line in written['events.jsonl'].splitlines()]
+  validate_recorded_scale(events)
   if any(e.get('run_id')!=output.name for e in events):raise ValueError('mixed batch identity')
   usage=[e['usage'] for e in events if e['kind'].endswith('-usage')]
   if len(usage)!=116 or any(set(u)!={'prompt_tokens','completion_tokens','total_tokens'} or any(type(v) is not int or v<0 for v in u.values()) or u['total_tokens']!=u['prompt_tokens']+u['completion_tokens'] for u in usage):raise ValueError('receipt usage differs')

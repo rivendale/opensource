@@ -66,7 +66,13 @@ other subjects or larger art, or independence from the writer (the reviewer uses
 
 ## Committed batch driver
 
-[driver.py](driver.py) implements the fixed 58-pair, 116-request [run list](RUN-LIST-8x.md).
+[driver.py](driver.py) implements the fixed 58-pair, 116-request [16x run list](RUN-LIST-16x.md).
+The registration and [T38 failure list](16X-FAILURES.md) precede implementation. Calibration selects
+the fixed `ViewPolicy.CALIBRATION` policy (16x, bounded by 512 pixels); ordinary runner and supervisor
+reviews retain `ViewPolicy.RUNNER` (8x). There is no numeric scale argument or CLI override.
+Model, prompt text, temperature zero, seed zero, caching OFF, question order and all floors stay fixed.
+Current receipts and request records must agree with the pinned 16x list; even hash-consistent wrong-scale
+artifacts refuse. Verify historical batches using their recorded driver revision.
 The [specification](DRIVER-SPEC.md) and [failure list](DRIVER-FAILURES.md) define its stops.
 Offline planning needs no credential or network:
 
@@ -98,7 +104,7 @@ scan, no receipt is written. Write failures return a partial report and never cl
 
 Run the offline checks in `tests/test_driver_plan.py`, `tests/test_driver_entry.py`,
 `tests/test_driver_persist.py`, `tests/test_driver_collect.py`, `tests/test_driver_batch.py`,
-and `tests/driver_mutants.py`. The rendered suites require the same ImageMagick `convert`
+`tests/test_driver_scale.py`, and `tests/driver_mutants.py`. The rendered suites require the same ImageMagick `convert`
 used by the reviewer. `tests/test_driver_fixture.py --fixture PATH` checks the operator-held first batch
 without changing its scorer outcome; no path means an explicit `fixture absent` status.
 The small synthetic fixture and checksums are public; raw first-batch outputs remain operator-held.
