@@ -1,0 +1,213 @@
+{
+  "baseline": "6f727a790529b1e708a7f6a9bf4314c503f3bca2",
+  "candidate_source": "working tree; pin publication commit in PR",
+  "off_main_vs_candidate_equal": true,
+  "transport": "direct Handler only, no socket binding",
+  "cases": [
+    {
+      "case": "initial",
+      "status": 200,
+      "upstream": [
+        {
+          "path": "/v1/chat/completions",
+          "sha256": "784e96e36502e64ebd31284124927576f35a85233c731cd2baf939ad59c75181",
+          "bytes": 764,
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "SYNTHETIC"
+          }
+        }
+      ],
+      "body": {
+        "model": "synthetic-pinned-model",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "ok"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 10,
+          "completion_tokens": 2,
+          "total_tokens": 12
+        }
+      }
+    },
+    {
+      "case": "tool-history",
+      "status": 200,
+      "upstream": [
+        {
+          "path": "/v1/chat/completions",
+          "sha256": "c75ca351d6acd3568a6e33037a20f506f1e06dade74f723736c8b47b0676c6d2",
+          "bytes": 1001,
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "SYNTHETIC"
+          }
+        }
+      ],
+      "body": {
+        "model": "synthetic-pinned-model",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "ok"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 10,
+          "completion_tokens": 2,
+          "total_tokens": 12
+        }
+      }
+    },
+    {
+      "case": "utf8-expands-after-normalization",
+      "status": 200,
+      "upstream": [
+        {
+          "path": "/v1/chat/completions",
+          "sha256": "e07c2215356f7485cabffc199d9154f50b502c3132b5ed7554e568df22d93ee9",
+          "bytes": 1080753,
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "SYNTHETIC"
+          }
+        }
+      ],
+      "body": {
+        "model": "synthetic-pinned-model",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "ok"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 10,
+          "completion_tokens": 2,
+          "total_tokens": 12
+        }
+      }
+    },
+    {
+      "case": "oversized-input",
+      "status": 413,
+      "upstream": [],
+      "body": {
+        "error": "relay refused request"
+      }
+    },
+    {
+      "case": "reviewer-128",
+      "status": 200,
+      "upstream": [
+        {
+          "path": "/v1/chat/completions",
+          "sha256": "a055fbbdd9624068a2bcef214f4aa77d3044ca75b23aaf84772a15752c2aa93b",
+          "bytes": 214,
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "SYNTHETIC"
+          }
+        }
+      ],
+      "body": {
+        "model": "synthetic-pinned-model",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "ok"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 10,
+          "completion_tokens": 2,
+          "total_tokens": 12
+        }
+      }
+    },
+    {
+      "case": "reviewer-256",
+      "status": 200,
+      "upstream": [
+        {
+          "path": "/v1/chat/completions",
+          "sha256": "189d1d2b7797dd189ce6ebd395ce931784c4629eb683e86bab198c3aefc853f0",
+          "bytes": 214,
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "SYNTHETIC"
+          }
+        }
+      ],
+      "body": {
+        "model": "synthetic-pinned-model",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "ok"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 10,
+          "completion_tokens": 2,
+          "total_tokens": 12
+        }
+      }
+    }
+  ],
+  "real_credentials_used": false,
+  "real_provider_calls": 0,
+  "checked_on": "2026-10-16",
+  "current_main": "8cf7b5c2319fc8405a9d4c85052b133e337f81a9",
+  "main_proxy_blob": "93e462ada94b96b7f8ee6f8113b5d51b7d906864",
+  "main_proxy_identical_to_baseline": true,
+  "upstream_sync": "Already-landed runner/reviewer changes through6f727a7 merged; later main commits change calibration docs/scorer checks only",
+  "checks": {
+    "direct_handler_off_comparisons": 6,
+    "native_block_and_size_directions": 8,
+    "actual_repository_consumers": "pass",
+    "cache_accounting_and_prefix_checks": "pass",
+    "reviewer_pixel_views": "pass",
+    "reviewer_json_fixtures": 86,
+    "reviewer_context_and_protocol": "pass",
+    "relative_links": 453,
+    "link_checker_selftest": "33/33"
+  },
+  "source_hashes": {
+    "skills/studio/runner/run.py": "8fd033a7372e6676b78fea5b4de9087c7206aa391efe01741ee47499a93dfd2b",
+    "skills/studio/runner/supervisor.py": "77782d5b8f874f526f42bd382ed0e6ae0768877869154f0ba045283a3ef83b4b",
+    "skills/studio/runner/cache_api.py": "c0ef156d2dc6f516f41cc6f6bba7a707a908fac11739da0da4183f8b8d84190c",
+    "skills/studio/runner/build_image.py": "e5973ded37df66bfb7f62a544583e5eeba1d6bd0e61bfe4803649e200b124228",
+    "skills/studio/runner/replay.py": "dde3e0deb5ca9135d9076209b3e9f3f654623b373183ae9c80e1df3fb73ef45d",
+    "skills/studio/runner/probe.py": "0a9d782a918e45872639c7cc8744515def022669007d6206dbc8c66e29d6283c",
+    "skills/studio/runner/reviewer.py": "96effbbcdfa307186b701bcaf9aa4ff9ad419ea09c277b06a67e5aca8986d54b",
+    "skills/studio/runner/agent.py": "3622748c58d094047b87c1f2ad6b122f7f839cdf5c5af15a0a2b49424a2a9935",
+    "skills/studio/runner/selftest.py": "488760694cf7ba512aba8590d2d7b089f84a5e7ef2fbfe556a68fbb1d23b0a3b",
+    "skills/studio/runner/proxy.py": "15a1a5404c8ea739d91f437ebd2445eec2ea7e9a4ee183a1c7f2b8eb3769167e",
+    "skills/studio/runner/common.py": "7d22f8e5e85951bea703a805911582976ff1c5e434e5de97f1f5974c6850a907"
+  },
+  "limitations": [
+    "Unix relay previously refused by sandbox; not retried",
+    "No refreshed pinned container/isolation receipt",
+    "External operator tally/checkpoint consumers not supplied or verified",
+    "No real key/provider/paid probe; live cache hit rate, billing and signature authenticity remain unmeasured"
+  ]
+}

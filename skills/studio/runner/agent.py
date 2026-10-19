@@ -11,6 +11,7 @@ import sys
 import time
 
 from common import VERSION, encode
+from cache_api import FIELDS, usage as checked_usage
 
 TOOLS = [{"type": "function", "function": {
     "name": "shell", "description": "Run local tools in the scratch directory. No web fetch, search or connectors.",
@@ -20,6 +21,11 @@ TOOLS = [{"type": "function", "function": {
              "name": "view_image", "description": "Inspect a local PNG or JPEG under /scratch using the pinned vision model.",
              "parameters": {"type": "object", "properties": {"path": {"type": "string"}},
                             "required": ["path"], "additionalProperties": False}}}]
+
+
+def system_text(skill):
+    return skill + "\n\nSandbox facts: the working directory is /scratch; " + \
+           "/scratch/inputs and /skill are read-only. The available tools are shell and view_image."
 
 
 class ToolLimit(Exception):
@@ -97,10 +103,9 @@ def main():
     args = parser.parse_args()
     skill = Path("/skill/SKILL.md").read_text()
     brief = Path("/scratch/brief.md").read_text()
-    messages = [{"role": "system", "content": skill + "\n\nSandbox facts: the working directory is /scratch; "
-                 "/scratch/inputs and /skill are read-only. The available tools are shell and view_image."},
+    messages = [{"role": "system", "content": system_text(skill)},
                 {"role": "user", "content": brief}]
-    tokens = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+    tokens = {k: 0 for k in FIELDS[:3]}
     emit("identity", agent=VERSION, model=args.model)
     for turn in range(args.turns):
         payload = json.dumps({"model": args.model, "messages": messages, "tools": TOOLS,
@@ -117,6 +122,10 @@ def main():
             reply = json.loads(body)
             message = reply["choices"][0]["message"]
             usage = reply.get("usage")
+            if "_native_content" in message or reply.get("_native_error"):
+                usage = checked_usage(usage)
+                for key in FIELDS:
+                    tokens.setdefault(key, 0)
             if not isinstance(usage, dict) or any(type(usage.get(k)) is not int or usage[k] < 0 for k in tokens):
                 emit("failed", reason="model did not report token usage")
                 return 1
@@ -124,6 +133,9 @@ def main():
                 tokens[key] += usage[key]
             emit("assistant", turn=turn + 1, text=message.get("content") or "", usage=usage,
                  calls=message.get("tool_calls", []))
+            if reply.get('_native_error') or ('_native_content' in message and reply['choices'][0].get('finish_reason') not in ('stop','tool_calls')):
+                emit('failed', reason='native response unusable', usage=tokens)
+                return 1
             messages.append(message)
             calls = message.get("tool_calls", [])
             if not calls:
