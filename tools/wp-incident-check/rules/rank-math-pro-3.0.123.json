@@ -1,0 +1,66 @@
+{
+  "incident": "Rank Math PRO 3.0.123",
+  "cve": "CVE-2026-111862",
+  "checked": "2026-10-20",
+  "window": {
+    "start": "2026-10-15T20:02:00+00:00",
+    "end": "2026-10-16T07:12:00+00:00",
+    "version": "3.0.123",
+    "source": "https://rankmath.com/kb/pro-3-0-123-security-incident/"
+  },
+  "checks": [
+    {
+      "id": "option_keys",
+      "targets": [
+        "database"
+      ],
+      "literals": [
+        "_uf6qdn2hmm",
+        "t8krdk990phb",
+        "_np5pvf754c"
+      ],
+      "label": "published option-name text; active row not verified",
+      "source": "https://rankmath.com/kb/pro-3-0-123-security-incident/"
+    },
+    {
+      "id": "account_prefix",
+      "targets": [
+        "database"
+      ],
+      "literals": [
+        "wpsupport_"
+      ],
+      "label": "suspicious account-prefix text; role/activity not verified",
+      "source": "https://rankmath.com/kb/pro-3-0-123-security-incident/"
+    },
+    {
+      "id": "cron_marker",
+      "targets": [
+        "cron",
+        "site"
+      ],
+      "literals": [
+        "#ms6v46"
+      ],
+      "label": "published cron-marker text; active job not verified",
+      "source": "https://rankmath.com/kb/pro-3-0-123-security-incident/"
+    },
+    {
+      "id": "callback_domain",
+      "targets": [
+        "site",
+        "database",
+        "cron"
+      ],
+      "literals": [
+        "rank1cdn.com"
+      ],
+      "label": "published callback-domain reference; never contacted",
+      "source": "https://rankmath.com/kb/pro-3-0-123-security-incident/"
+    }
+  ],
+  "ssh": {
+    "check": "compare supplied authorized_keys snapshot with owner baseline; never print keys",
+    "source": "https://rankmath.com/kb/pro-3-0-123-security-incident/"
+  }
+}

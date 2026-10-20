@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+"""Read-only local indicator checks on an owner-authorized offline WordPress snapshot."""
+import argparse
+import base64
+import datetime as dt
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import sys
+import time
+
+MAX_FILE = 8 * 1024 * 1024
+MAX_TOTAL = 256 * 1024 * 1024
+MAX_FILES = 10000
+SOURCE = 'https://rankmath.com/kb/pro-3-0-123-security-incident/'
+
+
+def flags(directory=False, noatime=True):
+    if noatime and not hasattr(os, 'O_NOATIME'):
+        raise OSError('Linux no-atime support required')
+    return os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | (os.O_DIRECTORY if directory else 0) | (os.O_NOATIME if noatime else 0)
+
+
+def open_path(path, directory=False):
+    # Walk descriptors, not resolved strings: never traverse a symlink parent or leaf.
+    parts = Path(os.path.abspath(path)).parts
+    fd = os.open('/', flags(True, False))
+    try:
+        for i, part in enumerate(parts[1:]):
+            last = i == len(parts) - 2
+            nxt = os.open(part, flags(directory if last else True, noatime=last), dir_fd=fd)
+            os.close(fd); fd = nxt
+        if len(parts) == 1:
+            raise OSError('filesystem root is not a site')
+        result = fd; fd = -1
+        return result
+    finally:
+        if fd >= 0: os.close(fd)
+
+
+def read_fd(fd):
+    before = os.fstat(fd)
+    if not stat.S_ISREG(before.st_mode): raise OSError('not a regular file')
+    if before.st_size > MAX_FILE: raise ValueError('size limit')
+    data = bytearray()
+    while len(data) <= MAX_FILE:
+        chunk = os.read(fd, min(65536, MAX_FILE + 1 - len(data)))
+        if not chunk: break
+        data.extend(chunk)
+    after = os.fstat(fd)
+    if len(data) > MAX_FILE: raise ValueError('size limit')
+    if (before.st_ino,before.st_size,before.st_mtime_ns,before.st_ctime_ns) != (after.st_ino,after.st_size,after.st_mtime_ns,after.st_ctime_ns):
+        raise OSError('changed during read')
+    return bytes(data)
+
+
+def read_path(path):
+    fd = open_path(path)
+    try: return read_fd(fd)
+    finally: os.close(fd)
+
+
+def iso(value):
+    result = dt.datetime.fromisoformat(value.replace('Z', '+00:00'))
+    if result.tzinfo is None: raise ValueError('timezone required')
+    return result.astimezone(dt.timezone.utc)
+
+
+def public_keys(data):
+    keys = set()
+    for line in data.decode('ascii').splitlines():
+        line = line.strip()
+        if not line or line.startswith('#'): continue
+        fields = line.split()
+        if len(fields) < 2 or not re.fullmatch(r'(ssh-(rsa|ed25519)|ecdsa-sha2-[A-Za-z0-9-]+)', fields[0]):
+            raise ValueError('unsupported SSH key format')
+        base64.b64decode(fields[1], validate=True)
+        keys.add((fields[0],fields[1]))
+    return keys
+
+
+def load_rules(path, yara):
+    doc = json.loads(read_path(path))
+    rules = doc['checks']; generated = []
+    if not isinstance(rules,list) or not 1 <= len(rules) <= 50: raise ValueError('rules')
+    ids = set()
+    for row in rules:
+        key = row['id']; literals = row['literals']
+        if not re.fullmatch(r'[a-z][a-z0-9_]{0,40}',key) or key in ids: raise ValueError('rule id')
+        ids.add(key)
+        if not isinstance(literals,list) or not 1 <= len(literals) <= 20: raise ValueError('literals')
+        if not all(isinstance(s,str) and 0 < len(s) <= 128 and all(32 <= ord(c) < 127 for c in s) for s in literals): raise ValueError('literal')
+        if not isinstance(row['targets'],list) or not row['targets'] or not set(row['targets']) <= {'site','database','cron'}: raise ValueError('targets')
+        if row['source'] != SOURCE or not isinstance(row['label'],str) or any(ord(c)<32 for c in row['label']): raise ValueError('source/label')
+        strings = ' '.join('$s'+str(i)+' = '+json.dumps(s)+' ascii' for i,s in enumerate(literals))
+        generated.append('rule '+key+' { strings: '+strings+' condition: any of them }')
+    window=doc['window']
+    if window['source'] != SOURCE or iso(window['start']) > iso(window['end']): raise ValueError('window')
+    return doc, {r['id']:r for r in rules}, yara.compile(source='\n'.join(generated))
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--authorized-owner',action='store_true',help='I own this site or have its owner authorization')
+    ap.add_argument('--site',required=True,help='offline Linux snapshot directory')
+    ap.add_argument('--database-export',help='plain uncompressed SQL export; never executed')
+    ap.add_argument('--cron-export',help='owner-supplied offline crontab text')
+    ap.add_argument('--ssh-keys',help='owner-supplied authorized_keys snapshot')
+    ap.add_argument('--known-ssh-keys',help='trusted baseline of allowed public keys')
+    ap.add_argument('--plugin-version',help='historical installed/update package version')
+    ap.add_argument('--installed-at',help='owner-recorded historical install/update time, with timezone')
+    ap.add_argument('--rules',default=str(Path(__file__).parent/'rules/rank-math-pro-3.0.123.json'))
+    a = ap.parse_args(argv)
+    if not a.authorized_owner:
+        print('Refused: explicit owner authorization is required before reading inputs.',file=sys.stderr);return 64
+    partial=[]; found=[]; checked=[]; count=0; total=0; deadline=time.monotonic()+60
+    try:
+        import yara
+        if yara.__version__ != '4.5.4': raise ValueError('pinned scanner required')
+        doc, rules, engine = load_rules(a.rules,yara)
+    except Exception:
+        print('PARTIAL: pinned YARA scanner/rules unavailable or invalid. No clean result.\nA clean result does not prove a site clean.');return 2
+
+    def scan(data,target,label):
+        nonlocal count,total
+        count+=1;total+=len(data)
+        if count>MAX_FILES or total>MAX_TOTAL or time.monotonic()>deadline:
+            raise ValueError('scan limit')
+        try:
+            for match in engine.match(data=data,timeout=3):
+                rule=rules[match.rule]
+                if target in rule['targets']:
+                    found.append('Potential indicator: '+rule['label']+' in '+json.dumps(label,ensure_ascii=True))
+        except Exception:
+            partial.append('scanner error or timeout; content not reported')
+
+    def walk(fd,prefix='',depth=0):
+        if depth>32:partial.append('directory depth limit');return
+        for name in sorted(os.listdir(fd)):
+            if time.monotonic()>deadline or count>=MAX_FILES or total>=MAX_TOTAL:
+                partial.append('scan limit');return
+            child=-1
+            try:
+                st=os.stat(name,dir_fd=fd,follow_symlinks=False)
+                if stat.S_ISLNK(st.st_mode):partial.append('symlink skipped');continue
+                if not (stat.S_ISDIR(st.st_mode) or stat.S_ISREG(st.st_mode)):
+                    partial.append('special file skipped');continue
+                child=os.open(name,flags(stat.S_ISDIR(st.st_mode)),dir_fd=fd)
+                if stat.S_ISDIR(st.st_mode):walk(child,prefix+name+'/',depth+1)
+                else:scan(read_fd(child),'site','site/'+prefix+name)
+            except ValueError:partial.append('size limit or scan limit')
+            except OSError:partial.append('unreadable or changed site input')
+            finally:
+                if child>=0:os.close(child)
+    fd=-1
+    try:
+        fd=open_path(a.site,True);walk(fd);checked.append('offline site files (no symlinks followed)')
+    except OSError:partial.append('site directory not checked')
+    finally:
+        if fd>=0:os.close(fd)
+    for path,target in [(a.database_export,'database'),(a.cron_export,'cron')]:
+        if not path:partial.append(target+' export not checked');continue
+        try:scan(read_path(path),target,target+' export');checked.append(target+' export text (not executed)')
+        except (OSError,ValueError):partial.append(target+' export unreadable or size limit')
+    if a.installed_at and a.plugin_version:
+        try:
+            when=iso(a.installed_at);window=doc['window']
+            if a.plugin_version==window['version'] and iso(window['start'])<=when<=iso(window['end']):
+                found.append('Potential indicator: owner-recorded update falls in the published affected window; activation not verified')
+            checked.append('owner-supplied historical installation time/version (not inferred from mtime)')
+        except (ValueError,TypeError):partial.append('installation history not checked: invalid timezone/date')
+    else:partial.append('installation history not checked')
+    if a.ssh_keys and a.known_ssh_keys:
+        try:
+            extra=public_keys(read_path(a.ssh_keys))-public_keys(read_path(a.known_ssh_keys))
+            if extra:found.append('Unexpected SSH keys: '+str(len(extra))+' (owner baseline comparison)')
+            checked.append('supplied SSH key snapshot against owner baseline; no live host access')
+        except (OSError,ValueError,UnicodeError):partial.append('SSH baseline not checked: unreadable/unsupported input')
+    else:partial.append('SSH baseline not checked')
+    print('WordPress incident indicator report: YARA '+yara.__version__)
+    print('PARTIAL: coverage incomplete' if partial else ('Indicators found' if found else 'No indicators found in the supplied inputs'))
+    for item in checked:print('Checked: '+item)
+    for item in found:print(item)
+    for item in sorted(set(partial)):print('Not checked: '+item)
+    print('Other host state, active administrator roles, installation provenance and broader malware are not established by these checks.')
+    print('Published remediation: follow the vendor recovery steps in order; a pre-incident backup is its preferred option. Disable the persistence mechanism before cleanup; replace exposed credentials and verify recovery.')
+    print('Recovery source: '+SOURCE)
+    print('No remediation performed. A clean result does not prove a site clean.')
+    return 2 if partial else 1 if found else 0
+
+if __name__=='__main__':sys.exit(main())

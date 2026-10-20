@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 HERE = Path(__file__).resolve().parents[1]
-TOOL = HERE / 'wp-incident-check'
+TOOL = Path(os.environ.get('WP_INCIDENT_UNDER_TEST', HERE / 'wp-incident-check'))
 
 
 class Contract(unittest.TestCase):

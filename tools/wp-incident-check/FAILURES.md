@@ -1,6 +1,6 @@
 # wp-incident-check failure list first
 
-Status: design prerequisite; no checker or fixtures implemented yet.
+Failure contract recorded before implementation; synthetic CLI controls now accompany it.
 
 1. Reading the site, export or launching a scanner before explicit owner authorization.
 2. Claiming read-only while the wrapper, scanner, WordPress hooks or database can modify evidence.
