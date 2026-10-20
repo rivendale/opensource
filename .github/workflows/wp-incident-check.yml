@@ -21,7 +21,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Install pinned existing scanner
-        run: python -m pip --only-binary=:all: --disable-pip-version-check install -r tools/wp-incident-check/requirements.txt
+        run: >-
+          python -m pip install --only-binary=:all: --disable-pip-version-check
+          -r tools/wp-incident-check/requirements.txt
       - name: Synthetic read-only and refusal controls
         run: python -B tools/wp-incident-check/tests/test_check.py
       - name: Relative links
