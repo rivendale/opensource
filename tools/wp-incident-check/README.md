@@ -15,12 +15,13 @@ systems, permissions or missing inputs produce a partial result, not a clean cer
 
 Candidate code, awaiting independent review. Installing the binding runs third-party code;
 use this exact version in its own environment. See the [safe setup checklist](../../ai/graphics.md#safe-setup-checklist).
-The source commit is pinned in the reviewed PR before release. The commands below install
-this branch for review; do not treat a moving branch as a released security tool.
+The commands below pin the candidate implementation for review. Independent review is
+still required before release; this is not a released security tool.
 
 ```bash
 git clone --branch wp-incident-check https://github.com/rivendale/opensource.git wp-incident-review
 cd wp-incident-review
+git checkout --detach 8ac1cd6a96228d608518d986d4c3c5b43bb8df1c
 python3 -m venv .wp-check-venv
 .wp-check-venv/bin/python -m pip install --only-binary=:all: -r tools/wp-incident-check/requirements.txt
 ```
