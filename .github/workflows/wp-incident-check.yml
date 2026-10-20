@@ -1,0 +1,30 @@
+name: Offline WordPress incident checker
+on:
+  pull_request:
+    paths:
+      - 'tools/wp-incident-check/**'
+      - '.github/workflows/wp-incident-check.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install pinned existing scanner
+        run: >-
+          python -m pip install --only-binary=:all: --disable-pip-version-check
+          -r tools/wp-incident-check/requirements.txt
+      - name: Synthetic read-only and refusal controls
+        run: python -B tools/wp-incident-check/tests/test_check.py
+      - name: Relative links
+        run: python tools/check_links.py
