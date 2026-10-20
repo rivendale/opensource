@@ -23,7 +23,7 @@ mkdir wp-incident-review
 cd wp-incident-review
 git init
 git remote add origin https://github.com/rivendale/opensource.git
-git fetch --depth 1 origin 8ac1cd6a96228d608518d986d4c3c5b43bb8df1c
+git fetch --depth 1 origin e95c0048f0267445f9205f4e0855a822afbaf744
 git checkout --detach FETCH_HEAD
 python3 -m venv .wp-check-venv
 .wp-check-venv/bin/python -m pip install --only-binary=:all: -r tools/wp-incident-check/requirements.txt
