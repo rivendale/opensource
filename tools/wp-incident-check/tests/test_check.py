@@ -1,5 +1,8 @@
 """Failure-first CLI checks; synthetic offline snapshots only. No real site or keys."""
 import base64
+import gzip
+import io
+import zipfile
 import json
 import os
 from pathlib import Path
@@ -57,6 +60,58 @@ class Contract(unittest.TestCase):
                 before=self.snapshot();r=self.run_tool()
                 self.assertEqual(r.returncode,1,r.stdout+r.stderr);self.assertIn('Potential indicator',r.stdout)
                 self.assertEqual(before,self.snapshot());path.write_bytes(original)
+    def test_unsupported_exports_fail_closed_without_changing_evidence(self):
+        stream=io.BytesIO()
+        with zipfile.ZipFile(stream,'w',zipfile.ZIP_DEFLATED) as z:
+            z.writestr('export.sql','_uf6qdn2hmm')
+        for data in ['_uf6qdn2hmm'.encode('utf-16'), gzip.compress(b'_uf6qdn2hmm'),
+                     stream.getvalue(), b'plain\x00text', b'x'*70000+b'\x00']:
+            for path in [self.db,self.cron]:
+                with self.subTest(path=path.name,signature=data[:4]):
+                    old=path.read_bytes();path.write_bytes(data);before=self.snapshot()
+                    r=self.run_tool()
+                    self.assertEqual(r.returncode,2,r.stdout+r.stderr)
+                    self.assertIn('unsupported export format',r.stdout)
+                    self.assertNotIn('No indicators found',r.stdout)
+                    self.assertEqual(before,self.snapshot());path.write_bytes(old)
+
+    def test_large_export_chunk_boundary_and_site_budget_independence(self):
+        # A match crossing the first 64 KiB read and another beyond 8 MiB.
+        self.db.write_bytes(b'x'*(65536-5)+b'_uf6qdn2hmm'+b'x'*(11*1024*1024)+b't8krdk990phb')
+        self.cron.write_text('#ms6v46')
+        for i in range(12000): (self.site/('image-%05d.jpg'%i)).touch()
+        before=self.snapshot();r=self.run_tool()
+        self.assertEqual(r.returncode,2,r.stdout+r.stderr)
+        self.assertIn('published option-name text',r.stdout)
+        self.assertIn('published cron-marker text',r.stdout)
+        self.assertIn('Checked: database export text',r.stdout)
+        self.assertIn('Checked: cron export text',r.stdout)
+        self.assertIn('site file-count limit',r.stdout)
+        self.assertNotIn('database export unreadable',r.stdout)
+        self.assertEqual(before,self.snapshot())
+
+    def test_large_export_and_split_literal_are_checked_without_site_limit(self):
+        for data in [b'x'*(65536-5)+b'_uf6qdn2hmm',b'x'*(11*1024*1024)+b't8krdk990phb']:
+            self.db.write_bytes(data);r=self.run_tool()
+            self.assertEqual(r.returncode,1,r.stdout+r.stderr)
+            self.assertIn('published option-name text',r.stdout)
+
+    def test_export_cap_names_the_actual_limit_and_still_checks_cron(self):
+        with self.db.open('wb') as f: f.truncate(256*1024*1024+1)
+        self.cron.write_text('#ms6v46');before=self.snapshot();r=self.run_tool()
+        self.assertEqual(r.returncode,2,r.stdout+r.stderr)
+        self.assertIn('database export not fully checked: export byte limit (256 MiB)',r.stdout)
+        self.assertIn('Checked: cron export text',r.stdout)
+        self.assertIn('published cron-marker text',r.stdout)
+        self.assertEqual(before,self.snapshot())
+
+    def test_case_variants_and_explicit_published_omissions(self):
+        (self.site/'index.php').write_text('RANK1CDN.COM')
+        r=self.run_tool();self.assertEqual(r.returncode,1,r.stdout+r.stderr)
+        self.assertIn('callback-domain',r.stdout)
+        for omission in ['class-wp-cache-util.php','@wp-mail.net','xmmqhn','.cache-as-PHP']:
+            self.assertIn(omission,r.stdout)
+
     def test_account_match_does_not_claim_confirmed_admin_or_echo_data(self):
         self.db.write_text('-- wpsupport_synthetic\n-- secret=SYNTHETIC-SECRET-DO-NOT-PRINT\n')
         r=self.run_tool();self.assertEqual(r.returncode,1,r.stdout+r.stderr)

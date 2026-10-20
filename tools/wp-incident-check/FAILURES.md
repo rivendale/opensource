@@ -25,3 +25,11 @@ Before implementation, independent synthetic fixtures must cover one clean snaps
 indicator individually, combined indicators and partial inputs. Record file content hashes,
 metadata and database-export bytes before/after every run. Add an owner-flag refusal that
 proves the scanner was not launched and no evidence was read or written.
+
+Review regression contract, 2026-10-20, before fixes:
+
+19. Compressed, UTF-16 or NUL-bearing exports are called checked/clean without decoding.
+20. Site file/byte/time budgets prevent database or cron inspection, or blame an export for a site cap.
+21. Large plain exports or a literal split across read chunks evade matching.
+22. Domain case changes evade matching; published indicators outside this bounded rule set are not named.
+23. Installation instructions select stale code, imply unsupported platforms or conceal what PARTIAL requires next.
