@@ -62,5 +62,6 @@
   "ssh": {
     "check": "compare supplied authorized_keys snapshot with owner baseline; never print keys",
     "source": "https://rankmath.com/kb/pro-3-0-123-security-incident/"
-  }
+  },
+  "cve_source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/111xxx/CVE-2026-111862.json"
 }

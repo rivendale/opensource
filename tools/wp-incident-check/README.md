@@ -1,10 +1,10 @@
 # Check an offline WordPress copy for published incident indicators
 
 This tool checks files you supply for the published Rank Math PRO 3.0.123 indicators.
-It uses the existing YARA engine. It does not repair a site, contact a website, execute PHP
+It uses the existing YARA engine for bounded, fixed-string matching, not a general malware scan. It does not repair a site, contact a website, execute PHP
 or connect to a database. A clean result does not prove a site clean.
 
-Use Linux or Ubuntu under WSL, Python 3.11 or newer, and a local copy owned by your user.
+**Linux/Ubuntu under WSL only** (macOS and native Windows are unsupported): use Python 3.11 or newer, and a local copy owned by your user.
 Run on an offline backup/snapshot, not a busy live site. Keep exports private: they may
 contain passwords and personal information. Do not upload them to an agent or this repo.
 Reading is restricted to regular files and directories; symlinks are skipped and reported.
@@ -14,14 +14,17 @@ systems, permissions or missing inputs produce a partial result, not a clean cer
 ## Install
 
 Candidate code, awaiting independent review. Installing the binding runs third-party code;
-use this exact version in its own environment. See the [safe setup checklist](../../ai/graphics.md#safe-setup-checklist).
+use this exact version in its own environment. Follow the [setup checks below](#setup-checks).
 The commands below pin the candidate implementation for review. Independent review is
 still required before release; this is not a released security tool.
 
 ```bash
-git clone --branch wp-incident-check https://github.com/rivendale/opensource.git wp-incident-review
+mkdir wp-incident-review
 cd wp-incident-review
-git checkout --detach 8ac1cd6a96228d608518d986d4c3c5b43bb8df1c
+git init
+git remote add origin https://github.com/rivendale/opensource.git
+git fetch --depth 1 origin 8ac1cd6a96228d608518d986d4c3c5b43bb8df1c
+git checkout --detach FETCH_HEAD
 python3 -m venv .wp-check-venv
 .wp-check-venv/bin/python -m pip install --only-binary=:all: -r tools/wp-incident-check/requirements.txt
 ```
@@ -46,9 +49,15 @@ outside that directory. The program reads plain, uncompressed SQL as text; it ne
   enter a database password on this tool's command line; it has no live-DB mode.
 
 Decompress `.gz`/`.zip` backups locally first. Do not restore or execute them to scan them.
-Files above 8 MiB, more than 10,000 files, 256 MiB total, excessive depth or a time limit
-make coverage partial. Large database exports will need a different investigation path;
-this small checker does not silently certify the unexamined remainder.
+Export as plain uncompressed text (prefer UTF-8); compressed, UTF-16 and NUL-bearing exports
+are refused as PARTIAL even when the file extension says `.sql`. The wrapper does not decode them.
+Database and cron exports are each scanned first in 64 KiB chunks, with a 127-byte overlap,
+a separate 256 MiB cap and 60-second budget per export. This checks literals crossing chunk
+boundaries without loading the whole export. The site then has its own 10,000-file, 256 MiB
+and 60-second budget, an 8 MiB per-file cap and a depth cap of 32. Every file, including an
+image, counts. Each YARA chunk match has a 3-second timeout. Any cap makes coverage PARTIAL;
+the report names the stopped category and limit. Ask your host/security professional to
+investigate evidence exceeding these bounds; a scanned prefix is never called fully checked.
 
 ## Run the basic check
 
@@ -64,7 +73,20 @@ owner's permission. Without it, the tool refuses before it reads inputs or loads
 Expect a **PARTIAL** report from this basic command. It does not supply server crontabs,
 SSH keys, a trusted key baseline or installation history. The report names those gaps.
 A shared-hosting user may need the host's security team to investigate server-level evidence.
-There is no requirement to give this tool live server access.
+There is no requirement to give this tool live server access. PARTIAL still reports any
+indicators found in the evidence it could check; it is not an all-clear. For each gap:
+
+| Report gap | What to do next |
+| --- | --- |
+| Database/cron export missing | Supply the corresponding offline export, or ask the host to inspect it. |
+| Unsupported export format | Decompress locally or re-export plain UTF-8 text; do not just rename it. |
+| Unreadable input | Use a local Linux/WSL copy you own, with no symlink path components. |
+| File/byte/depth/time limit or scanner failure | Have the host/security professional examine the unscanned remainder. |
+| Installation history missing | Consult historical update records; do not invent a timestamp or use file mtime. |
+| SSH baseline missing | Ask the host to compare its keys against a separately trusted baseline. |
+
+If evidence is unavailable, keep that limitation in your incident response; do not fill
+options with dummy data to obtain exit 0.
 
 Optional owner-supplied evidence can be added with these path options:
 
@@ -79,7 +101,11 @@ Optional owner-supplied evidence can be added with these path options:
 
 `Checked` names examined inputs. `Potential indicator` means a published string or update
 window matched; it is not a confirmed active administrator, database option or malicious intent.
-Database exports can contain comments, old rows and backups. Confirm context before cleanup.
+Matching is ASCII case-insensitive, including domain references. Database exports can
+contain comments, old rows and backups. Confirm context before cleanup. This bounded rule
+set omits the advisory's fake-core-file existence check (`class-wp-cache-util.php`),
+`@wp-mail.net` accounts, `xmmqhn`/encoded-PHP patterns and `.cache`-as-PHP configuration/file
+checks. These omissions are also printed in every completed report; ask your host to check them.
 `Unexpected SSH keys` means only that keys differ from your supplied baseline; key contents
 are never printed. `Not checked` and **PARTIAL** mean investigation is incomplete.
 
@@ -102,3 +128,16 @@ This tool does none of those actions. Known indicator absence is not proof of a 
 
 The tests create synthetic sites and use the real pinned YARA binding. No real website,
 export, credential or callback domain is contacted. [Failure list](FAILURES.md).
+
+## Setup checks
+
+Installation needs an internet connection for GitHub and the pinned PyPI wheel; scanning
+uses no network. Inspect the pinned source and requirement before installing. Use the
+separate virtual environment above, keep backup/export files outside the checkout, and
+run only on an offline copy you own. Never provide private keys or upload exports here.
+This tool requires Linux no-atime support to preserve evidence timestamps; it does not
+fall back to timestamp-changing reads on unsupported systems.
+
+Incident identity: [published CVE record](https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/111xxx/CVE-2026-111862.json).
+The vendor advisory supplies the indicator semantics; the CVE record separately supplies
+the CVE identifier.

@@ -14,6 +14,9 @@ import time
 MAX_FILE = 8 * 1024 * 1024
 MAX_TOTAL = 256 * 1024 * 1024
 MAX_FILES = 10000
+MAX_EXPORT = 256 * 1024 * 1024
+CHUNK = 65536
+OVERLAP = 127  # longest permitted ASCII literal is 128 bytes
 SOURCE = 'https://rankmath.com/kb/pro-3-0-123-security-incident/'
 
 
@@ -43,14 +46,14 @@ def open_path(path, directory=False):
 def read_fd(fd):
     before = os.fstat(fd)
     if not stat.S_ISREG(before.st_mode): raise OSError('not a regular file')
-    if before.st_size > MAX_FILE: raise ValueError('size limit')
+    if before.st_size > MAX_FILE: raise ValueError('per-file size limit (8 MiB)')
     data = bytearray()
     while len(data) <= MAX_FILE:
         chunk = os.read(fd, min(65536, MAX_FILE + 1 - len(data)))
         if not chunk: break
         data.extend(chunk)
     after = os.fstat(fd)
-    if len(data) > MAX_FILE: raise ValueError('size limit')
+    if len(data) > MAX_FILE: raise ValueError('per-file size limit (8 MiB)')
     if (before.st_ino,before.st_size,before.st_mtime_ns,before.st_ctime_ns) != (after.st_ino,after.st_size,after.st_mtime_ns,after.st_ctime_ns):
         raise OSError('changed during read')
     return bytes(data)
@@ -94,7 +97,7 @@ def load_rules(path, yara):
         if not all(isinstance(s,str) and 0 < len(s) <= 128 and all(32 <= ord(c) < 127 for c in s) for s in literals): raise ValueError('literal')
         if not isinstance(row['targets'],list) or not row['targets'] or not set(row['targets']) <= {'site','database','cron'}: raise ValueError('targets')
         if row['source'] != SOURCE or not isinstance(row['label'],str) or any(ord(c)<32 for c in row['label']): raise ValueError('source/label')
-        strings = ' '.join('$s'+str(i)+' = '+json.dumps(s)+' ascii' for i,s in enumerate(literals))
+        strings = ' '.join('$s'+str(i)+' = '+json.dumps(s)+' ascii nocase' for i,s in enumerate(literals))
         generated.append('rule '+key+' { strings: '+strings+' condition: any of them }')
     window=doc['window']
     if window['source'] != SOURCE or iso(window['start']) > iso(window['end']): raise ValueError('window')
@@ -115,7 +118,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if not a.authorized_owner:
         print('Refused: explicit owner authorization is required before reading inputs.',file=sys.stderr);return 64
-    partial=[]; found=[]; checked=[]; count=0; total=0; deadline=time.monotonic()+60
+    partial=[]; found=[]; checked=[]; seen=set(); count=0; total=0
     try:
         import yara
         if yara.__version__ != '4.5.4': raise ValueError('pinned scanner required')
@@ -124,23 +127,57 @@ def main(argv=None):
         print('PARTIAL: pinned YARA scanner/rules unavailable or invalid. No clean result.\nA clean result does not prove a site clean.');return 2
 
     def scan(data,target,label):
-        nonlocal count,total
-        count+=1;total+=len(data)
-        if count>MAX_FILES or total>MAX_TOTAL or time.monotonic()>deadline:
-            raise ValueError('scan limit')
         try:
-            for match in engine.match(data=data,timeout=3):
-                rule=rules[match.rule]
-                if target in rule['targets']:
-                    found.append('Potential indicator: '+rule['label']+' in '+json.dumps(label,ensure_ascii=True))
+            matches=engine.match(data=data,timeout=3)
         except Exception:
-            partial.append('scanner error or timeout; content not reported')
+            raise ValueError('scanner error or 3-second chunk timeout') from None
+        for match in matches:
+            rule=rules[match.rule]
+            if target in rule['targets'] and (match.rule,label) not in seen:
+                seen.add((match.rule,label))
+                found.append('Potential indicator: '+rule['label']+' in '+json.dumps(label,ensure_ascii=True))
+
+    def export(path,target):
+        # Each export is examined before the site, with an independent byte/time budget.
+        if not path:
+            partial.append(target+' export not checked: supply an offline plain SQL/text export');return
+        fd=-1
+        try:
+            fd=open_path(path);before=os.fstat(fd)
+            if not stat.S_ISREG(before.st_mode):raise ValueError('not a regular file')
+            if before.st_size>MAX_EXPORT:raise ValueError('export byte limit (256 MiB)')
+            end=time.monotonic()+60;used=0;tail=b'';first=True
+            while True:
+                if time.monotonic()>end:raise ValueError('export time limit (60 seconds)')
+                data=os.read(fd,min(CHUNK,MAX_EXPORT+1-used))
+                if not data:break
+                used+=len(data)
+                if used>MAX_EXPORT:raise ValueError('export byte limit (256 MiB)')
+                if (first and data.startswith((b'\x1f\x8b',b'PK',b'\xff\xfe',b'\xfe\xff'))) or b'\x00' in data:
+                    raise ValueError('unsupported export format (compressed, UTF-16 or NUL-bearing); re-export as plain uncompressed text')
+                first=False
+                scan(tail+data,target,target+' export')
+                tail=(tail+data)[-OVERLAP:]
+            after=os.fstat(fd)
+            if (before.st_ino,before.st_size,before.st_mtime_ns,before.st_ctime_ns)!=(after.st_ino,after.st_size,after.st_mtime_ns,after.st_ctime_ns):
+                raise ValueError('changed during read')
+            checked.append(target+' export text (not executed)')
+        except ValueError as error:partial.append(target+' export not fully checked: '+str(error))
+        except OSError:partial.append(target+' export unreadable; use an owned Linux/WSL regular-file copy without symlinks')
+        finally:
+            if fd>=0:os.close(fd)
+
+    export(a.database_export,'database')
+    export(a.cron_export,'cron')
+    deadline=time.monotonic()+60
 
     def walk(fd,prefix='',depth=0):
+        nonlocal count,total
         if depth>32:partial.append('directory depth limit');return
         for name in sorted(os.listdir(fd)):
-            if time.monotonic()>deadline or count>=MAX_FILES or total>=MAX_TOTAL:
-                partial.append('scan limit');return
+            if time.monotonic()>deadline:partial.append('site time limit (60 seconds)');return
+            if count>=MAX_FILES:partial.append('site file-count limit (10,000 files)');return
+            if total>=MAX_TOTAL:partial.append('site byte limit (256 MiB)');return
             child=-1
             try:
                 st=os.stat(name,dir_fd=fd,follow_symlinks=False)
@@ -149,21 +186,22 @@ def main(argv=None):
                     partial.append('special file skipped');continue
                 child=os.open(name,flags(stat.S_ISDIR(st.st_mode)),dir_fd=fd)
                 if stat.S_ISDIR(st.st_mode):walk(child,prefix+name+'/',depth+1)
-                else:scan(read_fd(child),'site','site/'+prefix+name)
-            except ValueError:partial.append('size limit or scan limit')
+                else:
+                    count+=1
+                    if st.st_size>MAX_TOTAL-total:raise ValueError('site byte limit (256 MiB)')
+                    data=read_fd(child);total+=len(data)
+                    if total>MAX_TOTAL:raise ValueError('site byte limit (256 MiB)')
+                    scan(data,'site','site/'+prefix+name)
+            except ValueError as error:partial.append('site input not fully checked: '+str(error))
             except OSError:partial.append('unreadable or changed site input')
             finally:
                 if child>=0:os.close(child)
     fd=-1
     try:
         fd=open_path(a.site,True);walk(fd);checked.append('offline site files (no symlinks followed)')
-    except OSError:partial.append('site directory not checked')
+    except OSError:partial.append('site directory not checked; use an owned Linux/WSL directory without symlinks')
     finally:
         if fd>=0:os.close(fd)
-    for path,target in [(a.database_export,'database'),(a.cron_export,'cron')]:
-        if not path:partial.append(target+' export not checked');continue
-        try:scan(read_path(path),target,target+' export');checked.append(target+' export text (not executed)')
-        except (OSError,ValueError):partial.append(target+' export unreadable or size limit')
     if a.installed_at and a.plugin_version:
         try:
             when=iso(a.installed_at);window=doc['window']
@@ -184,6 +222,7 @@ def main(argv=None):
     for item in checked:print('Checked: '+item)
     for item in found:print(item)
     for item in sorted(set(partial)):print('Not checked: '+item)
+    print('Published indicators not checked: wp-includes/class-wp-cache-util.php existence, @wp-mail.net accounts, xmmqhn or encoded PHP patterns, and .cache-as-PHP rules/files. Source: '+SOURCE)
     print('Other host state, active administrator roles, installation provenance and broader malware are not established by these checks.')
     print('Published remediation: follow the vendor recovery steps in order; a pre-incident backup is its preferred option. Disable the persistence mechanism before cleanup; replace exposed credentials and verify recovery.')
     print('Recovery source: '+SOURCE)

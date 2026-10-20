@@ -48,9 +48,9 @@ state must produce a partial/error report, never a clean result.
 
 ## Incident scope to carry into implementation
 
-Use only the [vendor's published incident advisory](https://rankmath.com/kb/pro-3-0-123-security-incident/).
+Indicator semantics use the [vendor's published incident advisory](https://rankmath.com/kb/pro-3-0-123-security-incident/).
 The initial rule covers the stated download/update window and public option names,
-account prefix, cron marker and callback-domain indicators from canonical T47. Match local
+account prefix, cron marker and callback-domain indicators in this initial rule set. Match local
 references only; never contact the callback domain. Installation history requires owner
 records; filesystem timestamps alone do not prove install time. Unexpected SSH keys require
 a trusted baseline and separately supplied server evidence. Site files alone cannot establish
