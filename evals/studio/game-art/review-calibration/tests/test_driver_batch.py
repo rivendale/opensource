@@ -11,7 +11,7 @@ class BatchTests(unittest.TestCase):
  def batch(self,mode='valid',name='batch-A'):
   harness=fixture_collect.CollectTests();result,_=harness.collect(mode);output=self.root/name
   baseline=self.root/(name+'-baseline.json');baseline.write_text(json.dumps(result['records']))
-  report,calls=harness.collect(mode,execute=lambda relay:m.run_batch(relay,output,baseline,'a'*40))
+  report,calls=harness.collect(mode,execute=lambda relay:m.run_batch(relay,output,baseline,'a'*40,preflight=fixture_collect.compatible_preflight()))
   self.assertLessEqual(len(calls),116)
   return report,output,harness.relay
  def test_completed_disk_batch_receipt_and_strict_rows(self):
@@ -40,7 +40,7 @@ class BatchTests(unittest.TestCase):
  def test_partial_receipt_never_scores_and_repeat_never_calls_provider(self):
   report,output,relay=self.batch('late-schema');self.assertEqual(report['status'],'partial');receipt=m.verify_receipt(output);self.assertIsNone(receipt['score_exit']);self.assertEqual(receipt['pairs_completed'],1)
   with patch.object(m,'collect_pairs',side_effect=AssertionError('existing batch called provider')):
-   report=m.run_batch(relay,output,output/'records.json','a'*40)
+   report=m.run_batch(relay,output,output/'records.json','a'*40,preflight=fixture_collect.compatible_preflight())
   self.assertEqual(report['status'],'partial');self.assertEqual(report['reason'],'FileExistsError')
  def test_receipt_payload_key_scan_precedes_write_and_suppresses_artifacts(self):
   harness=fixture_collect.CollectTests();result,_=harness.collect();relay=harness.relay;output=self.root/'receipt-incident';stage=m.persist_collection(relay,result,output)

@@ -6,12 +6,16 @@ from contextlib import nullcontext
 from unittest.mock import patch
 HERE=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('driver',HERE/'driver.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 import proxy
+def compatible_preflight(commit='a'*40):
+ return {'mode':'preflight','status':'compatible','model':m.SETTINGS['model'],'settings':dict(m.SETTINGS),'source_commit':commit,
+         'run_list_sha256':m.INPUT_SHA256['RUN-LIST-opus55-notemp.md'],'requests_used':1,
+         'usage':{'prompt_tokens':3,'completion_tokens':1,'total_tokens':4},'spend_usd':'0.000032','error':None}
 class CollectTests(unittest.TestCase):
  def collect(self,mode='valid',execute=None):
   calls=[];marker=b'SYNTHETIC-CALIBRATION-MARKER'
-  relay=object.__new__(proxy.Relay);relay.model=m.SETTINGS['model'];relay.routes={(m.SETTINGS['host'],m.SETTINGS['path']):'model'};relay.keys={m.SETTINGS['host']:marker};relay.calls=0;relay.turn_limit=116;relay.context=None;relay.lock=threading.Lock();relay.log=[];relay.incident=False;relay.limit_hit=False
+  relay=object.__new__(proxy.Relay);relay.review_temperature=None;relay.model=m.SETTINGS['model'];relay.routes={(m.SETTINGS['host'],m.SETTINGS['path']):'model'};relay.keys={m.SETTINGS['host']:marker};relay.calls=0;relay.turn_limit=116;relay.context=None;relay.lock=threading.Lock();relay.log=[];relay.incident=False;relay.limit_hit=False
   class Response:
-   status=400 if mode in ('reject-temperature','reject-seed') else 200
+   status=400 if mode in ('reject-temperature','reject-seed','provider-error','error-key','error-encoded-key','error-nonjson','error-oversize') else 200
    def read(self,_):
     req=calls[-1];first=req['max_tokens']==128;n=6 if len(calls)<=84 else 5
     text=json.dumps({'name':'a synthetic geometric shape'} if first else {'features':[False]*n})
@@ -29,12 +33,17 @@ class CollectTests(unittest.TestCase):
     if mode=='model':model='different-model'
     if mode=='cost':usage={'prompt_tokens':300000,'completion_tokens':2,'total_tokens':300002}
     data=json.dumps({'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
+    if mode in ('provider-error','error-key','error-encoded-key'):
+     data=json.dumps({'error':{'type':'invalid_request_error','message':marker.decode() if mode!='provider-error' else 'Synthetic setting rejected'},'unrelated':'NEVER-RETAIN-THIS'}).encode()
+    if mode=='error-nonjson':data=b'<html>SYNTHETIC RAW BODY NOT RETAINED</html>'
+    if mode=='error-oversize':data=b'x'*(proxy.MAX_BODY+1)
+    if mode=='error-encoded-key':data=data.replace(marker,b''.join(('\\u%04x'%c).encode() for c in marker))
     if mode=='decoded-key':data=data.replace(marker,b''.join(('\\u%04x'%c).encode() for c in marker))
     return data
   class HTTPS:
    def __init__(self,host,port,**kwargs):assert(host,port)==('api.anthropic.com',443)
    def request(self,method,path,payload,headers):
-    req=json.loads(payload);assert set(req)=={'model','messages','stream','temperature','seed','max_tokens'} and req['temperature']==req['seed']==0 and req['stream'] is False;assert path==m.SETTINGS['path'];calls.append(req)
+    req=json.loads(payload);assert set(req)=={'model','messages','stream','seed','max_tokens'}|({'temperature'} if mode=='ordinary' else set()) and req['seed']==0 and req['stream'] is False;assert mode!='ordinary' or req['temperature']==0;assert path==m.SETTINGS['path'];calls.append(req)
     for message in req['messages']:
      text=message.get('content')
      if isinstance(text,str):assert 'answers.json' not in text and 'images/' not in text and not any(word in text.lower().split() for word in ['coin','key','potion','heart','mushroom','boot'])
