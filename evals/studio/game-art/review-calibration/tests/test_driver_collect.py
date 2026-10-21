@@ -33,8 +33,9 @@ class CollectTests(unittest.TestCase):
     if mode=='model':model='different-model'
     if mode=='cost':usage={'prompt_tokens':300000,'completion_tokens':2,'total_tokens':300002}
     data=json.dumps({'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
-    if mode in ('provider-error','error-key','error-encoded-key'):
-     data=json.dumps({'error':{'type':'invalid_request_error','message':marker.decode() if mode!='provider-error' else 'Synthetic setting rejected'},'unrelated':'NEVER-RETAIN-THIS'}).encode()
+    if mode in ('provider-error','provider-error-200','error-key','error-encoded-key'):
+     data=json.dumps({'error':{'type':'invalid_request_error','message':marker.decode() if mode not in ('provider-error','provider-error-200') else 'Synthetic setting rejected'},'unrelated':'NEVER-RETAIN-THIS'}).encode()
+    if mode=='wire-json':data=b'not JSON transport'
     if mode=='error-nonjson':data=b'<html>SYNTHETIC RAW BODY NOT RETAINED</html>'
     if mode=='error-oversize':data=b'x'*(proxy.MAX_BODY+1)
     if mode=='error-encoded-key':data=data.replace(marker,b''.join(('\\u%04x'%c).encode() for c in marker))

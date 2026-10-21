@@ -29,6 +29,12 @@ class BatchTests(unittest.TestCase):
   self.assertEqual(receipt['rates']['output_per_million'],'20')
   receipt['model']='different-model';path.write_text(json.dumps(receipt))
   with self.assertRaises(ValueError):m.verify_receipt(output)
+ def test_completed_receipt_requires_compatible_preflight(self):
+  _,output,_=self.batch();path=output/'receipt.json';receipt=json.loads(path.read_text())
+  self.assertEqual(receipt['preflight']['status'],'compatible')
+  self.assertEqual(receipt['total_spend_usd'],'0.009312')
+  receipt['preflight']['status']='rejected';path.write_text(json.dumps(receipt))
+  with self.assertRaises(ValueError):m.verify_receipt(output)
  def test_copied_in_file_refused_by_receipt_hash(self):
   _,output,_=self.batch('late-schema');_,other,_=self.batch(name='batch-B')
   (output/'records.json').write_bytes((other/'records.json').read_bytes())

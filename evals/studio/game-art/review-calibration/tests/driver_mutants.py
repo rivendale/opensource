@@ -4,6 +4,12 @@ import json,shutil,subprocess,sys,tempfile
 from pathlib import Path
 HERE=Path(__file__).resolve().parents[1];ROOT=HERE.parents[3]
 MUTANTS=[
+ ('preflight-cost-budget','driver.py',"preflight_cost=Decimal(preflight_cost)","preflight_cost=Decimal('0')",'test_driver_preflight.py'),
+ ('preflight-gate','driver.py',"  validate_preflight(preflight,source_commit)\n","",'test_driver_preflight.py'),
+ ('preflight-identity','driver.py',"report['source_commit']!=source_commit","False",'test_driver_preflight.py'),
+ ('preflight-events-hash','driver.py',"if report.get('events_sha256')!=hashlib.sha256((root/'events.jsonl').read_bytes()).hexdigest():","if False:",'test_driver_preflight.py'),
+ ('temperature-omission','@proxy',"if getattr(self, 'review_temperature', 0) is None:","if False:",'test_driver_preflight.py'),
+ ('provider-error-fields','@proxy',"error_type if isinstance(error_type, str) else 'ProviderHTTPError'","'DiscardedErrorType'",'test_driver_preflight.py'),
  ('recorded-model','driver.py',"if receipt.get('model')!=SETTINGS['model']:","if False:",'test_driver_batch.py'),
  ('list-model','driver.py',"if model is None or model[1]!=SETTINGS['model']:","if False:",'test_driver_plan.py'),
  ('recorded-scale','driver.py',"if event.get('scale')!=SETTINGS['scale'] or type(event.get('scale')) is not int:","if False:",'test_driver_scale.py'),
@@ -20,7 +26,7 @@ MUTANTS=[
  ('existing-output','driver.py',"output.mkdir(mode=0o700,exist_ok=False)","output.mkdir(mode=0o700,exist_ok=True)",'test_driver_persist.py'),
  ('disk-readback','driver.py',"written={name:(output/name).read_bytes() for name in payloads}","written=payloads",'test_driver_persist.py'),
  ('missing-comparison','driver.py',"compared=subprocess.run([sys.executable,str(here/'compare_batches.py'),str(Path(baseline)),str(output/'records.json')],capture_output=True,timeout=30,check=False)","compared=subprocess.CompletedProcess([],0,b'',b'')",'test_driver_collect.py'),
- ('request-ceiling','driver.py',"if requests>=settings['requests'] or spend>=Decimal(settings['hard_stop_usd']):","if spend>=Decimal(settings['hard_stop_usd']):",'test_driver_collect.py'),
+ ('request-ceiling','driver.py',"if requests>=settings['requests'] or spend+preflight_cost>=Decimal(settings['hard_stop_usd']):","if spend+preflight_cost>=Decimal(settings['hard_stop_usd']):",'test_driver_collect.py'),
  ('scorer-exit-preserved','driver.py',"report['score_exit']=scored.returncode","report['score_exit']=0",'test_driver_collect.py'),
  ('consumer-error-status','driver.py',"if scored.returncode in (0,1) and compared.returncode==0:","if scored.returncode in (0,1,2) and compared.returncode==0:",'test_driver_collect.py'),
  ('copied-in-file','driver.py',"if hashlib.sha256(path.read_bytes()).hexdigest()!=digest:","if False:",'test_driver_batch.py'),
@@ -41,7 +47,7 @@ def main():
    shutil.copytree(HERE,calib,ignore=shutil.ignore_patterns('__pycache__'))
    shutil.copytree(HERE.parent/'review-plans',calib.parent/'review-plans',ignore=shutil.ignore_patterns('__pycache__'))
    runner=root/'skills/studio/runner';runner.parent.mkdir(parents=True);shutil.copytree(ROOT/'skills/studio/runner',runner,ignore=shutil.ignore_patterns('__pycache__'))
-   target=runner/'reviewer.py' if path=='@reviewer' else calib/path;text=target.read_text()
+   target=runner/'reviewer.py' if path=='@reviewer' else runner/'proxy.py' if path=='@proxy' else calib/path;text=target.read_text()
    if old not in text:raise RuntimeError('mutation target missing: '+name)
    target.write_text(text.replace(old,new,1));result=subprocess.run([sys.executable,str(calib/'tests'/test)],capture_output=True,text=True,timeout=30)
    if result.returncode==0 or 'SyntaxError' in result.stderr or 'ImportError' in result.stderr:raise RuntimeError('mutation not killed by behavior: '+name)
