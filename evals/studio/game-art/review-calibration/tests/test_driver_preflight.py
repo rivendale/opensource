@@ -29,6 +29,15 @@ class CompatibilityTests(unittest.TestCase):
   self.assertEqual(calls[1]['messages'][:2],calls[0]['messages'])
   self.assertEqual(calls[1]['messages'][2]['role'],'assistant')
   self.assertIn('created_at',report)
+ def test_receipt_binds_first_registered_image_views(self):
+  report,_=self.check()
+  bad=copy.deepcopy(report)
+  for event in bad['events']:
+   if event['kind'].endswith('-request'):
+    messages=json.loads(event['content'])
+    messages[1]['content'][0]['image_url']['sha256']='0'*64
+    event['content']=json.dumps(messages)
+  with self.assertRaises(ValueError):m.validate_preflight(bad,'a'*40)
  def test_second_answer_failures_and_identity_refuse_without_retry(self):
   for mode in ['second-incomplete','second-schema','second-json','missing-id','duplicate-id']:
    with self.subTest(mode=mode):

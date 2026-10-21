@@ -25,8 +25,8 @@ import reviewer
 import cache_api
 from proxy import Relay
 from common import read_key_fds
-SETTINGS={'model':'claude-opus-5-5','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':None,'seed':0,'prompt_cache':False,'scale':16,'requests':116,'hard_stop_usd':'1.00'}
-INPUT_SHA256={'answers.json': '4d4c488142564e85821f1414fde7d8bf67b3c3b5487fe0bb6acf66e2460c349a', 'RUN-LIST-opus55-notemp.md': '3c05745de3a7202130b35340b54432a64252347d3634512824a84eb254ca3d6a', 'images/244e9266.png': 'd738a0e7b2ebf8d65ce9b66484f3e236e65fb5c40090886a87b1b80589df20b2', 'images/2fd20bc9.png': 'fec3972c1bc662df2899672ff7fe6ebb58b38b9fb702767de2d4b74ec132d085', 'images/31834029.png': 'ec9ea3b8ef2288ff6c7ee19385e7a1146a73cbef03093af51008ffbcd646babd', 'images/5f70bf18.png': '50b068e07b4bf235705c19b77da49fdbbc7e98ddc0a46f1c6659cca98c963904', 'images/67c058dd.png': 'ecd7cf086f19da6079e24c0f0d8b3b9e017c7a82a4b306354ffc0dca3629bd4f', 'images/729152ee.png': '7d41bc62e328839cd2515040b647c983207aa67f9f5af6dec2a54315700b6551', 'images/87c4c0d8.png': 'b313a54b35964c976f62f8bc61da1d92aefa7217fc8ceeca8543f1a174ef88c7', 'images/955cb439.png': '5db57fc6e55561c5255fe07c0f9391d44a6fa72dba59878ccf966da671598242', 'images/a397f5be.png': '20c0f073ff99756789b51710d47b3d975dd06c099031e4c92e1af9af977ab1b4', 'images/b288076c.png': '2ebff1de8c8c40b4f4bc35741a0127e7adff3f6adb9e350ecaf278d3e43b2764', 'images/b5f7cab6.png': 'e160c5638526fa94b828f14b42f95daead27c30e5b3cbbc226a348794d2d2d94', 'images/bd99ccf4.png': '320c656f26ea17b94c5dee87f07d75040020e2e954ac863c2154feaa551bc70a', 'images/e62f4a63.png': '5c50ae700a920d0ee0ba3b2f08721f1cb5a3e1ca05413a76980d262039d1abfb', 'images/f87d4fa3.png': '33d223eef6729fd155afc852ffafaf302f0aa843d9b2d47a5964b3d644bf5b72', '../review-plans/leg-1-coin-pickup.json': '444efd1a8f1c7905c037c36ecb3d2e6602333b6a4f72cd6206bebc90aa9b0fb8', '../review-plans/leg-1-key-pickup.json': 'f52fc08da11bfd3244f79ac7ea512f44c0dde1802a81b795d76bbe7adae5c434', '../review-plans/leg-1-potion-pickup.json': '2aa8d2381cd18fe13ff054e955512fe4efd675592677502497a4f6d83b134222'}
+SETTINGS={'model':'claude-opus-5-5','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':None,'seed':0,'prompt_cache':False,'scale':16,'requests':116,'hard_stop_usd':'5.00','review_max_tokens':1024}
+INPUT_SHA256={'answers.json': '4d4c488142564e85821f1414fde7d8bf67b3c3b5487fe0bb6acf66e2460c349a', 'RUN-LIST-opus55-room.md': 'fd073a14b8d388ac2d358e8e7c0834c782942ee5d688bb2e2911d19de773bc01', 'images/244e9266.png': 'd738a0e7b2ebf8d65ce9b66484f3e236e65fb5c40090886a87b1b80589df20b2', 'images/2fd20bc9.png': 'fec3972c1bc662df2899672ff7fe6ebb58b38b9fb702767de2d4b74ec132d085', 'images/31834029.png': 'ec9ea3b8ef2288ff6c7ee19385e7a1146a73cbef03093af51008ffbcd646babd', 'images/5f70bf18.png': '50b068e07b4bf235705c19b77da49fdbbc7e98ddc0a46f1c6659cca98c963904', 'images/67c058dd.png': 'ecd7cf086f19da6079e24c0f0d8b3b9e017c7a82a4b306354ffc0dca3629bd4f', 'images/729152ee.png': '7d41bc62e328839cd2515040b647c983207aa67f9f5af6dec2a54315700b6551', 'images/87c4c0d8.png': 'b313a54b35964c976f62f8bc61da1d92aefa7217fc8ceeca8543f1a174ef88c7', 'images/955cb439.png': '5db57fc6e55561c5255fe07c0f9391d44a6fa72dba59878ccf966da671598242', 'images/a397f5be.png': '20c0f073ff99756789b51710d47b3d975dd06c099031e4c92e1af9af977ab1b4', 'images/b288076c.png': '2ebff1de8c8c40b4f4bc35741a0127e7adff3f6adb9e350ecaf278d3e43b2764', 'images/b5f7cab6.png': 'e160c5638526fa94b828f14b42f95daead27c30e5b3cbbc226a348794d2d2d94', 'images/bd99ccf4.png': '320c656f26ea17b94c5dee87f07d75040020e2e954ac863c2154feaa551bc70a', 'images/e62f4a63.png': '5c50ae700a920d0ee0ba3b2f08721f1cb5a3e1ca05413a76980d262039d1abfb', 'images/f87d4fa3.png': '33d223eef6729fd155afc852ffafaf302f0aa843d9b2d47a5964b3d644bf5b72', '../review-plans/leg-1-coin-pickup.json': '444efd1a8f1c7905c037c36ecb3d2e6602333b6a4f72cd6206bebc90aa9b0fb8', '../review-plans/leg-1-key-pickup.json': 'f52fc08da11bfd3244f79ac7ea512f44c0dde1802a81b795d76bbe7adae5c434', '../review-plans/leg-1-potion-pickup.json': '2aa8d2381cd18fe13ff054e955512fe4efd675592677502497a4f6d83b134222'}
 def estimate_spend(prompt,completion):
  rates=cache_api.RATES[SETTINGS['model']]
  return (Decimal(prompt)*Decimal(str(rates[0]))+Decimal(completion)*Decimal(str(rates[4])))/1000000
@@ -44,7 +44,7 @@ def build_plan(here=HERE):
   for image in images:
    item={'file':image['file'],'subject_words':list(key['words']),'features':copy.deepcopy(questions)}
    reviewer.validate_plan([item]);pairs.append(dict(pair=len(pairs),image=image['file'],repeat=repeat,plan=None,item=item))
- text=(here/'RUN-LIST-opus55-notemp.md').read_text()
+ text=(here/'RUN-LIST-opus55-room.md').read_text()
  model=re.search(r'^\| reviewer model \| `([^`]+)`',text,re.M)
  if model is None or model[1]!=SETTINGS['model']:raise ValueError('reviewer model differs from run list')
  for match in re.finditer(r'^\| (\d+) \| `([^`]+\.json)` \| `([^`]+\.png)`',text,re.M):
@@ -77,7 +77,7 @@ def collect_pairs(relay,settings=None,here=HERE,preflight_cost='0'):
  """
  settings=copy.deepcopy(SETTINGS if settings is None else settings);validate_settings(settings)
  if type(relay) is not Relay or getattr(relay.review_request,'__func__',None) is not Relay.review_request:raise ValueError('runner-owned Relay method required')
- if (relay.model!=settings['model'] or relay.routes!={(settings['host'],settings['path']):'model'} or getattr(relay,'cache_prefix',None) is not None or relay.calls!=0 or relay.turn_limit!=116 or getattr(relay,'review_temperature',0) is not settings['temperature']):raise ValueError('relay is not a fresh fixed-policy calibration relay')
+ if (relay.model!=settings['model'] or relay.routes!={(settings['host'],settings['path']):'model'} or getattr(relay,'cache_prefix',None) is not None or relay.calls!=0 or relay.turn_limit!=116 or getattr(relay,'review_max_tokens',256)!=settings['review_max_tokens'] or getattr(relay,'review_temperature',0) is not settings['temperature']):raise ValueError('relay is not a fresh fixed-policy calibration relay')
  preflight_cost=Decimal(preflight_cost)
  if not preflight_cost.is_finite() or not 0<=preflight_cost<Decimal(settings['hard_stop_usd']):raise ValueError('invalid preflight cost')
  stop=None
@@ -108,7 +108,7 @@ def collect_pairs(relay,settings=None,here=HERE,preflight_cost='0'):
     if requests>=settings['requests'] or spend+preflight_cost>=Decimal(settings['hard_stop_usd']):raise ValueError('request or spend ceiling')
     requests+=1
     relay.last_http_status=None
-    try:result=relay.review_request(messages,max_tokens)
+    try:result=relay.review_request(messages,settings['review_max_tokens'])
     except Exception:
      usage_unverified=True;raise
     if (not isinstance(result,dict) or not isinstance(result.get('usage'),dict) or set(result['usage'])!={'prompt_tokens','completion_tokens','total_tokens'} or any(type(v) is not int or v<0 for v in result['usage'].values()) or result['usage']['total_tokens']!=result['usage']['prompt_tokens']+result['usage']['completion_tokens']):
@@ -271,7 +271,7 @@ def verify_receipt(output):
   if receipt['status']=='complete':validate_recorded_scale(events)
   if any(e.get('run_id')!=receipt['run_id'] for e in events):raise ValueError('mixed batch identity')
  if receipt['status']=='complete':
-  proof=validate_preflight(receipt.get('preflight'),receipt['source_commit'])
+  proof=validate_preflight(receipt.get('preflight'),receipt['source_commit'],require_fresh=False)
   if receipt.get('total_spend_usd')!=str(Decimal(receipt['spend_usd'])+Decimal(proof['spend_usd'])):raise ValueError('combined spend differs')
   if set(hashes)!=set(ARTIFACT_NAMES) or receipt['requests_used']!=116 or receipt['pairs_completed']!=58 or receipt['score_exit'] not in (0,1) or receipt['compare_exit']!=0 or receipt['review_gate'] is not False:raise ValueError('incomplete receipt claims complete')
   records,plans=derive_records(events,build_plan())
@@ -354,10 +354,10 @@ def build_relay(socket_path,key_fds,preflight=False):
  """Operator entry uses exactly the runner's existing inherited-FD helper."""
  validate_settings(SETTINGS)
  if not isinstance(key_fds,dict) or set(key_fds)!={SETTINGS['host']}:raise ValueError('exact calibration host FD required')
- return Relay(socket_path,[dict(name='model',host=SETTINGS['host'],path=SETTINGS['path'])],read_key_fds(key_fds),SETTINGS['model'],1 if preflight else SETTINGS['requests'],review_temperature=SETTINGS['temperature'])
+ return Relay(socket_path,[dict(name='model',host=SETTINGS['host'],path=SETTINGS['path'])],read_key_fds(key_fds),SETTINGS['model'],2 if preflight else SETTINGS['requests'],review_temperature=SETTINGS['temperature'],review_max_tokens=SETTINGS['review_max_tokens'])
 
 SAFE_STOP_MESSAGES=frozenset({
- 'preflight model differs','preflight usage invalid','preflight reply invalid',
+ 'preflight model differs','preflight usage invalid','preflight reply invalid','preflight response identity differs',
  'request or spend ceiling','hard spend stop reached','provider refusal',
  'missing or unpriced usage category','inconsistent recorded usage',
  'review model identity mismatch','review response invalid','review usage invalid',
@@ -379,14 +379,35 @@ def stop_error(error,relay):
   return dict(http_status=status,type='KeyIncident',message='Provider diagnostic redacted after key incident')
  return value
 
-def validate_preflight(report,source_commit):
+def validate_preflight(report,source_commit,require_fresh=True):
  if not isinstance(report,dict):raise ValueError('successful preflight required')
- allowed={'mode','status','model','settings','source_commit','run_list_sha256','requests_used','usage','spend_usd','error','events_sha256'}
+ allowed={'mode','status','model','settings','source_commit','run_list_sha256','requests_used','usage','spend_usd','error','events_sha256','response_ids','created_at','pair','events','usage_unverified'}
  if set(report)-allowed or not allowed-{'events_sha256'}<=set(report):raise ValueError('preflight fields differ')
  validate_settings(report['settings'])
- if (report['mode']!='preflight' or report['status']!='compatible' or report['model']!=SETTINGS['model'] or report['source_commit']!=source_commit or report['run_list_sha256']!=INPUT_SHA256['RUN-LIST-opus55-notemp.md'] or type(report['requests_used']) is not int or report['requests_used']!=1 or report['error'] is not None):raise ValueError('preflight identity/status differs')
+ if (report['mode']!='preflight' or report['status']!='compatible' or report['model']!=SETTINGS['model'] or report['source_commit']!=source_commit or report['run_list_sha256']!=INPUT_SHA256['RUN-LIST-opus55-room.md'] or type(report['requests_used']) is not int or report['requests_used']!=2 or report['error'] is not None or report['usage_unverified'] is not False):raise ValueError('preflight identity/status differs')
+ ids=report['response_ids']
+ if not isinstance(ids,list) or len(ids)!=2 or any(not isinstance(value,str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,200}',value) for value in ids) or len(set(ids))!=2:raise ValueError('preflight response identity differs')
+ if type(report['pair']) is not int or report['pair']!=0:raise ValueError('preflight pair differs')
+ try:
+  created=datetime.fromisoformat(report['created_at'])
+  if created.tzinfo is None or created.utcoffset().total_seconds()!=0:raise ValueError('UTC required')
+  age=(datetime.now(timezone.utc)-created).total_seconds()
+ except (ValueError,TypeError,AttributeError):raise ValueError('preflight creation time invalid') from None
+ if age<0 or (require_fresh and age>86400):raise ValueError('preflight outside 24 hour window')
+ events=report['events']
+ if not isinstance(events,list):raise ValueError('preflight events differ')
+ derive_records(events,build_plan()[:1]);validate_recorded_scale(events)
+ metadata=reviewer.view_metadata((HERE/build_plan()[0]['image']).read_bytes(),policy=reviewer.ViewPolicy.CALIBRATION)
+ views=reviewer.neutral_views((HERE/build_plan()[0]['image']).read_bytes(),policy=reviewer.ViewPolicy.CALIBRATION)
+ expected=json.loads(reviewer.request_record([{'role':'user','content':reviewer.content(views)}]))[0]
+ for event in events:
+  if not event['kind'].endswith('-request'):continue
+  if any(event.get(k)!=v for k,v in metadata.items()):raise ValueError('preflight view identity differs')
+  messages=json.loads(event['content'])
+  if not isinstance(messages,list) or len(messages)<2 or messages[1]!=expected:raise ValueError('preflight view identity differs')
  usage=report['usage']
  if not isinstance(usage,dict) or set(usage)!={'prompt_tokens','completion_tokens','total_tokens'} or any(type(v) is not int or v<0 for v in usage.values()) or usage['total_tokens']!=usage['prompt_tokens']+usage['completion_tokens']:raise ValueError('preflight usage invalid')
+ if usage!={key:sum(event['usage'][key] for event in events if event['kind'].endswith('-usage')) for key in usage}:raise ValueError('preflight usage differs from events')
  if not isinstance(report['spend_usd'],str):raise ValueError('preflight cost invalid')
  try:cost=Decimal(report['spend_usd'])
  except InvalidOperation:raise ValueError('preflight cost invalid') from None
@@ -394,32 +415,52 @@ def validate_preflight(report,source_commit):
  return report
 
 def preflight(relay,source_commit):
- """Exactly one compatibility request, no image/score/retry; operator only."""
- build_plan();validate_settings(SETTINGS)
- if (type(relay) is not Relay or relay.model!=SETTINGS['model'] or relay.routes!={(SETTINGS['host'],SETTINGS['path']):'model'} or getattr(relay,'cache_prefix',None) is not None or relay.calls!=0 or relay.turn_limit!=1 or getattr(relay,'review_temperature',0) is not SETTINGS['temperature']):raise ValueError('fresh one-request registered relay required')
- report=dict(mode='preflight',status='rejected',model=SETTINGS['model'],settings=copy.deepcopy(SETTINGS),source_commit=source_commit,run_list_sha256=INPUT_SHA256['RUN-LIST-opus55-notemp.md'],requests_used=0,usage=None,spend_usd=None,error=None)
+ """One real registered pair, using the strict reviewer; operator only, no retry."""
+ pairs=build_plan();validate_settings(SETTINGS)
+ if (type(relay) is not Relay or getattr(relay.review_request,'__func__',None) is not Relay.review_request or relay.model!=SETTINGS['model'] or relay.routes!={(SETTINGS['host'],SETTINGS['path']):'model'} or getattr(relay,'cache_prefix',None) is not None or relay.calls!=0 or relay.turn_limit!=2 or getattr(relay,'review_max_tokens',256)!=SETTINGS['review_max_tokens'] or getattr(relay,'review_temperature',0) is not SETTINGS['temperature']):raise ValueError('fresh two-request registered relay required')
+ report=dict(mode='preflight',status='rejected',model=SETTINGS['model'],settings=copy.deepcopy(SETTINGS),source_commit=source_commit,run_list_sha256=INPUT_SHA256['RUN-LIST-opus55-room.md'],requests_used=0,usage=None,spend_usd=None,error=None,response_ids=[],created_at=datetime.now(timezone.utc).isoformat(),pair=0,events=[],usage_unverified=False)
+ pair=pairs[0];events=report['events'];usage={'prompt_tokens':0,'completion_tokens':0,'total_tokens':0}
  relay.last_http_status=None
  try:
-  report['requests_used']=1
-  value=relay.review_request([{'role':'user','content':'Reply OK.'}],8)
-  if relay.output_has_key(json.dumps(value,ensure_ascii=False).encode()):
-   relay.incident=True;raise ValueError('key incident in decoded preflight response')
-  if not isinstance(value,dict) or value.get('model')!=SETTINGS['model']:raise ValueError('preflight model differs')
-  usage=value.get('usage')
-  if not isinstance(usage,dict) or set(usage)!={'prompt_tokens','completion_tokens','total_tokens'} or any(type(v) is not int or v<0 for v in usage.values()) or usage['total_tokens']!=usage['prompt_tokens']+usage['completion_tokens']:raise ValueError('preflight usage invalid')
-  report.update(usage=usage,spend_usd=str(estimate_spend(usage['prompt_tokens'],usage['completion_tokens'])))
-  choices=value.get('choices')
-  if not isinstance(choices,list) or len(choices)!=1 or not isinstance(choices[0],dict):raise ValueError('preflight reply invalid')
-  message=choices[0].get('message')
-  if not isinstance(message,dict) or message.get('refusal') or message.get('tool_calls') or not isinstance(message.get('content'),str) or not message['content'].strip() or choices[0].get('finish_reason')!='stop':raise ValueError('preflight reply invalid')
+  data=(HERE/pair['image']).read_bytes();metadata=reviewer.view_metadata(data,policy=reviewer.ViewPolicy.CALIBRATION)
+  views=reviewer.neutral_views(data,policy=reviewer.ViewPolicy.CALIBRATION)
+  if metadata['scale']!=SETTINGS['scale'] or any(list(reviewer.png_dimensions(v))!=metadata['dimensions'] for v in views):raise ValueError('view dimensions differ')
+  def record(kind,content,tokens):
+   event=dict(kind=kind,pair=0,content=content,usage=tokens)
+   if kind.endswith('-request'):event.update(metadata)
+   if relay.output_has_key(json.dumps(event,ensure_ascii=False).encode()):
+    relay.incident=True;raise ValueError('key incident in decoded preflight response')
+   events.append(event)
+  def transport(messages,max_tokens):
+   if report['requests_used']>=2 or (report['spend_usd'] is not None and Decimal(report['spend_usd'])>=Decimal(SETTINGS['hard_stop_usd'])):raise ValueError('request or spend ceiling')
+   report['requests_used']+=1;relay.last_http_status=None
+   try:value=relay.review_request(messages,SETTINGS['review_max_tokens'])
+   except Exception:
+    report['usage_unverified']=True;raise
+   if relay.output_has_key(json.dumps(value,ensure_ascii=False).encode()):
+    relay.incident=True;raise ValueError('key incident in decoded preflight response')
+   tokens=value.get('usage') if isinstance(value,dict) else None
+   if not isinstance(tokens,dict) or set(tokens)!=set(usage) or any(type(v) is not int or v<0 for v in tokens.values()) or tokens['total_tokens']!=tokens['prompt_tokens']+tokens['completion_tokens']:
+    report['usage_unverified']=True;raise ValueError('preflight usage invalid')
+   for key in usage:usage[key]+=tokens[key]
+   report.update(usage=dict(usage),spend_usd=str(estimate_spend(usage['prompt_tokens'],usage['completion_tokens'])))
+   identity=value.get('id')
+   if not isinstance(identity,str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,200}',identity) or identity in report['response_ids']:raise ValueError('preflight response identity differs')
+   report['response_ids'].append(identity)
+   if Decimal(report['spend_usd'])>=Decimal(SETTINGS['hard_stop_usd']):raise ValueError('hard spend stop reached')
+   choices=value.get('choices')
+   if isinstance(choices,list) and len(choices)==1 and isinstance(choices[0],dict) and isinstance(choices[0].get('message'),dict) and choices[0]['message'].get('refusal'):raise ValueError('provider refusal')
+   return value
+  reviewer.review(views,pair['item'],SETTINGS['model'],transport,record)
   report['status']='compatible';validate_preflight(report,source_commit)
  except Exception as error:
   report['error']=stop_error(error,relay);report['status']='incident' if relay.incident else 'rejected'
+  if relay.incident:report['events']=[];report['response_ids']=[]
  return report
 
 def persist_preflight(relay,report,output):
  output=Path(output);validate_run_id(output.name)
- events=[dict(kind='preflight-request',model=report['model'],settings=report['settings'],text_only=True),dict(kind='preflight-result',status=report['status'],usage=report['usage'],spend_usd=report['spend_usd'],error=report['error'])]
+ events=report['events']+[dict(kind='preflight-result',status=report['status'],response_ids=report['response_ids'],created_at=report['created_at'],usage=report['usage'],spend_usd=report['spend_usd'],error=report['error'])]
  body=''.join(json.dumps(e,ensure_ascii=True)+'\n' for e in events).encode()
  receipt=dict(report,events_sha256=hashlib.sha256(body).hexdigest());encoded=(json.dumps(receipt,ensure_ascii=True,indent=2)+'\n').encode()
  if relay.output_has_key(body) or relay.output_has_key(encoded):raise ValueError('preflight artifact key incident')

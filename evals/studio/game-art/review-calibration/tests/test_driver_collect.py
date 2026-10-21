@@ -7,9 +7,12 @@ from unittest.mock import patch
 HERE=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('driver',HERE/'driver.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 import proxy
 def compatible_preflight(commit='a'*40):
- return {'mode':'preflight','status':'compatible','model':m.SETTINGS['model'],'settings':dict(m.SETTINGS),'source_commit':commit,
-         'run_list_sha256':m.INPUT_SHA256['RUN-LIST-opus55-room.md'],'requests_used':2,'response_ids':['synthetic-1','synthetic-2'],'created_at':m.datetime.now(m.timezone.utc).isoformat(),'pair':0,
-         'usage':{'prompt_tokens':3,'completion_tokens':1,'total_tokens':4},'spend_usd':'0.000032','error':None}
+ harness=CollectTests()
+ def execute(relay):
+  relay.turn_limit=2
+  return m.preflight(relay,commit)
+ return harness.collect(execute=execute)[0]
+
 class CollectTests(unittest.TestCase):
  def collect(self,mode='valid',execute=None):
   calls=[];marker=b'SYNTHETIC-CALIBRATION-MARKER'
@@ -34,7 +37,7 @@ class CollectTests(unittest.TestCase):
     second=len(calls)==2
     if mode=='second-schema' and second:text='{"features":[1]}'
     if mode=='second-json' and second:text='not JSON'
-    if mode=='cost':usage={'prompt_tokens':1100000,'completion_tokens':2,'total_tokens':1100002}
+    if mode=='cost':usage={'prompt_tokens':1500000,'completion_tokens':2,'total_tokens':1500002}
     data=json.dumps({'id':'synthetic-'+str(len(calls)),'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
     if mode=='missing-id':data=json.dumps(dict(json.loads(data),id='')).encode()
     if mode=='duplicate-id':data=json.dumps(dict(json.loads(data),id='synthetic-same')).encode()
