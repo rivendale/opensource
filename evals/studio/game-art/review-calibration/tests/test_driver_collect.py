@@ -8,16 +8,16 @@ HERE=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_loca
 import proxy
 def compatible_preflight(commit='a'*40):
  return {'mode':'preflight','status':'compatible','model':m.SETTINGS['model'],'settings':dict(m.SETTINGS),'source_commit':commit,
-         'run_list_sha256':m.INPUT_SHA256['RUN-LIST-opus55-notemp.md'],'requests_used':1,
+         'run_list_sha256':m.INPUT_SHA256['RUN-LIST-opus55-room.md'],'requests_used':2,'response_ids':['synthetic-1','synthetic-2'],'created_at':m.datetime.now(m.timezone.utc).isoformat(),'pair':0,
          'usage':{'prompt_tokens':3,'completion_tokens':1,'total_tokens':4},'spend_usd':'0.000032','error':None}
 class CollectTests(unittest.TestCase):
  def collect(self,mode='valid',execute=None):
   calls=[];marker=b'SYNTHETIC-CALIBRATION-MARKER'
-  relay=object.__new__(proxy.Relay);relay.review_temperature=None;relay.model=m.SETTINGS['model'];relay.routes={(m.SETTINGS['host'],m.SETTINGS['path']):'model'};relay.keys={m.SETTINGS['host']:marker};relay.calls=0;relay.turn_limit=116;relay.context=None;relay.lock=threading.Lock();relay.log=[];relay.incident=False;relay.limit_hit=False
+  relay=object.__new__(proxy.Relay);relay.review_temperature=None;relay.review_max_tokens=1024;relay.model=m.SETTINGS['model'];relay.routes={(m.SETTINGS['host'],m.SETTINGS['path']):'model'};relay.keys={m.SETTINGS['host']:marker};relay.calls=0;relay.turn_limit=116;relay.context=None;relay.lock=threading.Lock();relay.log=[];relay.incident=False;relay.limit_hit=False
   class Response:
    status=400 if mode in ('reject-temperature','reject-seed','provider-error','error-key','error-encoded-key','error-nonjson','error-oversize') else 200
    def read(self,_):
-    req=calls[-1];first=req['max_tokens']==128;n=6 if len(calls)<=84 else 5
+    req=calls[-1];first=len(calls)%2==1;n=6 if len(calls)<=84 else 5
     text=json.dumps({'name':'a synthetic geometric shape'} if first else {'features':[False]*n})
     usage={'prompt_tokens':10,'completion_tokens':2,'total_tokens':12};model=m.SETTINGS['model']
     if mode=='bad-json':text='not json'
@@ -31,8 +31,15 @@ class CollectTests(unittest.TestCase):
     if mode=='usage-bool':usage.update(prompt_tokens=True,total_tokens=3)
     if mode=='usage-cache':usage['prompt_tokens_details']={'cached_tokens':1}
     if mode=='model':model='different-model'
-    if mode=='cost':usage={'prompt_tokens':300000,'completion_tokens':2,'total_tokens':300002}
-    data=json.dumps({'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
+    second=len(calls)==2
+    if mode=='second-schema' and second:text='{"features":[1]}'
+    if mode=='second-json' and second:text='not JSON'
+    if mode=='cost':usage={'prompt_tokens':1100000,'completion_tokens':2,'total_tokens':1100002}
+    data=json.dumps({'id':'synthetic-'+str(len(calls)),'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
+    if mode=='missing-id':data=json.dumps(dict(json.loads(data),id='')).encode()
+    if mode=='duplicate-id':data=json.dumps(dict(json.loads(data),id='synthetic-same')).encode()
+    if mode=='second-incomplete' and second:
+     value=json.loads(data);value['choices'][0]['finish_reason']='length';data=json.dumps(value).encode()
     if mode in ('provider-error','provider-error-200','error-key','error-encoded-key'):
      data=json.dumps({'error':{'type':'invalid_request_error','message':marker.decode() if mode not in ('provider-error','provider-error-200') else 'Synthetic setting rejected'},'unrelated':'NEVER-RETAIN-THIS'}).encode()
     if mode=='wire-json':data=b'not JSON transport'
@@ -58,7 +65,7 @@ class CollectTests(unittest.TestCase):
   self.relay=relay
   return result,calls
  def test_full_batch_116_requests_in_order(self):
-  r,calls=self.collect();self.assertEqual(r['status'],'collected');self.assertEqual(len(calls),116);self.assertEqual(r['pairs_completed'],58);self.assertEqual(len(r['records']),42);self.assertEqual(len(r['plan_records']),16);self.assertEqual([c['max_tokens'] for c in calls],[128,256]*58)
+  r,calls=self.collect();self.assertEqual(r['status'],'collected');self.assertEqual(len(calls),116);self.assertEqual(r['pairs_completed'],58);self.assertEqual(len(r['records']),42);self.assertEqual(len(r['plan_records']),16);self.assertEqual([c['max_tokens'] for c in calls],[1024,1024]*58)
   self.assertTrue(all(e['scale']==16 for e in r['events'] if e['kind'].endswith('-request')));self.assertEqual(r['spend_usd'],'0.00928')
  def test_full_batch_persisted_and_consumed_from_disk(self):
   result,_=self.collect()

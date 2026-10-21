@@ -1,5 +1,6 @@
 """Synthetic compatibility and redacted provider-error controls; no provider or keys."""
 import copy, json, tempfile, unittest
+from datetime import timedelta
 from pathlib import Path
 from unittest.mock import patch
 import test_driver_collect as fixture
@@ -9,21 +10,46 @@ class CompatibilityTests(unittest.TestCase):
  def check(self,mode='valid'):
   harness=fixture.CollectTests()
   def execute(relay):
-   relay.turn_limit=1
+   relay.turn_limit=2
    return m.preflight(relay,'a'*40)
-  with patch.object(m.reviewer,'neutral_views',side_effect=AssertionError('preflight rendered an image')):
-   report,calls=harness.collect(mode,execute=execute)
+  report,calls=harness.collect(mode,execute=execute)
   self.relay=harness.relay
   return report,calls
- def test_preflight_one_text_request_registered_settings_and_cost(self):
+ def test_preflight_first_real_pair_registered_settings_and_cost(self):
   report,calls=self.check()
-  self.assertEqual(report['status'],'compatible');self.assertEqual(len(calls),1)
+  self.assertEqual(report['status'],'compatible');self.assertEqual(len(calls),2)
   self.assertNotIn('temperature',calls[0]);self.assertEqual(calls[0]['seed'],0)
   self.assertEqual(calls[0]['model'],'claude-opus-5-5')
-  self.assertTrue(all(isinstance(x['content'],str) for x in calls[0]['messages']))
-  self.assertLessEqual(calls[0]['max_tokens'],8)
-  self.assertEqual(report['usage'],{'prompt_tokens':10,'completion_tokens':2,'total_tokens':12})
-  self.assertEqual(report['spend_usd'],'0.00008')
+  self.assertTrue(any(isinstance(x['content'],list) for x in calls[0]['messages']))
+  self.assertEqual([c['max_tokens'] for c in calls],[1024,1024])
+  self.assertEqual(report['usage'],{'prompt_tokens':20,'completion_tokens':4,'total_tokens':24})
+  self.assertEqual(report['spend_usd'],'0.00016')
+  self.assertEqual(report['response_ids'],['synthetic-1','synthetic-2'])
+  self.assertEqual(report['pair'],0)
+  self.assertEqual(calls[1]['messages'][:2],calls[0]['messages'])
+  self.assertEqual(calls[1]['messages'][2]['role'],'assistant')
+  self.assertIn('created_at',report)
+ def test_second_answer_failures_and_identity_refuse_without_retry(self):
+  for mode in ['second-incomplete','second-schema','second-json','missing-id','duplicate-id']:
+   with self.subTest(mode=mode):
+    report,calls=self.check(mode);self.assertEqual(report['status'],'rejected')
+    self.assertLessEqual(len(calls),2)
+    self.assertIsNotNone(report['spend_usd'])
+    if mode.startswith('second-'):self.assertEqual(report['spend_usd'],'0.00016')
+    with self.assertRaises(ValueError):m.validate_preflight(report,'a'*40)
+ def test_old_future_missing_or_duplicate_preflight_identity_refuses(self):
+  report,_=self.check()
+  for field,value in [('created_at',(m.datetime.now(m.timezone.utc)-timedelta(hours=24,seconds=1)).isoformat()),
+                      ('created_at',(m.datetime.now(m.timezone.utc)+timedelta(minutes=1)).isoformat()),
+                      ('created_at','bad-time'),('response_ids',[]),('response_ids',['same','same']),('pair',1)]:
+   bad=copy.deepcopy(report);bad[field]=value
+   with self.assertRaises(ValueError):m.validate_preflight(bad,'a'*40)
+ def test_ordinary_relay_still_refuses_1024(self):
+  def execute(relay):
+   relay.review_max_tokens=256
+   with self.assertRaises(ValueError):relay.review_request([{'role':'user','content':'ping'}],1024)
+   return None
+  _,calls=fixture.CollectTests().collect(execute=execute);self.assertEqual(calls,[])
  def test_rejected_or_incompatible_preflight_never_authorizes_run(self):
   for mode in ['provider-error','error-nonjson','error-oversize','model','usage','refusal','empty','wire-json']:
    with self.subTest(mode=mode):
@@ -86,13 +112,13 @@ class CompatibilityTests(unittest.TestCase):
    self.assertEqual(report['error']['http_status'],400);self.assertEqual(report['error']['type'],kind)
    self.assertNotIn('SYNTHETIC RAW BODY',json.dumps(report))
  def test_preflight_spend_counts_against_the_same_dollar_stop(self):
-  report,calls=fixture.CollectTests().collect(execute=lambda relay:m.collect_pairs(relay,preflight_cost='0.99998'))
+  report,calls=fixture.CollectTests().collect(execute=lambda relay:m.collect_pairs(relay,preflight_cost='4.99998'))
   self.assertEqual(report['status'],'partial');self.assertEqual(len(calls),1)
   self.assertEqual(report['pairs_completed'],0)
  def test_fixed_local_stop_messages_explain_mismatch_without_exception_echo(self):
   report,_=self.check('model')
   self.assertEqual(report['error']['http_status'],200)
-  self.assertEqual(report['error']['message'],'preflight model differs')
+  self.assertEqual(report['error']['message'],'review model identity mismatch')
   value=m.stop_error(ValueError('PRIVATE-EXCEPTION-TEXT'),self.relay)
   self.assertNotIn('PRIVATE-EXCEPTION-TEXT',json.dumps(value))
  def test_ordinary_reviewer_keeps_temperature_zero(self):
