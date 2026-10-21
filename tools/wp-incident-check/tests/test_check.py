@@ -158,4 +158,93 @@ class Contract(unittest.TestCase):
         self.assertGreaterEqual(r.stdout.count('Potential indicator'),4);self.assertEqual(before,self.snapshot())
         self.assertIn('https://rankmath.com/kb/pro-3-0-123-security-incident/',r.stdout)
 
+
+class Gaps(unittest.TestCase):
+    """Promises made by the README and FAILURES.md that a mutation pass over the tool found unpinned (each test is written from the stated promise, not from the code)."""
+    setUp = Contract.setUp
+    run_tool = Contract.run_tool
+    snapshot = Contract.snapshot
+
+    def fake_yara(self, version='4.5.4', match_raises=False):
+        fake = self.root/'fake'; fake.mkdir(exist_ok=True)
+        (fake/'yara.py').write_text('__version__=%r\nclass E:\n    def match(self, data=None, timeout=None):\n        %s\ndef compile(**kw): return E()\n'
+                                    % (version, 'raise RuntimeError("SYNTHETIC-SECRET")' if match_raises else 'return []'))
+        return {'PYTHONPATH': str(fake)}
+
+    def rules_file(self, change):
+        doc = json.loads((HERE/'rules/rank-math-pro-3.0.123.json').read_text()); change(doc)
+        path = self.root/'rules.json'; path.write_text(json.dumps(doc)); return ['--rules', str(path)]
+
+    def test_scanner_failure_while_matching_is_partial_never_clean(self):
+        r = self.run_tool(env=self.fake_yara(match_raises=True))
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr); self.assertNotIn('No indicators found', r.stdout)
+        self.assertIn('scanner error', r.stdout); self.assertNotIn('SYNTHETIC-SECRET', r.stdout + r.stderr)
+
+    def test_a_different_scanner_version_is_not_used(self):
+        r = self.run_tool(env=self.fake_yara(version='4.5.3'))
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr); self.assertIn('PARTIAL', r.stdout); self.assertNotIn('No indicators found', r.stdout)
+
+    def test_rules_that_change_source_or_carry_unprintable_literals_are_refused(self):
+        for label, change in [('source', lambda d: d['checks'][0].__setitem__('source', 'https://example.org/other')),
+                              ('literal', lambda d: d['checks'][0]['literals'].append('bad\nliteral')),
+                              ('target', lambda d: d['checks'][0].__setitem__('targets', ['site', 'registry']))]:
+            with self.subTest(label):
+                r = self.run_tool(self.args + self.rules_file(change))
+                self.assertEqual(r.returncode, 2, r.stdout + r.stderr); self.assertIn('PARTIAL: pinned YARA scanner/rules', r.stdout)
+
+    def test_an_indicator_only_counts_in_the_inputs_its_rule_names(self):
+        (self.site/'index.php').write_text('_uf6qdn2hmm wpsupport_synthetic t8krdk990phb')   # database-only literals in a site file
+        self.cron.write_text('wpsupport_synthetic _np5pvf754c\n')                          # database-only literals in a crontab
+        r = self.run_tool(); self.assertEqual(r.returncode, 0, r.stdout + r.stderr); self.assertNotIn('Potential indicator', r.stdout)
+
+    def test_the_update_window_needs_the_affected_version(self):
+        args = self.args.copy(); args[args.index('--installed-at') + 1] = '2026-10-16T01:00:00+00:00'
+        r = self.run_tool(args); self.assertEqual(r.returncode, 0, r.stdout + r.stderr)                 # version 3.0.124 inside the window
+        self.assertNotIn('Potential indicator', r.stdout)
+        args[args.index('--plugin-version') + 1] = '3.0.123'; r = self.run_tool(args)
+        self.assertEqual(r.returncode, 1); self.assertIn('owner-recorded update', r.stdout)
+
+    def test_an_install_time_without_a_timezone_is_not_assumed(self):
+        args = self.args.copy(); args[args.index('--plugin-version') + 1] = '3.0.123'; args[args.index('--installed-at') + 1] = '2026-10-16T01:00:00'
+        r = self.run_tool(args); self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        self.assertIn('invalid timezone/date', r.stdout); self.assertNotIn('owner-recorded update', r.stdout)
+
+    def test_ssh_comparison_runs_from_supplied_keys_to_baseline_and_rejects_bad_lines(self):
+        a = 'ssh-ed25519 ' + base64.b64encode(b'KEY-A').decode() + '\n'; b = 'ssh-ed25519 ' + base64.b64encode(b'KEY-B').decode() + '\n'
+        self.keys.write_text(a + b); self.known.write_text(a)
+        r = self.run_tool(); self.assertEqual(r.returncode, 1); self.assertIn('Unexpected SSH keys: 1', r.stdout)
+        self.keys.write_text(a); self.known.write_text(a + b)               # a baseline that lists more keys than the host has is not a finding
+        r = self.run_tool(); self.assertEqual(r.returncode, 0, r.stdout + r.stderr); self.assertNotIn('Unexpected SSH keys', r.stdout)
+        for bad in ('ssh-bogus ' + base64.b64encode(b'x').decode() + '\n', 'ssh-ed25519 not*base64!\n'):
+            self.keys.write_text(bad); r = self.run_tool()
+            self.assertEqual(r.returncode, 2, bad); self.assertIn('SSH baseline not checked', r.stdout)
+
+    def test_a_hostile_file_name_cannot_inject_terminal_codes_or_lines(self):
+        (self.site/'x\x1b[31mred\nPotential indicator: forged line.php').write_text('rank1cdn.com')
+        r = self.run_tool(); self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertNotIn('\x1b', r.stdout)
+        self.assertEqual([ln for ln in r.stdout.splitlines() if ln.startswith('Potential indicator: forged')], [])
+        self.assertEqual(len([ln for ln in r.stdout.splitlines() if ln.startswith('Potential indicator')]), 1)
+
+    def test_a_match_inside_the_chunk_overlap_is_reported_once(self):
+        self.db.write_bytes(b'a' * (65536 - 20) + b'rank1cdn.com' + b'b' * 70000)
+        r = self.run_tool(); self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertEqual(len([ln for ln in r.stdout.splitlines() if ln.startswith('Potential indicator') and 'database export' in ln]), 1)
+
+    def test_the_overlap_covers_the_longest_permitted_literal(self):
+        literal = 'L' * 128
+        def change(d):
+            d['checks'] = [{'id': 'long_literal', 'targets': ['database'], 'literals': [literal], 'label': 'synthetic long literal', 'source': d['window']['source']}]
+        self.db.write_bytes(b'x' * (65536 - 127) + literal.encode() + b'y' * 70000)       # 127 bytes of the literal in the first chunk, 1 in the next: needs the full 127-byte overlap
+        r = self.run_tool(self.args + self.rules_file(change)); self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn('synthetic long literal', r.stdout)
+
+    def test_special_files_deep_trees_and_symlinks_are_named_in_the_report(self):
+        os.mkfifo(self.site/'pipe'); (self.site/'link.php').symlink_to(self.db)
+        path = self.site
+        for _ in range(40): path = path/'d'; path.mkdir()
+        r = self.run_tool(); self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        for line in ('Not checked: special file skipped', 'Not checked: symlink skipped', 'Not checked: directory depth limit'):
+            self.assertIn(line, r.stdout)
+
 if __name__=='__main__':unittest.main(verbosity=2)
