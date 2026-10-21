@@ -23,6 +23,11 @@ Each script re-executes itself under its venv when the library is missing. Overr
 `FETCH_VENV` and `BROWSE_VENV`. Keep `fetch` and `browse` in the same directory: `browse` loads `fetch`'s address
 filter from beside itself, so the rules have one home.
 
+Certificate trust differs by runtime. `fetch` runs on Python and `browse` on a bundled Chromium,
+and each may carry its own root list apart from the operating system's. After a certificate authority
+incident, test each one at the consuming end: see
+[hsi-operator's lesson on trust stores](https://github.com/rivendale/hsi-operator/blob/main/docs/lessons-2026-10-21.md#a-host-has-many-trust-stores-test-each-one-at-the-consuming-end).
+
 ## Use
 
 ```sh
