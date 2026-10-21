@@ -22,6 +22,13 @@ class BatchTests(unittest.TestCase):
   self.assertTrue(all(json.loads(line)['run_id']=='batch-A' for line in (output/'events.jsonl').read_text().splitlines()))
   self.assertEqual(set(json.loads((output/'records.json').read_text())[0]),{'image','repeat','name','features'})
   self.assertEqual(len(json.loads((output/'plan-records.json').read_text())[0]),6)
+ def test_recorded_model_must_match_registered_list(self):
+  _,output,_=self.batch();path=output/'receipt.json';receipt=json.loads(path.read_text())
+  self.assertEqual(receipt['model'],'claude-opus-5-5')
+  self.assertEqual(receipt['rates']['input_per_million'],'4')
+  self.assertEqual(receipt['rates']['output_per_million'],'20')
+  receipt['model']='different-model';path.write_text(json.dumps(receipt))
+  with self.assertRaises(ValueError):m.verify_receipt(output)
  def test_copied_in_file_refused_by_receipt_hash(self):
   _,output,_=self.batch('late-schema');_,other,_=self.batch(name='batch-B')
   (output/'records.json').write_bytes((other/'records.json').read_bytes())

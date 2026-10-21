@@ -11,7 +11,7 @@ class CollectTests(unittest.TestCase):
   calls=[];marker=b'SYNTHETIC-CALIBRATION-MARKER'
   relay=object.__new__(proxy.Relay);relay.model=m.SETTINGS['model'];relay.routes={(m.SETTINGS['host'],m.SETTINGS['path']):'model'};relay.keys={m.SETTINGS['host']:marker};relay.calls=0;relay.turn_limit=116;relay.context=None;relay.lock=threading.Lock();relay.log=[];relay.incident=False;relay.limit_hit=False
   class Response:
-   status=200
+   status=400 if mode in ('reject-temperature','reject-seed') else 200
    def read(self,_):
     req=calls[-1];first=req['max_tokens']==128;n=6 if len(calls)<=84 else 5
     text=json.dumps({'name':'a synthetic geometric shape'} if first else {'features':[False]*n})
@@ -27,7 +27,7 @@ class CollectTests(unittest.TestCase):
     if mode=='usage-bool':usage.update(prompt_tokens=True,total_tokens=3)
     if mode=='usage-cache':usage['prompt_tokens_details']={'cached_tokens':1}
     if mode=='model':model='different-model'
-    if mode=='cost':usage={'prompt_tokens':400000,'completion_tokens':2,'total_tokens':400002}
+    if mode=='cost':usage={'prompt_tokens':300000,'completion_tokens':2,'total_tokens':300002}
     data=json.dumps({'model':model,'choices':[{'finish_reason':'stop','message':{'role':'assistant','content':text,**({'refusal':'synthetic refusal'} if mode=='refusal' else {})}}],'usage':usage}).encode()
     if mode=='decoded-key':data=data.replace(marker,b''.join(('\\u%04x'%c).encode() for c in marker))
     return data
@@ -49,7 +49,7 @@ class CollectTests(unittest.TestCase):
   return result,calls
  def test_full_batch_116_requests_in_order(self):
   r,calls=self.collect();self.assertEqual(r['status'],'collected');self.assertEqual(len(calls),116);self.assertEqual(r['pairs_completed'],58);self.assertEqual(len(r['records']),42);self.assertEqual(len(r['plan_records']),16);self.assertEqual([c['max_tokens'] for c in calls],[128,256]*58)
-  self.assertTrue(all(e['scale']==16 for e in r['events'] if e['kind'].endswith('-request')));self.assertEqual(r['spend_usd'],'0.00696')
+  self.assertTrue(all(e['scale']==16 for e in r['events'] if e['kind'].endswith('-request')));self.assertEqual(r['spend_usd'],'0.00928')
  def test_full_batch_persisted_and_consumed_from_disk(self):
   result,_=self.collect()
   with tempfile.TemporaryDirectory() as directory:
@@ -84,7 +84,7 @@ class CollectTests(unittest.TestCase):
     consumed=m.consume_written(self.relay,result,stage,output,output/'records.json')
    self.assertEqual(consumed['status'],'partial');self.assertIsNone(consumed['score_exit'])
  def test_bad_reply_http_usage_model_cost_stop_without_retry(self):
-  for mode in ['bad-json','http','usage','usage-total','usage-negative','usage-bool','usage-cache','model','cost','refusal','empty','schema']:
+  for mode in ['reject-temperature','reject-seed','bad-json','http','usage','usage-total','usage-negative','usage-bool','usage-cache','model','cost','refusal','empty','schema']:
    with self.subTest(mode=mode):
     r,calls=self.collect(mode);self.assertEqual(r['status'],'partial');self.assertEqual(len(calls),1);self.assertEqual(r['pairs_completed'],0)
     if mode.startswith('usage') or mode in ('http','model'):self.assertTrue(r['usage_unverified'])
