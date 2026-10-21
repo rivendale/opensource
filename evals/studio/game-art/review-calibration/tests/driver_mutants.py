@@ -4,6 +4,8 @@ import json,shutil,subprocess,sys,tempfile
 from pathlib import Path
 HERE=Path(__file__).resolve().parents[1];ROOT=HERE.parents[3]
 MUTANTS=[
+ ('recorded-model','driver.py',"if receipt.get('model')!=SETTINGS['model']:","if False:",'test_driver_batch.py'),
+ ('list-model','driver.py',"if model is None or model[1]!=SETTINGS['model']:","if False:",'test_driver_plan.py'),
  ('recorded-scale','driver.py',"if event.get('scale')!=SETTINGS['scale'] or type(event.get('scale')) is not int:","if False:",'test_driver_scale.py'),
  ('settings','driver.py',"if settings!=SETTINGS or any(type(settings[k]) is not type(v) for k,v in SETTINGS.items()):","if False:",'test_driver_plan.py'),
  ('prompt-filename','@reviewer',"Name what you see","images/e62f4a63.png Name what you see",'test_driver_collect.py'),
@@ -12,7 +14,7 @@ MUTANTS=[
  ('invented-record','driver.py',"name=name['name'],features=features['features']","name='invented',features=features['features']",'test_driver_plan.py'),
  ('incident-suppression','driver.py'," if status=='incident':events=[];records=[];plans=[]"," if False:events=[];records=[];plans=[]",'test_driver_collect.py'),
  ('decoded-key-scan','driver.py',"if relay.output_has_key(json.dumps(event,ensure_ascii=True).encode()):","if False:",'test_driver_collect.py'),
- ('wrong-rate','driver.py',"Decimal(prompt)*3+Decimal(completion)*15","Decimal(prompt)*0+Decimal(completion)*15",'test_driver_collect.py'),
+ ('wrong-rate','driver.py',"Decimal(prompt)*Decimal(str(rates[0]))+Decimal(completion)*Decimal(str(rates[4]))","Decimal(prompt)*0+Decimal(completion)*Decimal(str(rates[4]))",'test_driver_collect.py'),
  ('mixed-batch-events','driver.py',"if [e.get('kind') for e in group]!=list(EVENT_KINDS) or any(e.get('pair')!=pair['pair'] for e in group):","if False:",'test_driver_plan.py'),
  ('output-scan','driver.py',"if relay.output_has_key(body):","if False:",'test_driver_persist.py'),
  ('existing-output','driver.py',"output.mkdir(mode=0o700,exist_ok=False)","output.mkdir(mode=0o700,exist_ok=True)",'test_driver_persist.py'),

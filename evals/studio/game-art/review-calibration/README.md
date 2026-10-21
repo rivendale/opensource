@@ -66,12 +66,16 @@ other subjects or larger art, or independence from the writer (the reviewer uses
 
 ## Committed batch driver
 
-[driver.py](driver.py) implements the fixed 58-pair, 116-request [16x run list](RUN-LIST-16x.md).
-The registration and [T38 failure list](16X-FAILURES.md) precede implementation. Calibration selects
+[driver.py](driver.py) implements the fixed 58-pair, 116-request [Opus 5.5 run list](RUN-LIST-opus55.md).
+The registration and [model-change failure list](OPUS55-FAILURES.md) precede implementation.
+Only the reviewer model changes from the prior [16x batch](RUN-LIST-16x.md); its questions,
+pairs and floors remain fixed. Accounting uses the model's existing `cache_api.RATES` entry. Calibration selects
 the fixed `ViewPolicy.CALIBRATION` policy (16x, bounded by 512 pixels); ordinary runner and supervisor
 reviews retain `ViewPolicy.RUNNER` (8x). There is no numeric scale argument or CLI override.
-Model, prompt text, temperature zero, seed zero, caching OFF, question order and all floors stay fixed.
-Current receipts and request records must agree with the pinned 16x list; even hash-consistent wrong-scale
+Opus 5.5, prompt text, temperature zero, seed zero, caching OFF, question order and all floors are pinned.
+If the provider rejects a fixed setting, including temperature or seed, the batch stops without
+a retry or dropping the setting. Model/endpoint compatibility has not been tested with a live call.
+Current receipts and request records must agree with the pinned Opus 5.5 list and model; even hash-consistent wrong-scale
 artifacts refuse. Verify historical batches using their recorded driver revision.
 The [specification](DRIVER-SPEC.md) and [failure list](DRIVER-FAILURES.md) define its stops.
 Offline planning needs no credential or network:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fixed 8x calibration batch using the trusted runner reviewer and intake."""
+"""Fixed 16x Opus 5.5 calibration batch using the trusted runner reviewer and intake."""
 import argparse,copy,hashlib,json,re,sys,subprocess,tempfile
 from datetime import datetime,timezone
 from decimal import Decimal
@@ -22,10 +22,15 @@ if __name__=='__main__' and '--run' in sys.argv:
   print(json.dumps({'status':'partial','reason':type(error).__name__}));sys.exit(2)
 sys.path.insert(0,str(ROOT/'skills/studio/runner'))
 import reviewer
+import cache_api
 from proxy import Relay
 from common import read_key_fds
-SETTINGS={'model':'claude-sonnet-4-5-20250929','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':0,'seed':0,'prompt_cache':False,'scale':16,'requests':116,'hard_stop_usd':'1.00'}
-INPUT_SHA256={'answers.json': '4d4c488142564e85821f1414fde7d8bf67b3c3b5487fe0bb6acf66e2460c349a', 'RUN-LIST-16x.md': '62eab11b9df546f0cbf23090bb2c5ccc58271487c7d0411185517cfac1a71d40', 'images/244e9266.png': 'd738a0e7b2ebf8d65ce9b66484f3e236e65fb5c40090886a87b1b80589df20b2', 'images/2fd20bc9.png': 'fec3972c1bc662df2899672ff7fe6ebb58b38b9fb702767de2d4b74ec132d085', 'images/31834029.png': 'ec9ea3b8ef2288ff6c7ee19385e7a1146a73cbef03093af51008ffbcd646babd', 'images/5f70bf18.png': '50b068e07b4bf235705c19b77da49fdbbc7e98ddc0a46f1c6659cca98c963904', 'images/67c058dd.png': 'ecd7cf086f19da6079e24c0f0d8b3b9e017c7a82a4b306354ffc0dca3629bd4f', 'images/729152ee.png': '7d41bc62e328839cd2515040b647c983207aa67f9f5af6dec2a54315700b6551', 'images/87c4c0d8.png': 'b313a54b35964c976f62f8bc61da1d92aefa7217fc8ceeca8543f1a174ef88c7', 'images/955cb439.png': '5db57fc6e55561c5255fe07c0f9391d44a6fa72dba59878ccf966da671598242', 'images/a397f5be.png': '20c0f073ff99756789b51710d47b3d975dd06c099031e4c92e1af9af977ab1b4', 'images/b288076c.png': '2ebff1de8c8c40b4f4bc35741a0127e7adff3f6adb9e350ecaf278d3e43b2764', 'images/b5f7cab6.png': 'e160c5638526fa94b828f14b42f95daead27c30e5b3cbbc226a348794d2d2d94', 'images/bd99ccf4.png': '320c656f26ea17b94c5dee87f07d75040020e2e954ac863c2154feaa551bc70a', 'images/e62f4a63.png': '5c50ae700a920d0ee0ba3b2f08721f1cb5a3e1ca05413a76980d262039d1abfb', 'images/f87d4fa3.png': '33d223eef6729fd155afc852ffafaf302f0aa843d9b2d47a5964b3d644bf5b72', '../review-plans/leg-1-coin-pickup.json': '444efd1a8f1c7905c037c36ecb3d2e6602333b6a4f72cd6206bebc90aa9b0fb8', '../review-plans/leg-1-key-pickup.json': 'f52fc08da11bfd3244f79ac7ea512f44c0dde1802a81b795d76bbe7adae5c434', '../review-plans/leg-1-potion-pickup.json': '2aa8d2381cd18fe13ff054e955512fe4efd675592677502497a4f6d83b134222'}
+SETTINGS={'model':'claude-opus-5-5','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':0,'seed':0,'prompt_cache':False,'scale':16,'requests':116,'hard_stop_usd':'1.00'}
+INPUT_SHA256={'answers.json': '4d4c488142564e85821f1414fde7d8bf67b3c3b5487fe0bb6acf66e2460c349a', 'RUN-LIST-opus55.md': '0c926857d07ab60933d0d2cb7f4324a7a2b1be76711f149700b7e95a3fb8c0c6', 'images/244e9266.png': 'd738a0e7b2ebf8d65ce9b66484f3e236e65fb5c40090886a87b1b80589df20b2', 'images/2fd20bc9.png': 'fec3972c1bc662df2899672ff7fe6ebb58b38b9fb702767de2d4b74ec132d085', 'images/31834029.png': 'ec9ea3b8ef2288ff6c7ee19385e7a1146a73cbef03093af51008ffbcd646babd', 'images/5f70bf18.png': '50b068e07b4bf235705c19b77da49fdbbc7e98ddc0a46f1c6659cca98c963904', 'images/67c058dd.png': 'ecd7cf086f19da6079e24c0f0d8b3b9e017c7a82a4b306354ffc0dca3629bd4f', 'images/729152ee.png': '7d41bc62e328839cd2515040b647c983207aa67f9f5af6dec2a54315700b6551', 'images/87c4c0d8.png': 'b313a54b35964c976f62f8bc61da1d92aefa7217fc8ceeca8543f1a174ef88c7', 'images/955cb439.png': '5db57fc6e55561c5255fe07c0f9391d44a6fa72dba59878ccf966da671598242', 'images/a397f5be.png': '20c0f073ff99756789b51710d47b3d975dd06c099031e4c92e1af9af977ab1b4', 'images/b288076c.png': '2ebff1de8c8c40b4f4bc35741a0127e7adff3f6adb9e350ecaf278d3e43b2764', 'images/b5f7cab6.png': 'e160c5638526fa94b828f14b42f95daead27c30e5b3cbbc226a348794d2d2d94', 'images/bd99ccf4.png': '320c656f26ea17b94c5dee87f07d75040020e2e954ac863c2154feaa551bc70a', 'images/e62f4a63.png': '5c50ae700a920d0ee0ba3b2f08721f1cb5a3e1ca05413a76980d262039d1abfb', 'images/f87d4fa3.png': '33d223eef6729fd155afc852ffafaf302f0aa843d9b2d47a5964b3d644bf5b72', '../review-plans/leg-1-coin-pickup.json': '444efd1a8f1c7905c037c36ecb3d2e6602333b6a4f72cd6206bebc90aa9b0fb8', '../review-plans/leg-1-key-pickup.json': 'f52fc08da11bfd3244f79ac7ea512f44c0dde1802a81b795d76bbe7adae5c434', '../review-plans/leg-1-potion-pickup.json': '2aa8d2381cd18fe13ff054e955512fe4efd675592677502497a4f6d83b134222'}
+def estimate_spend(prompt,completion):
+ rates=cache_api.RATES[SETTINGS['model']]
+ return (Decimal(prompt)*Decimal(str(rates[0]))+Decimal(completion)*Decimal(str(rates[4])))/1000000
+
 def validate_settings(settings):
  if settings!=SETTINGS or any(type(settings[k]) is not type(v) for k,v in SETTINGS.items()):raise ValueError('fixed calibration settings differ')
 def build_plan(here=HERE):
@@ -39,7 +44,9 @@ def build_plan(here=HERE):
   for image in images:
    item={'file':image['file'],'subject_words':list(key['words']),'features':copy.deepcopy(questions)}
    reviewer.validate_plan([item]);pairs.append(dict(pair=len(pairs),image=image['file'],repeat=repeat,plan=None,item=item))
- text=(here/'RUN-LIST-16x.md').read_text()
+ text=(here/'RUN-LIST-opus55.md').read_text()
+ model=re.search(r'^\| reviewer model \| `([^`]+)`',text,re.M)
+ if model is None or model[1]!=SETTINGS['model']:raise ValueError('reviewer model differs from run list')
  for match in re.finditer(r'^\| (\d+) \| `([^`]+\.json)` \| `([^`]+\.png)`',text,re.M):
   number=int(match[1]);plan=match[2];image=match[3]
   if number!=len(pairs) or number<42:raise ValueError('plan pair order differs')
@@ -91,7 +98,7 @@ def collect_pairs(relay,settings=None,here=HERE):
     events.append(event)
     if kind.endswith('-usage'):
      if (set(usage)!={'prompt_tokens','completion_tokens','total_tokens'} or any(type(v) is not int or v<0 for v in usage.values()) or usage['total_tokens']!=usage['prompt_tokens']+usage['completion_tokens']):raise ValueError('inconsistent recorded usage')
-     prompt+=usage['prompt_tokens'];completion+=usage['completion_tokens'];spend=(Decimal(prompt)*3+Decimal(completion)*15)/1000000
+     prompt+=usage['prompt_tokens'];completion+=usage['completion_tokens'];spend=estimate_spend(prompt,completion)
      if spend>=Decimal(settings['hard_stop_usd']):raise ValueError('hard spend stop reached')
    def transport(messages,max_tokens):
     nonlocal requests,usage_unverified
@@ -119,7 +126,7 @@ def collect_pairs(relay,settings=None,here=HERE):
   records=[];plans=[];status='partial';reason='RecordMismatch'
  if status=='collected' and (requests!=116 or completed!=58):status='partial';reason='CountMismatch'
  if status=='incident':events=[];records=[];plans=[]
- return dict(status=status,reason=reason,requests_used=requests,pairs_completed=completed,records=records,plan_records=plans,events=events,prompt_tokens=prompt,completion_tokens=completion,spend_usd=str(spend),rates_date='2026-10-16',rates_source='https://platform.claude.com/docs/en/about-claude/pricing',usage_unverified=usage_unverified,spend_is_estimate=True,review_gate=False)
+ return dict(status=status,reason=reason,requests_used=requests,pairs_completed=completed,records=records,plan_records=plans,events=events,prompt_tokens=prompt,completion_tokens=completion,spend_usd=str(spend),rates_date=cache_api.RATES_DATE,rates_source=cache_api.RATES_SOURCE,usage_unverified=usage_unverified,spend_is_estimate=True,review_gate=False)
 
 def validate_run_id(run_id):
  if not isinstance(run_id,str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}',run_id):raise ValueError('invalid run id')
@@ -244,6 +251,7 @@ def verify_receipt(output):
  if output.is_symlink() or not output.is_dir() or (output/'receipt.json').is_symlink():raise ValueError('unsafe batch directory')
  receipt=json.loads((output/'receipt.json').read_bytes());validate_run_id(receipt['run_id'])
  validate_settings(receipt['settings'])
+ if receipt.get('model')!=SETTINGS['model']:raise ValueError('recorded model differs from run list')
  if receipt['run_id']!=output.name:raise ValueError('receipt directory identity differs')
  if receipt.get('status') not in ('partial','incident','complete') or receipt.get('review_gate') is not False:raise ValueError('invalid receipt status or gate')
  hashes=receipt['sha256']
@@ -290,7 +298,7 @@ def finish_receipt(relay,result,stage,consumed,output,source_commit):
   usage=[e['usage'] for e in events if e['kind'].endswith('-usage')]
   if len(usage)!=116 or any(set(u)!={'prompt_tokens','completion_tokens','total_tokens'} or any(type(v) is not int or v<0 for v in u.values()) or u['total_tokens']!=u['prompt_tokens']+u['completion_tokens'] for u in usage):raise ValueError('receipt usage differs')
   prompt=sum(u['prompt_tokens'] for u in usage);completion=sum(u['completion_tokens'] for u in usage)
-  if prompt!=result['prompt_tokens'] or completion!=result['completion_tokens'] or Decimal(result['spend_usd'])!=(Decimal(prompt)*3+Decimal(completion)*15)/1000000 or result['usage_unverified']:raise ValueError('receipt accounting differs')
+  if prompt!=result['prompt_tokens'] or completion!=result['completion_tokens'] or Decimal(result['spend_usd'])!=estimate_spend(prompt,completion) or result['usage_unverified']:raise ValueError('receipt accounting differs')
  if relay.incident:
   status='incident'
   for name in ARTIFACT_NAMES:(output/name).unlink(missing_ok=True)
@@ -300,7 +308,7 @@ def finish_receipt(relay,result,stage,consumed,output,source_commit):
   model=SETTINGS['model'],settings=copy.deepcopy(SETTINGS),status=status,requests_used=result['requests_used'],pairs_completed=result['pairs_completed'],
   record_counts=dict(records=0 if status=='incident' else len(result['records']),plan_records=0 if status=='incident' else len(result['plan_records'])),
   prompt_tokens=result['prompt_tokens'],completion_tokens=result['completion_tokens'],spend_usd=result['spend_usd'],
-  rates=dict(date=result['rates_date'],source=result['rates_source'],input_per_million='3',output_per_million='15'),
+  rates=dict(date=result['rates_date'],source=result['rates_source'],input_per_million=str(cache_api.RATES[SETTINGS['model']][0]),output_per_million=str(cache_api.RATES[SETTINGS['model']][4])),
   usage_unverified=result['usage_unverified'],spend_is_estimate=result['spend_is_estimate'],key_scan='incident' if status=='incident' else 'passed',review_gate=False,
   score_exit=consumed.get('score_exit'),compare_exit=consumed.get('compare_exit'),sha256=hashes)
  body=(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n').encode()
