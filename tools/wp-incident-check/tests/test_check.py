@@ -235,7 +235,7 @@ class Gaps(unittest.TestCase):
         literal = 'L' * 128
         def change(d):
             d['checks'] = [{'id': 'long_literal', 'targets': ['database'], 'literals': [literal], 'label': 'synthetic long literal', 'source': d['window']['source']}]
-        self.db.write_bytes(b'x' * (65536 - 100) + literal.encode() + b'y' * 70000)       # 100 bytes in the first chunk, 28 in the next
+        self.db.write_bytes(b'x' * (65536 - 127) + literal.encode() + b'y' * 70000)       # 127 bytes of the literal in the first chunk, 1 in the next: needs the full 127-byte overlap
         r = self.run_tool(self.args + self.rules_file(change)); self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
         self.assertIn('synthetic long literal', r.stdout)
 
