@@ -74,6 +74,7 @@ output whole (`score.py records.json`) with its exit code. The scale and dimensi
 
 ## Pre-registered reading
 
+- **Stops before any pair completes:** a rejected setting or model-ID mismatch means "could not run", not a floor failure. It does not move the next change to the questions. For a rejected sampling setting, the fallback requires a separately approved, newly registered batch changing only that rejected setting and accepting the loss of determinism. This batch still stops without retry or fallback.
 - **All floors pass:** record "Opus 5.5 at 16x passes calibration"; the review stays a column, never a gate, until the operator decides otherwise.
 - **Some floors still fail:** the next change is the questions, in their own registered batch of this size. The reviewer model, 16x views and every floor stay fixed. No further model or enlargement change is bundled into that batch.
 - **Nothing is called a pass on the number of improved images.** Improvement against the first batch is reported by `compare_batches.py`; the floors are the only threshold.
