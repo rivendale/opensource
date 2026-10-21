@@ -66,16 +66,18 @@ other subjects or larger art, or independence from the writer (the reviewer uses
 
 ## Committed batch driver
 
-[driver.py](driver.py) implements the fixed 58-pair, 116-request [Opus 5.5 run list](RUN-LIST-opus55.md).
-The registration and [model-change failure list](OPUS55-FAILURES.md) precede implementation.
-Only the reviewer model changes from the prior [16x batch](RUN-LIST-16x.md); its questions,
-pairs and floors remain fixed. Accounting uses the model's existing `cache_api.RATES` entry. Calibration selects
+[driver.py](driver.py) implements the fixed 58-pair, 116-request [no-temperature Opus 5.5 run list](RUN-LIST-opus55-notemp.md).
+The registration and [fallback/preflight failure list](NOTEMP-FAILURES.md) precede implementation.
+Only temperature is omitted from the prior [Opus 5.5 registration](RUN-LIST-opus55.md);
+seed zero, questions, pairs and floors remain fixed. Determinism is not assumed; the same
+three repeats per image measure variability. Accounting uses the model's existing `cache_api.RATES` entry. Calibration selects
 the fixed `ViewPolicy.CALIBRATION` policy (16x, bounded by 512 pixels); ordinary runner and supervisor
 reviews retain `ViewPolicy.RUNNER` (8x). There is no numeric scale argument or CLI override.
-Opus 5.5, prompt text, temperature zero, seed zero, caching OFF, question order and all floors are pinned.
+Opus 5.5, prompt text, temperature omitted, seed zero, caching OFF, question order and all floors are pinned.
+The receipt represents omitted temperature as null; the actual HTTP payload has no temperature key.
 If the provider rejects a fixed setting, including temperature or seed, the batch stops without
 a retry or dropping the setting. Model/endpoint compatibility has not been tested with a live call.
-Current receipts and request records must agree with the pinned Opus 5.5 list and model; even hash-consistent wrong-scale
+Current receipts and request records must agree with the pinned no-temperature Opus 5.5 list and model; even hash-consistent wrong-scale
 artifacts refuse. Verify historical batches using their recorded driver revision.
 The [specification](DRIVER-SPEC.md) and [failure list](DRIVER-FAILURES.md) define its stops.
 Offline planning needs no credential or network:
@@ -90,9 +92,31 @@ share `common.read_key_fds`. Key values never belong in arguments. The following
 interface only; FD 3 must already be inherited through the operator's approved credential lane:
 
 ```sh
-python3 driver.py --run --output runs/calibration-20261016 --baseline previous/records.json --key-fds '{"api.anthropic.com":3}'
-python3 driver.py --verify runs/calibration-20261016
+python3 driver.py --preflight --output runs/opus55-notemp-preflight --key-fds '{"api.anthropic.com":3}'
+python3 driver.py --run --preflight-receipt runs/opus55-notemp-preflight/receipt.json --output runs/calibration-20261021 --baseline previous/records.json --key-fds '{"api.anthropic.com":3}'
+python3 driver.py --verify runs/calibration-20261021
 ```
+
+Each command needs a fresh inherited descriptor from the existing approved credential lane.
+The preflight makes exactly one minimal text-only request (maximum 8 output tokens), never
+an image or a calibration pair. It creates a new directory with scanned metadata-only
+`events.jsonl` and `receipt.json`. Success means protocol/settings compatibility, not a
+calibration pass. Token usage and estimated cost use the existing model rate; a minimal
+check is not necessarily free of provider billing. A rejected response without trustworthy
+usage records unknown cost, not zero. No retry or setting fallback occurs.
+
+`--run` refuses before credential intake unless that receipt is compatible, its event hash
+matches, and its model, settings, run-list hash and source commit equal the current batch.
+Changing the source invalidates the preflight and requires a new one. The batch retains
+its 116-request limit; the preflight is one additional request. Its spend counts toward
+the same $1 stop and appears separately and in the combined receipt total. Costs remain
+estimates; the stop can exceed the budget by the one request already in flight.
+
+Provider stops retain HTTP status and bounded error-object type/message (128/1024 characters)
+in the batch events and receipt. Non-JSON/missing/oversized error objects get a fixed
+diagnostic, never a raw body dump. Raw and decoded fields are key-scanned; an incident
+redacts diagnostics and suppresses batch data artifacts. Arbitrary local exception text,
+headers, request payloads and unrelated provider fields are not added to diagnostics.
 
 The parent output directory must exist; the run-id directory must be new. Execution requires committed,
 unchanged tracked runner/calibration sources, with no untracked importable code in those trees. The source preflight runs before runner imports; untracked bytecode also refuses. There is no resume or overwrite mode. Records retain their
@@ -108,7 +132,7 @@ scan, no receipt is written. Write failures return a partial report and never cl
 
 Run the offline checks in `tests/test_driver_plan.py`, `tests/test_driver_entry.py`,
 `tests/test_driver_persist.py`, `tests/test_driver_collect.py`, `tests/test_driver_batch.py`,
-`tests/test_driver_scale.py`, and `tests/driver_mutants.py`. The rendered suites require the same ImageMagick `convert`
+`tests/test_driver_scale.py`, `tests/test_driver_preflight.py`, and `tests/driver_mutants.py`. The rendered suites require the same ImageMagick `convert`
 used by the reviewer. `tests/test_driver_fixture.py --fixture PATH` checks the operator-held first batch
 without changing its scorer outcome; no path means an explicit `fixture absent` status.
 The small synthetic fixture and checksums are public; raw first-batch outputs remain operator-held.

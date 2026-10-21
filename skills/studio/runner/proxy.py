@@ -27,11 +27,18 @@ def attempted_host(path):
     return host.lower()
 
 
+class ProviderError(ValueError):
+    """Bounded provider error fields; never expose the response through str(error)."""
+    def __init__(self, status, error_type, message):
+        self.provider_error = {'http_status': status, 'type': error_type[:128], 'message': message[:1024]}
+        super().__init__('reviewer model route failed')
+
+
 class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
     daemon_threads = True
     block_on_close = False
 
-    def __init__(self, path, routes, keys, model, turn_limit, ca_file=None, cache_prefix=None):
+    def __init__(self, path, routes, keys, model, turn_limit, ca_file=None, cache_prefix=None, review_temperature=0):
         self.routes = {}
         self.budgets = {}
         for route in routes:
@@ -55,6 +62,9 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
                                                    "max_bytes": route["max_bytes"], "calls": 0, "bytes": 0}
         if set(keys) != {host for host, _ in self.routes}:
             raise ValueError("each routed host needs its own explicit key")
+        if review_temperature is not None and (type(review_temperature) is not int or review_temperature != 0):
+            raise ValueError('reviewer temperature must be zero or explicitly omitted')
+        self.review_temperature = review_temperature
         self.cache_prefix = cache_prefix
         if cache_prefix is not None and [route for route,name in self.routes.items() if name=='model'] != [('api.anthropic.com','/v1/messages')]:
             raise ValueError('prompt cache requires the exact native route')
@@ -83,6 +93,8 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
         host, path = model_routes[0]
         request = {'model': self.model, 'messages': messages, 'stream': False,
                    'temperature': 0, 'seed': 0, 'max_tokens': max_tokens}
+        if getattr(self, 'review_temperature', 0) is None:
+            del request['temperature']
         if getattr(self, 'cache_prefix', None) is not None:
             request = native_request(request, {'system': messages[0]['content']}, max_tokens)
         payload = json.dumps(request, allow_nan=False).encode()
@@ -98,15 +110,32 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             headers = self.model_headers(host)
             connection.request('POST', path, payload, headers)
             response = connection.getresponse()
+            self.last_http_status = response.status
             body = response.read(MAX_BODY + 1)
             if self.output_has_key(body):
                 self.incident = True
                 self.record(host, 'POST', 502, 0)
                 raise ValueError('key incident in reviewer response')
             self.record(host, 'POST', response.status, len(body))
-            if response.status != 200 or len(body) > MAX_BODY:
-                raise ValueError('reviewer model route failed')
-            value = json.loads(body)
+            if len(body) > MAX_BODY:
+                raise ProviderError(response.status, 'BodyLimit', 'Provider response exceeded the relay limit')
+            try:
+                value = json.loads(body)
+            except (ValueError, UnicodeError):
+                if response.status != 200:
+                    raise ProviderError(response.status, 'UnstructuredProviderError', 'Provider returned a non-JSON error body') from None
+                raise
+            has_error = isinstance(value, dict) and isinstance(value.get('error'), dict)
+            if (response.status != 200 or has_error) and self.output_has_key(json.dumps(value, ensure_ascii=False).encode()):
+                self.incident = True
+                raise ValueError('key incident in decoded reviewer response')
+            if response.status != 200 or has_error:
+                error = value.get('error') if isinstance(value, dict) else None
+                error_type = error.get('type') if isinstance(error, dict) else None
+                message = error.get('message') if isinstance(error, dict) else None
+                raise ProviderError(response.status,
+                                    error_type if isinstance(error_type, str) else 'ProviderHTTPError',
+                                    message if isinstance(message, str) else 'Provider error object missing type/message')
             return native_response(value, self.model) if getattr(self, 'cache_prefix', None) is not None else value
         finally:
             connection.close()

@@ -41,6 +41,8 @@ jobs:
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_batch.py
       - name: Fixed calibration policy and recorded-scale refusal
         run: python3 evals/studio/game-art/review-calibration/tests/test_driver_scale.py
+      - name: Compatibility preflight and provider error controls
+        run: python3 evals/studio/game-art/review-calibration/tests/test_driver_preflight.py
       - name: Structural guard mutations
         run: python3 evals/studio/game-art/review-calibration/tests/driver_mutants.py --structural-only
       - name: Rendered component guard mutations
