@@ -66,7 +66,7 @@ other subjects or larger art, or independence from the writer (the reviewer uses
 
 ## Committed batch driver
 
-[driver.py](driver.py) implements the fixed 58-pair, 116-request [no-temperature Opus 5.5 run list](RUN-LIST-opus55-notemp.md).
+[driver.py](driver.py) implements the fixed 58-pair, 116-request [Opus 5.5 answer-room run list](RUN-LIST-opus55-room.md).
 The registration and [fallback/preflight failure list](NOTEMP-FAILURES.md) precede implementation.
 Only temperature is omitted from the prior [Opus 5.5 registration](RUN-LIST-opus55.md);
 seed zero, questions, pairs and floors remain fixed. Determinism is not assumed; the same
@@ -92,25 +92,34 @@ share `common.read_key_fds`. Key values never belong in arguments. The following
 interface only; FD 3 must already be inherited through the operator's approved credential lane:
 
 ```sh
-python3 driver.py --preflight --output runs/opus55-notemp-preflight --key-fds '{"api.anthropic.com":3}'
-python3 driver.py --run --preflight-receipt runs/opus55-notemp-preflight/receipt.json --output runs/calibration-20261021 --baseline previous/records.json --key-fds '{"api.anthropic.com":3}'
+python3 driver.py --preflight --output runs/opus55-room-preflight --key-fds '{"api.anthropic.com":3}'
+python3 driver.py --run --preflight-receipt runs/opus55-room-preflight/receipt.json --output runs/calibration-20261021 --baseline previous/records.json --key-fds '{"api.anthropic.com":3}'
 python3 driver.py --verify runs/calibration-20261021
 ```
 
 Each command needs a fresh inherited descriptor from the existing approved credential lane.
-The preflight makes exactly one minimal text-only request (maximum 8 output tokens), never
-an image or a calibration pair. It creates a new directory with scanned metadata-only
-`events.jsonl` and `receipt.json`. Success means protocol/settings compatibility, not a
-calibration pass. Token usage and estimated cost use the existing model rate; a minimal
-check is not necessarily free of provider billing. A rejected response without trustworthy
-usage records unknown cost, not zero. No retry or setting fallback occurs.
+The preflight makes exactly one real pair: blind-name then features for the first
+registered image, using the strict reviewer, the same conversation and 16x views.
+Both requests use max_tokens 1,024 through this registered Opus relay; ordinary
+reviewers keep their existing 256-token bound. A rejected, incomplete, refused or
+unparseable answer stops without retry. Scanned events preserve the view hashes,
+responses and usage. The receipt records both provider response ids and UTC creation
+time. Success means this pair was protocol-compatible, not a calibration pass.
 
-`--run` refuses before credential intake unless that receipt is compatible, its event hash
-matches, and its model, settings, run-list hash and source commit equal the current batch.
-Changing the source invalidates the preflight and requires a new one. The batch retains
-its 116-request limit; the preflight is one additional request. Its spend counts toward
-the same $1 stop and appears separately and in the combined receipt total. Costs remain
-estimates; the stop can exceed the budget by the one request already in flight.
+`--run` refuses before credential intake unless the receipt is compatible, at most
+24 hours old (no future date), its event hash matches, and its model, settings,
+run-list hash and source commit equal the current batch. Changing the source requires
+a new preflight. A prior text-only receipt cannot authorize this registration.
+The receipt's pair records, image identity, 16x metadata and summed usage are checked.
+Completed batch artifacts remain verifiable after their preflight ages beyond 24
+hours; age limits authorization of a new batch, not archival verification.
+
+The batch retains its 116-request limit; preflight adds two requests. Its spend
+counts toward the same $5 stop and appears separately and in the combined receipt.
+Costs remain estimates; the stop can exceed the budget by the one request already
+in flight. Rejected responses with unknown usage set `usage_unverified`; any reported
+spend is then only the known lower bound, or null when none is known. No unknown
+cost becomes zero. Partial work is "could not finish", never a floor result.
 
 Provider stops retain HTTP status and bounded error-object type/message (128/1024 characters)
 in the batch events and receipt. Non-JSON/missing/oversized error objects get a fixed

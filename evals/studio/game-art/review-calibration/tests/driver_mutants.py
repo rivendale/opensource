@@ -4,6 +4,11 @@ import json,shutil,subprocess,sys,tempfile
 from pathlib import Path
 HERE=Path(__file__).resolve().parents[1];ROOT=HERE.parents[3]
 MUTANTS=[
+ ('preflight-age','driver.py','require_fresh and age>86400','False','test_driver_preflight.py'),
+ ('preflight-response-id','driver.py','len(set(ids))!=2','False','test_driver_preflight.py'),
+ ('preflight-image','driver.py',"len(messages)<2 or messages[1]!=expected","len(messages)<2",'test_driver_preflight.py'),
+ ('calibration-answer-cap','driver.py',"result=relay.review_request(messages,settings['review_max_tokens'])","result=relay.review_request(messages,max_tokens)",'test_driver_collect.py'),
+ ('ordinary-answer-cap','@proxy',"getattr(self, 'review_max_tokens', 256)","1024",'test_driver_preflight.py'),
  ('preflight-cost-budget','driver.py',"preflight_cost=Decimal(preflight_cost)","preflight_cost=Decimal('0')",'test_driver_preflight.py'),
  ('preflight-gate','driver.py',"  validate_preflight(preflight,source_commit)\n","",'test_driver_preflight.py'),
  ('preflight-identity','driver.py',"report['source_commit']!=source_commit","False",'test_driver_preflight.py'),

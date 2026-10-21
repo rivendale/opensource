@@ -22,15 +22,15 @@ class PlanTests(unittest.TestCase):
   data['events'][0]['pair']=1
   with self.assertRaises(ValueError):m.derive_records(data['events'],[data['pair']])
  def test_registered_opus_model_and_fixed_other_settings(self):
-  self.assertEqual(m.SETTINGS,{'model':'claude-opus-5-5','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':None,'seed':0,'prompt_cache':False,'scale':16,'requests':116,'hard_stop_usd':'1.00'})
-  self.assertIn('RUN-LIST-opus55-notemp.md',m.INPUT_SHA256)
+  self.assertEqual(m.SETTINGS,{'model':'claude-opus-5-5','host':'api.anthropic.com','path':'/v1/chat/completions','temperature':None,'seed':0,'prompt_cache':False,'scale':16,'requests':116,'hard_stop_usd':'5.00','review_max_tokens':1024})
+  self.assertIn('RUN-LIST-opus55-room.md',m.INPUT_SHA256)
  def test_hash_consistent_list_with_another_model_is_refused(self):
   with tempfile.TemporaryDirectory() as directory:
    target=Path(directory)/'calibration';shutil.copytree(HERE,target)
    shutil.copytree(HERE.parent/'review-plans',target.parent/'review-plans')
-   path=target/'RUN-LIST-opus55-notemp.md'
+   path=target/'RUN-LIST-opus55-room.md'
    path.write_text(path.read_text().replace('| reviewer model | `claude-opus-5-5`','| reviewer model | `different-model`'))
-   hashes=dict(m.INPUT_SHA256,**{'RUN-LIST-opus55-notemp.md':hashlib.sha256(path.read_bytes()).hexdigest()})
+   hashes=dict(m.INPUT_SHA256,**{'RUN-LIST-opus55-room.md':hashlib.sha256(path.read_bytes()).hexdigest()})
    with patch.object(m,'INPUT_SHA256',hashes):
     with self.assertRaises(ValueError):m.build_plan(target)
  def test_unknown_setting_refused(self):

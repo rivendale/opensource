@@ -38,7 +38,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
     daemon_threads = True
     block_on_close = False
 
-    def __init__(self, path, routes, keys, model, turn_limit, ca_file=None, cache_prefix=None, review_temperature=0):
+    def __init__(self, path, routes, keys, model, turn_limit, ca_file=None, cache_prefix=None, review_temperature=0, review_max_tokens=256):
         self.routes = {}
         self.budgets = {}
         for route in routes:
@@ -64,6 +64,13 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
             raise ValueError("each routed host needs its own explicit key")
         if review_temperature is not None and (type(review_temperature) is not int or review_temperature != 0):
             raise ValueError('reviewer temperature must be zero or explicitly omitted')
+        if type(review_max_tokens) is not int or review_max_tokens not in (256, 1024):
+            raise ValueError('invalid reviewer token cap')
+        if review_max_tokens == 1024 and (model != 'claude-opus-5-5' or
+                self.routes != {('api.anthropic.com','/v1/chat/completions'): 'model'} or
+                cache_prefix is not None or review_temperature is not None):
+            raise ValueError('extended reviewer cap requires the registered Opus relay')
+        self.review_max_tokens = review_max_tokens
         self.review_temperature = review_temperature
         self.cache_prefix = cache_prefix
         if cache_prefix is not None and [route for route,name in self.routes.items() if name=='model'] != [('api.anthropic.com','/v1/messages')]:
@@ -88,7 +95,7 @@ class Relay(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
     def review_request(self, messages, max_tokens, timeout=60):
         """Host-owned tool-free reviewer request; unreachable from HTTP callers."""
         model_routes = [route for route, name in self.routes.items() if name == 'model']
-        if len(model_routes) != 1 or type(max_tokens) is not int or not 1 <= max_tokens <= 256:
+        if len(model_routes) != 1 or type(max_tokens) is not int or not 1 <= max_tokens <= getattr(self, 'review_max_tokens', 256):
             raise ValueError('invalid trusted reviewer transport')
         host, path = model_routes[0]
         request = {'model': self.model, 'messages': messages, 'stream': False,
