@@ -10,3 +10,5 @@
 
 Prove a broken fixture and a broken link separately on this branch before restoring both.
 The final tree must retain the existing independent fixtures byte-for-byte.
+
+[Intentional broken-link denial probe](ci-intentionally-missing.md)

@@ -19,7 +19,7 @@
   "json": [
    {
     "path": "status",
-    "equals": "intentional-ci-denial-probe"
+    "equals": "done"
    },
    {
     "path": "schemaVersion",
