@@ -2,7 +2,7 @@
  "id": "11i-gitlab-has-no-license-identifier",
  "spec_item": 9,
  "tag": "spec",
- "title": "GitLab never gives a license identifier here: class 'none' and a NO LICENSE finding",
+ "title": "GitLab never gives a license identifier here: class 'check first' and a NO LICENSE finding",
  "tool": "glean-resolve",
  "servers": {
   "A": {
@@ -37,7 +37,7 @@
   "json": [
    {
     "path": "license.classification",
-    "equals": "none"
+    "equals": "check first"
    }
   ],
   "finding_includes": [

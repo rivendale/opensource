@@ -5,7 +5,7 @@
  "title": "a full DOI is its own pinned identity",
  "tool": "glean-check",
  "files": {
-  "cards.jsonl": "{\"id\": \"c1\", \"idea\": \"stream the file in chunks instead of reading it whole\", \"where\": {\"doi_or_arxiv\": \"doi:10.1000/xyz123\", \"section\": \"Eq. 4\"}, \"solves\": \"memory use on large inputs\", \"decision\": \"take\", \"reason\": \"\", \"target\": \"Ship the docs site\", \"done_when\": \"the site answers 200 at the production URL\", \"license\": {\"spdx\": null, \"evidence_url\": null, \"classification\": \"none\"}, \"adds\": [], \"credit\": {\"author\": \"Jane Roe\", \"author_url\": \"https://example.test/jane\", \"source_url\": \"https://example.test/o/r\", \"text\": \"adapted from Jane Roe's parser design\"}}\n"
+  "cards.jsonl": "{\"id\": \"c1\", \"idea\": \"stream the file in chunks instead of reading it whole\", \"where\": {\"doi_or_arxiv\": \"doi:10.1000/xyz123\", \"section\": \"Eq. 4\"}, \"solves\": \"memory use on large inputs\", \"decision\": \"take\", \"reason\": \"\", \"target\": \"Ship the docs site\", \"done_when\": \"the site answers 200 at the production URL\", \"license\": {\"spdx\": null, \"evidence_url\": null, \"classification\": \"check first\"}, \"adds\": [], \"credit\": {\"author\": \"Jane Roe\", \"author_url\": \"https://example.test/jane\", \"source_url\": \"https://example.test/o/r\", \"text\": \"adapted from Jane Roe's parser design\"}}\n"
  },
  "args": [
   "cards.jsonl",

@@ -2,7 +2,7 @@
  "id": "13k-crossref-license-is-not-code-license",
  "spec_item": 13,
  "tag": "spec",
- "title": "a CC-BY license on the paper text is not a license for its code: classification stays 'none' for the card's port gate",
+ "title": "a CC-BY license on the paper text is not a license for its code: classification stays 'check first' for the card's port gate",
  "tool": "glean-resolve",
  "servers": {
   "A": {
@@ -38,7 +38,7 @@
    {
     "path": "license.classification",
     "in": [
-     "none",
+     "check first",
      "study only"
     ]
    }

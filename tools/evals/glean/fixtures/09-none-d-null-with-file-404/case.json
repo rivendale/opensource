@@ -2,7 +2,7 @@
  "id": "09-none-d-null-with-file-404",
  "spec_item": 9,
  "tag": "spec",
- "title": "license None: classified 'none' (treated as NO license, ideas only), never permissive",
+ "title": "license None: classified 'check first' (treated as NO license, ideas only), never permissive",
  "tool": "glean-resolve",
  "servers": {
   "A": {
@@ -69,7 +69,7 @@
    },
    {
     "path": "license.classification",
-    "equals": "none"
+    "equals": "check first"
    }
   ]
  },
