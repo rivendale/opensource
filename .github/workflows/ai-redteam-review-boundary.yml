@@ -1,0 +1,25 @@
+name: Offline PR reviewer boundary
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ai-redteam-pr-review.yml'
+      - '.github/workflows/ai-redteam-review-boundary.yml'
+      - 'tests/ai-redteam-review/**'
+permissions:
+  contents: read
+jobs:
+  boundary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          repository: rivendale/ai-redteam
+          ref: 682e67dd0722ec59ca20843eead86a4857e03ad6
+          path: .ai-redteam-review
+          persist-credentials: false
+      - name: Structural gates and reviewed-source denial controls
+        run: python3 tests/ai-redteam-review/check.py --source .ai-redteam-review
