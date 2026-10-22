@@ -161,6 +161,24 @@ invoice or a claim of measured savings. See the [feasibility and failure plan](P
 
 See [compatibility checks and remaining acceptance](CACHE-COMPATIBILITY.md) for the OFF-mode comparison and result-consumer inventory.
 
+### New run lists and plans
+
+Use `claude-sonnet-5-5` by default when writing a **new** run list or plan. Generate its model/rate fragment
+with `python3 skills/studio/runner/plan.py` from the repository root. The helper prints JSON to stdout only;
+it cannot edit an existing plan, register a run, read a key or call a model. `--model` permits an explicit
+model in the dated rate table and refuses unknown IDs instead of substituting a default.
+Copy the fragment into a new plan with its separately chosen inputs, limits and authorization.
+Actual runner invocations still require an explicit `--model`, key FD and self-test receipt.
+
+The Sonnet 5.5 row uses the [official pricing table](https://platform.claude.com/docs/en/about-claude/pricing),
+checked October 22, 2026. The table's cache-read rate supersedes the higher launch-announcement figure.
+The five rate columns stay in `cache_api.py`; new Sonnet receipts use the date attached to that row.
+Existing model rows retain their earlier dates. Registered run lists, fixed calibration settings, tallies
+and completed receipts record their original model and are not migrated by the helper.
+
+Run `python3 skills/studio/runner/tests/sonnet55/check.py` for five-column accounting, the new planning default,
+an explicit old-model selection and unknown-model refusal. This runs offline with synthetic counters.
+
 ### Fresh-context model review
 
 For game-art runs, the operator can add `--review-plan /absolute/operator-plan.json`

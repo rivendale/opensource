@@ -1,0 +1,31 @@
+name: Offline studio model planning
+on:
+  pull_request:
+    paths:
+      - 'skills/studio/runner/cache_api.py'
+      - 'skills/studio/runner/plan.py'
+      - 'skills/studio/runner/tests/**'
+      - '.github/workflows/studio-model-plan.yml'
+permissions:
+  contents: read
+jobs:
+  accounting:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: New plans and dated cache accounting
+        run: |
+          python3 skills/studio/runner/tests/sonnet55/check.py
+          python3 skills/studio/runner/tests/cache_checks.py
+          python3 skills/studio/runner/tests/cache_blocks.py
+      - name: Relative links
+        run: python3 tools/check_links.py

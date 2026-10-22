@@ -7,9 +7,12 @@ FIELDS = ('prompt_tokens','completion_tokens','total_tokens','uncached_input_tok
           'cache_creation_input_tokens','cache_read_input_tokens',
           'cache_creation_5m_input_tokens','cache_creation_1h_input_tokens')
 RATES_DATE = '2026-10-16'
+DEFAULT_NEW_MODEL = 'claude-sonnet-5-5'
+RATES_DATES = {DEFAULT_NEW_MODEL: '2026-10-22'}
 RATES_SOURCE = 'https://platform.claude.com/docs/en/about-claude/pricing'
 # USD/MTok: uncached, 5m creation, 1h creation, read, output.
 RATES = {'claude-sonnet-4-5-20250929': (3,3.75,6,.30,15),
+         'claude-sonnet-5-5': (2,2.5,4,.10,10),
          'claude-opus-5-5': (4,5,8,.20,20)}
 
 
@@ -55,7 +58,7 @@ def receipt(value,model):
     if not value: return {}
     result=usage(value)
     result['estimated_cost_usd']=estimate_cost(value,model)
-    result['rates_date']=RATES_DATE if model in RATES else None
+    result['rates_date']=RATES_DATES.get(model,RATES_DATE) if model in RATES else None
     result['rates_source']=RATES_SOURCE if model in RATES else None
     return result
 
