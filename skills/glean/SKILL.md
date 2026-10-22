@@ -38,7 +38,7 @@ python3 /path/to/reviewed/opensource/tools/glean-resolve doi:10.1234/example
 The arguments above illustrate forms, not verified sources. Supported inputs are
 `owner/repo`, GitHub or GitLab repository URLs (also `github.com/owner/repo` and
 `gitlab.com/owner/repo` without a scheme), GitHub `tree`, `blob` or `commit` URLs,
-DOIs and arXiv identities. An unsupported PDF or algorithm URL is unresolved; supply
+DOIs and arXiv identities (also DOI and arXiv URLs without a scheme). An unsupported PDF or algorithm URL is unresolved; supply
 its DOI, versioned arXiv identity or pinned repository. Never guess a near-match owner.
 
 The resolver prints one JSON document. It records canonical identity, full commit
