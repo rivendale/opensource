@@ -1,6 +1,9 @@
 # Opt-in bounded PR reviewer
 
-The workflow runs one diff-only review round only when `AI_REDTEAM_ENABLED` is exactly `true`.
+The workflow compares `AI_REDTEAM_ENABLED` with `true` using GitHub
+[case-insensitive string equality](https://docs.github.com/en/actions/reference/workflows-and-actions/expressions#operators).
+`TRUE` or mixed case can start the job, but the pinned Python script accepts only lowercase `true`
+and returns before reading either credential otherwise. Set lowercase `true` to run a review.
 Unset or false skips the secret-bearing job. Forks, foreign repositories and Dependabot skip too.
 It checks out the server-supplied base SHA, then the reviewer at a full reviewed commit. PR head code,
 install scripts and dependencies never execute with the model key. Git credentials are not persisted.
@@ -18,6 +21,7 @@ never an approval or merge recommendation.
 
 Run `python3 tests/ai-redteam-review/check.py --source /path/to/reviewed/ai-redteam`.
 The source must have the exact reviewed tree. The local test evaluates the actual workflow expression
-for an eligible PR, disabled/unset variables, forks and Dependabot, then runs the pinned source's
+for eligible lowercase and uppercase values, disabled/unset variables, forks and Dependabot.
+Separate script tripwires prove uppercase values return before credential access or transport. It then runs the pinned source's
 secret-access tripwire and diagnostic tests. The separate offline CI job has no model key and repeats
 these checks. It checks out the PR for testing only in that key-free job.
