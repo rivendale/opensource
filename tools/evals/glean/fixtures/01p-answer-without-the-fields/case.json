@@ -1,0 +1,44 @@
+{
+ "id": "01p-answer-without-the-fields",
+ "spec_item": 1,
+ "tag": "principle",
+ "title": "a 200 answer with the wrong shape (a list) is unresolved",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/repos/o/r": {
+    "status": 200,
+    "body": "[1, 2, 3]",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_GH_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "o/r",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unresolved"
+   }
+  ],
+  "stderr_not_contains": [
+   "Traceback"
+  ]
+ },
+ "fake_gh": {
+  "auth": true,
+  "api": {}
+ }
+}

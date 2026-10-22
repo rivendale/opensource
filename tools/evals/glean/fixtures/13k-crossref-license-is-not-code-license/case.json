@@ -1,0 +1,50 @@
+{
+ "id": "13k-crossref-license-is-not-code-license",
+ "spec_item": 13,
+ "tag": "spec",
+ "title": "a CC-BY license on the paper text is not a license for its code: classification stays 'none' for the card's port gate",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/works/10.1000%2Fxyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\", \"message\": {\"DOI\": \"10.1000/xyz123\", \"URL\": \"https://doi.org/10.1000/xyz123\", \"title\": [\"A Crossref Paper\"], \"license\": [{\"URL\": \"https://creativecommons.org/licenses/by/4.0/\"}]}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+   "/works/10.1000/xyz123": {
+    "status": 200,
+    "body": "{\"status\": \"ok\", \"message\": {\"DOI\": \"10.1000/xyz123\", \"URL\": \"https://doi.org/10.1000/xyz123\", \"title\": [\"A Crossref Paper\"], \"license\": [{\"URL\": \"https://creativecommons.org/licenses/by/4.0/\"}]}}",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_CROSSREF_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "doi:10.1000/xyz123",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "json": [
+   {
+    "path": "license.classification",
+    "in": [
+     "none",
+     "study only"
+    ]
+   }
+  ],
+  "not_contains": [
+   "\"classification\": \"copy\""
+  ]
+ }
+}
