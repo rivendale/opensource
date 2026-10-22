@@ -21,7 +21,7 @@ CAP = 1048576
 SHA = re.compile(r'[0-9a-fA-F]{40}')
 ARXIV = re.compile(r'(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?/\d{7})(?:v[1-9]\d*)?')
 DOI = re.compile(r'10\.\d{4,9}/\S+', re.I)
-INJECTION = re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|run this|execute this|system prompt|disable (?:the )?safety', re.I)
+INJECTION = re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|run this|execute this|system prompt|disable (?:the )?safety|^\s*(?:SYSTEM|ASSISTANT|DEVELOPER):|you are now|disable (?:the )?checks|new instructions', re.I | re.M)
 
 
 def clean(text):
@@ -183,6 +183,8 @@ def required_string(obj, key):
 
 
 def source_form(source):
+    if re.match(r'^(?:github\.com|gitlab\.com)/', source, re.I):
+        source = 'https://' + source
     if source.startswith('doi:'):
         return 'doi', source[4:], None, None
     if source.startswith('arxiv:'):

@@ -36,7 +36,8 @@ python3 /path/to/reviewed/opensource/tools/glean-resolve doi:10.1234/example
 ```
 
 The arguments above illustrate forms, not verified sources. Supported inputs are
-`owner/repo`, GitHub or GitLab repository URLs, GitHub `tree`, `blob` or `commit` URLs,
+`owner/repo`, GitHub or GitLab repository URLs (also `github.com/owner/repo` and
+`gitlab.com/owner/repo` without a scheme), GitHub `tree`, `blob` or `commit` URLs,
 DOIs and arXiv identities. An unsupported PDF or algorithm URL is unresolved; supply
 its DOI, versioned arXiv identity or pinned repository. Never guess a near-match owner.
 
@@ -66,7 +67,7 @@ Copy the license object from the resolver; never invent permissive metadata.
 - `take`: implement from the idea. Name `target` and `done_when`.
 - `port`: copy only a `copy` reuse class, keep copyright notices, and add the copied
   file and license to `THIRD_PARTY.md`. Name `target` and `done_when`.
-- `skip`: supply `reason`.
+- `skip`: supply `reason`; no credit is required because nothing was borrowed.
 - `needs-decision`: leave the decision to the operator. Any `adds` entry forces this
   state. So does recognized install, daemon, hosted service, relay or account wording.
 
@@ -76,7 +77,7 @@ needs a decision; an idea may be taken. GPL, AGPL, unknown and absent licenses n
 allow a port. Assets need their own checks. The checker applies these classes but
 cannot authenticate supplied license evidence or prove semantic absence of side effects.
 
-Include `credit` with `author`, linked `author_url`, linked `source_url`, and `text`
+For cards other than `skip`, include `credit` with `author`, linked `author_url`, linked `source_url`, and `text`
 worded as authorship, such as `adapted from ...`. Put credit where readers see it
 before using the result. Preserve existing credits. The receipt follows the
 [Credit form](https://github.com/rivendale/hsi-operator/blob/main/AGENTS.md#credit).
