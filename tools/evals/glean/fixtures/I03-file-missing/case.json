@@ -1,0 +1,27 @@
+{
+ "id": "I03-file-missing",
+ "spec_item": null,
+ "tag": "principle",
+ "title": "the cards file does not exist: exit 2, named, no traceback",
+ "tool": "glean-check",
+ "files": {},
+ "args": [
+  "nope.jsonl",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "stderr_not_contains": [
+   "Traceback"
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unreadable"
+   }
+  ]
+ }
+}

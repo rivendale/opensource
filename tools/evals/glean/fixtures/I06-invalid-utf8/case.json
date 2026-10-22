@@ -1,0 +1,26 @@
+{
+ "id": "I06-invalid-utf8",
+ "spec_item": null,
+ "tag": "principle",
+ "title": "bytes that are not UTF-8 do not crash the checker",
+ "tool": "glean-check",
+ "files": {},
+ "args": [
+  "cards.jsonl",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   1,
+   2
+  ],
+  "stderr_not_contains": [
+   "Traceback"
+  ],
+  "no_control_chars": true
+ },
+ "binary_files": {
+  "cards.jsonl": "7b226964223a226331222c2269646561223a2262616420ff2062797465227d0a"
+ }
+}

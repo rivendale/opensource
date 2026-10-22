@@ -1,0 +1,24 @@
+{
+ "id": "I27-no-arguments",
+ "spec_item": null,
+ "tag": "principle",
+ "title": "no arguments at all: exit 2 and one JSON document that says why",
+ "tool": "glean-check",
+ "files": {},
+ "args": [],
+ "expect": {
+  "exit": [
+   2
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "unreadable"
+   },
+   {
+    "path": "schemaVersion",
+    "equals": 1
+   }
+  ]
+ }
+}
