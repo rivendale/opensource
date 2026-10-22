@@ -45,8 +45,8 @@ The resolver prints one JSON document. It records canonical identity, full commi
 SHA or paper identity, license evidence and reuse class, date, and available repository
 health. Missing license evidence means `check first`, not permission to copy. GitLab
 licenses remain `check first` until separately verified; its API metadata does not
-establish a license at the pinned SHA. A missing advisory list is unknown, not zero
-vulnerabilities. An archived repository is flagged, not silently substituted.
+establish a license at the pinned SHA. A missing or non-list advisory answer is unknown,
+not zero vulnerabilities; it raises "Security advisory access unavailable". An archived repository is flagged, not silently substituted.
 
 Paper metadata does not establish separately licensed code. Reading an algorithm is
 an idea (`take`); `port` requires actual code location and separate license evidence.
@@ -87,7 +87,8 @@ python3 /path/to/reviewed/opensource/tools/glean-check cards.jsonl
 ```
 
 The checker prints normalized cards, findings, counts and a receipt row. Imported
-text is quoted JSON data; controls and escape sequences are removed. Known directive
+text is quoted JSON data; controls, escape sequences and Unicode format characters
+(category Cf, including bidi and zero-width controls) are removed from output strings. Known directive
 phrases are flagged `INJECTED-INSTRUCTION`. This is not a complete detector, and
 unflagged source text still has no authority. No source or card text is executed.
 

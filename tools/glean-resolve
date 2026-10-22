@@ -13,6 +13,7 @@ import socket
 import ssl
 import subprocess
 import sys
+import unicodedata
 import time
 from urllib.parse import quote, unquote, urlsplit
 import xml.etree.ElementTree as ET
@@ -27,7 +28,7 @@ INJECTION = re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|ru
 def clean(text):
     text = re.sub(r'\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)', '', text)
     text = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', text)
-    return ''.join(c for c in text if (ord(c) >= 32 and ord(c) != 127 and c not in '\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069') or c in '\n\t')
+    return ''.join(c for c in text if (ord(c) >= 32 and ord(c) != 127 and unicodedata.category(c) != 'Cf') or c in '\n\t')
 
 
 def sanitize(value):
@@ -251,7 +252,9 @@ def resolve(source, result):
             advisories = None
             try:
                 candidate = get(prefix + '/security-advisories?state=published')
-                if isinstance(candidate, list):
+                if not isinstance(candidate, list):
+                    raise ValueError('advisories answer is not a list')
+                else:
                     advisories = [{key: row.get(key) for key in ('ghsa_id', 'html_url', 'summary', 'severity', 'published_at', 'withdrawn_at')} for row in candidate if isinstance(row, dict) and not row.get('withdrawn_at')]
             except ValueError:
                 result['findings'].append('Security advisory access unavailable')
@@ -283,7 +286,6 @@ def resolve(source, result):
         result.update(identity={'kind': 'repo', 'canonical_url': 'https://' + ('github.com/' if kind == 'github' else 'gitlab.com/') + identity, 'sha': sha, 'doi': None, 'arxiv_id': None, 'version': None}, license=lic, health=health, code_available=True)
         for value in (repo.get('description'),):
             if isinstance(value, str) and INJECTION.search(value):
-                result['findings'].append('INJECTED-INSTRUCTION')
                 result['source_excerpt'] = value
     elif kind == 'doi':
         if not DOI.fullmatch(identity):
@@ -351,9 +353,10 @@ def main():
         if isinstance(value, list):
             return any(directives(v) for v in value)
         return False
+    result = sanitize(result)
     if directives(result) and 'INJECTED-INSTRUCTION' not in result['findings']:
         result['findings'].append('INJECTED-INSTRUCTION')
-    print(json.dumps(sanitize(result), ensure_ascii=True, allow_nan=False))
+    print(json.dumps(result, ensure_ascii=True, allow_nan=False))
     return 0 if result['status'] == 'resolved' else 2
 
 
