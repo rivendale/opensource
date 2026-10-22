@@ -6,6 +6,7 @@
 - Source skill/code comes from main or an unreviewed/mutable reference.
 - A workflow step, dependency installer or write permission broadens the secret boundary.
 - A key is interpolated into shell text, printed, or persisted by Git.
+- The local workflow model claims uppercase TRUE is denied, unlike GitHub string equality; the script gate and workflow gate are conflated.
 - Source denial checks are skipped while the local structural check says green.
 
 Tests use fixed workflow bytes and the reviewed source's offline secret-tripwire tests. No live key or model call.
