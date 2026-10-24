@@ -1,0 +1,38 @@
+{
+ "id": "13zf-arxiv-utf8-bom-resolves-control",
+ "spec_item": 13,
+ "tag": "principle",
+ "title": "a UTF-8 feed with a byte order mark still resolves (control)",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": {
+     "hex": "efbbbf3c3f786d6c2076657273696f6e3d27312e302720656e636f64696e673d275554462d38273f3e3c6665656420786d6c6e733d27687474703a2f2f7777772e77332e6f72672f323030352f41746f6d273e3c656e7472793e3c69643e687474703a2f2f61727869762e6f72672f6162732f323330312e303030303176323c2f69643e3c7469746c653e41204d6574686f6420666f72205468696e67733c2f7469746c653e3c73756d6d6172793e733c2f73756d6d6172793e3c7075626c69736865643e323032332d30312d30315430303a30303a30305a3c2f7075626c69736865643e3c2f656e7472793e3c2f666565643e"
+    }
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "resolved"
+   }
+  ]
+ }
+}

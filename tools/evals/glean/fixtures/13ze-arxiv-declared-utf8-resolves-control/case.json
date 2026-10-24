@@ -1,0 +1,40 @@
+{
+ "id": "13ze-arxiv-declared-utf8-resolves-control",
+ "spec_item": 13,
+ "tag": "principle",
+ "title": "a UTF-8 feed that declares UTF-8 still resolves (control for the encoding refusals)",
+ "tool": "glean-resolve",
+ "servers": {
+  "A": {
+   "/query": {
+    "headers": {
+     "Content-Type": "application/atom+xml"
+    },
+    "body": "<?xml version='1.0' encoding='UTF-8'?><feed xmlns='http://www.w3.org/2005/Atom'><entry><id>http://arxiv.org/abs/2301.00001v2</id><title>A Method for Things</title><summary>s</summary><published>2023-01-01T00:00:00Z</published></entry></feed>"
+   }
+  }
+ },
+ "env": {
+  "GLEAN_ARXIV_API_BASE": "http://127.0.0.1:{{PORT_A}}"
+ },
+ "args": [
+  "arxiv:2301.00001v2",
+  "--now",
+  "{{NOW}}"
+ ],
+ "expect": {
+  "exit": [
+   0
+  ],
+  "json": [
+   {
+    "path": "status",
+    "equals": "resolved"
+   },
+   {
+    "path": "identity.arxiv_id",
+    "equals": "2301.00001v2"
+   }
+  ]
+ }
+}
