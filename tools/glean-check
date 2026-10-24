@@ -175,7 +175,7 @@ def main():
             derived = license_class(spdx)
             if classification == 'copy' and (derived != 'copy' or not url(license_info.get('evidence_url'))):
                 classification = derived if derived != 'copy' else 'check first'
-                finding(card_id, 'license restricted', 'Copy class requires identified permissive license and pinned file evidence')
+                finding(card_id, 'license restricted', 'Copy class requires an identified permissive license and an evidence URL (the URL is not fetched or checked here)')
             # Treat caller metadata conservatively, never elevate a stricter resolver class.
             if derived in ('study only', 'library use', 'check first'):
                 classification = derived
