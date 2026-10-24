@@ -176,6 +176,21 @@ def fetch_metadata(base, path, test=False, xml=False):
         connection.close()
 
 
+def require_utf8_xml(raw):
+    """Only plain UTF-8 reaches the XML parser. The DOCTYPE/ENTITY refusal below is a byte search, and markup written in
+    another encoding (UTF-16 interleaves NUL bytes) is invisible to it while the parser still reads and expands it, so any
+    other encoding is refused outright. The arXiv feed is UTF-8."""
+    if b'\x00' in raw:
+        raise ValueError('XML must be UTF-8')
+    try:
+        text = raw.decode('utf-8')
+    except UnicodeDecodeError:
+        raise ValueError('XML must be UTF-8') from None
+    declared = re.match(r'\ufeff?\s*<\?xml[^>]*?\sencoding\s*=\s*([\'"])([^\'"]*)\1', text)
+    if declared and declared.group(2).strip().lower().replace('_', '-') not in ('utf-8', 'utf8'):
+        raise ValueError('XML must declare UTF-8')
+
+
 def required_string(obj, key):
     value = obj.get(key) if isinstance(obj, dict) else None
     if not isinstance(value, str) or not value.strip():
@@ -306,6 +321,7 @@ def resolve(source, result):
             raise ValueError('invalid arXiv ID')
         base, test = endpoint('GLEAN_ARXIV_API_BASE', 'https://export.arxiv.org/api')
         raw = fetch_metadata(base, 'query?id_list=' + quote(identity, safe=''), test, xml=True)
+        require_utf8_xml(raw)
         if b'<!DOCTYPE' in raw.upper() or b'<!ENTITY' in raw.upper():
             raise ValueError('XML declarations refused')
         atom = '{http://www.w3.org/2005/Atom}'
