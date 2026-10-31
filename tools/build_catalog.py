@@ -92,6 +92,7 @@ PERMISSIVE = {"MIT", "MIT-0", "BSD-2-Clause", "BSD-3-Clause", "BSD-3-Clause-Clea
               "BSD-2-Clause-Patent", "UPL-1.0", "PHP-3.01", "Python-2.0"}
 WEAK = {"LGPL-2.1", "LGPL-3.0", "LGPL-2.0", "MPL-2.0", "MPL-1.1", "EPL-1.0", "EPL-2.0", "CDDL-1.0", "MS-PL",
         "LGPL-2.1-only", "LGPL-2.1-or-later", "LGPL-3.0-only", "LGPL-3.0-or-later"}
+RANK = {"copy": 0, "library": 1, "study": 2, "check": 3}   # most permissive first
 COPYLEFT_RE = re.compile(r"^(A?GPL|CC-BY-SA|EUPL|OSL|CECILL)", re.I)
 TRILARION_LICENSE = {"mit": "MIT", "bsd": "BSD-3-Clause", "2-clause bsd": "BSD-2-Clause", "3-clause bsd": "BSD-3-Clause",
                      "apache-2.0": "Apache-2.0", "zlib": "Zlib", "isc": "ISC", "public domain": "public domain",
@@ -114,6 +115,24 @@ def genre_of(labels):
 
 
 def license_class(spdx):
+    """The reuse class of an SPDX id or expression: copy, library, study or check.
+
+    In an expression without parentheses, OR binds loosest, then AND, then WITH, as in SPDX:
+    `X OR Y` takes the most permissive operand's class (the reuser may choose), `X AND Y` the most
+    restrictive (every part applies), and `X WITH exception` the base license's class. Operators
+    must be upper case; a lower-case "and" is not parsed and reads `check`. An expression with
+    parentheses is not parsed either and keeps the plain-string rules below.
+    """
+    if spdx and "(" not in spdx and ")" not in spdx:
+        for op, pick in ((" OR ", min), (" AND ", max)):
+            if op in spdx:
+                parts = [p.strip() for p in spdx.split(op)]
+                if not all(parts):
+                    return "check"      # a dangling operator: not a valid expression
+                return pick((license_class(p) for p in parts), key=RANK.get)
+        if " WITH " in spdx:
+            base, _, exception = spdx.partition(" WITH ")
+            return license_class(base.strip()) if base.strip() and exception.strip() else "check"
     if spdx and " AND " in spdx and all(p in PERMISSIVE for p in spdx.split(" AND ")):
         return "copy"       # an SPDX AND of permissive licenses: keep every notice when copying
     if not spdx or spdx in ("NOASSERTION", "OTHER"):
@@ -422,7 +441,7 @@ def main():
             **({"curated_why": e["curated_why"], "curated_repo": e["curated_repo"]} if e.get("curated_repo") else {}),
             "repo": (g or {}).get("nameWithOwner") and f"https://github.com/{g['nameWithOwner']}" or e["repo"],
             "homepage": (g or {}).get("homepageUrl") or e.get("homepage"),
-            "description": re.sub(r"\s*[\u2014\u2013]\s*", " - ", ((g or {}).get("description") or e["description"] or "")).strip()[:200],
+            "description": re.sub(r"\s*[\U00002014\U00002013]\s*", " - ", ((g or {}).get("description") or e["description"] or "")).strip()[:200],
             "language": ((g or {}).get("primaryLanguage") or {}).get("name") if g else e.get("list_language"),
             "license": lic, "license_from": lic_src, "reuse": reuse,
             "stars": (g or {}).get("stargazerCount"), "pushed": pushed[:10] if pushed else None,
@@ -486,7 +505,7 @@ def write_markdown(out, root, today, dropped, seed_count=0, seed_drops=()):
             name = f"[{esc(r['name'])}]({r['repo']})" if linkable else (f"{esc(r['name'])} (`{esc(r['repo'])}`)" if r["repo"] else esc(r["name"]))
             lic = (r["license"] or "none") + (f" ({r['license_from']})" if r["license_from"] and r["license_from"] != "github" else "")
             last = (r["pushed"] or "") + (" archived" if r["archived"] else "")
-            about = esc(r["description"])[:120] + (f" **{esc(r['note'])}**" if r["note"] else "")
+            about = esc_desc(r["description"], 120) + (f" **{esc(r['note'])}**" if r["note"] else "")
             md.append(f"| {name} | {reuse_text(r)} | {esc(lic)} | {esc(r['language'] or '')} | "
                       f"{r['stars'] if r['stars'] is not None else ''} | {last} | {about} |")
         open(os.path.join(root, "catalog", f"{slug}.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
@@ -497,9 +516,6 @@ def write_markdown(out, root, today, dropped, seed_count=0, seed_drops=()):
     for seed in seed_drops:
         idx.append(f"| [{esc(seed['repo'])}]({seed['repo']}) | {esc(seed['reason'])} | {esc(seed['why'])} |")
     open(os.path.join(root, "catalog", "README.md"), "w", encoding="utf-8").write("\n".join(idx) + "\n")
-
-
-RANK = {"copy": 0, "library": 1, "study": 2, "check": 3}
 
 
 def build_domain(a):
@@ -670,8 +686,22 @@ def write_domain(spec, out, drops, root, today, domain, elsewhere):
 
 
 def esc(s):
-    s = re.sub(r"\s*[\u2014\u2013]\s*", " - ", s or "")    # no em or en dashes in this repository
+    s = re.sub(r"\s*[\U00002014\U00002013]\s*", " - ", s or "")    # no em or en dashes in this repository
     return re.sub(r"\|", "\\|", re.sub(r"\s+", " ", s)).strip()
+
+
+def esc_desc(s, limit=None):
+    """Text a repository's owner wrote (its GitHub description), made inert in a markdown table cell.
+
+    One line; a backslash, backtick, bracket or pipe gets a backslash, so it opens no code span, link or
+    image and ends no cell; < and > become entities, so no HTML tag or autolink survives. The text is cut
+    to `limit` characters before it is escaped, so the cut never splits an escape.
+    """
+    s = esc(s).replace("\\|", "|")      # esc's dash and whitespace rules; its pipe escape is redone below
+    if limit is not None:
+        s = s[:limit].rstrip()
+    s = re.sub(r"([\\`\[\]|])", r"\\\1", s)
+    return s.replace("<", "&lt;").replace(">", "&gt;")
 
 
 if __name__ == "__main__":
