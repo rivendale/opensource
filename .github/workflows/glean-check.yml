@@ -4,6 +4,7 @@ on:
     paths:
       - 'tools/glean-*'
       - 'tools/evals/**'
+      - 'tools/build_catalog.py'
       - 'skills/glean/**'
       - '**/*.md'
       - 'tools/check_links.py'
