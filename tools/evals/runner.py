@@ -117,6 +117,8 @@ def build(work, case):
     for d in case.get("mkdirs", []):
         (work / d).mkdir(parents=True, exist_ok=True)
     for name, mode in case.get("chmod", {}).items():
+        if (work / name).is_symlink():
+            raise ValueError(f"fixture chmod target is a symlink: {name}")
         os.chmod(work / name, int(mode, 8))
 
 
@@ -249,13 +251,28 @@ def _run_case(case, tools_dir):
         calls = [l.strip() for l in gh_log.read_text().splitlines() if l.strip()]
         return dict(rc=runs[0][0], out=runs[0][1], err=runs[0][2], secs=runs[0][3], runs=runs, before=before, after=after, expect=case["expect"], gh_calls=calls)
     finally:
-        for dp, dn, fn in os.walk(root):
-            for n in dn + fn:
-                try:
-                    os.chmod(os.path.join(dp, n), 0o700 if n in dn else 0o600)
-                except OSError:
-                    pass
-        shutil.rmtree(root, ignore_errors=True)
+        remove_tree(root)
+
+
+def remove_tree(root):
+    """Delete a fixture's temp root even if the tool left unreadable directories behind.
+
+    Only real directories get chmod: rmtree needs rwx on a directory to empty it, never a mode on the files in it.
+    Symlinks are skipped because os.chmod follows them, and the toolbin holds links to the real bash, env,
+    python3 and git; following one as root would strip their execute bits. Linux has no lchmod, so the check is
+    explicit instead of follow_symlinks=False.
+    """
+    root = str(root)
+    for dp, dn, fn in os.walk(root, followlinks=False):
+        for n in dn:
+            p = os.path.join(dp, n)
+            if os.path.islink(p):
+                continue
+            try:
+                os.chmod(p, 0o700)
+            except OSError:
+                pass
+    shutil.rmtree(root, ignore_errors=True)
 
 
 def dig(doc, path):
@@ -291,7 +308,7 @@ def check(res):
 
         def walk(v, path=""):
             if isinstance(v, str):
-                if re.search("[\u0000-\u0008\u000b-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]", v):
+                if re.search("[\U00000000-\U00000008\U0000000b-\U0000001f\U0000007f-\U0000009f\U0000200b-\U0000200f\U0000202a-\U0000202e\U00002066-\U00002069\U0000feff]", v):
                     bad_strings.append(path or "(root)")
             elif isinstance(v, list):
                 for i, x in enumerate(v):
@@ -353,7 +370,7 @@ def check(res):
         bad = re.findall(rb"[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]|\x1b|\r", res["out"])
         if bad:
             problems.append(f"control characters in stdout: {sorted(set(b.hex() for b in bad))}")
-        if re.search("[​-‏‪-‮⁦-⁩﻿]", out):
+        if re.search("[\U0000200b-\U0000200f\U0000202a-\U0000202e\U00002066-\U00002069\U0000feff]", out):
             problems.append("invisible or bidi format characters in stdout")
     for name, rq in e.get("requests", {}).items():
         log = res.get("reqlogs", {}).get(name, [])
