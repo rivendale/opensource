@@ -1,0 +1,24 @@
+name: Offline catalog build checks
+on:
+  pull_request:
+    paths:
+      - 'tools/build_catalog.py'
+      - 'tools/fetch_sources.sh'
+      - 'tools/check_build.py'
+      - 'tests/tools/test_build_catalog.py'
+      - '.github/workflows/catalog-build.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the build tools
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: SPDX expression classes and description escaping
+        run: python3 tests/tools/test_build_catalog.py
+      - name: Build and fetch failure paths against a fake gh
+        run: python3 tools/check_build.py
