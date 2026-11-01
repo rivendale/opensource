@@ -10,7 +10,7 @@ Checks, each configured in the repo's .hygiene.json (schema: tools/hygiene/READM
   modes         a tracked file with a shebang went from 100755 to 100644 between the merge base of --base and HEAD
                 (pushing through the GitHub API resets modes)
   invisible     a raw character a reader cannot see in a tracked text file or path: every format (Cf) and control (Cc)
-                character except tab, LF, CR, FF and VT, the U+E0000 tag block, blank fillers (EXTRA_HIDDEN), and a
+                character except tab, LF, CR, FF and VT, every Default_Ignorable_Code_Point, U+2800, unassigned code points, a
                 variation selector after a character it cannot modify; also a text file that is not valid UTF-8.
                 Bidi controls are Trojan Source (CVE-2021-42574). A BOM at file start is allowed. Binary files
                 (git's rule: a NUL in the first 8000 bytes, or -text / binary in .gitattributes) are skipped.
@@ -71,38 +71,87 @@ def tracked(root):
     return [p for p in git(root, "ls-files", "-z").split("\0") if p]
 
 
-# Blank-looking characters that are not whitespace and not Cf/Cc: the Hangul fillers (Lo), the braille blank (So)
-# and the combining grapheme joiner (Mn).
-EXTRA_HIDDEN = {0x115F, 0x1160, 0x3164, 0xFFA0, 0x2800, 0x034F}
+# Default_Ignorable_Code_Point: characters a renderer shows as nothing. From the Unicode Character Database,
+# DerivedCoreProperties.txt (https://www.unicode.org/Public/UCD/latest/ucd/DerivedCoreProperties.txt); this list was
+# checked against the 18.0.0 draft of 2026-08-07 in github.com/unicode-org/unicodetools. It covers the bidi controls,
+# zero-width characters, the Hangul fillers, the variation selectors and the whole U+E0000 to U+E0FFF block (tags and
+# the reserved code points after them, which also smuggle text).
+DEFAULT_IGNORABLE = ((0x00AD, 0x00AD), (0x034F, 0x034F), (0x061C, 0x061C), (0x115F, 0x1160), (0x17B4, 0x17B5),
+                     (0x180B, 0x180F), (0x200B, 0x200F), (0x202A, 0x202E), (0x2060, 0x206F), (0x3164, 0x3164),
+                     (0xFE00, 0xFE0F), (0xFEFF, 0xFEFF), (0xFFA0, 0xFFA0), (0xFFF0, 0xFFF8), (0x1BCA0, 0x1BCA3),
+                     (0x1D173, 0x1D17A), (0xE0000, 0xE0FFF))
+# Blank-looking but not default-ignorable: the braille blank.
+EXTRA_HIDDEN = {0x2800}
 # The only control characters allowed raw. str.isspace() would also let 0x1C-0x1F and U+0085 through.
 WHITESPACE = set("\t\n\r\f\v")
 VS_RX = re.compile("[\U0000FE00-\U0000FE0F\U000E0100-\U000E01EF]")
-# A variation selector is legitimate right after a character it can modify: a symbol or emoji (So, Sm, Sk), the
-# keycap bases, a few emoji with other categories, and the scripts with standardized or ideographic variants.
-VS_BASES = {0x23, 0x2A, *range(0x30, 0x3A), 0x203C, 0x2049, 0x2139, 0x3030, 0x303D}
+# The characters that take U+FE0E or U+FE0F, from emoji-variation-sequences.txt (Unicode emoji data,
+# https://www.unicode.org/Public/UCD/latest/ucd/emoji/emoji-variation-sequences.txt; this list is the 19.0.0 draft of
+# 2026-09-21 in github.com/unicode-org/unicodetools). Hex code points and ranges.
+EMOJI_VS_BASES = (
+    "23 2A 30-39 A9 AE 203C 2049 2122 2139 2194-2199 21A9-21AA 231A-231B 2328 23CF 23E9-23F3 23F8-23FA 24C2 "
+    "25AA-25AB 25B6 25C0 25FB-25FE 2600-2604 260E 2611 2614-2615 2618 261D 2620 2622-2623 2626 262A 262E-262F "
+    "2638-263A 2640 2642 2648-2653 265F-2660 2663 2665-2666 2668 267B 267E-267F 2692-2697 2699 269B-269C "
+    "26A0-26A1 26A7 26AA-26AB 26B0-26B1 26BD-26BE 26C4-26C5 26C8 26CE-26CF 26D1 26D3-26D4 26E9-26EA 26F0-26F5 "
+    "26F7-26FA 26FD 2702 2705 2708-270D 270F 2712 2714 2716 271D 2721 2728 2733-2734 2744 2747 274C 274E "
+    "2753-2755 2757 2763-2764 2795-2797 27A1 27B0 27BF 2934-2935 2B05-2B07 2B1B-2B1C 2B50 2B55 3030 303D 3297 "
+    "3299 1F004 1F170-1F171 1F17E-1F17F 1F202 1F21A 1F22F 1F237 1F30D-1F30F 1F315 1F31C 1F321 1F324-1F32C "
+    "1F336 1F378 1F37D 1F393 1F396-1F397 1F399-1F39B 1F39E-1F39F 1F3A7 1F3AC-1F3AE 1F3C2 1F3C4 1F3C6 "
+    "1F3CA-1F3CE 1F3D4-1F3E0 1F3ED 1F3F3 1F3F5 1F3F7 1F408 1F415 1F41F 1F426 1F43F 1F441-1F442 1F446-1F449 "
+    "1F44D-1F44E 1F453 1F46A 1F47D 1F4A3 1F4B0 1F4B3 1F4BB 1F4BF 1F4CB 1F4DA 1F4DF 1F4E4-1F4E6 1F4EA-1F4ED "
+    "1F4F7 1F4F9-1F4FB 1F4FD 1F508 1F50D 1F512-1F513 1F549-1F54A 1F550-1F567 1F56F-1F570 1F573-1F579 1F587 "
+    "1F58A-1F58D 1F590 1F5A5 1F5A8 1F5B1-1F5B2 1F5BC 1F5C2-1F5C4 1F5D1-1F5D3 1F5DC-1F5DE 1F5E1 1F5E3 1F5E8 "
+    "1F5EF 1F5F3 1F5FA 1F610 1F687 1F68D 1F691 1F694 1F698 1F6AD 1F6B2 1F6B9-1F6BA 1F6BC 1F6CB 1F6CD-1F6CF "
+    "1F6E0-1F6E5 1F6E9 1F6F0 1F6F3 "
+)
 CJK = ((0x2E80, 0x2FDF), (0x3400, 0x4DBF), (0x4E00, 0x9FFF), (0xF900, 0xFAFF), (0x20000, 0x3FFFF))
 VS_SCRIPTS = ((0x1000, 0x109F), (0x1800, 0x18AF), (0xA840, 0xA87F))  # Myanmar, Mongolian, Phags-pa
+KEYCAP_BASES = set("#*0123456789")
+
+
+def _ranges(text):
+    out = []
+    for tok in text.split():
+        a, _, b = tok.partition("-")
+        out.append((int(a, 16), int(b or a, 16)))
+    return tuple(out)
+
+
+EMOJI_VS = _ranges(EMOJI_VS_BASES)
+
+
+def is_variation_selector(cp):
+    return 0xFE00 <= cp <= 0xFE0F or 0xE0100 <= cp <= 0xE01EF
 
 
 def is_hidden(ch):
-    """A character a reader cannot see: every Cf and Cc character except the five whitespace controls (the set
-    strip_hidden() in tools/build_catalog.py removes, without the extra controls isspace() exempts), the U+E0000
-    tag block, and EXTRA_HIDDEN. Variation selectors depend on what precedes them; see vs_ok()."""
+    """A character a reader cannot see: every Default_Ignorable_Code_Point, EXTRA_HIDDEN, every Cf and Cc character
+    except the five whitespace controls (the strip_hidden() set in tools/build_catalog.py, without the extra controls
+    isspace() exempts) and every unassigned (Cn) code point. Variation selectors are left to vs_ok(), which judges
+    them by the character before them."""
     cp = ord(ch)
-    if 0xE0000 <= cp <= 0xE007F or cp in EXTRA_HIDDEN:
+    if is_variation_selector(cp):
+        return False
+    if cp in EXTRA_HIDDEN or any(a <= cp <= b for a, b in DEFAULT_IGNORABLE):
         return True
-    return ch not in WHITESPACE and unicodedata.category(ch) in ("Cf", "Cc")
+    return ch not in WHITESPACE and unicodedata.category(ch) in ("Cf", "Cc", "Cn")
 
 
 def vs_ok(prev, vs):
-    """True when the variation selector vs directly follows a character it can apply to."""
+    """True when the variation selector vs directly follows a character it can apply to. U+FE0E and U+FE0F: a base
+    listed in emoji-variation-sequences.txt; of ASCII only the keycap bases, and only with U+FE0F. U+FE00 to U+FE0D:
+    CJK and the VS_SCRIPTS scripts. U+E0100 and up (ideographic variation selectors): CJK."""
     if not prev:
         return False
-    cp = ord(prev)
+    cp, v = ord(prev), ord(vs)
     within = lambda ranges: any(a <= cp <= b for a, b in ranges)
-    if ord(vs) >= 0xE0100:  # ideographic variation selectors
+    if cp < 0x80:
+        return prev in KEYCAP_BASES and v == 0xFE0F
+    if v >= 0xE0100:
         return within(CJK)
-    return unicodedata.category(prev) in ("So", "Sm", "Sk") or cp in VS_BASES or within(CJK) or within(VS_SCRIPTS)
+    if v in (0xFE0E, 0xFE0F):
+        return within(EMOJI_VS)
+    return within(CJK) or within(VS_SCRIPTS)
 
 
 def _hidden_rx():
@@ -127,9 +176,11 @@ HIDDEN_RUN = re.compile(HIDDEN.pattern + "+")
 
 def describe(ch):
     cp = ord(ch)
+    cat = unicodedata.category(ch)
     kind = "bidi control" if ch in BIDI else "tag character" if 0xE0000 <= cp <= 0xE007F else \
-        "variation selector" if VS_RX.match(ch) else "blank character" if cp in EXTRA_HIDDEN else \
-        "control character" if unicodedata.category(ch) == "Cc" else "format character"
+        "variation selector" if is_variation_selector(cp) else "unassigned code point" if cat == "Cn" else \
+        "control character" if cat == "Cc" else "format character" if cat == "Cf" else "default-ignorable character" \
+        if any(a <= cp <= b for a, b in DEFAULT_IGNORABLE) else "blank character"
     name = unicodedata.name(ch, "")
     return f"U+{cp:04X} ({kind}{', ' + name if name else ''})"
 
@@ -581,6 +632,11 @@ def run(root, cfg, base, today=None):
     cfg = load_config(cfg)
     out = {"fail": [], "warn": []}
     files = tracked(root)
+    for key in ("invisible_allow", "stale_exclude"):
+        for g in cfg[key]:
+            match = matcher([g])
+            if len(files) > 1 and all(match(p) for p in files):
+                raise ConfigError(f"{key}: {g!r} matches every tracked file; list the paths that need it")
     if cfg["modes"]:
         check_modes(root, base, out)
     if cfg["invisible"]:
@@ -738,7 +794,9 @@ def selftest():
         put("y.txt", "a\U00003164b\nc\U00002800d\ne\U0000034ff\ng\x1ch\ni\x85j\nform\x0cfeed\x0bvtab\n"
                      "heart \U00002764\U0000FE0F keycap 1\U0000FE0F\U000020E3 flag \U0001F3F3\U0000FE0F ideograph "
                      "\U00004E00\U000E0100\n"
-                     "bare a\U0000FE0F and a\U000E0100 and twice \U00002764\U0000FE0F\U0000FE0F\n")
+                     "bare a\U0000FE0F and a\U000E0100 and twice \U00002764\U0000FE0F\U0000FE0F\n"
+                     "ascii =\U0000FE06= +\U0000FE0F keycap text 1\U0000FE0E arrow \U00002192\U0000FE0F cjk \U00004E00\U0000FE00\n"
+                     "smuggled \U000E0263\U000E0275 nonchar \U0000FDD0 unassigned \U00000378\n")
         os.symlink("tgt\U0000200b", os.path.join(repo, "fixtures", "link"))
         put("fixtures/odd\U00002066name.txt", "x\n")
         put("ONE.md", BOM + "Sentinel: end\n")
@@ -762,6 +820,15 @@ def selftest():
         expect("an ideographic variation selector after a letter is caught", fails(r, "y.txt:8:14 ", "U+E0100"))
         expect("a second variation selector in a row is caught", fails(r, "y.txt:8:", "U+FE0F")
                and sum(x.startswith("invisible: y.txt:8:") for x in r["fail"]) == 3)
+        for col, cp, why in ((8, "U+FE06", "after an ASCII symbol"), (12, "U+FE0F", "after ASCII + (category Sm)"),
+                             (27, "U+FE0E", "text style after a keycap base"),
+                             (36, "U+FE0F", "after a symbol not in emoji-variation-sequences")):
+            expect(f"a variation selector {why} is caught", fails(r, f"y.txt:9:{col} ", cp))
+        expect("U+FE00 after a CJK ideograph passes", sum(x.startswith("invisible: y.txt:9:") for x in r["fail"]) == 4)
+        expect("the block after the tags (U+E0263, default-ignorable and unassigned) is caught",
+               fails(r, "y.txt:10:10 ", "U+E0263", "and 1 more"))
+        expect("a noncharacter is caught", fails(r, "y.txt:10:", "U+FDD0"))
+        expect("an unassigned code point is caught", fails(r, "y.txt:10:", "U+0378", "unassigned"))
         expect("an allow-listed symlink is skipped",
                not fails(r, "fixtures/link"))
         r3 = run(repo, {**cfg, "invisible_allow": []}, "HEAD~1", today)
@@ -797,6 +864,9 @@ def selftest():
                          ({"invisible_allow": ["**"]}, "matches every file"),
                          ({"invisible_allow": ["**/*"]}, "matches every file"),
                          ({"stale_exclude": ["*"]}, "matches every file"),
+                         ({"invisible_allow": ["**/?*"]}, "matches every tracked file"),
+                         ({"stale_exclude": [{"glob": "a**", "why": "x"}]}, "whole path segment"),
+                         ({"stale_exclude": ["?*", "**/?*"]}, "matches every tracked file"),
                          ({"claims": {"file": "a"}}, "claims must be a list"),
                          ({"instructions": ["AGENTS.md"]}, "objects with a file"),
                          ({"stale_pattern": 5}, "must be a string")):
