@@ -117,7 +117,7 @@ licenses (often non-commercial). Check assets separately. This is practical guid
 
 ## Genres
 
-601 of 2,740 projects have a permissive code license verified on GitHub. Built 2026-10-06.
+601 of 2,740 projects have a permissive code license verified on GitHub. Built 2026-10-06, from `data/catalog.json`.
 
 | genre | projects | copy | active in the last 2 years | playbook |
 |---|---|---|---|---|

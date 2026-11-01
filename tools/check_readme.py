@@ -106,7 +106,7 @@ def selftest():
     edits = [
         ("README.md", f"a genre catalog of {n(f['games'])} ", f"a genre catalog of {n(f['games'] + 1)} "),
         ("README.md", f"{n(f['copy'])} of {n(f['games'])} projects", f"{n(f['copy'] - 1)} of {n(f['games'])} projects"),
-        ("README.md", f"Built {f['built']}.", "Built 2000-01-01."),
+        ("README.md", f"Built {f['built']}, from `data/catalog.json`.", "Built 2000-01-01, from `data/catalog.json`."),
         ("README.md", f"so {n(f['left_out'])} projects", f"so {n(f['left_out'] + 1)} projects"),
         ("README.md", f"| {n(f['software'])} hand-picked", f"| {n(f['software'] + 1)} hand-picked"),
         ("README.md", f" in {f['categories']} categories", f" in {f['categories'] + 1} categories"),
