@@ -46,7 +46,7 @@ the cache; without it the build stops with one line saying so. A batch GitHub do
 retried with exponential backoff and jitter. A batch still unanswered stops the build before any
 output is written; the batches answered before it stay cached, so a rerun resumes there.
 """
-import argparse, collections, datetime, json, os, random, re, subprocess, sys, time
+import argparse, collections, datetime, json, os, random, re, subprocess, sys, time, unicodedata
 
 GENRES = {  # slug: (title, one-line scope)
     "strategy": ("Strategy", "real-time, turn-based, 4X, tower defense, wargames"),
@@ -92,6 +92,35 @@ PERMISSIVE = {"MIT", "MIT-0", "BSD-2-Clause", "BSD-3-Clause", "BSD-3-Clause-Clea
               "BSD-2-Clause-Patent", "UPL-1.0", "PHP-3.01", "Python-2.0"}
 WEAK = {"LGPL-2.1", "LGPL-3.0", "LGPL-2.0", "MPL-2.0", "MPL-1.1", "EPL-1.0", "EPL-2.0", "CDDL-1.0", "MS-PL",
         "LGPL-2.1-only", "LGPL-2.1-or-later", "LGPL-3.0-only", "LGPL-3.0-or-later"}
+# Every exception id on the SPDX License List 3.29.0 (2026-09-16), deprecated ids left out:
+# https://github.com/spdx/license-list-data/blob/v3.29.0/json/exceptions.json
+# Each grants permissions on top of its base license, so `X WITH <one of these>` keeps X's class.
+# Any other exception text is unknown terms and reads `check first`.
+SPDX_EXCEPTIONS = frozenset({
+    "389-exception", "Asterisk-exception", "Asterisk-linking-protocols-exception", "Autoconf-exception-2.0",
+    "Autoconf-exception-3.0", "Autoconf-exception-generic", "Autoconf-exception-generic-3.0",
+    "Autoconf-exception-macro", "Bison-exception-1.24", "Bison-exception-2.2", "Bootloader-exception",
+    "CGAL-linking-exception", "Classpath-exception-2.0", "Classpath-exception-2.0-short",
+    "CLISP-exception-2.0", "cryptsetup-OpenSSL-exception", "Digia-Qt-LGPL-exception-1.1",
+    "DigiRule-FOSS-exception", "eCos-exception-2.0", "erlang-otp-linking-exception",
+    "Fawkes-Runtime-exception", "FLTK-exception", "fmt-exception", "Font-exception-2.0",
+    "freertos-exception-2.0", "GCC-exception-2.0", "GCC-exception-2.0-note", "GCC-exception-3.1",
+    "Gmsh-exception", "GNAT-exception", "GNOME-examples-exception", "GNU-compiler-exception",
+    "gnu-javamail-exception", "Google-Patent-WebM", "GPL-3.0-389-ds-base-exception",
+    "GPL-3.0-interface-exception", "GPL-3.0-linking-exception", "GPL-3.0-linking-source-exception",
+    "GPL-CC-1.0", "GStreamer-exception-2005", "GStreamer-exception-2008", "harbour-exception",
+    "i2p-gpl-java-exception", "Independent-modules-exception", "KiCad-libraries-exception",
+    "kvirc-openssl-exception", "LGPL-3.0-linking-exception", "libpri-OpenH323-exception", "Libtool-exception",
+    "Linux-syscall-note", "LLGPL", "LLVM-exception", "LZMA-exception", "mif-exception", "mxml-exception",
+    "OCaml-LGPL-linking-exception", "OCCT-exception-1.0", "OpenJDK-assembly-exception-1.0",
+    "openvpn-openssl-exception", "PCRE2-exception", "polyparse-exception", "PS-or-PDF-font-exception-20170817",
+    "QPL-1.0-INRIA-2004-exception", "Qt-GPL-exception-1.0", "Qt-LGPL-exception-1.1", "Qwt-exception-1.0",
+    "romic-exception", "RRDtool-FLOSS-exception-2.0", "rsync-linking-exception", "SANE-exception", "SHL-2.0",
+    "SHL-2.1", "Simple-Library-Usage-exception", "Spelling-Provider-LGPL-exception",
+    "sqlitestudio-OpenSSL-exception", "stunnel-exception", "SWI-exception", "Swift-exception",
+    "Texinfo-exception", "u-boot-exception-2.0", "UBDL-exception", "Universal-FOSS-exception-1.0",
+    "vsftpd-openssl-exception", "WxWindows-exception-3.1", "x11vnc-openssl-exception"
+})
 RANK = {"copy": 0, "library": 1, "study": 2, "check": 3}   # most permissive first
 COPYLEFT_RE = re.compile(r"^(A?GPL|CC-BY-SA|EUPL|OSL|CECILL)", re.I)
 TRILARION_LICENSE = {"mit": "MIT", "bsd": "BSD-3-Clause", "2-clause bsd": "BSD-2-Clause", "3-clause bsd": "BSD-3-Clause",
@@ -103,6 +132,16 @@ TRILARION_LICENSE = {"mit": "MIT", "bsd": "BSD-3-Clause", "2-clause bsd": "BSD-2
 
 LURE = re.compile(r"full[- _]?version|premium|free[- _]?download|\bcrack|keygen|unlocked|mod[- _]?menu|"
                   r"\bcheats?\b|\bhacks?\b|torrent|\btrainer\b|activation|for[- _]pc\b|\bdownload\b", re.I)
+def strip_hidden(s):
+    """Text an outside party wrote, without the characters a reader cannot see: every format character
+    (Unicode category Cf: bidi controls, zero-width characters, the byte order mark, soft hyphen, invisible
+    math operators, the U+E0000 tag block used to smuggle ASCII) and every control character (Cc: ESC,
+    NUL...). Whitespace controls (tab, newline, carriage return) stay, for the caller's whitespace rule.
+    The same set glean-check's clean() removes. A bidi control can make text read in an order other than
+    the one it is stored in; the others hide text or terminal sequences."""
+    return "".join(c for c in s or "" if c.isspace() or unicodedata.category(c) not in ("Cf", "Cc"))
+
+
 DECOMP = re.compile(r"decomp|disassembl|reverse[- ]?engineer", re.I)
 
 
@@ -119,7 +158,8 @@ def license_class(spdx):
 
     In an expression without parentheses, OR binds loosest, then AND, then WITH, as in SPDX:
     `X OR Y` takes the most permissive operand's class (the reuser may choose), `X AND Y` the most
-    restrictive (every part applies), and `X WITH exception` the base license's class. Operators
+    restrictive (every part applies), and `X WITH exception` the base license's class when the
+    exception is on the SPDX list (SPDX_EXCEPTIONS), else `check`: unknown terms. Operators
     must be upper case; a lower-case "and" is not parsed and reads `check`. An expression with
     parentheses is not parsed either and keeps the plain-string rules below.
     """
@@ -132,7 +172,8 @@ def license_class(spdx):
                 return pick((license_class(p) for p in parts), key=RANK.get)
         if " WITH " in spdx:
             base, _, exception = spdx.partition(" WITH ")
-            return license_class(base.strip()) if base.strip() and exception.strip() else "check"
+            base, exception = base.strip(), exception.strip()
+            return license_class(base) if base and exception in SPDX_EXCEPTIONS else "check"
     if spdx and " AND " in spdx and all(p in PERMISSIVE for p in spdx.split(" AND ")):
         return "copy"       # an SPDX AND of permissive licenses: keep every notice when copying
     if not spdx or spdx in ("NOASSERTION", "OTHER"):
@@ -441,7 +482,8 @@ def main():
             **({"curated_why": e["curated_why"], "curated_repo": e["curated_repo"]} if e.get("curated_repo") else {}),
             "repo": (g or {}).get("nameWithOwner") and f"https://github.com/{g['nameWithOwner']}" or e["repo"],
             "homepage": (g or {}).get("homepageUrl") or e.get("homepage"),
-            "description": re.sub(r"\s*[\U00002014\U00002013]\s*", " - ", ((g or {}).get("description") or e["description"] or "")).strip()[:200],
+            "description": re.sub(r"\s*[\U00002014\U00002013]\s*", " - ",
+                                  strip_hidden((g or {}).get("description") or e["description"] or "")).strip()[:200],
             "language": ((g or {}).get("primaryLanguage") or {}).get("name") if g else e.get("list_language"),
             "license": lic, "license_from": lic_src, "reuse": reuse,
             "stars": (g or {}).get("stargazerCount"), "pushed": pushed[:10] if pushed else None,
@@ -458,8 +500,9 @@ def main():
     out.sort(key=lambda r: (r["genre"], {"copy": 0, "library": 1, "study": 2, "check": 3}[r["reuse"]], -(r["stars"] or 0), r["name"].lower()))
     os.makedirs(os.path.join(a.out, "data"), exist_ok=True)
     os.makedirs(os.path.join(a.out, "catalog"), exist_ok=True)
-    json.dump({"built": today.isoformat(), "count": len(out), "dropped": dict(dropped), "curated_seeds": len(seeds), "curated_dropped": curated_dropped, "entries": out},
-              open(os.path.join(a.out, "data", "catalog.json"), "w"), indent=1, ensure_ascii=False)
+    write_text(os.path.join(a.out, "data", "catalog.json"), json.dumps(
+        {"built": today.isoformat(), "count": len(out), "dropped": dict(dropped), "curated_seeds": len(seeds), "curated_dropped": curated_dropped, "entries": out},
+        indent=1, ensure_ascii=False))
     print(f"dropped: {dict(dropped)}", file=sys.stderr)
     write_markdown(out, a.out, today, dropped, len(seeds), curated_dropped)
     print(f"wrote {len(out)} entries", file=sys.stderr)
@@ -502,20 +545,22 @@ def write_markdown(out, root, today, dropped, seed_count=0, seed_drops=()):
               "", "| project | reuse | license | language | stars | last push | about |", "|---|---|---|---|---|---|---|"]
         for r in rows:
             linkable = (r["repo"] or "").startswith(("http://", "https://"))
-            name = f"[{esc(r['name'])}]({r['repo']})" if linkable else (f"{esc(r['name'])} (`{esc(r['repo'])}`)" if r["repo"] else esc(r["name"]))
+            # name and repo can come from a list: third-party text in link text, a link target and a code span
+            name = f"[{esc_desc(r['name'])}]({link_url(r['repo'])})" if linkable else \
+                (f"{esc_desc(r['name'])} ({code_span(r['repo'])})" if r["repo"] else esc_desc(r["name"]))
             lic = (r["license"] or "none") + (f" ({r['license_from']})" if r["license_from"] and r["license_from"] != "github" else "")
             last = (r["pushed"] or "") + (" archived" if r["archived"] else "")
             about = esc_desc(r["description"], 120) + (f" **{esc(r['note'])}**" if r["note"] else "")
-            md.append(f"| {name} | {reuse_text(r)} | {esc(lic)} | {esc(r['language'] or '')} | "
+            md.append(f"| {name} | {reuse_text(r)} | {esc_desc(lic)} | {esc_desc(r['language'] or '')} | "
                       f"{r['stars'] if r['stars'] is not None else ''} | {last} | {about} |")
-        open(os.path.join(root, "catalog", f"{slug}.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
+        write_text(os.path.join(root, "catalog", f"{slug}.md"), "\n".join(md) + "\n")
     idx += ['', '## Curated seeds', '',
             f'{seed_count} seeds = {seed_count - len(seed_drops)} catalog rows + {len(seed_drops)} listed drops.',
             'Edit [games-seeds.json](../tools/domains/games-seeds.json), then rebuild. Metadata hosts other than GitHub are not enriched.',
             '', '| repository | reason left out | reference note |', '|---|---|---|']
     for seed in seed_drops:
         idx.append(f"| [{esc(seed['repo'])}]({seed['repo']}) | {esc(seed['reason'])} | {esc(seed['why'])} |")
-    open(os.path.join(root, "catalog", "README.md"), "w", encoding="utf-8").write("\n".join(idx) + "\n")
+    write_text(os.path.join(root, "catalog", "README.md"), "\n".join(idx) + "\n")
 
 
 def build_domain(a):
@@ -586,9 +631,9 @@ def build_domain(a):
     out.sort(key=lambda r: (cats.index(r["category"]), RANK[r["reuse"]], -(r["stars"] or 0), r["name"].lower()))
     drops = [{"name": s["name"], "url": s["url"], "reason": why, **({"listed_in": s["listed_in"]} if s.get("listed_in") and why.startswith("listed in") else {})} for s, why in dropped]
     os.makedirs(os.path.join(a.out, "data"), exist_ok=True)
-    json.dump({"built": today.isoformat(), "domain": a.domain, "count": len(out), "seeds": len(seeds),
-               "dropped": drops, "categories": spec["categories"], "entries": out},
-              open(os.path.join(a.out, "data", f"{a.domain}.json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    write_text(os.path.join(a.out, "data", f"{a.domain}.json"), json.dumps(
+        {"built": today.isoformat(), "domain": a.domain, "count": len(out), "seeds": len(seeds),
+         "dropped": drops, "categories": spec["categories"], "entries": out}, indent=1, ensure_ascii=False))
     write_domain(spec, out, drops, os.path.join(a.out, a.domain), today, a.domain, elsewhere)
     print(f"{len(seeds)} seeds = {len(out)} rows + {len(drops)} dropped", file=sys.stderr)
     for d in drops:
@@ -628,7 +673,7 @@ def write_domain(spec, out, drops, root, today, domain, elsewhere):
             md += ["", "Listed once elsewhere in this repository, so not repeated here:", ""]
             md += [f"- [{esc(s['name'])}]({s['url']}), in [{s['listed_in']}](../../{s['listed_in']}): {esc(s['why'])}" +
                    (f" **{esc(s['note'])}**" if s["note"] else "") for s in elsewhere[c["slug"]]]
-        open(os.path.join(root, "catalog", f"{c['slug']}.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
+        write_text(os.path.join(root, "catalog", f"{c['slug']}.md"), "\n".join(md) + "\n")
     res = ["| resource | covers | license | use |", "|---|---|---|---|"]
     for r in spec.get("resources", []):
         res.append(f"| [{esc(r['name'])}]({r['url']}) | {esc(r['covers'])} | {esc(r['license'])} | {esc(r['use'])} |")
@@ -682,26 +727,54 @@ def write_domain(spec, out, drops, root, today, domain, elsewhere):
             "```sh", f"python3 tools/build_catalog.py --domain {domain} --src sources --out .", "```", "",
             f"**Left out at build time:** {len(gone)} of {len(out) + len(drops)} seeds.", ""] + left + \
            (["", f"**Listed once, elsewhere in this repository:** {len(moved)}.", ""] + elsewhere_lines if moved else [])
-    open(os.path.join(root, "README.md"), "w", encoding="utf-8").write("\n".join(idx) + "\n")
+    write_text(os.path.join(root, "README.md"), "\n".join(idx) + "\n")
 
 
 def esc(s):
-    s = re.sub(r"\s*[\U00002014\U00002013]\s*", " - ", s or "")    # no em or en dashes in this repository
+    """Text this repository wrote, for a markdown table cell: one line, no em or en dash, pipes escaped.
+    Hidden characters are removed here too. Text an outside party wrote goes through esc_desc instead."""
+    s = strip_hidden(s)
+    s = re.sub(r"\s*[\U00002014\U00002013]\s*", " - ", s)    # no em or en dashes in this repository
     return re.sub(r"\|", "\\|", re.sub(r"\s+", " ", s)).strip()
 
 
 def esc_desc(s, limit=None):
-    """Text a repository's owner wrote (its GitHub description), made inert in a markdown table cell.
+    """Text an outside party wrote (a GitHub description, a list's project name or license), made inert in a
+    markdown table cell or in link text.
 
-    One line; a backslash, backtick, bracket or pipe gets a backslash, so it opens no code span, link or
-    image and ends no cell; < and > become entities, so no HTML tag or autolink survives. The text is cut
-    to `limit` characters before it is escaped, so the cut never splits an escape.
+    One line, with no hidden character (strip_hidden: removed, because it has nothing to show, and a bidi
+    control can reorder what a reader sees). A backslash, backtick, bracket, pipe, `*`, `_`, `~` or `$`
+    gets a backslash, so it opens no code span, link, image, emphasis, strikethrough or math and ends no
+    cell; &, < and > become entities, so no HTML tag, autolink or character reference (`&#x202E;`)
+    survives. Every escape is added in one pass over the text, so no escape is escaped again; a backslash
+    already in the text is escaped like any other and stays visible. The text is cut to `limit`
+    characters before it is escaped, so the cut never splits an escape.
     """
     s = esc(s).replace("\\|", "|")      # esc's dash and whitespace rules; its pipe escape is redone below
     if limit is not None:
         s = s[:limit].rstrip()
-    s = re.sub(r"([\\`\[\]|])", r"\\\1", s)
-    return s.replace("<", "&lt;").replace(">", "&gt;")
+    s = re.sub(r"([\\`\[\]|*_~$])", r"\\\1", s)
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def code_span(s):
+    """Text an outside party wrote, as a code span in a table cell. Backslashes do not escape inside a code
+    span, so the fence is one backtick longer than the longest run in the text and cannot be closed early;
+    a pipe still gets a backslash, which GitHub's table parser removes before the span is read."""
+    s = esc(s)
+    fence = "`" * (max((len(run) for run in re.findall(r"`+", s)), default=0) + 1)
+    return f"{fence} {s} {fence}" if s else ""
+
+
+def link_url(u):
+    """A URL an outside party wrote, as a markdown link target: the characters that could end the target
+    or the table cell are percent-encoded, so the link stays one link."""
+    return re.sub(r"[()<>|`\\\"\[\]\s]", lambda m: "".join(f"%{b:02X}" for b in m.group(0).encode()), strip_hidden(u).strip())
+
+
+def write_text(path, text):
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
 
 
 if __name__ == "__main__":

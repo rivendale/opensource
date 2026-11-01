@@ -534,7 +534,7 @@ def ctrl_case():
         probs.append("an OSC sequence survives")
     if not re.search(r"A.*RED.*B.*C.*D.*E.*F", p.out, re.S):
         probs.append("the visible text around the controls is missing (the stripping ate real text?)")
-    for name, ch in (("bidi override U+202E", "‮"), ("zero-width space U+200B", "​"), ("line separator U+2028", " ")):
+    for name, ch in (("bidi override U+202E", "\U0000202E"), ("zero-width space U+200B", "\U0000200B"), ("line separator U+2028", "\U00002028")):
         if ch in p.out:
             probs.append(f"{name} survives (assumption: hidden-text characters are removed)")
     return probs

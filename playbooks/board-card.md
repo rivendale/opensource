@@ -1,7 +1,7 @@
 # Board and card playbook
 
 Abstract board games (chess, Connect Four), card games (solitaire, trick-taking, collectible and
-deck-building), dice games and virtual tabletops. The full list of 34 projects, with license and
+deck-building), dice games and virtual tabletops. The full list of 35 projects, with license and
 activity, is in [../catalog/board-card.md](../catalog/board-card.md). The catalog's genre mapping
 put several of the strongest references under strategy, so this playbook also draws on
 [../catalog/strategy.md](../catalog/strategy.md). Every project named here was checked against its

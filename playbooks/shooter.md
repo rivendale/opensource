@@ -1,7 +1,7 @@
 # Shooter playbook
 
 First-person and third-person shooters, plus the top-down multiplayer shooters the catalog files
-here; scrolling shoot 'em ups are in the [arcade playbook](arcade.md). The catalog lists 202
+here; scrolling shoot 'em ups are in the [arcade playbook](arcade.md). The catalog lists 205
 shooter projects, 22 of them `copy` class; the full table is in
 [../catalog/shooter.md](../catalog/shooter.md). Many of the best-maintained rows are GPL source
 ports of id Software engines, which this chassis treats as `study only`, and many need commercial

@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import sys
 import unicodedata
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 CAP = 1048576
 SHA = re.compile(r'[0-9a-fA-F]{40}')
@@ -65,6 +65,56 @@ def url(value):
         return u.scheme in ('https', 'http') and bool(u.hostname) and not u.username and not u.password
     except ValueError:
         return False
+
+
+def repo_path(source):
+    """The repository part of a source URL's path, lower case: /owner/repo on GitHub, everything before /-/
+    on GitLab (or the whole path), without a trailing / or .git. None when the path is not plain."""
+    path = plain_path(source.path)
+    if path is None:
+        return None
+    if '/-/' in path + '/':
+        path = (path + '/').split('/-/', 1)[0]
+    elif source.hostname in ('github.com', 'www.github.com'):
+        path = '/'.join(path.split('/')[:3])
+    path = path.rstrip('/')
+    path = path[:-4] if path.lower().endswith('.git') else path
+    return path.lower() if path.count('/') >= 2 and all(path.split('/')[1:]) else None
+
+
+def plain_path(path):
+    """A URL path decoded once, or None when it hides something: a % left after one decode (double
+    encoding), a control or format character, a backslash, an empty, blank, '.' or '..' segment."""
+    path = unquote(path)
+    segments = path.rstrip('/').split('/')[1:]
+    if '%' in path or chr(92) in path or clean(path) != path or path[:1] != '/':
+        return None
+    if any(not x.strip() or x in ('.', '..') for x in segments):
+        return None
+    return path
+
+
+def pinned_evidence(evidence, source, sha):
+    """True when evidence is a file in the card's own repository (source, credit.source_url) at the
+    card's own commit (sha, where.sha): REPO/blob/SHA/PATH, or REPO/-/blob/SHA/PATH on GitLab, where REPO
+    is the source URL reduced by repo_path. Another repository or host, a branch or tag name, or a path
+    that climbs out or hides a segment is not evidence."""
+    if not (url(evidence) and url(source) and isinstance(sha, str) and SHA.fullmatch(sha)):
+        return False
+    if any(c.isspace() for c in evidence + source):
+        return False        # urlsplit drops tabs, newlines and outer spaces; a URL that needs that is not plain
+    e, s = urlsplit(evidence), urlsplit(source)
+    if (e.scheme, e.hostname, e.port) != (s.scheme, s.hostname, s.port) or s.query or s.fragment or e.query:
+        return False
+    repo, path = repo_path(s), plain_path(e.path)
+    if repo is None or path is None:
+        return False
+    for middle in ('/blob/',) if s.hostname in ('github.com', 'www.github.com') else ('/blob/', '/-/blob/'):
+        prefix = repo + middle
+        if path.lower().startswith(prefix):
+            commit, _, file = path[len(prefix):].partition('/')
+            return commit.lower() == sha.lower() and bool(file.rstrip('/'))
+    return False
 
 
 def license_class(spdx):
@@ -173,9 +223,10 @@ def main():
                 fatal = True
                 classification = 'check first'
             derived = license_class(spdx)
-            if classification == 'copy' and (derived != 'copy' or not url(license_info.get('evidence_url'))):
+            credit_info = card.get('credit') if isinstance(card.get('credit'), dict) else {}
+            if classification == 'copy' and (derived != 'copy' or not pinned_evidence(license_info.get('evidence_url'), credit_info.get('source_url'), where.get('sha'))):
                 classification = derived if derived != 'copy' else 'check first'
-                finding(card_id, 'license restricted', 'Copy class requires an identified permissive license and an evidence URL (the URL is not fetched or checked here)')
+                finding(card_id, 'license restricted', "Copy class requires an identified permissive license and an evidence URL to a file in the card's own repository (credit source_url) at its own commit (where sha), as glean-resolve prints it; the URL is not fetched here")
             # Treat caller metadata conservatively, never elevate a stricter resolver class.
             if derived in ('study only', 'library use', 'check first'):
                 classification = derived
