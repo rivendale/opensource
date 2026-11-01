@@ -31,6 +31,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
+      - name: Refuse to run without hygiene_ref outside rivendale/opensource
+        if: inputs.hygiene_ref == '' && github.repository != 'rivendale/opensource'
+        run: |
+          echo "::error::call this workflow with hygiene_ref set to the commit SHA in your uses: line"
+          exit 1
       - name: Check out the repository under test, with history for the mode check
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
@@ -92,6 +97,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
+      - name: Refuse to run without hygiene_ref outside rivendale/opensource
+        if: inputs.hygiene_ref == '' && github.repository != 'rivendale/opensource'
+        run: |
+          echo "::error::call this workflow with hygiene_ref set to the commit SHA in your uses: line"
+          exit 1
       - name: Check out the repository under test
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
@@ -116,45 +126,27 @@ jobs:
         env:
           FROM_CALLER: ${{ inputs.hygiene_ref != '' }}
         run: |
-          if [ "$FROM_CALLER" = true ]; then tool=.hygiene-tool/tools/hygiene/repo_hygiene.py; else tool=tools/hygiene/repo_hygiene.py; fi
-          python3 "$tool" --root . --print-root-safety > "$RUNNER_TEMP/commands.txt"
+          if [ "$FROM_CALLER" = true ]; then dir=.hygiene-tool/tools/hygiene; else dir=tools/hygiene; fi
+          mkdir "$RUNNER_TEMP/hygiene"
+          cp "$dir/root_safety.sh" "$RUNNER_TEMP/hygiene/"
+          python3 "$dir/repo_hygiene.py" --root . --print-root-safety > "$RUNNER_TEMP/hygiene/commands.txt"
           rm -rf .hygiene-tool
-          if [ ! -s "$RUNNER_TEMP/commands.txt" ]; then echo "::notice::.hygiene.json lists no root_safety commands"; fi
-      # Each command runs as root in a throwaway python:3.12 container with no network (loopback still works,
-      # so local stub servers are fine). The repo is mounted read-only and copied, so nothing a command does
-      # reaches the runner. The job fails when a command fails, or when a file or directory that existed under
-      # the system paths before is gone afterwards or has a different mode, owner or symlink target: the mark
-      # of a cleanup that chmods or deletes through a symlink. New files there are not failures.
+          if [ ! -s "$RUNNER_TEMP/hygiene/commands.txt" ]; then echo "::notice::.hygiene.json lists no root_safety commands"; fi
+      # tools/hygiene/root_safety.sh runs each command as root in a throwaway python:3.12 container with no
+      # network (loopback still works, so local stub servers are fine), on a copy of the read-only repo mount.
+      # It fails when a command fails, when a system file is deleted or changes mode, owner, type, link target
+      # or (in the bin directories) content, or when a snapshot cannot be taken or compared.
+      # The image is pinned by digest: the python:3.12 index of 2026-10-28, read from mirror.gcr.io and
+      # public.ecr.aws/docker/library, which agree. Update the digest when moving to a newer image.
       - name: Run the root_safety commands as root in a throwaway container
         run: |
-          [ -s "$RUNNER_TEMP/commands.txt" ] || exit 0
+          [ -s "$RUNNER_TEMP/hygiene/commands.txt" ] || exit 0
           docker run --rm --network none --user 0:0 \
-            -v "$PWD:/src:ro" -v "$RUNNER_TEMP/commands.txt:/commands.txt:ro" \
-            python:3.12 bash -c '
+            -v "$PWD:/src:ro" -v "$RUNNER_TEMP/hygiene:/hygiene:ro" \
+            python:3.12@sha256:17b9724493d916f56565c131f389faff2597f46dec6ce09516f95125bc9f519f \
+            bash -c '
             set -u
             command -v git >/dev/null || { echo "::error::git is missing from the container image"; exit 1; }
-            cp -a --no-preserve=ownership /src /work
+            cp -a --no-preserve=ownership /src /work || exit 1
             git config --global --add safe.directory /work
-            git config --global --add safe.directory /src
-            snap() {
-              find -H /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/lib /usr/local/lib /etc -xdev \
-                \( -type f -o -type d -o -type l \) -printf "%m %u:%g %y %p -> %l\n" 2>/dev/null | LC_ALL=C sort
-            }
-            snap > /tmp/before
-            cd /work
-            status=0
-            while IFS= read -r cmd; do
-              [ -z "$cmd" ] && continue
-              echo "::group::$cmd"
-              bash -c "$cmd" < /dev/null || { echo "::error::root_safety command failed: $cmd"; status=1; }
-              echo "::endgroup::"
-            done < /commands.txt
-            snap > /tmp/after
-            LC_ALL=C comm -23 /tmp/before /tmp/after > /tmp/lost
-            if [ -s /tmp/lost ]; then
-              echo "::error::system files were deleted, or their mode, owner or target changed, while running as root:"
-              head -50 /tmp/lost
-              status=1
-            fi
-            /usr/bin/env true || { echo "::error::/usr/bin/env no longer runs"; status=1; }
-            exit $status'
+            exec bash /hygiene/root_safety.sh /hygiene/commands.txt /work'

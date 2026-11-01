@@ -10,6 +10,7 @@ import json, os, pathlib, subprocess, sys, tempfile, unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 TOOL = ROOT / "tools/hygiene/repo_hygiene.py"
+ROOT_SAFETY = ROOT / "tools/hygiene/root_safety.sh"
 ENV = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1", "GITHUB_ACTIONS": "",
        "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid",
        "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.invalid"}
@@ -44,9 +45,10 @@ class Hygiene(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertIn("all checks hold", r.stdout)
 
-    def test_tool_is_executable_and_has_no_raw_hidden_characters(self):
-        self.assertTrue(os.access(TOOL, os.X_OK))
-        self.assertTrue(TOOL.read_text(encoding="utf-8").isascii())
+    def test_tools_are_executable_and_ascii(self):
+        for t in (TOOL, ROOT_SAFETY):
+            self.assertTrue(os.access(t, os.X_OK), t)
+            self.assertTrue(t.read_text(encoding="utf-8").isascii(), t)
 
     def test_this_repo_passes_its_own_config(self):
         r = tool("--root", str(ROOT))
@@ -89,6 +91,78 @@ class Hygiene(unittest.TestCase):
         line = [l for l in r.stdout.splitlines() if l.startswith("::error::")][0]
         self.assertIn("100%25", line)
         self.assertNotIn("100% ", line)
+
+
+class RootSafety(unittest.TestCase):
+    """tools/hygiene/root_safety.sh against a fake system tree, without a container."""
+
+    def setUp(self):
+        self.d = pathlib.Path(tempfile.mkdtemp(prefix="rootsafety-"))
+        self.addCleanup(subprocess.run, ["rm", "-rf", "--", str(self.d)])
+        self.sys = self.d / "sys"
+        (self.sys / "bin").mkdir(parents=True)
+        (self.sys / "f").write_text("keep\n")
+        (self.sys / "bin" / "tool").write_text("#!/bin/sh\n")
+        (self.sys / "bin" / "tool").chmod(0o755)
+        self.work = self.d / "work"
+        self.work.mkdir()
+
+    def run_sh(self, *commands, dirs=None):
+        cmds = self.d / "commands.txt"
+        cmds.write_text("".join(c + "\n" for c in commands))
+        env = {**os.environ, "ROOT_SAFETY_DIRS": dirs or str(self.sys), "ROOT_SAFETY_HASH_DIRS": str(self.sys / "bin")}
+        return subprocess.run(["bash", str(ROOT_SAFETY), str(cmds), str(self.work)], capture_output=True, text=True,
+                              env=env)
+
+    def test_clean_commands_pass_and_new_files_are_fine(self):
+        r = self.run_sh("true", f"touch {self.sys}/new")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_deleting_a_file_fails_even_when_the_command_also_deletes_snapshot_files(self):
+        # The reviewer's case: the old job kept its snapshots in /tmp, so a command could remove them.
+        r = self.run_sh(f"rm -f {self.sys}/f; rm -rf /tmp/before /tmp/after {self.d}/before")
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn(f"{self.sys}/f", r.stdout)
+
+    def test_a_mode_change_through_a_symlink_fails(self):
+        r = self.run_sh(f"ln -s {self.sys}/bin/tool {self.work}/link && chmod 644 {self.work}/link")
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("755", r.stdout)
+
+    def test_a_write_through_a_symlink_into_a_bin_directory_fails(self):
+        r = self.run_sh(f"ln -s {self.sys}/bin/tool {self.work}/link && echo x >> {self.work}/link")
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("/bin/tool", r.stdout)
+
+    def test_removing_a_snapshot_directory_fails_instead_of_passing(self):
+        r = self.run_sh(f"rm -rf {self.sys}")
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("snapshot after the commands failed", r.stdout)
+
+    def test_no_snapshot_directory_fails(self):
+        r = self.run_sh("true", dirs=str(self.d / "missing"))
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("none of the snapshot directories exist", r.stdout)
+
+    def test_a_failing_command_fails_and_stdin_is_closed(self):
+        r = self.run_sh("read x; echo \"got [$x]\"", "false", "touch after-false")
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("got []", r.stdout)
+        self.assertTrue((self.work / "after-false").exists())
+
+
+class ConfigNotice(unittest.TestCase):
+    def test_loosening_the_config_prints_a_notice_not_a_failure(self):
+        repo = Repo({"a.md": "ok\n"}, {"stale_fails": True})
+        pathlib.Path(repo.path, ".hygiene.json").write_text(json.dumps({"stale_fails": False, "modes": False}))
+        for a in (["add", "-A"], ["-c", "commit.gpgsign=false", "commit", "-qm", "loosen"]):
+            subprocess.run(["git", "-C", repo.path, *a], check=True, capture_output=True, env=ENV)
+        r = tool("--root", repo.path, "--base", "HEAD~1")
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("NOTE  config: this change to .hygiene.json turns modes off", r.stdout)
+        self.assertIn("turns stale_fails off", r.stdout)
+        r = tool("--root", repo.path, "--base", "HEAD~1", env={"GITHUB_ACTIONS": "true"})
+        self.assertIn("::notice::config:", r.stdout)
 
 
 if __name__ == "__main__":
