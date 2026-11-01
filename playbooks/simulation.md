@@ -1,6 +1,6 @@
 # Simulation playbook
 
-City building, tycoon, transport, colony and life sims. The full list of 177 projects is in
+City building, tycoon, transport, colony and life sims. The full list of 180 projects is in
 [../catalog/simulation.md](../catalog/simulation.md); OpenRCT2 and OpenTTD are cataloged under
 [strategy](../catalog/strategy.md). Every project named here was checked against its repository
 on 2026-09-23; reuse classes are quoted as the catalog states them (`copy`, `library use`,

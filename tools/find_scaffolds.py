@@ -15,7 +15,7 @@ the hand-checked add-on tables live in art/blender.md and art/2d.md.
 import argparse, collections, datetime, json, os, re, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from build_catalog import license_class, LURE, esc  # noqa: E402
+from build_catalog import license_class, LURE, INVISIBLE, esc, esc_desc  # noqa: E402
 
 # (kind, group, GitHub search query)
 QUERIES = [
@@ -75,6 +75,28 @@ def search(q, n=30):
         return []
 
 
+def write_pages(out, root, built):
+    """scaffolds/<kind>.md from the kept entries. A description is the repository owner's text: esc_desc."""
+    REUSE = {"copy": "copy", "library": "library use", "study": "study only", "check": "check first"}
+    for kind, title in KIND_TITLE.items():
+        rows = [r for r in out if r["kind"] == kind]
+        md = [f"# {title}", "", f"Found by GitHub search on {built.isoformat()}, then verified on GitHub: code, a license "
+              "GitHub can identify, 25+ stars, a push in the last three years. Search is a starting point, not an "
+              "endorsement: read a repository before you build on it. Reuse classes as in the main catalog.", "",
+              HEADER[kind], ""]
+        for grp in sorted({r["group"] for r in rows}):
+            md += [f"## {grp}", ""]
+            if (kind, grp) in GROUP_NOTE:
+                md += [GROUP_NOTE[(kind, grp)], ""]
+            md += ["| repository | reuse | license | language | stars | last push | about |", "|---|---|---|---|---|---|---|"]
+            for r in [x for x in rows if x["group"] == grp]:
+                md.append(f"| [{esc(r['name'])}]({r['repo']}) | {REUSE[r['reuse']]} | {r['license']} | {esc(r['language'])} | "
+                          f"{r['stars']} | {r['pushed']}{' archived' if r['archived'] else ''} | {esc_desc(r['description'], 110)} |")
+            md.append("")
+        with open(os.path.join(root, "scaffolds", f"{kind}s.md"), "w", encoding="utf-8") as f:
+            f.write("\n".join(md))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
@@ -129,7 +151,7 @@ def main():
             if len(ages) < 2 or min(ages) < MIN_AGE_DAYS:
                 dropped[f"MCP repo or owner under {MIN_AGE_DAYS} days old"] += 1; continue
         out.append({**{k: e[k] for k in ("name", "repo", "kind", "group")},
-                    "description": re.sub(r"\s*[\u2014\u2013]\s*", " - ", (g.get("description") or "")).strip()[:200],
+                    "description": re.sub(r"\s*[\u2014\u2013]\s*", " - ", INVISIBLE.sub("", g.get("description") or "")).strip()[:200],
                     "language": g.get("language"), "license": spdx, "reuse": license_class(spdx),
                     "stars": g.get("stargazers_count"), "pushed": pushed, "archived": g.get("archived"),
                     "topics": g.get("topics", [])[:8]})
@@ -138,23 +160,7 @@ def main():
     os.makedirs(os.path.join(a.out, "scaffolds"), exist_ok=True)
     json.dump({"built": today.isoformat(), "count": len(out), "dropped": dict(dropped), "entries": out},
               open(os.path.join(a.out, "data", "scaffolds.json"), "w"), indent=1, ensure_ascii=False)
-    REUSE = {"copy": "copy", "library": "library use", "study": "study only", "check": "check first"}
-    for kind, title in KIND_TITLE.items():
-        rows = [r for r in out if r["kind"] == kind]
-        md = [f"# {title}", "", f"Found by GitHub search on {today.isoformat()}, then verified on GitHub: code, a license "
-              "GitHub can identify, 25+ stars, a push in the last three years. Search is a starting point, not an "
-              "endorsement: read a repository before you build on it. Reuse classes as in the main catalog.", "",
-              HEADER[kind], ""]
-        for grp in sorted({r["group"] for r in rows}):
-            md += [f"## {grp}", ""]
-            if (kind, grp) in GROUP_NOTE:
-                md += [GROUP_NOTE[(kind, grp)], ""]
-            md += ["| repository | reuse | license | language | stars | last push | about |", "|---|---|---|---|---|---|---|"]
-            for r in [x for x in rows if x["group"] == grp]:
-                md.append(f"| [{esc(r['name'])}]({r['repo']}) | {REUSE[r['reuse']]} | {r['license']} | {esc(r['language'])} | "
-                          f"{r['stars']} | {r['pushed']}{' archived' if r['archived'] else ''} | {esc(r['description'])[:110]} |")
-            md.append("")
-        open(os.path.join(a.out, "scaffolds", f"{kind}s.md"), "w", encoding="utf-8").write("\n".join(md))
+    write_pages(out, a.out, today)
     print(f"kept {len(out)}; dropped {dict(dropped)}", file=sys.stderr)
 
 

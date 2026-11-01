@@ -1,7 +1,7 @@
 # Rhythm playbook
 
 Games where the player acts in time with music: scrolling-note games (keyboard, dance pad, plastic
-guitar), circle-clicking games, singing games. The full list of 102 projects, with license and
+guitar), circle-clicking games, singing games. The full list of 101 projects, with license and
 activity, is in [../catalog/rhythm.md](../catalog/rhythm.md). Every project named here was checked
 against its repository on 2026-09-23; reuse classes are quoted as the catalog states them (`copy`,
 `library use`, `study only`, `check first`).

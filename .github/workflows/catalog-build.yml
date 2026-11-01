@@ -3,9 +3,15 @@ on:
   pull_request:
     paths:
       - 'tools/build_catalog.py'
+      - 'tools/find_scaffolds.py'
       - 'tools/fetch_sources.sh'
       - 'tools/check_build.py'
+      - 'tools/check_readme.py'
       - 'tests/tools/test_build_catalog.py'
+      - 'README.md'
+      - 'playbooks/*.md'
+      - 'data/*.json'
+      - 'tools/web/tests/browse_tests.py'
       - '.github/workflows/catalog-build.yml'
 permissions:
   contents: read
@@ -18,7 +24,11 @@ jobs:
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           persist-credentials: false
-      - name: SPDX expression classes and description escaping
+      - name: SPDX expression classes and description escaping (catalog and scaffold pages)
         run: python3 tests/tools/test_build_catalog.py
       - name: Build and fetch failure paths against a fake gh
         run: python3 tools/check_build.py
+      - name: README and playbook counts match the data
+        run: python3 tools/check_readme.py
+      - name: README count checker selftests
+        run: python3 tools/check_readme.py --selftest

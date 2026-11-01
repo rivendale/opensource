@@ -74,8 +74,12 @@ Copy the license object from the resolver; never invent permissive metadata.
 The [README license table](https://github.com/rivendale/opensource#the-license-rule) is authoritative.
 MPL, LGPL and EPL allow library use, not copying into the project. A new dependency
 needs a decision; an idea may be taken. GPL, AGPL, unknown and absent licenses never
-allow a port. Assets need their own checks. The checker applies these classes but
-cannot authenticate supplied license evidence or prove semantic absence of side effects.
+allow a port. Assets need their own checks. A `copy` class stays `copy` only when its
+`evidence_url` is a file in the card's own repository (`credit.source_url`) at the card's
+own commit (`where.sha`), in the form the resolver prints: `SOURCE/blob/SHA/PATH`
+(`SOURCE/-/blob/SHA/PATH` on GitLab). Evidence from another repository or a branch
+reads `check first`. The checker applies these classes but does not fetch the evidence,
+so it cannot authenticate it or prove semantic absence of side effects.
 
 For cards other than `skip`, include `credit` with `author`, linked `author_url`, linked `source_url`, and `text`
 worded as authorship, such as `adapted from ...`. Put credit where readers see it

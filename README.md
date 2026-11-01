@@ -45,7 +45,6 @@ what remains unfinished. Harvest for pages is a separate planned skill.
 |---|---|---|
 | Games | a genre catalog of 2,740 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
 | Software | 371 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
-
 | Tools | `tools/web/`: two readers that turn a public web page into text for an agent without trusting the page. `fetch` tries scholarly APIs, a direct read and the Wayback Machine; `browse` renders JavaScript pages in a headless browser whose every request goes through a public-only proxy. 212 independent tests. | [`tools/web/`](tools/web/README.md) |
 | WordPress incident checks | Read-only checks of an owner's offline site/export for published incident indicators, using YARA; explicit authorization required, partial coverage stays partial | [`wp-incident-check`](tools/wp-incident-check/README.md) |
 
@@ -110,35 +109,35 @@ local, and give them the least access that works.
 | `copy` | MIT, BSD, Apache-2.0, zlib, ISC, CC0, Unlicense... | reuse the code, keep the copyright notice, list it in THIRD_PARTY.md |
 | `library use` | LGPL, MPL, EPL | use it unmodified as a library; do not copy it into your code |
 | `study only` | GPL, AGPL, CC-BY-SA | read it for design and mechanics; copy nothing |
-| `check first` | no license; a license only a list states; one GitHub could not identify; a decompiled commercial game | all rights reserved until you confirm otherwise |
+| `check first` | no license; a license only a list states; one GitHub could not identify; a license `WITH` an exception that is not on the SPDX list; a decompiled commercial game | all rights reserved until you confirm otherwise |
 
 **A code license says nothing about art, audio, maps or data**, which frequently carry their own
 licenses (often non-commercial). Check assets separately. This is practical guidance, not legal advice.
 
 ## Genres
 
-598 of 2,740 projects have a permissive code license verified on GitHub. Built 2026-09-23.
+601 of 2,740 projects have a permissive code license verified on GitHub. Built 2026-10-06.
 
 | genre | projects | copy | active in the last 2 years | playbook |
 |---|---|---|---|---|
-| [Strategy](catalog/strategy.md) | 420 | 39 | 139 | [playbook](playbooks/strategy.md) |
-| [Simulation](catalog/simulation.md) | 177 | 29 | 74 | [playbook](playbooks/simulation.md) |
-| [Arcade](catalog/arcade.md) | 314 | 65 | 69 | [playbook](playbooks/arcade.md) |
-| [Action](catalog/action.md) | 137 | 22 | 27 | [playbook](playbooks/action.md) |
-| [Platformer](catalog/platformer.md) | 104 | 16 | 37 | [playbook](playbooks/platformer.md) |
+| [Strategy](catalog/strategy.md) | 426 | 38 | 144 | [playbook](playbooks/strategy.md) |
+| [Simulation](catalog/simulation.md) | 180 | 31 | 77 | [playbook](playbooks/simulation.md) |
+| [Arcade](catalog/arcade.md) | 315 | 66 | 70 | [playbook](playbooks/arcade.md) |
+| [Action](catalog/action.md) | 137 | 22 | 26 | [playbook](playbooks/action.md) |
+| [Platformer](catalog/platformer.md) | 104 | 16 | 36 | [playbook](playbooks/platformer.md) |
 | [RPG](catalog/rpg.md) | 234 | 37 | 76 | [playbook](playbooks/rpg.md) |
 | [Roguelike](catalog/roguelike.md) | 69 | 11 | 23 | [playbook](playbooks/roguelike.md) |
-| [Fighting](catalog/fighting.md) | 76 | 40 | 40 | [playbook](playbooks/fighting.md) |
-| [Shooter](catalog/shooter.md) | 202 | 22 | 75 | [playbook](playbooks/shooter.md) |
-| [Puzzle](catalog/puzzle.md) | 241 | 54 | 61 | [playbook](playbooks/puzzle.md) |
-| [Racing](catalog/racing.md) | 66 | 16 | 25 | [playbook](playbooks/racing.md) |
+| [Fighting](catalog/fighting.md) | 78 | 40 | 41 | [playbook](playbooks/fighting.md) |
+| [Shooter](catalog/shooter.md) | 205 | 22 | 79 | [playbook](playbooks/shooter.md) |
+| [Puzzle](catalog/puzzle.md) | 241 | 54 | 62 | [playbook](playbooks/puzzle.md) |
+| [Racing](catalog/racing.md) | 68 | 16 | 27 | [playbook](playbooks/racing.md) |
 | [Sports](catalog/sports.md) | 11 | 2 | 1 | [playbook](playbooks/sports.md) |
 | [Adventure](catalog/adventure.md) | 76 | 18 | 23 | [playbook](playbooks/adventure.md) |
 | [Sandbox](catalog/sandbox.md) | 34 | 15 | 16 | [playbook](playbooks/sandbox.md) |
-| [Board and card](catalog/board-card.md) | 34 | 12 | 17 | [playbook](playbooks/board-card.md) |
-| [Rhythm](catalog/rhythm.md) | 102 | 36 | 69 | [playbook](playbooks/rhythm.md) |
+| [Board and card](catalog/board-card.md) | 35 | 12 | 18 | [playbook](playbooks/board-card.md) |
+| [Rhythm](catalog/rhythm.md) | 101 | 37 | 67 | [playbook](playbooks/rhythm.md) |
 | [Educational](catalog/educational.md) | 9 | 0 | 2 | [playbook](playbooks/educational.md) |
-| [Engines and frameworks](catalog/engines.md) | 257 | 105 | 141 |  |
+| [Engines and frameworks](catalog/engines.md) | 262 | 105 | 144 |  |
 | [Other](catalog/other.md) | 155 | 59 | 48 |  |
 
 ## How the catalog is built
@@ -160,7 +159,7 @@ build before anything is written, and the lookups that succeeded stay cached in 
 rerun picks up where it stopped. `python3 tools/check_build.py` checks those failure paths with a
 fake `gh` and no network.
 
-**Safety:** topic searches pull in malware lures named after commercial games, so 444 projects found
+**Safety:** topic searches pull in malware lures named after commercial games, so 473 projects found
 only by a topic search with under 10 stars or no code, named like a download lure, or removed on review, are left out (counts in
 [`catalog/README.md`](catalog/README.md)). **Never download a release, zip or installer from a catalog
 repository; read and build from source.** Report a lure you still find as an issue.

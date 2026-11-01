@@ -9,6 +9,7 @@ on:
       - '**/*.md'
       - 'tools/check_links.py'
       - 'tests/tools/test_runner_cleanup.py'
+      - 'tests/tools/test_glean_check.py'
       - '.github/workflows/glean-check.yml'
 permissions:
   contents: read
@@ -23,6 +24,8 @@ jobs:
           persist-credentials: false
       - name: Eval runner cleanup never chmods through a symlink
         run: python3 tests/tools/test_runner_cleanup.py
+      - name: Copy evidence is pinned to the card's own repository and commit
+        run: python3 tests/tools/test_glean_check.py
       - name: Existing independent glean fixtures
         run: python3 tools/evals/runner.py glean
       - name: Relative Markdown links

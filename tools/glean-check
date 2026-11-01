@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import sys
 import unicodedata
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 CAP = 1048576
 SHA = re.compile(r'[0-9a-fA-F]{40}')
@@ -65,6 +65,27 @@ def url(value):
         return u.scheme in ('https', 'http') and bool(u.hostname) and not u.username and not u.password
     except ValueError:
         return False
+
+
+def pinned_evidence(evidence, source, sha):
+    """True when evidence is a file in the card's own repository (source, credit.source_url) at the
+    card's own commit (sha, where.sha): SOURCE/blob/SHA/PATH, or SOURCE/-/blob/SHA/PATH on GitLab.
+    Another repository, a branch or tag name, or a path that climbs out with '..' is not evidence."""
+    if not (url(evidence) and url(source) and isinstance(sha, str) and SHA.fullmatch(sha)):
+        return False
+    e, s = urlsplit(evidence), urlsplit(source)
+    repo = s.path.rstrip('/')
+    if (e.scheme, e.hostname, e.port) != (s.scheme, s.hostname, s.port) or s.query or s.fragment or e.query or repo.count('/') < 2:
+        return False
+    segments = [unquote(x) for x in e.path.split('/')]
+    if any(x in ('.', '..') or '/' in x or '\\' in x for x in segments):
+        return False
+    for middle in ('/blob/', '/-/blob/'):
+        prefix = repo + middle
+        if e.path.lower().startswith(prefix.lower()):
+            commit, _, file = e.path[len(prefix):].partition('/')
+            return commit.lower() == sha.lower() and bool(file.strip('/'))
+    return False
 
 
 def license_class(spdx):
@@ -173,9 +194,10 @@ def main():
                 fatal = True
                 classification = 'check first'
             derived = license_class(spdx)
-            if classification == 'copy' and (derived != 'copy' or not url(license_info.get('evidence_url'))):
+            credit_info = card.get('credit') if isinstance(card.get('credit'), dict) else {}
+            if classification == 'copy' and (derived != 'copy' or not pinned_evidence(license_info.get('evidence_url'), credit_info.get('source_url'), where.get('sha'))):
                 classification = derived if derived != 'copy' else 'check first'
-                finding(card_id, 'license restricted', 'Copy class requires an identified permissive license and an evidence URL (the URL is not fetched or checked here)')
+                finding(card_id, 'license restricted', "Copy class requires an identified permissive license and an evidence URL to a file in the card's own repository (credit source_url) at its own commit (where sha), as glean-resolve prints it; the URL is not fetched here")
             # Treat caller metadata conservatively, never elevate a stricter resolver class.
             if derived in ('study only', 'library use', 'check first'):
                 classification = derived

@@ -54,3 +54,5 @@ curated lists beyond games, by category, with the same reuse classes.
   link and `#anchor` in the markdown, and `--selftest` checks the checker.
 - After changing `tools/build_catalog.py` or `tools/fetch_sources.sh`, run `python3 tools/check_build.py`.
   It runs both against a fake `gh`, with no network, and checks what happens when GitHub fails.
+- After a rebuild, or any edit to a count in `README.md` or a playbook, run `python3 tools/check_readme.py`;
+  it fails when a hand-written count disagrees with `data/*.json`.
