@@ -1,0 +1,160 @@
+# Repository hygiene, shared by the rivendale open-source repos. How to adopt it: tools/hygiene/README.md.
+#
+# Another repo calls it pinned to a commit of this repo, and passes the same commit as hygiene_ref:
+#
+#   jobs:
+#     hygiene:
+#       uses: rivendale/opensource/.github/workflows/hygiene.yml@<40-hex commit sha>
+#       with:
+#         hygiene_ref: <the same 40-hex commit sha>
+#
+# In this repo it runs on its own pull requests and pushes to main, with the tool from the commit under test.
+# The caller's .hygiene.json configures the static checks and lists the root_safety commands.
+name: hygiene
+
+on:
+  workflow_call:
+    inputs:
+      hygiene_ref:
+        description: Commit SHA of rivendale/opensource to take tools/hygiene from. Use the SHA in your `uses:` line.
+        type: string
+        required: true
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository under test, with history for the mode check
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # inputs.hygiene_ref is set only under workflow_call (it is required there). On this repo's own
+      # pull_request and push runs the inputs context is empty and the tool comes from the checkout above,
+      # which is the commit under test. github.sha is not used: in a called workflow it is the caller's commit.
+      - name: Check that hygiene_ref is a commit SHA
+        if: inputs.hygiene_ref != ''
+        env:
+          HYGIENE_REF: ${{ inputs.hygiene_ref }}
+        run: |
+          if ! printf '%s' "$HYGIENE_REF" | grep -Eqx '[0-9a-f]{40}'; then
+            echo "::error::hygiene_ref must be a full 40-character commit SHA of rivendale/opensource, got: $HYGIENE_REF"
+            exit 1
+          fi
+      - name: Check out the hygiene tool at hygiene_ref
+        if: inputs.hygiene_ref != ''
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          repository: rivendale/opensource
+          ref: ${{ inputs.hygiene_ref }}
+          path: .hygiene-tool
+          sparse-checkout: tools/hygiene
+          persist-credentials: false
+      - name: Locate the tool
+        env:
+          FROM_CALLER: ${{ inputs.hygiene_ref != '' }}
+        run: |
+          if [ "$FROM_CALLER" = true ]; then tool=.hygiene-tool/tools/hygiene/repo_hygiene.py; else tool=tools/hygiene/repo_hygiene.py; fi
+          test -f "$tool" || { echo "::error::$tool not found"; exit 1; }
+          echo "HYGIENE_TOOL=$tool" >> "$GITHUB_ENV"
+      - name: Selftest the checker
+        run: python3 "$HYGIENE_TOOL" --selftest
+      - name: Command-line tests (this repo only)
+        if: inputs.hygiene_ref == ''
+        run: python3 tests/tools/test_repo_hygiene.py
+      - name: Static checks
+        env:
+          # pull_request: the base commit; merge_group: its base; push: the commit before the push.
+          EVENT_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          base=""
+          if [ -n "$EVENT_BASE" ] && ! printf '%s' "$EVENT_BASE" | grep -Eqx '0+' \
+              && git cat-file -e "$EVENT_BASE^{commit}" 2>/dev/null; then
+            base="$EVENT_BASE"
+          elif [ -n "$DEFAULT_BRANCH" ] && git cat-file -e "origin/$DEFAULT_BRANCH^{commit}" 2>/dev/null; then
+            # A new branch (before is all zeros), a force push whose old commit is gone, or another event.
+            base="origin/$DEFAULT_BRANCH"
+            echo "::notice::no usable event base ('$EVENT_BASE'); checking modes against $base"
+          else
+            echo "::notice::no base commit; the mode check is skipped"
+          fi
+          python3 "$HYGIENE_TOOL" --root . ${base:+--base "$base"}
+
+  root-safety:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out the repository under test
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Check that hygiene_ref is a commit SHA
+        if: inputs.hygiene_ref != ''
+        env:
+          HYGIENE_REF: ${{ inputs.hygiene_ref }}
+        run: |
+          printf '%s' "$HYGIENE_REF" | grep -Eqx '[0-9a-f]{40}' \
+            || { echo "::error::hygiene_ref must be a full 40-character commit SHA"; exit 1; }
+      - name: Check out the hygiene tool at hygiene_ref
+        if: inputs.hygiene_ref != ''
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          repository: rivendale/opensource
+          ref: ${{ inputs.hygiene_ref }}
+          path: .hygiene-tool
+          sparse-checkout: tools/hygiene
+          persist-credentials: false
+      - name: Read the root_safety commands from .hygiene.json
+        env:
+          FROM_CALLER: ${{ inputs.hygiene_ref != '' }}
+        run: |
+          if [ "$FROM_CALLER" = true ]; then tool=.hygiene-tool/tools/hygiene/repo_hygiene.py; else tool=tools/hygiene/repo_hygiene.py; fi
+          python3 "$tool" --root . --print-root-safety > "$RUNNER_TEMP/commands.txt"
+          rm -rf .hygiene-tool
+          if [ ! -s "$RUNNER_TEMP/commands.txt" ]; then echo "::notice::.hygiene.json lists no root_safety commands"; fi
+      # Each command runs as root in a throwaway python:3.12 container with no network (loopback still works,
+      # so local stub servers are fine). The repo is mounted read-only and copied, so nothing a command does
+      # reaches the runner. The job fails when a command fails, or when a file or directory that existed under
+      # the system paths before is gone afterwards or has a different mode, owner or symlink target: the mark
+      # of a cleanup that chmods or deletes through a symlink. New files there are not failures.
+      - name: Run the root_safety commands as root in a throwaway container
+        run: |
+          [ -s "$RUNNER_TEMP/commands.txt" ] || exit 0
+          docker run --rm --network none --user 0:0 \
+            -v "$PWD:/src:ro" -v "$RUNNER_TEMP/commands.txt:/commands.txt:ro" \
+            python:3.12 bash -c '
+            set -u
+            command -v git >/dev/null || { echo "::error::git is missing from the container image"; exit 1; }
+            cp -a --no-preserve=ownership /src /work
+            git config --global --add safe.directory /work
+            git config --global --add safe.directory /src
+            snap() {
+              find -H /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/lib /usr/local/lib /etc -xdev \
+                \( -type f -o -type d -o -type l \) -printf "%m %u:%g %y %p -> %l\n" 2>/dev/null | LC_ALL=C sort
+            }
+            snap > /tmp/before
+            cd /work
+            status=0
+            while IFS= read -r cmd; do
+              [ -z "$cmd" ] && continue
+              echo "::group::$cmd"
+              bash -c "$cmd" < /dev/null || { echo "::error::root_safety command failed: $cmd"; status=1; }
+              echo "::endgroup::"
+            done < /commands.txt
+            snap > /tmp/after
+            LC_ALL=C comm -23 /tmp/before /tmp/after > /tmp/lost
+            if [ -s /tmp/lost ]; then
+              echo "::error::system files were deleted, or their mode, owner or target changed, while running as root:"
+              head -50 /tmp/lost
+              status=1
+            fi
+            /usr/bin/env true || { echo "::error::/usr/bin/env no longer runs"; status=1; }
+            exit $status'
