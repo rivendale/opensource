@@ -56,3 +56,7 @@ curated lists beyond games, by category, with the same reuse classes.
   It runs both against a fake `gh`, with no network, and checks what happens when GitHub fails.
 - After a rebuild, or any edit to a count in `README.md` or a playbook, run `python3 tools/check_readme.py`;
   it fails when a hand-written count disagrees with `data/*.json`.
+- Run `python3 tools/hygiene/repo_hygiene.py --base origin/main` before pushing: lost executable bits, raw
+  invisible characters, counts in `.hygiene.json`, stale "checked" dates and instruction-file limits. The
+  `hygiene` workflow runs it on every pull request; [tools/hygiene/README.md](tools/hygiene/README.md) says how
+  other repos call it.

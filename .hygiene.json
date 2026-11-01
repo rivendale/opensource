@@ -1,0 +1,38 @@
+{
+  "_comment": "Repository hygiene config, read by tools/hygiene/repo_hygiene.py and .github/workflows/hygiene.yml. Schema: tools/hygiene/README.md. Keys starting with _ are comments.",
+  "invisible_allow": [
+    {"glob": "tools/evals/glean/fixtures/07f-bidi-and-zero-width/**", "why": "fixture: plants raw bidi and zero-width characters to check that glean-check strips them"},
+    {"glob": "tools/evals/glean/fixtures/13g-paper-title-is-data/**", "why": "fixture: a paper title with raw bidi and zero-width characters, to check it is treated as data"},
+    {"glob": "catalog/arcade.md", "why": "generated; one upstream description still holds a raw U+200D. build_catalog.py strips it now (strip_hidden), so the next networked rebuild removes it. Delete this entry after that rebuild."},
+    {"glob": "data/catalog.json", "why": "generated; the same U+200D as catalog/arcade.md. Delete this entry after the next networked rebuild."}
+  ],
+  "claims": [
+    {"file": "evals/studio/README.md", "pattern": "\\[game-sfx/cases\\]\\(game-sfx/cases\\): (\\d+) cases", "count_glob": "evals/studio/game-sfx/cases/*/expected.json"},
+    {"file": "evals/studio/README.md", "pattern": "\\[game-sfx/cases\\]\\(game-sfx/cases\\): \\d+ cases \\(\\d+ defect, (\\d+) controls\\)", "count_glob": "evals/studio/game-sfx/cases/*-c[0-9]*/expected.json"},
+    {"file": "evals/studio/README.md", "pattern": "\\[game-music/cases\\]\\(game-music/cases\\): (\\d+) cases", "count_glob": "evals/studio/game-music/cases/*/expected.json"},
+    {"file": "evals/studio/README.md", "pattern": "\\[game-music/cases\\]\\(game-music/cases\\): \\d+ cases \\(\\d+ defect, (\\d+) controls\\)", "count_glob": "evals/studio/game-music/cases/*-c[0-9]*/expected.json"},
+    {"file": "evals/studio/README.md", "pattern": "\\[game-video/cases\\]\\(game-video/cases\\): (\\d+) cases", "count_glob": "evals/studio/game-video/cases/*/expected.json"},
+    {"file": "evals/studio/README.md", "pattern": "\\[game-video/cases\\]\\(game-video/cases\\): \\d+ cases \\(\\d+ defect, (\\d+) controls\\)", "count_glob": "evals/studio/game-video/cases/*-c[0-9]*/expected.json"},
+    {"file": "engines/godot.md", "pattern": "All (\\d+) playbooks", "count_glob": "playbooks/*.md"}
+  ],
+  "_claims": "Counts in README.md and the playbooks are checked by tools/check_readme.py against data/*.json; they are not repeated here. The game-prototype case count is per batch in evals/studio/README.md, so it has no single claim.",
+  "stale_pattern": "\\b(?:checked|verified|read)[:\\s]+(?:on\\s+)?(\\d{4}-\\d{2}-\\d{2})\\b",
+  "stale_globs": ["**/*.md"],
+  "stale_exclude": [
+    {"glob": "catalog/**", "why": "generated"},
+    {"glob": "software/**", "why": "generated"},
+    {"glob": "scaffolds/scaffolds.md", "why": "generated"},
+    {"glob": "scaffolds/mcps.md", "why": "generated"},
+    {"glob": "tools/evals/glean/fixtures/**", "why": "fixtures"},
+    {"glob": "evals/**/cases/**", "why": "fixtures"},
+    {"glob": "**/CI-FAILURES.md", "why": "a dated log of past runs, not a claim about now"},
+    {"glob": "**/FAILURES.md", "why": "a dated log of past runs, not a claim about now"}
+  ],
+  "max_age_days": 45,
+  "instructions": [{"file": "AGENTS.md", "max_bytes": 32768}],
+  "_instructions": "AGENTS.md has no sentinel line; add one here if it gets one.",
+  "root_safety": [
+    "python3 tools/evals/runner.py glean",
+    "python3 tests/tools/test_runner_cleanup.py"
+  ]
+}
