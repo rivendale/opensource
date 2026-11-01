@@ -92,6 +92,7 @@ def _hidden_rx():
 
 
 HIDDEN = _hidden_rx()
+HIDDEN_RUN = re.compile(HIDDEN.pattern + "+")
 
 
 def describe(ch):
@@ -99,6 +100,11 @@ def describe(ch):
         "control character" if unicodedata.category(ch) == "Cc" else "format character"
     name = unicodedata.name(ch, "")
     return f"U+{ord(ch):04X} ({kind}{', ' + name if name else ''})"
+
+
+def escape(ch):
+    """The Python escape for one character (in JSON, one above U+FFFF is a surrogate pair of \\u escapes)."""
+    return f"\\u{ord(ch):04x}" if ord(ch) <= 0xFFFF else f"\\U{ord(ch):08x}"
 
 
 def show(path):
@@ -233,7 +239,7 @@ def check_modes(root, base, out):
     try:
         raw = git(root, "diff", "--raw", "-z", "-M", "--no-abbrev", f"{base}...HEAD")
     except subprocess.CalledProcessError as e:
-        out["fail"].append(f"modes: cannot diff against {base}: {e.stderr.strip()}")
+        out["fail"].append(f"modes: cannot diff against {base}: {(e.stderr.strip().splitlines() or [''])[0]}")
         return
     parts = raw.split("\0")
     i = 0
@@ -273,11 +279,15 @@ def check_invisible(root, files, cfg, out):
         if text is None:
             continue
         for n, line in enumerate(text.split("\n"), 1):
-            for m in HIDDEN.finditer(line):
-                if n == 1 and m.start() == 0 and m.group() == BOM:
-                    continue
-                out["fail"].append(f"invisible: {show(path)}:{n}:{m.start() + 1} raw {describe(m.group())}; "
-                                   f"write it as an escape (\\u{ord(m.group()):04x} or an HTML entity)")
+            for m in HIDDEN_RUN.finditer(line):
+                run_, col = m.group(), m.start()
+                if n == 1 and col == 0 and run_[0] == BOM:
+                    run_, col = run_[1:], 1
+                    if not run_:
+                        continue
+                more = f" and {len(run_) - 1} more hidden character(s) after it" if len(run_) > 1 else ""
+                out["fail"].append(f"invisible: {show(path)}:{n}:{col + 1} raw {describe(run_[0])}{more}; "
+                                   f"write it as an escape ({escape(run_[0])} or an HTML entity)")
 
 
 def count_for(root, files, claim):
@@ -448,7 +458,7 @@ def selftest():
             os.chmod(os.path.join(repo, name), 0o644)
         put("README.md", "Now 3 skills.\nchecked 2025-10-01\n```\nchecked 2020-01-01 in a fence\n```\n"
                          "~~~~\n```\nchecked 2020-02-02 still fenced\n~~~~\nverified: 2025-09-09\n")
-        put("x.py", "s = 'admin\u202e'  # bidi\nt = '1\u200b2'\nu = '\x1b[31m'\nv = 'tag\U000e0041'\n"
+        put("x.py", "s = 'admin\u202e'  # bidi\nt = '1\u200b2'\nu = '\x1b[31m'\nv = 'tag\U000e0041\U000e0042\U000e0043'\n"
                     "w = 'soft\u00adhyphen'\nz = 'late \ufeff BOM'\n")
         put("bad\u200bname.txt", "x\n")
         put("AGENTS.md", "Sentinel: end\nappended after the sentinel\n")
@@ -461,7 +471,9 @@ def selftest():
         expect("bidi control is caught", fails(r, "x.py:1:", "U+202E", "bidi"))
         expect("zero-width space is caught", fails(r, "x.py:2:", "U+200B"))
         expect("ESC control character is caught", fails(r, "x.py:3:", "U+001B"))
-        expect("tag-block character is caught", fails(r, "x.py:4:", "U+E0041", "tag"))
+        expect("tag-block character is caught, with a long escape", fails(r, "x.py:4:", "U+E0041", "tag", "\\U000e0041"))
+        expect("a run of hidden characters is one message", fails(r, "x.py:4:", "and 2 more hidden character(s)")
+               and sum(x.startswith("invisible: x.py:4:") for x in r["fail"]) == 1)
         expect("soft hyphen (Cf) is caught", fails(r, "x.py:5:", "U+00AD"))
         expect("a BOM after the start of the file is caught", fails(r, "x.py:6:", "U+FEFF"))
         expect("a hidden character in a path is caught and printed escaped",
