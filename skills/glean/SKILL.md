@@ -77,8 +77,12 @@ needs a decision; an idea may be taken. GPL, AGPL, unknown and absent licenses n
 allow a port. Assets need their own checks. A `copy` class stays `copy` only when its
 `evidence_url` is a file in the card's own repository (`credit.source_url`) at the card's
 own commit (`where.sha`), in the form the resolver prints: `SOURCE/blob/SHA/PATH`
-(`SOURCE/-/blob/SHA/PATH` on GitLab). Evidence from another repository or a branch
-reads `check first`. The checker applies these classes but does not fetch the evidence,
+(`SOURCE/-/blob/SHA/PATH` on GitLab). SOURCE is reduced to the repository first
+(`/owner/repo` on GitHub, the path before `/-/` on GitLab, no `.git` or trailing `/`).
+Evidence from another repository or a branch reads `check first`. A paper card
+credits the paper, so its `source_url` is not a code repository: it never keeps `copy`
+and cannot be ported. This is intended. To port a paper's code, write a code card
+for the code repository. The checker applies these classes but does not fetch the evidence,
 so it cannot authenticate it or prove semantic absence of side effects.
 
 For cards other than `skip`, include `credit` with `author`, linked `author_url`, linked `source_url`, and `text`

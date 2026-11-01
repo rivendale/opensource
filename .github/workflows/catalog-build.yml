@@ -12,6 +12,7 @@ on:
       - 'playbooks/*.md'
       - 'data/*.json'
       - 'tools/web/tests/browse_tests.py'
+      - 'tools/web/tests/lib.py'
       - '.github/workflows/catalog-build.yml'
 permissions:
   contents: read

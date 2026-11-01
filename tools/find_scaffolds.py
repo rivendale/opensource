@@ -15,7 +15,7 @@ the hand-checked add-on tables live in art/blender.md and art/2d.md.
 import argparse, collections, datetime, json, os, re, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from build_catalog import license_class, LURE, INVISIBLE, esc, esc_desc  # noqa: E402
+from build_catalog import license_class, LURE, esc, esc_desc, strip_hidden  # noqa: E402
 
 # (kind, group, GitHub search query)
 QUERIES = [
@@ -151,7 +151,7 @@ def main():
             if len(ages) < 2 or min(ages) < MIN_AGE_DAYS:
                 dropped[f"MCP repo or owner under {MIN_AGE_DAYS} days old"] += 1; continue
         out.append({**{k: e[k] for k in ("name", "repo", "kind", "group")},
-                    "description": re.sub(r"\s*[\u2014\u2013]\s*", " - ", INVISIBLE.sub("", g.get("description") or "")).strip()[:200],
+                    "description": re.sub(r"\s*[\u2014\u2013]\s*", " - ", strip_hidden(g.get("description") or "")).strip()[:200],
                     "language": g.get("language"), "license": spdx, "reuse": license_class(spdx),
                     "stars": g.get("stargazers_count"), "pushed": pushed, "archived": g.get("archived"),
                     "topics": g.get("topics", [])[:8]})

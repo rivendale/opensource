@@ -67,24 +67,53 @@ def url(value):
         return False
 
 
+def repo_path(source):
+    """The repository part of a source URL's path, lower case: /owner/repo on GitHub, everything before /-/
+    on GitLab (or the whole path), without a trailing / or .git. None when the path is not plain."""
+    path = plain_path(source.path)
+    if path is None:
+        return None
+    if '/-/' in path + '/':
+        path = (path + '/').split('/-/', 1)[0]
+    elif source.hostname in ('github.com', 'www.github.com'):
+        path = '/'.join(path.split('/')[:3])
+    path = path.rstrip('/')
+    path = path[:-4] if path.lower().endswith('.git') else path
+    return path.lower() if path.count('/') >= 2 and all(path.split('/')[1:]) else None
+
+
+def plain_path(path):
+    """A URL path decoded once, or None when it hides something: a % left after one decode (double
+    encoding), a control or format character, a backslash, an empty, blank, '.' or '..' segment."""
+    path = unquote(path)
+    segments = path.rstrip('/').split('/')[1:]
+    if '%' in path or chr(92) in path or clean(path) != path or path[:1] != '/':
+        return None
+    if any(not x.strip() or x in ('.', '..') for x in segments):
+        return None
+    return path
+
+
 def pinned_evidence(evidence, source, sha):
     """True when evidence is a file in the card's own repository (source, credit.source_url) at the
-    card's own commit (sha, where.sha): SOURCE/blob/SHA/PATH, or SOURCE/-/blob/SHA/PATH on GitLab.
-    Another repository, a branch or tag name, or a path that climbs out with '..' is not evidence."""
+    card's own commit (sha, where.sha): REPO/blob/SHA/PATH, or REPO/-/blob/SHA/PATH on GitLab, where REPO
+    is the source URL reduced by repo_path. Another repository or host, a branch or tag name, or a path
+    that climbs out or hides a segment is not evidence."""
     if not (url(evidence) and url(source) and isinstance(sha, str) and SHA.fullmatch(sha)):
         return False
+    if any(c.isspace() for c in evidence + source):
+        return False        # urlsplit drops tabs, newlines and outer spaces; a URL that needs that is not plain
     e, s = urlsplit(evidence), urlsplit(source)
-    repo = s.path.rstrip('/')
-    if (e.scheme, e.hostname, e.port) != (s.scheme, s.hostname, s.port) or s.query or s.fragment or e.query or repo.count('/') < 2:
+    if (e.scheme, e.hostname, e.port) != (s.scheme, s.hostname, s.port) or s.query or s.fragment or e.query:
         return False
-    segments = [unquote(x) for x in e.path.split('/')]
-    if any(x in ('.', '..') or '/' in x or '\\' in x for x in segments):
+    repo, path = repo_path(s), plain_path(e.path)
+    if repo is None or path is None:
         return False
-    for middle in ('/blob/', '/-/blob/'):
+    for middle in ('/blob/',) if s.hostname in ('github.com', 'www.github.com') else ('/blob/', '/-/blob/'):
         prefix = repo + middle
-        if e.path.lower().startswith(prefix.lower()):
-            commit, _, file = e.path[len(prefix):].partition('/')
-            return commit.lower() == sha.lower() and bool(file.strip('/'))
+        if path.lower().startswith(prefix):
+            commit, _, file = path[len(prefix):].partition('/')
+            return commit.lower() == sha.lower() and bool(file.rstrip('/'))
     return False
 
 

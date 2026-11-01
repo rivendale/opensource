@@ -1,7 +1,7 @@
 # Arcade playbook
 
 Shoot 'em ups, single-screen classics, breakout- and asteroids-likes, maze chasers, snake, and
-one-button games. The catalog lists 314 arcade projects, 65 of them `copy` class; the full table
+one-button games. The catalog lists 315 arcade projects, 66 of them `copy` class; the full table
 is in [../catalog/arcade.md](../catalog/arcade.md). Some rows are neighbors (racers, pinball,
 party games), so read a row before you rely on it. Every project named below was checked against
 its repository on 2026-09-23.

@@ -4,7 +4,7 @@ scaffold lists' markdown.
 
     python3 tests/tools/test_build_catalog.py
 """
-import datetime, importlib.util, os, pathlib, tempfile, unittest
+import datetime, importlib.util, os, pathlib, tempfile, unicodedata, unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("build_catalog", ROOT / "tools/build_catalog.py")
@@ -83,6 +83,13 @@ DESCRIPTIONS = [
     ("a\U0000200Eb\U0000200Fc\U0000061Cd", "abcd"),
     ("zero\U0000200Bwidth\U0000200C\U0000200D\U00002060\U0000FEFF", "zerowidth"),
     ("\U0000FEFF*x*", "\\*x\\*"),
+    # every other format (Cf) and control (Cc) character is removed too; whitespace controls become one space
+    ("a\U000000ADb", "ab"), ("x\U0000180Ey", "xy"), ("x\U00002061y\U00002062\U00002063\U00002064", "xy"),
+    ("x\U0000206Ay\U0000206F", "xy"), ("a\U0000FFF9b\U0000FFFAc\U0000FFFBd", "abcd"),
+    ("\U000E0001\U000E0069\U000E0067\U000E006E\U000E006F\U000E0072\U000E0065tag\U000E007F", "tag"),
+    ("a\x00b\x07c\x1b[31md\x7fe\x9bf", "abc\\[31mdef"), ("a\tb\x0bc\x0cd\x85e", "a b c d e"),
+    # GitHub renders $...$ as math
+    ("$x^2$ and $$y$$", "\\$x^2\\$ and \\$\\$y\\$\\$"),
 ]
 
 
@@ -102,7 +109,49 @@ class Description(unittest.TestCase):
         self.assertEqual(bc.esc_desc("\U0000200B" * 50 + "a" * 200, 120), "a" * 120)   # removed before the cut
 
     def test_esc_removes_invisible(self):
-        self.assertEqual(bc.esc("na\U0000202Eme\U0000200B"), "name")
+        self.assertEqual(bc.esc("na\U0000202Eme\U0000200B\U000E0041\x1b"), "name")
+
+    def test_strip_hidden_matches_glean_check(self):
+        every = "".join(chr(c) for c in range(0x110000) if not 0xD800 <= c <= 0xDFFF)
+        kept = set(bc.strip_hidden(every))
+        for c in every:
+            hidden = unicodedata.category(c) in ("Cf", "Cc") and not c.isspace()
+            self.assertEqual(c in kept, not hidden, f"U+{ord(c):04X}")
+
+
+class ThirdPartyCells(unittest.TestCase):
+    """A list's project name, repository and license are third-party text, like a description."""
+
+    def test_code_span_cannot_be_closed(self):
+        self.assertEqual(bc.code_span("git://h/x"), "` git://h/x `")
+        self.assertEqual(bc.code_span("a`b"), "`` a`b ``")
+        self.assertEqual(bc.code_span("a``b`"), "``` a``b` ```")
+        self.assertEqual(bc.code_span("a|b\n<i>"), "` a\\|b <i> `")   # < is literal inside a code span
+        self.assertEqual(bc.code_span(""), "")
+
+    def test_link_url_stays_one_link(self):
+        self.assertEqual(bc.link_url("https://h/a b)(<x>|`\"[]\\"), "https://h/a%20b%29%28%3Cx%3E%7C%60%22%5B%5D%5C")
+        self.assertEqual(bc.link_url("https://github.com/o/r"), "https://github.com/o/r")
+        self.assertEqual(bc.link_url(" https://h/x\U0000202E\ny\U00002028 "), "https://h/x%0Ay")
+
+    def test_catalog_name_and_repo_cells(self):
+        base = {"genre": "puzzle", "license_from": "per list, unverified", "reuse": "check", "language": "C*",
+                "stars": None, "pushed": None, "archived": False, "active": False, "note": None, "description": ""}
+        rows = [{**base, "name": "x](https://evil.example) [y", "repo": "https://h/a) [z](https://evil.example",
+                 "license": "CUSTOM <b>|_x_"},
+                {**base, "name": "g`<img src=x>`", "repo": "svn://h/r` <img src=x> `", "license": None}]
+        with tempfile.TemporaryDirectory() as tmp:
+            os.makedirs(os.path.join(tmp, "catalog"))
+            bc.write_markdown(rows, tmp, datetime.date(2026, 10, 1), {})
+            with open(os.path.join(tmp, "catalog", "puzzle.md"), encoding="utf-8") as f:
+                lines = [x for x in f.read().splitlines() if x.startswith("| ") and "https://h/" in x or "svn://" in x]
+        link, span = sorted(lines, key=lambda x: "svn://" in x)
+        self.assertTrue(link.startswith("| [x\\](https://evil.example) \\[y](https://h/a%29%20%5Bz%5D%28https://evil.example) |"), link)
+        self.assertIn("| CUSTOM &lt;b&gt;\\|\\_x\\_ (per list, unverified) |", link)
+        self.assertIn("| C\\* |", link)
+        self.assertTrue(span.startswith("| g\\`&lt;img src=x&gt;\\` (`` svn://h/r` <img src=x> ` ``) |"), span)
+        for line in (link, span):
+            self.assertEqual(line.replace("\\|", "").count("|"), 8, line)
 
     def test_catalog_page_cell(self):
         row = {"name": "g", "genre": "puzzle", "repo": "https://github.com/o/g", "license": "MIT", "license_from": "github",

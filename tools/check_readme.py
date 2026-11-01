@@ -11,6 +11,8 @@ generated pages (catalog/, software/README.md) are written by the build and are 
 import collections, json, pathlib, re, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+# Playbooks that state no project count, on purpose. Any other playbook without a count sentence is reported.
+NO_COUNT = {"fighting", "racing"}
 
 
 def n(x):
@@ -72,11 +74,27 @@ def problems(root, f):
         out.append(f"README.md: genre table has a row for {genre}, which the data does not have")
 
     for page in sorted((root / "playbooks").glob("*.md")):
-        genre = page.stem
-        for got in re.findall(r"The full list of ([\d,]+) projects", page.read_text(encoding="utf-8")):
-            want = f["genres"].get(genre, [0])[0]
-            if got != n(want):
-                out.append(f"playbooks/{page.name}: full list reads {got} projects, the data says {n(want)}")
+        genre, text, where = page.stem, page.read_text(encoding="utf-8"), f"playbooks/{page.name}"
+        total, copy, _ = f["genres"].get(genre, [0, 0, 0])
+        seen = 0
+        for got in re.findall(r"The full list of ([\d,]+)\s+projects", text):
+            seen += 1
+            if got != n(total):
+                out.append(f"{where}: full list reads {got} projects, the data says {n(total)}")
+        for got, got_copy in re.findall(r"The catalog lists ([\d,]+)\s+[\w-]+\s+projects,\s+(?:only\s+)?([\d,]+)\s+of them", text):
+            seen += 1
+            if got != n(total):
+                out.append(f"{where}: catalog lists {got} projects, the data says {n(total)}")
+            if got_copy != n(copy):
+                out.append(f"{where}: catalog lists {got_copy} of them copy, the data says {n(copy)}")
+        for got, none in re.findall(r"is thin: ([\d,]+)\s+projects(,\s+none with a permissive)?", text):
+            seen += 1
+            if got != n(total):
+                out.append(f"{where}: thin list reads {got} projects, the data says {n(total)}")
+            if none and copy:
+                out.append(f"{where}: says none has a permissive license, the data says {copy} are copy")
+        if not seen and genre not in NO_COUNT:
+            out.append(f"{where}: no count sentence found (add one, or add {genre} to NO_COUNT in tools/check_readme.py)")
     return out
 
 
@@ -97,6 +115,12 @@ def selftest():
         ("README.md", "| [Other](catalog/other.md) |", "| [Misc](catalog/misc.md) |"),
         ("README.md", "permissive code license verified on GitHub", "permissive license"),
         ("playbooks/puzzle.md", "The full list of ", "The full list of 1"),
+        ("playbooks/strategy.md", f"The full list of {n(f['genres']['strategy'][0])}", "The full list of 999"),
+        ("playbooks/arcade.md", f"lists {f['genres']['arcade'][0]} arcade", "lists 9 arcade"),
+        ("playbooks/arcade.md", f"projects, {f['genres']['arcade'][1]} of them", "projects, 1 of them"),
+        ("playbooks/action.md", f"only\n{f['genres']['action'][1]} of them", "only\n99 of them"),
+        ("playbooks/educational.md", f"is thin: {f['genres']['educational'][0]}\nprojects", "is thin: 8\nprojects"),
+        ("playbooks/sandbox.md", "The full list of ", "A list of "),
     ]
     failed = 0
     for path, old, new in edits:

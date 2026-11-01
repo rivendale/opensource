@@ -1,6 +1,6 @@
 # Strategy playbook
 
-Real-time strategy (RTS), turn-based tactics, 4X, tower defense and wargames. The full list of 420
+Real-time strategy (RTS), turn-based tactics, 4X, tower defense and wargames. The full list of 426
 projects, with license and activity, is in [../catalog/strategy.md](../catalog/strategy.md). Every
 project named here was checked against its repository on 2026-09-23; reuse classes are quoted as the
 catalog states them (`copy`, `library use`, `study only`, `check first`).

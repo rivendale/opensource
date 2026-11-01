@@ -53,6 +53,17 @@ REFUSED = [
     f"{SOURCE}/blob/{SHA}/LICENSE?ref=main",
     f"{SOURCE}/commit/{SHA}",
     "https://example.test/x",
+    f"{SOURCE}/blob/{SHA}/%00",                               # a control character after decoding
+    f"{SOURCE}/blob/{SHA}/%20",                               # a blank file name
+    f"{SOURCE}/blob/{SHA}/ ",
+    f"{SOURCE}/blob/{SHA}//LICENSE",                          # an empty segment
+    f"{SOURCE}/blob/{SHA}/%252e%252e/x",                      # % left after one decode
+    f"{SOURCE}/blob/{SHA}/a%5c..%5cx",                        # a backslash
+    f"{SOURCE}.git/blob/{SHA}/LICENSE",                       # .git belongs to a clone URL, not a blob URL
+    f"{SOURCE}/-/blob/{SHA}/LICENSE",                         # GitLab's form on GitHub
+    f"https://github.com:443/o/r/blob/{SHA}/LICENSE",         # another port spelling
+    f"{SOURCE}/blob/{SHA}/LICENSE\n",                         # urlsplit would drop the newline
+    f" {SOURCE}/blob/{SHA}/LICENSE",
 ]
 
 
@@ -77,6 +88,20 @@ class EvidenceUrl(unittest.TestCase):
                 self.assertEqual(c["decision"], "take")
                 self.assertIn("license restricted", codes)
                 self.assertIn("port refused", codes)
+
+    def test_source_url_is_normalized(self):
+        evidence = f"{SOURCE}/blob/{SHA}/LICENSE"
+        for source in ("https://github.com/o/r/", "https://github.com/o/r.git", "https://github.com/O/R",
+                       "https://github.com/o/r/tree/main", f"https://github.com/o/r/blob/{SHA}/README.md"):
+            with self.subTest(source=source):
+                c, _ = check(card(evidence, source=source))
+                self.assertEqual(c["license"]["classification"], "copy")
+        c, _ = check(card(f"https://gitlab.com/g/sub/p/-/blob/{SHA}/LICENSE", source="https://gitlab.com/g/sub/p/-/tree/main"))
+        self.assertEqual(c["license"]["classification"], "copy")
+        for source in ("https://github.com/o/r/tree/main", "https://github.com/o/r.git"):
+            with self.subTest(source=source, evidence="other repo"):
+                c, _ = check(card(f"https://github.com/o/r2/blob/{SHA}/LICENSE", source=source))
+                self.assertEqual(c["license"]["classification"], "check first")
 
     def test_card_pinned_to_a_branch_is_refused(self):
         c, codes = check(card(f"{SOURCE}/blob/main/LICENSE", sha="main"))
