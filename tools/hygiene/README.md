@@ -6,7 +6,7 @@ and the reusable workflow [`.github/workflows/hygiene.yml`](../../.github/workfl
 | Check | Fails when |
 |---|---|
 | `modes` | a tracked file with a shebang went from 100755 to 100644 since the base commit (a push through the GitHub API resets modes). A rename git does not pair because the file was also rewritten counts too: a deleted 100755 file and an added 100644 file with a shebang in the same directory, or with the same name |
-| `invisible` | a tracked text file or path holds a raw character a reader cannot see: any format (Cf) or control (Cc) character except tab, newline, carriage return, form feed and vertical tab (the `strip_hidden()` set in [`tools/build_catalog.py`](../build_catalog.py), without the other controls `isspace()` lets through), every Unicode Default_Ignorable_Code_Point (including the Hangul fillers and all of U+E0000 to U+E0FFF, not only the tags), the braille blank U+2800, and every unassigned code point. A variation selector (U+FE00 to U+FE0F, U+E0100 to U+E01EF) fails unless it directly follows a character it applies to: U+FE0E or U+FE0F after a base listed in Unicode's `emoji-variation-sequences.txt` (of ASCII only `#`, `*` and `0` to `9`, with U+FE0F); U+FE00 to U+FE0D and U+E0100 and up after CJK, and U+FE00 to U+FE0D also after Myanmar, Mongolian or Phags-pa. A byte order mark at the very start of a file is allowed. A file that is not valid UTF-8 fails, and is still scanned. Binary files are skipped the way git decides: a NUL byte in the first 8000 bytes, or `-text` or `binary` in `.gitattributes`. Path names are always checked, even on the allow-list |
+| `invisible` | a tracked text file or path holds a raw character a reader cannot see: any format (Cf) or control (Cc) character except tab, newline, carriage return, form feed and vertical tab (the `strip_hidden()` set in [`tools/build_catalog.py`](../build_catalog.py), without the other controls `isspace()` lets through), every Unicode Default_Ignorable_Code_Point (including the Hangul fillers and all of U+E0000 to U+E0FFF, not only the tags), the braille blank U+2800, the 66 noncharacters, and the line and paragraph separators U+2028 and U+2029 (in JavaScript they end a line, so code after them runs unseen). A variation selector fails unless it completes a sequence Unicode defines: U+FE0E or U+FE0F after a base listed in `emoji-variation-sequences.txt` (of ASCII only `#`, `*` and `0` to `9`, with U+FE0F); U+FE00 to U+FE0D after a base listed for that selector in `StandardizedVariants.txt`. Ideographic variation selectors (U+E0100 to U+E01EF) always fail, because any ideograph can carry one: a repo that uses ideographic variation sequences puts those files on `invisible_allow`. A byte order mark at the very start of a file is allowed. A file that is not valid UTF-8 fails, and is still scanned. Binary files are skipped the way git decides: a NUL byte in the first 8000 bytes, or `-text` or `binary` in `.gitattributes`. Path names are always checked, even on the allow-list |
 | `claims` | a number written in a file disagrees with a count taken from the repo |
 | `stale` | a dated marker such as "checked 2026-09-24" is older than `max_age_days`. Fenced code blocks are skipped. A warning unless `stale_fails` is true |
 | `instructions` | an agent instruction file is over its byte limit, or its sentinel line is missing or not the last line |
@@ -118,10 +118,9 @@ Example:
 - The invisible set follows the Unicode tables of the Python that runs it (3.12 on the runner), so a character
   assigned in a later Unicode version may not be caught.
 - A file marked `-text` or `binary` in `.gitattributes` is skipped, so that file is a place to review too.
-- The emoji bases and the default-ignorable ranges are copied into the tool from the Unicode data files named in its
-  comments; update them when Unicode adds some. The non-emoji variation selectors use a script rule (CJK, Myanmar,
-  Mongolian, Phags-pa), not the full standardized-variants table.
-- "Unassigned" follows the Python that runs the tool, so a character added in a later Unicode version fails until
-  the runner's Python knows it.
+- The default-ignorable ranges, the emoji bases and the standardized variants are copied into the tool from the
+  Unicode data files named in its comments; update them when Unicode adds some.
+- Code points unassigned in the runner's Unicode tables are not flagged (they may be newer characters, such as new
+  emoji); the reserved code points that render as nothing are already default-ignorable.
 - The root-safety job only sees what the commands do inside the container, to the paths above. It compares file
   contents only in the bin directories.

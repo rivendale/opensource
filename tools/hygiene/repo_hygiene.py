@@ -10,8 +10,9 @@ Checks, each configured in the repo's .hygiene.json (schema: tools/hygiene/READM
   modes         a tracked file with a shebang went from 100755 to 100644 between the merge base of --base and HEAD
                 (pushing through the GitHub API resets modes)
   invisible     a raw character a reader cannot see in a tracked text file or path: every format (Cf) and control (Cc)
-                character except tab, LF, CR, FF and VT, every Default_Ignorable_Code_Point, U+2800, unassigned code points, a
-                variation selector after a character it cannot modify; also a text file that is not valid UTF-8.
+                character except tab, LF, CR, FF and VT, every Default_Ignorable_Code_Point, U+2800, the noncharacters,
+                U+2028 and U+2029, and a variation selector outside a sequence Unicode defines (every ideographic
+                one); also a text file that is not valid UTF-8.
                 Bidi controls are Trojan Source (CVE-2021-42574). A BOM at file start is allowed. Binary files
                 (git's rule: a NUL in the first 8000 bytes, or -text / binary in .gitattributes) are skipped.
   claims        a number written in a file disagrees with a count taken from the repo ("12 skills" vs skills/*/SKILL.md)
@@ -104,8 +105,98 @@ EMOJI_VS_BASES = (
     "1F5EF 1F5F3 1F5FA 1F610 1F687 1F68D 1F691 1F694 1F698 1F6AD 1F6B2 1F6B9-1F6BA 1F6BC 1F6CB 1F6CD-1F6CF "
     "1F6E0-1F6E5 1F6E9 1F6F0 1F6F3 "
 )
-CJK = ((0x2E80, 0x2FDF), (0x3400, 0x4DBF), (0x4E00, 0x9FFF), (0xF900, 0xFAFF), (0x20000, 0x3FFFF))
-VS_SCRIPTS = ((0x1000, 0x109F), (0x1800, 0x18AF), (0xA840, 0xA87F))  # Myanmar, Mongolian, Phags-pa
+# The base and selector pairs for U+FE00 to U+FE0D, from StandardizedVariants.txt (Unicode Character Database,
+# https://www.unicode.org/Public/UCD/latest/ucd/StandardizedVariants.txt; this list is the 18.0.0 draft of 2026-07-29
+# in github.com/unicode-org/unicodetools). Selector: hex code points and ranges of the bases it is defined for.
+STANDARDIZED_VARIANTS = {
+    0xFE00: (
+        "30 1000 1002 1004 1010-1011 1015 1019-101A 101C-101D 1022 1031 1075 1078 107A 1080 2018-2019 "
+        "201C-201D 210B 2110 2112 211B 212C 2130-2131 2133 2205 2229-222A 223D 2242-2243 2248 2268-2269 "
+        "2272-2273 228A-228B 2293-2295 2297 229C 22CD 22DA-22DD 29B7 2A3C-2A3D 2A6C 2A9D-2A9E 2AAC-2AAD "
+        "2ACB-2ACC 3001-3002 31C0 31C6 31C9 31CF-31D2 31D4-31D5 31D7 31DB-31DD 31E5 349E 34B9 34BB 34DF 3515 "
+        "36EE 36FC 3781 382F 3862 387C 38C7 38E3 391C 393A 3A2E 3A6C 3AE4 3B08 3B19 3B49 3B9D 3C18 3C4E 3D33 "
+        "3D96 3EAC 3EB8 3F1B 3FFC 4008 4018 4039 4046 4096 40E3 412F 4202 4227 42A0 4301 4334 4359 43D5 43D9 "
+        "440B 446B 452B 455D 4561 456B 45D7 45F9 4635 46BE 46C7 4995 49E6 4A6E 4A76 4AB2 4B33 4BCE 4CCE 4CED "
+        "4CF8 4D56 4E0D 4E26 4E32 4E38-4E39 4E3D 4E41 4E82 4E86 4EAE 4EC0 4ECC 4EE4 4F60 4F80 4F86 4F8B 4FAE "
+        "4FBB 4FBF 5002 502B 507A 5099 50CF 50DA 50E7 5140 5145 514D 5154 5164 5167-5169 516D 5177 5180 518D "
+        "5192 5195 5197 51A4 51AC 51B5 51B7 51C9 51CC 51DC 51DE 51F5 5203 5207 5217 5229 523A-523B 5246 5272 "
+        "5277 5289 529B 52A3 52B3 52C7 52C9 52D2 52DE 52E4 52F5 52FA 5305-5306 5317 533F 5349 5351 535A 5373 "
+        "5375 537D 537F 53C3 53CA 53DF 53E5 53EB 53F1 5406 540F 541D 5438 5442 5448 5468 549E 54A2 54BD 54F6 "
+        "5510 5553 5555 5563 5584 5587 5599 559D 55AB 55B3 55C0 55C2 55E2 5606 5651 5668 5674 56F9 5716-5717 "
+        "578B 57CE 57F4 580D 5831-5832 5840 585A 585E 58A8 58AC 58B3 58D8 58DF 58EE 58F2 58F7 5906 591A 5922 "
+        "5944 5948 5951 5954 5962 5973 59D8 59EC 5A1B 5A27 5A62 5A66 5AB5 5B08 5B28 5B3E 5B85 5BC3 5BD8 5BE7 "
+        "5BEE 5BF3 5BFF 5C06 5C22 5C3F 5C60 5C62 5C64-5C65 5C6E 5C8D 5CC0 5D19 5D43 5D50 5D6B 5D6E 5D7C 5DB2 "
+        "5DBA 5DE1-5DE2 5DFD 5E28 5E3D 5E69 5E74 5EA6 5EB0 5EB3 5EB6 5EC9-5ECA 5ED2-5ED3 5ED9 5EEC 5EFE 5F04 "
+        "5F22 5F53 5F62 5F69 5F6B 5F8B 5F9A 5FA9 5FAD 5FCD 5FD7 5FF5 5FF9 6012 601C 6075 6081 6094 60C7 60D8 "
+        "60E1 6108 6144 6148 614C 614E 6160 6168 617A 618E 6190 61A4 61AF 61B2 61DE 61F2 61F6 6200 6210 621B "
+        "622E 6234 625D 62B1 62C9 62CF 62D3-62D4 62FC 62FE 633D 6350 6368 637B 6383 63A0 63A9 63C4-63C5 63E4 "
+        "641C 6422 6452 6469 6477 647E 649A 649D 64C4 654F 6556 656C 6578 6599 65C5 65E2-65E3 6613 6649 6674 "
+        "6688 6691 669C 66B4 66C6 66F4 66F8 6700 6717 671B 6721 674E 6753 6756 675E 677B 6785 6797 67F3 67FA "
+        "6817 681F 6852 6881 6885 688E 68A8 6914 6942 69A3 69EA 6A02 6A13 6AA8 6AD3 6ADB 6B04 6B21 6B54 6B72 "
+        "6B77 6B79 6B9F 6BAE 6BBA-6BBB 6C4E 6C67 6C88 6CBF 6CCC-6CCD 6CE5 6D16 6D1B 6D1E 6D34 6D3E 6D41 "
+        "6D69-6D6A 6D77-6D78 6D85 6DCB 6DDA 6DEA 6DF9 6E1A 6E2F 6E6E 6E9C 6EBA 6EC7 6ECB 6ED1 6EDB 6F0F "
+        "6F22-6F23 6F6E 6FC6 6FEB 6FFE 701B 701E 7039 704A 7070 7077 707D 7099 70AD 70C8 70D9 7145 7149 716E "
+        "719C 71CE 71D0 7210 721B 7228 722B 7235 7250 7262 7280 7295 72AF 72C0 72FC 732A 7375 737A 7387 738B "
+        "73A5 73B2 73DE 7406 7409 7422 7447 745C 7469 7471 7485 7489 7498 74CA 7506 7524 753B 753E 7559 7565 "
+        "7570 75E2 7610 761D 761F 7642 7669 76CA 76DB 76E7 76F4 7701 771E-771F 7740 774A 778B 77A7 784E 786B "
+        "788C 7891 78CA 78CC 78FB 792A 793C 793E 7948-7949 7950 7956 795D-795E 7965 797F 798D-798F 79AE 79CA "
+        "79EB 7A1C 7A40 7A4A 7A4F 7A81 7AB1 7ACB 7AEE 7B20 7BC0 7BC6 7BC9 7C3E 7C60 7C7B 7C92 7CBE 7CD2 7CD6 "
+        "7CE3 7CE7-7CE8 7D00 7D10 7D22 7D2F 7D5B 7D63 7DA0 7DBE 7DC7 7DF4 7E02 7E09 7E37 7E41 7E45 7F3E 7F72 "
+        "7F79-7F7A 7F85 7F95 7F9A 7FBD 7FFA 8001 8005 8046 8060 806F-8070 807E 808B 80AD 80B2 8103 813E 81D8 "
+        "81E8 81ED 8201 8204 8218 826F 8279 828B 8291 829D 82B1 82B3 82BD 82E5-82E6 831D 8323 8336 8352-8353 "
+        "8363 83AD 83BD 83C9-83CA 83CC 83DC 83E7 83EF 83F1 843D 8449 8457 84EE 84F1 84F3 84FC 8516 8564 85CD "
+        "85FA 8606 8612 862D 863F 8650 865C 8667 8669 8688 86A9 86E2 870E 8728 876B 8779 8786 87BA 87E1 8801 "
+        "881F 884C 8860 8863 88C2 88CF 88D7 88DE 88E1 88F8 88FA 8910 8941 8964 8986 898B 8996 8AA0 8AAA 8ABF "
+        "8ACB 8AD2 8AD6 8AED 8AF8 8AFE 8B01 8B39 8B58 8B80 8B8A 8C48 8C55 8CAB 8CC1-8CC2 8CC8 8CD3 8D08 8D1B "
+        "8D77 8DBC 8DCB 8DEF-8DF0 8ECA 8ED4 8F26 8F2A 8F38 8F3B 8F62 8F9E 8FB0 8FB6 9023 9038 9072 907C 908F "
+        "9094 90CE 90DE 90F1 90FD 9111 911B 916A 9199 91B4 91CC 91CF 91D1 9234 9238 9276 927C 92D7-92D8 9304 "
+        "934A 93F9 9415 958B 95AD 95B7 962E 964B 964D 9675 9678 967C 9686 96A3 96B7-96B8 96C3 96E2-96E3 "
+        "96F6-96F7 9723 9732 9748 9756 97DB 97E0 97FF 980B 9818 9829 983B 985E 98E2 98EF 98FC 9928-9929 99A7 "
+        "99C2 99F1 99FE 9A6A 9B12 9B6F 9C40 9C57 9CFD 9D67 9DB4 9DFA 9E1E 9E7F 9E97 9E9F 9EBB 9ECE 9EF9 9EFE "
+        "9F05 9F0F 9F16 9F3B 9F43 9F8D-9F8E 9F9C A856 A85C A85E-A860 A868 AA60-AA66 AA6B-AA6C AA6F AA7A FF01 "
+        "FF0C FF0E FF10 FF1A-FF1B FF1F 10AC5-10AC6 10AD6-10AD7 10AE1 13091 1310F 1311C 13121 13127 13139 "
+        "131A0 131B1 131B8-131B9 131CB 131E0 131F9-131FA 1327B 1327F 13285 1328C 132AA 132CB 132DC 132E7 "
+        "13307 1331B 13322 1333C 13377-13378 13399-1339A 133D3 133E4-133E5 133E7 133EE 133F2 133F5-133F6 "
+        "13416 13419-1341A 13423 13443-13446 13BE8-13BEA 13F72 1D49C 1D49E-1D49F 1D4A2 1D4A5-1D4A6 "
+        "1D4A9-1D4AC 1D4AE-1D4B5 1DB10 20122 2051C 20525 2054B 2063A 20804 208DE 20A2C 20B63 214E4 216A8 "
+        "216EA 219C8 21B18 21D0B 21DE4 21DE6 22183 2219F 22331 226D4 22844 2284A 22B0C 22BF1 2300A 232B8 "
+        "2335F 23393 2339C 233C3 233D5 2346D 236A3 238A7 23A8D 23AFA 23CBC 23D1E 23ED1 23F5E 23F8E 24263 "
+        "242EE 243AB 24608 24735 24814 24C36 24C92 24FA1 24FB8 25044 250F2-250F3 25119 25133 25249 2541D "
+        "25626 2569A 256C5 2597C 25AA7 25BAB 25C80 25CD0 25F86 261DA 26228 26247 262D9 2633E 264DA 26523 "
+        "265A8 267A7 267B5 26B3C 26C36 26CD5 26D6B 26F2C 26FB1 270D2 273CA 27667 278AE 27966 27CA8 27ED3 "
+        "27F2F 285D2 285ED 2872E 28BFA 28D77 29145 291DF 2921A 2940A 29496 295B6 29B30 2A0CE 2A105 2A20E "
+        "2A291 2A392 2A600 "
+    ),
+    0xFE01: (
+        "2018-2019 201C-201D 210B 2110 2112 211B 212C 2130-2131 2133 3001-3002 31C6 31CF 31DD 3B9D 3EB8 4039 "
+        "4FAE 50E7 514D 51B5 5207 52C7 52C9 52E4 52FA 5317 5351 537F 5584 5599 559D 5606 585A 5B3E 5BE7 5C6E "
+        "5ECA 5F22 6094 614C 614E 618E 61F2 61F6 654F 6674 6691 6717 671B 6885 6A02 6BBA 6D41 6D77 6ECB 6F22 "
+        "701E 716E 7235 732A 7387 7471 7570 76CA 76F4 771F 774A 788C 78CC 7956 798F 7A40 7BC0 7DF4 8005 8201 "
+        "8279 82E5 8457 865C 8779 8996 8AAA 8AED 8AF8 8AFE 8B01 8B39 8B8A 8D08 8F38 9038 96E3 9756 97FF 980B "
+        "983B 9B12 9F9C FF01 FF0C FF0E FF1A-FF1B FF1F 13093 13132 13139 13187 131B1 131EE 131F8-131FA 13257 "
+        "1327F 1328B 132A4 13308 13312-13314 1331B 13321-13322 13331 133E8 13419 13F1F 14274 1D49C "
+        "1D49E-1D49F 1D4A2 1D4A5-1D4A6 1D4A9-1D4AC 1D4AE-1D4B5 22331 25AA7 "
+    ),
+    0xFE02: (
+        "2018-2019 201C-201D 537F 5BE7 618E 61F2 6717 6A02 6BBA 6D41 7DF4 8005 980B 9F9C 13117 13139 13183 "
+        "131A0 131BA 131EE 13216 1327B 132A4 132E7 132E9 132F8 132FD 13302-13303 13310-13314 1331C 13321 "
+        "13331 1334A 13361 13373 1337D 13385 133AF-133B0 133BF 133DB 133DD 13419 1342C 1342E 14274 1D4CF "
+    ),
+    0xFE03: (
+        "13012 130B8 130BA 1310F 1312F 13139 13184 1319C-1319D 1319F 131B1 131DB 13205 13296 13338 13419 "
+    ),
+    0xFE04: (
+        "13139 1340D "
+    ),
+    0xFE05: (
+        "13139 14274 "
+    ),
+    0xFE06: (
+        "1312F 13139 13184 131DB 131EE 13205 132A4 132E9 1332B 13338 13370-13371 13419 14274 "
+    ),
+}
+# Noncharacters: U+FDD0 to U+FDEF and the last two code points of every plane.
+NONCHARACTERS = {*range(0xFDD0, 0xFDF0), *(plane << 16 | low for plane in range(17) for low in (0xFFFE, 0xFFFF))}
 KEYCAP_BASES = set("#*0123456789")
 
 
@@ -118,6 +209,7 @@ def _ranges(text):
 
 
 EMOJI_VS = _ranges(EMOJI_VS_BASES)
+SV_BASES = {vs: _ranges(text) for vs, text in STANDARDIZED_VARIANTS.items()}
 
 
 def is_variation_selector(cp):
@@ -125,33 +217,36 @@ def is_variation_selector(cp):
 
 
 def is_hidden(ch):
-    """A character a reader cannot see: every Default_Ignorable_Code_Point, EXTRA_HIDDEN, every Cf and Cc character
-    except the five whitespace controls (the strip_hidden() set in tools/build_catalog.py, without the extra controls
-    isspace() exempts) and every unassigned (Cn) code point. Variation selectors are left to vs_ok(), which judges
-    them by the character before them."""
+    """A character a reader cannot see: every Default_Ignorable_Code_Point (which covers the reserved invisible code
+    points), EXTRA_HIDDEN, the noncharacters, every Cf and Cc character except the five whitespace controls (the
+    strip_hidden() set in tools/build_catalog.py, without the extra controls isspace() exempts), and the line and
+    paragraph separators (Zl, Zp: U+2028 and U+2029 end a line in JavaScript, so code after them runs unseen).
+    Other unassigned code points are not flagged: they may be characters newer than this Python's Unicode tables.
+    Variation selectors are left to vs_ok(), which judges them by the character before them."""
     cp = ord(ch)
     if is_variation_selector(cp):
         return False
-    if cp in EXTRA_HIDDEN or any(a <= cp <= b for a, b in DEFAULT_IGNORABLE):
+    if cp in EXTRA_HIDDEN or cp in NONCHARACTERS or any(a <= cp <= b for a, b in DEFAULT_IGNORABLE):
         return True
-    return ch not in WHITESPACE and unicodedata.category(ch) in ("Cf", "Cc", "Cn")
+    return ch not in WHITESPACE and unicodedata.category(ch) in ("Cf", "Cc", "Zl", "Zp")
 
 
 def vs_ok(prev, vs):
-    """True when the variation selector vs directly follows a character it can apply to. U+FE0E and U+FE0F: a base
-    listed in emoji-variation-sequences.txt; of ASCII only the keycap bases, and only with U+FE0F. U+FE00 to U+FE0D:
-    CJK and the VS_SCRIPTS scripts. U+E0100 and up (ideographic variation selectors): CJK."""
+    """True when the variation selector vs directly follows a character it is defined for. U+FE0E and U+FE0F: a
+    base listed in emoji-variation-sequences.txt; of ASCII only the keycap bases, and only with U+FE0F. U+FE00 to
+    U+FE0D: the pairs in StandardizedVariants.txt. U+E0100 and up (ideographic variation selectors): never, since
+    any ideograph can carry one; a repo that uses ideographic variation sequences allow-lists those files."""
     if not prev:
         return False
     cp, v = ord(prev), ord(vs)
     within = lambda ranges: any(a <= cp <= b for a, b in ranges)
-    if cp < 0x80:
-        return prev in KEYCAP_BASES and v == 0xFE0F
     if v >= 0xE0100:
-        return within(CJK)
+        return False
+    if cp < 0x80 and v in (0xFE0E, 0xFE0F):
+        return prev in KEYCAP_BASES and v == 0xFE0F
     if v in (0xFE0E, 0xFE0F):
         return within(EMOJI_VS)
-    return within(CJK) or within(VS_SCRIPTS)
+    return within(SV_BASES.get(v, ()))
 
 
 def _hidden_rx():
@@ -178,7 +273,8 @@ def describe(ch):
     cp = ord(ch)
     cat = unicodedata.category(ch)
     kind = "bidi control" if ch in BIDI else "tag character" if 0xE0000 <= cp <= 0xE007F else \
-        "variation selector" if is_variation_selector(cp) else "unassigned code point" if cat == "Cn" else \
+        "variation selector" if is_variation_selector(cp) else "noncharacter" if cp in NONCHARACTERS else \
+        "line or paragraph separator" if cat in ("Zl", "Zp") else "unassigned code point" if cat == "Cn" else \
         "control character" if cat == "Cc" else "format character" if cat == "Cf" else "default-ignorable character" \
         if any(a <= cp <= b for a, b in DEFAULT_IGNORABLE) else "blank character"
     name = unicodedata.name(ch, "")
@@ -522,8 +618,10 @@ def check_invisible(root, files, cfg, out):
             for m in VS_RX.finditer(line):
                 col = m.start()
                 if not vs_ok(line[col - 1] if col else "", m.group()):
-                    out["fail"].append(f"invisible: {show(path)}:{n}:{col + 1} raw {describe(m.group())} not after a "
-                                       f"character it can modify; write it as an escape ({escape(m.group())})")
+                    why = "an ideographic variation selector; if the file uses ideographic variation sequences, " \
+                        "allow-list it" if ord(m.group()) >= 0xE0100 else "not after a character it is defined for"
+                    out["fail"].append(f"invisible: {show(path)}:{n}:{col + 1} raw {describe(m.group())}, {why}; "
+                                       f"write it as an escape ({escape(m.group())})")
 
 
 def count_for(root, files, claim):
@@ -792,11 +890,13 @@ def selftest():
         put("marked.dat", "x\U0000202ey\n")
         put("raw.txt", "x\U0000202ey\n")
         put("y.txt", "a\U00003164b\nc\U00002800d\ne\U0000034ff\ng\x1ch\ni\x85j\nform\x0cfeed\x0bvtab\n"
-                     "heart \U00002764\U0000FE0F keycap 1\U0000FE0F\U000020E3 flag \U0001F3F3\U0000FE0F ideograph "
-                     "\U00004E00\U000E0100\n"
+                     "heart \U00002764\U0000FE0F keycap 1\U0000FE0F\U000020E3 flag \U0001F3F3\U0000FE0F serif "
+                     "\U00002229\U0000FE00 myanmar \U00001000\U0000FE00 new emoji \U0001FAE9 \U0001FAC6\n"
                      "bare a\U0000FE0F and a\U000E0100 and twice \U00002764\U0000FE0F\U0000FE0F\n"
-                     "ascii =\U0000FE06= +\U0000FE0F keycap text 1\U0000FE0E arrow \U00002192\U0000FE0F cjk \U00004E00\U0000FE00\n"
-                     "smuggled \U000E0263\U000E0275 nonchar \U0000FDD0 unassigned \U00000378\n")
+                     "ascii =\U0000FE06= +\U0000FE0F keycap text 1\U0000FE0E arrow \U00002192\U0000FE0F cjk \U00004E00\U0000FE00 ivs \U00004E00\U000E0100\n"
+                     "smuggled \U000E0263\U000E0275 nonchar \U0000FDD0 last \U0010FFFF reserved \U00002065 \U0000FFF0 "
+                     "assigned later \U00000378\n"
+                     "// check the user is admin\U00002028isAdmin = true; para\U00002029graph\n")
         os.symlink("tgt\U0000200b", os.path.join(repo, "fixtures", "link"))
         put("fixtures/odd\U00002066name.txt", "x\n")
         put("ONE.md", BOM + "Sentinel: end\n")
@@ -815,7 +915,8 @@ def selftest():
         for line, cp in ((1, "U+3164"), (2, "U+2800"), (3, "U+034F"), (4, "U+001C"), (5, "U+0085")):
             expect(f"{cp} is caught", fails(r, f"y.txt:{line}:", cp))
         expect("form feed and vertical tab are whitespace", not fails(r, "y.txt:6:"))
-        expect("variation selectors after an emoji, a keycap base or an ideograph pass", not fails(r, "y.txt:7:"))
+        expect("variation selectors in emoji and standardized sequences pass, and so do code points newer than "
+               "this Python's Unicode tables", not fails(r, "y.txt:7:"))
         expect("a variation selector after a letter is caught", fails(r, "y.txt:8:7 ", "U+FE0F"))
         expect("an ideographic variation selector after a letter is caught", fails(r, "y.txt:8:14 ", "U+E0100"))
         expect("a second variation selector in a row is caught", fails(r, "y.txt:8:", "U+FE0F")
@@ -824,11 +925,17 @@ def selftest():
                              (27, "U+FE0E", "text style after a keycap base"),
                              (36, "U+FE0F", "after a symbol not in emoji-variation-sequences")):
             expect(f"a variation selector {why} is caught", fails(r, f"y.txt:9:{col} ", cp))
-        expect("U+FE00 after a CJK ideograph passes", sum(x.startswith("invisible: y.txt:9:") for x in r["fail"]) == 4)
+        expect("U+FE00 after an ideograph with no standardized variant is caught", fails(r, "y.txt:9:43 ", "U+FE00"))
+        expect("an ideographic variation selector is caught even after an ideograph", fails(r, "y.txt:9:", "U+E0100"))
         expect("the block after the tags (U+E0263, default-ignorable and unassigned) is caught",
                fails(r, "y.txt:10:10 ", "U+E0263", "and 1 more"))
         expect("a noncharacter is caught", fails(r, "y.txt:10:", "U+FDD0"))
-        expect("an unassigned code point is caught", fails(r, "y.txt:10:", "U+0378", "unassigned"))
+        expect("the last noncharacter of plane 16 is caught", fails(r, "y.txt:10:", "U+10FFFF", "noncharacter"))
+        expect("reserved default-ignorables U+2065 and U+FFF0 are caught",
+               fails(r, "y.txt:10:", "U+2065") and fails(r, "y.txt:10:", "U+FFF0"))
+        expect("an unassigned code point outside those ranges is not flagged", not fails(r, "y.txt:10:", "U+0378"))
+        expect("U+2028 (ends a line in JavaScript) and U+2029 are caught",
+               fails(r, "y.txt:11:", "U+2028", "separator") and fails(r, "y.txt:11:", "U+2029"))
         expect("an allow-listed symlink is skipped",
                not fails(r, "fixtures/link"))
         r3 = run(repo, {**cfg, "invisible_allow": []}, "HEAD~1", today)
