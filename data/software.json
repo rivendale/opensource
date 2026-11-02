@@ -1,8 +1,8 @@
 {
- "built": "2026-10-07",
+ "built": "2026-11-02",
  "domain": "software",
- "count": 371,
- "seeds": 373,
+ "count": 377,
+ "seeds": 380,
  "dropped": [
   {
    "name": "mrdoob/three.js",
@@ -15,6 +15,12 @@
    "url": "https://github.com/ahujasid/mcp-for-blender",
    "reason": "listed in scaffolds/mcps.md, not repeated here",
    "listed_in": "scaffolds/mcps.md"
+  },
+  {
+   "name": "Humpalumps/Ultra-Water",
+   "url": "https://github.com/Humpalumps/Ultra-Water",
+   "reason": "listed in catalog/engines.md, not repeated here",
+   "listed_in": "catalog/engines.md"
   }
  ],
  "categories": [
@@ -727,7 +733,7 @@
    "category": "local-ai-agents",
    "repo": "https://github.com/NousResearch/hermes-agent",
    "homepage": "https://hermes-agent.nousresearch.com",
-   "why": "Self-hosted agent that creates and refines its own skills from experience, with memory, session search and many chat and model backends.",
+   "why": "Deep eval #6 on 2026-11-01 says Borrow idea. Fits agent setup. Take the stance that only OS isolation is a real boundary. Skip curl-to-bash on household hosts. See [iamlukethedev/Herald-OS](https://github.com/iamlukethedev/Herald-OS). Strong signal. Risk is elevated.",
    "language": "Python",
    "license": "MIT",
    "license_from": "github",
@@ -1068,6 +1074,21 @@
    "note": null
   },
   {
+   "name": "vercel-labs/agent-desktop",
+   "category": "local-ai-agents",
+   "repo": "https://github.com/vercel-labs/agent-desktop",
+   "homepage": "https://agent-browser.dev/desktop",
+   "why": "Deep eval #3 on 2026-11-01 says Adopt portion. Fits Game Tester and agent setup. Take the skills and the STALE_REF retry. Skip a blind global npm install. Risk is elevated.",
+   "language": "Rust",
+   "license": "Apache-2.0",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 9036,
+   "pushed": "2026-11-02",
+   "active": true,
+   "note": null
+  },
+  {
    "name": "kunchenguid/firstmate",
    "category": "local-ai-agents",
    "repo": "https://github.com/kunchenguid/firstmate",
@@ -1154,6 +1175,21 @@
    "reuse": "copy",
    "stars": 1346,
    "pushed": "2026-08-24",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "iamlukethedev/Herald-OS",
+   "category": "local-ai-agents",
+   "repo": "https://github.com/iamlukethedev/Herald-OS",
+   "homepage": null,
+   "why": "Deep eval #6 on 2026-11-01 says Borrow idea. Fits Rygiel OS and agent setup. Take the permission tiers, protected paths, and audit.jsonl. Skip the Linux ISO and curl-to-bash install. See [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). Risk is elevated.",
+   "language": "TypeScript",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 605,
+   "pushed": "2026-10-29",
    "active": true,
    "note": null
   },
@@ -1276,6 +1312,21 @@
    "pushed": "2026-10-07",
    "active": true,
    "note": "sends usage events (versions, operating system, provider names, memory IDs, hashed user IDs) to PostHog by default until `MEM0_TELEMETRY=false` is set; the default LLM and embedder are OpenAI, so set both to local ones to keep memory text on your machine; the default vector store path is under /tmp, so set a lasting one; graph memory, temporal search and decay are hosted-platform features, not in the open-source package"
+  },
+  {
+   "name": "MemPalace/mempalace",
+   "category": "agent-memory",
+   "repo": "https://github.com/MemPalace/mempalace",
+   "homepage": "http://mempalaceofficial.com/",
+   "why": "Deep eval #8 on 2026-11-01 says Borrow idea. Fits agent setup and local/ZDR. Take the append-only verbatim store. Skip the 47-tool graph before a naive baseline. Agrees with [2610.30755](https://arxiv.org/abs/2610.30755). Risk is elevated.",
+   "language": "Python",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 60247,
+   "pushed": "2026-10-31",
+   "active": true,
+   "note": null
   },
   {
    "name": "vectorize-io/hindsight",
@@ -1462,7 +1513,7 @@
    "category": "mcp",
    "repo": "https://github.com/microsoft/playwright-mcp",
    "homepage": "https://www.npmjs.com/package/@playwright/mcp",
-   "why": "Browser automation for agents via accessibility snapshots rather than screenshots.",
+   "why": "Browser automation for agents via accessibility snapshots rather than screenshots. Deep eval #9 on 2026-11-01 says Adopt portion. Fits Game Tester and agent setup. Pair it with VeriCUA, [2610.40578](https://arxiv.org/abs/2610.40578). Risk is elevated.",
    "language": "TypeScript",
    "license": "Apache-2.0",
    "license_from": "github",
@@ -1743,6 +1794,21 @@
    "note": null
   },
   {
+   "name": "Leonxlnx/taste-skill",
+   "category": "agent-skills",
+   "repo": "https://github.com/Leonxlnx/taste-skill",
+   "homepage": "https://tasteskill.dev",
+   "why": "Deep eval #5 on 2026-11-01 says Adopt portion. Fits icf.games, Rygiel OS, and agent setup. Take the anti-slop rules and the scripts. Skip a blind install.sh. Risk is watch stars.",
+   "language": "JavaScript",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 108554,
+   "pushed": "2026-10-31",
+   "active": true,
+   "note": null
+  },
+  {
    "name": "mvanhorn/last30days-skill",
    "category": "agent-skills",
    "repo": "https://github.com/mvanhorn/last30days-skill",
@@ -1788,11 +1854,26 @@
    "note": "your CV and career history go to the model provider; its skills run pre-approved on your machine, so read their code first; its README warns that a fork is always public and that setup writes your name, contact details and salary expectations into tracked files, so use a private copy"
   },
   {
+   "name": "Donchitos/Claude-Code-Game-Studios",
+   "category": "agent-skills",
+   "repo": "https://github.com/Donchitos/Claude-Code-Game-Studios",
+   "homepage": null,
+   "why": "Deep eval #7 on 2026-11-01 says Borrow idea. Fits agent setup. The studio targets Godot, Unity, and Unreal. Take the ask-before-write and session checkpoint ideas. See [gamedev-skills/awesome-gamedev-agent-skills](https://github.com/gamedev-skills/awesome-gamedev-agent-skills). Skip the shell hooks. Risk is watch stars.",
+   "language": "Shell",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 33335,
+   "pushed": "2026-10-19",
+   "active": true,
+   "note": null
+  },
+  {
    "name": "cloudflare/security-audit-skill",
    "category": "agent-skills",
    "repo": "https://github.com/cloudflare/security-audit-skill",
    "homepage": null,
-   "why": "Coding-agent skill for multi-phase security audits whose findings are verified independently and written in a machine-readable form. Useful as a reference when checking your own review skill for gaps; adapt the ideas, not the text.",
+   "why": "Deep eval #4 on 2026-11-01 says Adopt portion. Fits agent setup, RE Analyst, and Systems Integrator. Coding-agent skill for multi-phase security audits with schema findings. Strong signal. Risk is low.",
    "language": "JavaScript",
    "license": "MIT",
    "license_from": "github",
@@ -1844,6 +1925,21 @@
    "reuse": "copy",
    "stars": 12024,
    "pushed": "2026-09-02",
+   "active": true,
+   "note": null
+  },
+  {
+   "name": "gamedev-skills/awesome-gamedev-agent-skills",
+   "category": "agent-skills",
+   "repo": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+   "homepage": null,
+   "why": "Deep eval #7 on 2026-11-01 says Adopt portion. Fits icf.games and agent setup. Take skills/web-engines and router/SKILL.md. See [Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios). Copied skills need Apache-2.0 attribution. Risk is watch stars.",
+   "language": "Python",
+   "license": "Apache-2.0",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 6573,
+   "pushed": "2026-10-28",
    "active": true,
    "note": null
   },

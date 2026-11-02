@@ -25,12 +25,12 @@ Built 2026-10-06 from three public lists, GitHub topic searches and curated seed
 | [Board and card](board-card.md) | 35 | 12 | 18 |
 | [Rhythm](rhythm.md) | 101 | 37 | 67 |
 | [Educational](educational.md) | 9 | 0 | 2 |
-| [Engines and frameworks](engines.md) | 262 | 105 | 144 |
+| [Engines and frameworks](engines.md) | 263 | 106 | 145 |
 | [Other](other.md) | 155 | 59 | 48 |
 
 ## Curated seeds
 
-15 seeds = 14 catalog rows + 1 listed drops.
+16 seeds = 15 catalog rows + 1 listed drops.
 Edit [games-seeds.json](../tools/domains/games-seeds.json), then rebuild. Metadata hosts other than GitHub are not enriched.
 
 | repository | reason left out | reference note |

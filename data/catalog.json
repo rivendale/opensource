@@ -1,13 +1,13 @@
 {
  "built": "2026-10-06",
- "count": 2740,
+ "count": 2741,
  "dropped": {
   "name or description reads like a download lure": 5,
   "found only by a topic search, under 10 stars": 457,
   "found only by a topic search, with no code or tagged leak/crack/apk": 10,
   "removed by a reviewed override (see tools/overrides.json)": 1
  },
- "curated_seeds": 15,
+ "curated_seeds": 16,
  "curated_dropped": [
   {
    "repo": "https://codeberg.org/OpenBoE/oboe",
@@ -17099,6 +17099,33 @@
    "platform": null,
    "state": "beta",
    "note": null
+  },
+  {
+   "name": "Humpalumps/Ultra-Water",
+   "genre": "engines",
+   "labels": [
+    "engines"
+   ],
+   "sources": [
+    "curated"
+   ],
+   "curated_why": "Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.",
+   "curated_repo": "https://github.com/Humpalumps/Ultra-Water",
+   "repo": "https://github.com/Humpalumps/Ultra-Water",
+   "homepage": null,
+   "description": "Real-time FFT ocean renderer for three.js (WebGL2): shore breakers, foam, caustics, underwater rendering and buoyancy at 170 - 300 fps",
+   "language": "JavaScript",
+   "license": "MIT",
+   "license_from": "github",
+   "reuse": "copy",
+   "stars": 572,
+   "pushed": "2026-11-02",
+   "active": true,
+   "archived": false,
+   "deps": null,
+   "platform": null,
+   "state": null,
+   "note": "Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low."
   },
   {
    "name": "Arcane-Engine",

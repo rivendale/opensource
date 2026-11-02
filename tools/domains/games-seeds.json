@@ -75,6 +75,11 @@
    "repo": "https://codeberg.org/OpenBoE/oboe",
    "genre": "rpg",
    "why": "Open Blades of Exile; inspect its README objection to Copilot use before any AI use."
+  },
+  {
+   "repo": "https://github.com/Humpalumps/Ultra-Water",
+   "genre": "engines",
+   "why": "Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low."
   }
  ]
 }
