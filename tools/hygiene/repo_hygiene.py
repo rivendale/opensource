@@ -753,15 +753,16 @@ def deny_terms_from_env():
 def check_deny_phrases(root, files, cfg, out):
     """Fail when a deny term from HYGIENE_DENY_TERMS appears in a tracked text file.
 
-    Under GitHub Actions the variable must be set and non-empty (fail closed). Outside CI an
-    unset or blank variable skips this check so local runs without the private list still work.
+    Under GitHub Actions the environment variable must be set and non-empty (fail closed).
+    Outside CI an unset or blank value skips this check so local runs without the private
+    list still work. The list is a repository secret; this function does not print it.
     """
     terms = deny_terms_from_env()
     if not terms:
         if os.environ.get("GITHUB_ACTIONS") == "true":
             out["fail"].append(
                 "deny_phrases: HYGIENE_DENY_TERMS is empty or unset; refusing to run open "
-                "(set the repository Actions variable HYGIENE_DENY_TERMS)"
+                "(set the repository secret HYGIENE_DENY_TERMS)"
             )
         return
     include = matcher(cfg["deny_globs"])
@@ -787,6 +788,24 @@ def check_deny_phrases(root, files, cfg, out):
                     f"deny_phrases: {show(path)}:{line}:{col} holds {phrase!r}"
                 )
                 start = idx + max(len(phrase), 1)
+
+
+def mask_deny_terms_for_actions_log():
+    """Register each deny term with the Actions log masker. Do not print the term list.
+
+    GitHub masks a secret and each of its lines, so a one-line comma-separated secret would
+    leave a single term visible in a "holds '...'" line. add-mask registers each term. The
+    runner does not echo that value. Call this before printing results.
+    """
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    terms = deny_terms_from_env()
+    if not terms:
+        return
+    for term in terms:
+        # Same escaping as a workflow command: the runner decodes it before masking.
+        escaped = term.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+        print(f"::add-mask::{escaped}", flush=True)
 
 
 def run(root, cfg, base, today=None):
@@ -828,6 +847,11 @@ def selftest():
         os.environ.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1", HOME=d,
                           GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.invalid",
                           GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.invalid")
+        # Own fake terms for every case except the missing-terms cases below, which clear
+        # this on purpose. CI sets GITHUB_ACTIONS=true and does not pass the repository
+        # secret into the selftest step, so a missing list would fail the clean-repo case.
+        saved_deny_terms = os.environ.get("HYGIENE_DENY_TERMS")
+        os.environ["HYGIENE_DENY_TERMS"] = "ACME_INTERNAL_WIDGET,ZZZ_DENY_TEST_PHRASE"
         repo = os.path.join(d, "repo")
         os.mkdir(repo)
 
@@ -1083,6 +1107,10 @@ def selftest():
                 expect(f"config error: {why}", False)
             except ConfigError as e:
                 expect(f"config error: {why}", why in str(e))
+        if saved_deny_terms is None:
+            os.environ.pop("HYGIENE_DENY_TERMS", None)
+        else:
+            os.environ["HYGIENE_DENY_TERMS"] = saved_deny_terms
     print("all checks hold" if ok else "SELFTEST FAILED")
     return 0 if ok else 1
 
@@ -1124,6 +1152,7 @@ def main(argv=None):
     except (ConfigError, ValueError) as e:
         print(annotate("error", f"config {cfg_path}: {e}"))
         return 2
+    mask_deny_terms_for_actions_log()
     for x in notices:
         print(annotate("notice", x))
     for w in r["warn"]:

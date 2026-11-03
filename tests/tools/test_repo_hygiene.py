@@ -45,6 +45,18 @@ class Hygiene(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertIn("all checks hold", r.stdout)
 
+    def test_selftest_passes_in_ci_without_the_repository_secret(self):
+        # The hygiene workflow runs --selftest with GITHUB_ACTIONS=true and does not
+        # pass HYGIENE_DENY_TERMS. The clean-repo case must still pass.
+        env = {k: v for k, v in {**ENV, "GITHUB_ACTIONS": "true"}.items() if k != "HYGIENE_DENY_TERMS"}
+        r = subprocess.run([sys.executable, str(TOOL), "--selftest"], capture_output=True, text=True, env=env)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("PASS  clean repo:", r.stdout)
+        self.assertIn("PASS  deny_phrases fails closed in CI when HYGIENE_DENY_TERMS is missing", r.stdout)
+        self.assertNotIn("SELFTEST FAILED", r.stdout)
+        self.assertNotIn("ACME_INTERNAL_WIDGET", r.stdout)
+        self.assertNotIn("ZZZ_DENY_TEST_PHRASE", r.stdout)
+
     def test_tools_are_executable_and_ascii(self):
         for t in (TOOL, ROOT_SAFETY):
             self.assertTrue(os.access(t, os.X_OK), t)
@@ -114,16 +126,44 @@ class Hygiene(unittest.TestCase):
         r = tool("--root", repo.path, env={"GITHUB_ACTIONS": "true", "HYGIENE_DENY_TERMS": ""})
         self.assertEqual(r.returncode, 1, r.stdout)
         self.assertIn("HYGIENE_DENY_TERMS is empty or unset", r.stdout)
-        env = {**ENV, "GITHUB_ACTIONS": "true"}
-        env.pop("HYGIENE_DENY_TERMS", None)
-        r = tool("--root", repo.path, env={"GITHUB_ACTIONS": "true"})
-        # tool() merges env over ENV; ensure key absent
+        self.assertIn("repository secret", r.stdout)
+        self.assertNotIn("Actions variable", r.stdout)
+        # tool() merges env over ENV; ensure the key is absent, as in CI before the secret exists.
         r = subprocess.run([sys.executable, str(TOOL), "--root", repo.path],
                            capture_output=True, text=True,
                            env={k: v for k, v in {**ENV, "GITHUB_ACTIONS": "true"}.items()
                                 if k != "HYGIENE_DENY_TERMS"})
         self.assertEqual(r.returncode, 1, r.stdout)
         self.assertIn("HYGIENE_DENY_TERMS is empty or unset", r.stdout)
+
+    def test_ci_masks_each_deny_term_and_does_not_print_the_list(self):
+        planted = Repo({"note.md": "mentions ACME_INTERNAL_WIDGET once\n"})
+        listed = "ACME_INTERNAL_WIDGET,ZZZ_DENY_TEST_PHRASE"
+        r = tool("--root", planted.path, env={"GITHUB_ACTIONS": "true", "HYGIENE_DENY_TERMS": listed})
+        self.assertEqual(r.returncode, 1, r.stdout)
+        lines = r.stdout.splitlines()
+        self.assertIn("::add-mask::ACME_INTERNAL_WIDGET", lines)
+        self.assertIn("::add-mask::ZZZ_DENY_TEST_PHRASE", lines)
+        self.assertNotIn(listed, r.stdout)
+        mask_at = lines.index("::add-mask::ACME_INTERNAL_WIDGET")
+        err_at = next(i for i, line in enumerate(lines)
+                      if line.startswith("::error::") and "ACME_INTERNAL_WIDGET" in line)
+        self.assertLess(mask_at, err_at)
+        # A percent sign has to be escaped or the runner would not mask that term.
+        percent = Repo({"note.md": "clean\n"})
+        r = tool("--root", percent.path, env={"GITHUB_ACTIONS": "true", "HYGIENE_DENY_TERMS": "100%OFF"})
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("::add-mask::100%25OFF", r.stdout.splitlines())
+        self.assertNotIn("::add-mask::100%OFF", r.stdout)
+
+    def test_workflow_reads_deny_terms_from_a_repository_secret(self):
+        text = (ROOT / ".github/workflows/hygiene.yml").read_text(encoding="utf-8")
+        self.assertIn("secrets.HYGIENE_DENY_TERMS", text)
+        self.assertNotIn("vars.HYGIENE_DENY_TERMS", text)
+        self.assertNotIn("Actions variable", text)
+        for line in text.splitlines():
+            if "HYGIENE_DENY_TERMS" in line and not line.lstrip().startswith("#"):
+                self.assertNotIn("echo", line)
 
 
 class RootSafety(unittest.TestCase):
