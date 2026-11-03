@@ -43,8 +43,8 @@ what remains unfinished. Harvest for pages is a separate planned skill.
 
 | domain | what it holds | start here |
 |---|---|---|
-| Games | a genre catalog of 2,740 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
-| Software | 371 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
+| Games | a genre catalog of 2,741 open-source games and engines, a build playbook per genre, and guides to game art, engines and building with AI tools | [Start a new game](#start-a-new-game), [genres](#genres) |
+| Software | 377 hand-picked open-source applications, tools and libraries beyond games, in 19 categories from self-hosting, local AI and agent memory to documents, media, learning and personal finance, and curated lists that go wider | [`software/`](software/README.md) |
 | Tools | `tools/web/`: two readers that turn a public web page into text for an agent without trusting the page. `fetch` tries scholarly APIs, a direct read and the Wayback Machine; `browse` renders JavaScript pages in a headless browser whose every request goes through a public-only proxy. 212 independent tests. | [`tools/web/`](tools/web/README.md) |
 | WordPress incident checks | Read-only checks of an owner's offline site/export for published incident indicators, using YARA; explicit authorization required, partial coverage stays partial | [`wp-incident-check`](tools/wp-incident-check/README.md) |
 | Repository hygiene | One check the rivendale open-source repos share: lost executable bits, raw invisible characters, hand-written counts, stale "checked" dates, instruction-file limits, and commands run as root in a throwaway container to catch cleanup that breaks system files. A reusable workflow pinned by commit | [`tools/hygiene/`](tools/hygiene/README.md) |
@@ -55,7 +55,7 @@ this repository; everything else lives under [`software/`](software/).
 ## Games
 
 A chassis for building new games **from open source instead of from scratch**: a genre catalog of
-2,740 open-source games and engines with each project's license and activity read from GitHub,
+2,741 open-source games and engines with each project's license and activity read from GitHub,
 a build playbook per genre, a guide to building with AI coding tools (Claude, Codex, Grok), and
 engineering lessons from small games we built.
 
@@ -117,7 +117,7 @@ licenses (often non-commercial). Check assets separately. This is practical guid
 
 ## Genres
 
-601 of 2,740 projects have a permissive code license verified on GitHub. Built 2026-10-06, from `data/catalog.json`.
+602 of 2,741 projects have a permissive code license verified on GitHub. Built 2026-10-06, from `data/catalog.json`.
 
 | genre | projects | copy | active in the last 2 years | playbook |
 |---|---|---|---|---|
@@ -138,7 +138,7 @@ licenses (often non-commercial). Check assets separately. This is practical guid
 | [Board and card](catalog/board-card.md) | 35 | 12 | 18 | [playbook](playbooks/board-card.md) |
 | [Rhythm](catalog/rhythm.md) | 101 | 37 | 67 | [playbook](playbooks/rhythm.md) |
 | [Educational](catalog/educational.md) | 9 | 0 | 2 | [playbook](playbooks/educational.md) |
-| [Engines and frameworks](catalog/engines.md) | 262 | 105 | 144 |  |
+| [Engines and frameworks](catalog/engines.md) | 263 | 106 | 145 |  |
 | [Other](catalog/other.md) | 155 | 59 | 48 |  |
 
 ## How the catalog is built
