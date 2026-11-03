@@ -93,6 +93,39 @@ class Hygiene(unittest.TestCase):
         self.assertNotIn("100% ", line)
 
 
+
+    def test_deny_phrases_from_env_with_fake_terms(self):
+        planted = Repo({"note.md": "mentions ACME_INTERNAL_WIDGET once\n"})
+        r = tool("--root", planted.path, env={
+            "HYGIENE_DENY_TERMS": "ACME_INTERNAL_WIDGET,ZZZ_DENY_TEST_PHRASE",
+            "GITHUB_ACTIONS": "",
+        })
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("ACME_INTERNAL_WIDGET", r.stdout)
+        clean = Repo({"note.md": "no fake markers here\n"})
+        r = tool("--root", clean.path, env={
+            "HYGIENE_DENY_TERMS": "ACME_INTERNAL_WIDGET\nZZZ_DENY_TEST_PHRASE",
+            "GITHUB_ACTIONS": "",
+        })
+        self.assertEqual(r.returncode, 0, r.stdout)
+
+    def test_deny_phrases_fails_closed_in_ci_without_terms(self):
+        repo = Repo({"note.md": "ok\n"})
+        r = tool("--root", repo.path, env={"GITHUB_ACTIONS": "true", "HYGIENE_DENY_TERMS": ""})
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("HYGIENE_DENY_TERMS is empty or unset", r.stdout)
+        env = {**ENV, "GITHUB_ACTIONS": "true"}
+        env.pop("HYGIENE_DENY_TERMS", None)
+        r = tool("--root", repo.path, env={"GITHUB_ACTIONS": "true"})
+        # tool() merges env over ENV; ensure key absent
+        r = subprocess.run([sys.executable, str(TOOL), "--root", repo.path],
+                           capture_output=True, text=True,
+                           env={k: v for k, v in {**ENV, "GITHUB_ACTIONS": "true"}.items()
+                                if k != "HYGIENE_DENY_TERMS"})
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("HYGIENE_DENY_TERMS is empty or unset", r.stdout)
+
+
 class RootSafety(unittest.TestCase):
     """tools/hygiene/root_safety.sh against a fake system tree, without a container."""
 

@@ -67,7 +67,7 @@ game engines, frameworks and libraries to build on. 263 projects; 106 with a per
 | [Thunder Engine](https://github.com/thunder-engine/thunder) | copy | Apache-2.0 | C++ | 681 | 2026-10-06 | Thunder Engine - Cross-platform 2D and 3D game engine with modular architecture |
 | [Loon Game](https://github.com/cping/LGame) | copy | Apache-2.0 | Java | 668 | 2026-06-05 | A cross-platform Java game Engine (Framework) , support JavaFX / Android / IOS / HTML5 / Linux / MAC / Windows |
 | [Castor3D](https://github.com/DragonJoker/Castor3D) | copy | MIT | C++ | 587 | 2026-09-22 | Multi-OS 3D engine. |
-| [Humpalumps/Ultra-Water](https://github.com/Humpalumps/Ultra-Water) | copy (see note) | MIT | JavaScript | 572 | 2026-11-02 | Real-time FFT ocean renderer for three.js (WebGL2): shore breakers, foam, caustics, underwater rendering and buoyancy at **Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.** |
+| [Humpalumps/Ultra-Water](https://github.com/Humpalumps/Ultra-Water) | copy (see note) | MIT | JavaScript | 572 | 2026-11-02 | Real-time FFT ocean renderer for three.js (WebGL2): shore breakers, foam, caustics, underwater rendering and buoyancy at **Adopt portion. Fits our games site. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.** |
 | [Arcane-Engine](https://github.com/Ershany/Arcane-Engine) | copy | MIT | C++ | 524 | 2026-08-14 | 3D C/C++ Game Engine - Created By Brady Jessup |
 | [rFXGen](https://github.com/raysan5/rfxgen) | copy | Zlib | C | 512 | 2026-08-13 | A simple and easy-to-use fx sounds generator |
 | [GeonBit.UI](https://github.com/RonenNess/GeonBit.UI) | copy | MIT | C# | 509 | 2024-04-25 | UI system for MonoGame projects. |

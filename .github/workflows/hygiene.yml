@@ -79,6 +79,8 @@ jobs:
           # pull_request: the base commit; merge_group: its base; push: the commit before the push.
           EVENT_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          # Deny terms live in a repo Actions variable, not in the tree. Empty/missing fails closed in CI.
+          HYGIENE_DENY_TERMS: ${{ vars.HYGIENE_DENY_TERMS }}
         run: |
           base=""
           if [ -n "$EVENT_BASE" ] && ! printf '%s' "$EVENT_BASE" | grep -Eqx '0+' \
