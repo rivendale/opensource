@@ -25,4 +25,4 @@ A license marked *per license file* was read from the repository's own license f
 Listed once elsewhere in this repository, so not repeated here:
 
 - [mrdoob/three.js](https://github.com/mrdoob/three.js), in [catalog/engines.md](../../catalog/engines.md): The standard JavaScript library for 3D in the browser over WebGL and WebGPU; most web 3D scenes start here.
-- [Humpalumps/Ultra-Water](https://github.com/Humpalumps/Ultra-Water), in [catalog/engines.md](../../catalog/engines.md): Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.
+- [Humpalumps/Ultra-Water](https://github.com/Humpalumps/Ultra-Water), in [catalog/engines.md](../../catalog/engines.md): Adopt portion. Fits our games site. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.

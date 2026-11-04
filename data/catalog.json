@@ -17109,7 +17109,7 @@
    "sources": [
     "curated"
    ],
-   "curated_why": "Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.",
+   "curated_why": "Adopt portion. Fits our games site. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.",
    "curated_repo": "https://github.com/Humpalumps/Ultra-Water",
    "repo": "https://github.com/Humpalumps/Ultra-Water",
    "homepage": null,
@@ -17125,7 +17125,7 @@
    "deps": null,
    "platform": null,
    "state": null,
-   "note": "Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low."
+   "note": "Adopt portion. Fits our games site. FFT ocean for three.js and WebGL2. Take src/water. Risk is low."
   },
   {
    "name": "Arcane-Engine",

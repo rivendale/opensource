@@ -51,6 +51,8 @@ DEFAULTS = {
     "stale_fails": False,
     "instructions": [],
     "root_safety": [],
+    "deny_globs": ["**/*"],
+    "deny_exclude": [],
 }
 CLAIM_KEYS = {"file", "pattern", "count_glob", "count_json", "count_lines"}
 INSTRUCTION_KEYS = {"file", "max_bytes", "sentinel"}
@@ -480,6 +482,8 @@ def load_config(cfg):
             raise ConfigError(f"instructions {item['file']!r}: sentinel must be one non-empty line")
     if not all(isinstance(x, str) and x.strip() and "\n" not in x for x in cfg["root_safety"]):
         raise ConfigError("root_safety must be a list of one-line shell commands")
+    cfg["deny_globs"] = _globs(cfg, "deny_globs")
+    cfg["deny_exclude"] = _globs(cfg, "deny_exclude", catch_all_ok=False)
     return cfg
 
 
@@ -492,7 +496,7 @@ def loosened(old, new):
             out.append(f"turns {key} off")
     if new["max_age_days"] > old["max_age_days"]:
         out.append(f"raises max_age_days from {old['max_age_days']} to {new['max_age_days']}")
-    for key in ("invisible_allow", "stale_exclude"):
+    for key in ("invisible_allow", "stale_exclude", "deny_exclude"):
         for g in new[key]:
             if g not in old[key]:
                 out.append(f"adds {g!r} to {key}")
@@ -519,6 +523,12 @@ def loosened(old, new):
     for cmd in old["root_safety"]:
         if cmd not in new["root_safety"]:
             out.append(f"drops the root_safety command {cmd!r}")
+    for g in new["deny_exclude"]:
+        if g not in old["deny_exclude"]:
+            out.append(f"adds {g!r} to deny_exclude")
+    for g in old["deny_globs"]:
+        if g not in new["deny_globs"]:
+            out.append(f"drops {g!r} from deny_globs")
     return out
 
 
@@ -726,6 +736,78 @@ def check_instructions(root, cfg, out):
                 out["fail"].append(f"instructions: {item['file']} must end with the sentinel line {sentinel!r}")
 
 
+
+def deny_terms_from_env():
+    """Terms from HYGIENE_DENY_TERMS (comma or newline separated). None if unset or blank."""
+    raw = os.environ.get("HYGIENE_DENY_TERMS")
+    if raw is None or not str(raw).strip():
+        return None
+    terms = []
+    for part in str(raw).replace(",", "\n").splitlines():
+        t = part.strip()
+        if t:
+            terms.append(t)
+    return terms
+
+
+def check_deny_phrases(root, files, cfg, out):
+    """Fail when a deny term from HYGIENE_DENY_TERMS appears in a tracked text file.
+
+    Under GitHub Actions the environment variable must be set and non-empty (fail closed).
+    Outside CI an unset or blank value skips this check so local runs without the private
+    list still work. The list is a repository secret; this function does not print it.
+    """
+    terms = deny_terms_from_env()
+    if not terms:
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            out["fail"].append(
+                "deny_phrases: HYGIENE_DENY_TERMS is empty or unset; refusing to run open "
+                "(set the repository secret HYGIENE_DENY_TERMS)"
+            )
+        return
+    include = matcher(cfg["deny_globs"])
+    exclude = matcher(cfg["deny_exclude"])
+    by_attr = binary_by_attr(root, files)
+    for path in files:
+        if not include(path) or exclude(path) or path in by_attr:
+            continue
+        full = os.path.join(root, path)
+        data = read_bytes(full)
+        if data is None or is_binary(data):
+            continue
+        body, _ = decode(data)
+        for phrase in terms:
+            start = 0
+            while True:
+                idx = body.find(phrase, start)
+                if idx < 0:
+                    break
+                line = body.count("\n", 0, idx) + 1
+                col = idx - body.rfind("\n", 0, idx)
+                out["fail"].append(
+                    f"deny_phrases: {show(path)}:{line}:{col} holds {phrase!r}"
+                )
+                start = idx + max(len(phrase), 1)
+
+
+def mask_deny_terms_for_actions_log():
+    """Register each deny term with the Actions log masker. Do not print the term list.
+
+    GitHub masks a secret and each of its lines, so a one-line comma-separated secret would
+    leave a single term visible in a "holds '...'" line. add-mask registers each term. The
+    runner does not echo that value. Call this before printing results.
+    """
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    terms = deny_terms_from_env()
+    if not terms:
+        return
+    for term in terms:
+        # Same escaping as a workflow command: the runner decodes it before masking.
+        escaped = term.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+        print(f"::add-mask::{escaped}", flush=True)
+
+
 def run(root, cfg, base, today=None):
     cfg = load_config(cfg)
     out = {"fail": [], "warn": []}
@@ -743,6 +825,7 @@ def run(root, cfg, base, today=None):
     if cfg["stale"]:
         check_stale(root, files, cfg, out, today or dt.date.today())
     check_instructions(root, cfg, out)
+    check_deny_phrases(root, files, cfg, out)
     return out
 
 
@@ -764,6 +847,11 @@ def selftest():
         os.environ.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1", HOME=d,
                           GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.invalid",
                           GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.invalid")
+        # Own fake terms for every case except the missing-terms cases below, which clear
+        # this on purpose. CI sets GITHUB_ACTIONS=true and does not pass the repository
+        # secret into the selftest step, so a missing list would fail the clean-repo case.
+        saved_deny_terms = os.environ.get("HYGIENE_DENY_TERMS")
+        os.environ["HYGIENE_DENY_TERMS"] = "ACME_INTERNAL_WIDGET,ZZZ_DENY_TEST_PHRASE"
         repo = os.path.join(d, "repo")
         os.mkdir(repo)
 
@@ -953,6 +1041,43 @@ def selftest():
         expect("loosening: tightening gives no notices", loosened(cfg, {**cfg, "stale_fails": True}) == [])
         r = run(repo, cfg, "no-such-ref", today)
         expect("an unknown --base fails", fails(r, "cannot diff against no-such-ref"))
+
+        # deny_phrases from HYGIENE_DENY_TERMS (obviously fake terms only)
+        put("catalog.md", "Fits ACME_INTERNAL_WIDGET in the demo lane.\n")
+        sh("add", "-A")
+        sh("commit", "-qm", "deny planted")
+        prev_terms = os.environ.get("HYGIENE_DENY_TERMS")
+        prev_ga = os.environ.get("GITHUB_ACTIONS")
+        os.environ["HYGIENE_DENY_TERMS"] = "ACME_INTERNAL_WIDGET\nZZZ_DENY_TEST_PHRASE"
+        os.environ.pop("GITHUB_ACTIONS", None)
+        deny_cfg = {"modes": False, "invisible": False, "stale": False}
+        r = run(repo, deny_cfg, None, today)
+        expect("deny_phrases catches a planted fake term",
+               fails(r, "deny_phrases:", "catalog.md:", "ACME_INTERNAL_WIDGET"))
+        put("catalog.md", "Fits the demo lane with a role label.\n")
+        sh("add", "-A")
+        sh("commit", "-qm", "deny cleared")
+        r = run(repo, deny_cfg, None, today)
+        expect("deny_phrases is clean after a rewrite",
+               not any("deny_phrases:" in x for x in r["fail"]))
+        os.environ["GITHUB_ACTIONS"] = "true"
+        os.environ["HYGIENE_DENY_TERMS"] = ""
+        r = run(repo, deny_cfg, None, today)
+        expect("deny_phrases fails closed in CI when HYGIENE_DENY_TERMS is empty",
+               fails(r, "HYGIENE_DENY_TERMS is empty or unset"))
+        os.environ.pop("HYGIENE_DENY_TERMS", None)
+        r = run(repo, deny_cfg, None, today)
+        expect("deny_phrases fails closed in CI when HYGIENE_DENY_TERMS is missing",
+               fails(r, "HYGIENE_DENY_TERMS is empty or unset"))
+        if prev_terms is None:
+            os.environ.pop("HYGIENE_DENY_TERMS", None)
+        else:
+            os.environ["HYGIENE_DENY_TERMS"] = prev_terms
+        if prev_ga is None:
+            os.environ.pop("GITHUB_ACTIONS", None)
+        else:
+            os.environ["GITHUB_ACTIONS"] = prev_ga
+
         for bad, why in (({"stale_globz": []}, "unknown key"), ({"stale_pattern": "no group"}, "needs a group"),
                          ({"invisible_allow": [{"glob": "x"}]}, "glob"), ({"root_safety": ["a\nb"]}, "one-line"),
                          ({"claims": [{"file": "a", "pattern": "(1)"}]}, "exactly one"),
@@ -982,6 +1107,10 @@ def selftest():
                 expect(f"config error: {why}", False)
             except ConfigError as e:
                 expect(f"config error: {why}", why in str(e))
+        if saved_deny_terms is None:
+            os.environ.pop("HYGIENE_DENY_TERMS", None)
+        else:
+            os.environ["HYGIENE_DENY_TERMS"] = saved_deny_terms
     print("all checks hold" if ok else "SELFTEST FAILED")
     return 0 if ok else 1
 
@@ -1023,6 +1152,7 @@ def main(argv=None):
     except (ConfigError, ValueError) as e:
         print(annotate("error", f"config {cfg_path}: {e}"))
         return 2
+    mask_deny_terms_for_actions_log()
     for x in notices:
         print(annotate("notice", x))
     for w in r["warn"]:

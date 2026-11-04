@@ -493,7 +493,7 @@
    "name": "microsoft/playwright-mcp",
    "url": "https://github.com/microsoft/playwright-mcp",
    "category": "mcp",
-   "why": "Browser automation for agents via accessibility snapshots rather than screenshots. Deep eval #9 on 2026-11-01 says Adopt portion. Fits Game Tester and agent setup. Pair it with VeriCUA, [2610.40578](https://arxiv.org/abs/2610.40578). Risk is elevated."
+   "why": "Browser automation for agents via accessibility snapshots rather than screenshots. Adopt portion. Fits our game-testing lane and agent setup. Pair it with VeriCUA, [2610.40578](https://arxiv.org/abs/2610.40578). Risk is elevated."
   },
   {
    "name": "github/github-mcp-server",
@@ -2127,7 +2127,7 @@
    "name": "NousResearch/hermes-agent",
    "url": "https://github.com/NousResearch/hermes-agent",
    "category": "local-ai-agents",
-   "why": "Deep eval #6 on 2026-11-01 says Borrow idea. Fits agent setup. Take the stance that only OS isolation is a real boundary. Skip curl-to-bash on household hosts. See [iamlukethedev/Herald-OS](https://github.com/iamlukethedev/Herald-OS). Strong signal. Risk is elevated."
+   "why": "Borrow idea. Fits agent setup. Take the stance that only OS isolation is a real boundary. Skip curl-to-bash on home machines. See [iamlukethedev/Herald-OS](https://github.com/iamlukethedev/Herald-OS). Strong signal. Risk is elevated."
   },
   {
    "name": "WyattBlue/auto-editor",
@@ -2457,7 +2457,7 @@
    "name": "cloudflare/security-audit-skill",
    "url": "https://github.com/cloudflare/security-audit-skill",
    "category": "agent-skills",
-   "why": "Deep eval #4 on 2026-11-01 says Adopt portion. Fits agent setup, RE Analyst, and Systems Integrator. Coding-agent skill for multi-phase security audits with schema findings. Strong signal. Risk is low."
+   "why": "Adopt portion. Fits agent setup, our reverse-engineering review lane, and our systems-integration lane. Coding-agent skill for multi-phase security audits with schema findings. Strong signal. Risk is low."
   },
   {
    "name": "garrytan/gstack",
@@ -2469,44 +2469,44 @@
    "name": "Humpalumps/Ultra-Water",
    "url": "https://github.com/Humpalumps/Ultra-Water",
    "category": "media-3d",
-   "why": "Deep eval #1 on 2026-11-01 says Adopt portion. Fits icf.games. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.",
+   "why": "Adopt portion. Fits our games site. FFT ocean for three.js and WebGL2. Take src/water. Risk is low.",
    "listed_in": "catalog/engines.md"
   },
   {
    "name": "vercel-labs/agent-desktop",
    "url": "https://github.com/vercel-labs/agent-desktop",
    "category": "local-ai-agents",
-   "why": "Deep eval #3 on 2026-11-01 says Adopt portion. Fits Game Tester and agent setup. Take the skills and the STALE_REF retry. Skip a blind global npm install. Risk is elevated."
+   "why": "Adopt portion. Fits our game-testing lane and agent setup. Take the skills and the STALE_REF retry. Skip a blind global npm install. Risk is elevated."
   },
   {
    "name": "Leonxlnx/taste-skill",
    "url": "https://github.com/Leonxlnx/taste-skill",
    "category": "agent-skills",
-   "why": "Deep eval #5 on 2026-11-01 says Adopt portion. Fits icf.games, Rygiel OS, and agent setup. Take the anti-slop rules and the scripts. Skip a blind install.sh. Risk is watch stars."
+   "why": "Adopt portion. Fits our games site, the family app, and agent setup. Take the anti-slop rules and the scripts. Skip a blind install.sh. Risk: watch the star count."
   },
   {
    "name": "iamlukethedev/Herald-OS",
    "url": "https://github.com/iamlukethedev/Herald-OS",
    "category": "local-ai-agents",
-   "why": "Deep eval #6 on 2026-11-01 says Borrow idea. Fits Rygiel OS and agent setup. Take the permission tiers, protected paths, and audit.jsonl. Skip the Linux ISO and curl-to-bash install. See [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). Risk is elevated."
+   "why": "Borrow idea. Fits the family app and agent setup. Take the permission tiers, protected paths, and audit.jsonl. Skip the Linux ISO and curl-to-bash install. See [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). Risk is elevated."
   },
   {
    "name": "gamedev-skills/awesome-gamedev-agent-skills",
    "url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
    "category": "agent-skills",
-   "why": "Deep eval #7 on 2026-11-01 says Adopt portion. Fits icf.games and agent setup. Take skills/web-engines and router/SKILL.md. See [Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios). Copied skills need Apache-2.0 attribution. Risk is watch stars."
+   "why": "Adopt portion. Fits our games site and agent setup. Take skills/web-engines and router/SKILL.md. See [Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios). Copied skills need Apache-2.0 attribution. Risk: watch the star count."
   },
   {
    "name": "Donchitos/Claude-Code-Game-Studios",
    "url": "https://github.com/Donchitos/Claude-Code-Game-Studios",
    "category": "agent-skills",
-   "why": "Deep eval #7 on 2026-11-01 says Borrow idea. Fits agent setup. The studio targets Godot, Unity, and Unreal. Take the ask-before-write and session checkpoint ideas. See [gamedev-skills/awesome-gamedev-agent-skills](https://github.com/gamedev-skills/awesome-gamedev-agent-skills). Skip the shell hooks. Risk is watch stars."
+   "why": "Borrow idea. Fits agent setup. The studio targets Godot, Unity, and Unreal. Take the ask-before-write and session checkpoint ideas. See [gamedev-skills/awesome-gamedev-agent-skills](https://github.com/gamedev-skills/awesome-gamedev-agent-skills). Skip the shell hooks. Risk: watch the star count."
   },
   {
    "name": "MemPalace/mempalace",
    "url": "https://github.com/MemPalace/mempalace",
    "category": "agent-memory",
-   "why": "Deep eval #8 on 2026-11-01 says Borrow idea. Fits agent setup and local/ZDR. Take the append-only verbatim store. Skip the 47-tool graph before a naive baseline. Agrees with [2610.30755](https://arxiv.org/abs/2610.30755). Risk is elevated."
+   "why": "Borrow idea. Fits agent setup and the local zero-retention lane. Take the append-only verbatim store. Skip the 47-tool graph before a naive baseline. Agrees with [2610.30755](https://arxiv.org/abs/2610.30755). Risk is elevated."
   }
  ]
 }

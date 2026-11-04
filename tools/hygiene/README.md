@@ -10,6 +10,7 @@ and the reusable workflow [`.github/workflows/hygiene.yml`](../../.github/workfl
 | `claims` | a number written in a file disagrees with a count taken from the repo |
 | `stale` | a dated marker such as "checked 2026-09-24" is older than `max_age_days`. Fenced code blocks are skipped. A warning unless `stale_fails` is true |
 | `instructions` | an agent instruction file is over its byte limit, or its sentinel line is missing or not the last line |
+| `deny_phrases` | a tracked text file holds a term from the `HYGIENE_DENY_TERMS` environment variable (comma or newline separated). Under GitHub Actions that variable must be set and non-empty (fail closed). Outside CI an unset or blank value skips this check. Terms are never stored in the repo. Set them as the repository secret `HYGIENE_DENY_TERMS`. The check does not print the term list |
 | root safety (workflow job, [`root_safety.sh`](root_safety.sh)) | a `root_safety` command fails; or, while it runs as root, deletes or changes the mode, owner, type or symlink target of anything under `/bin`, `/sbin`, `/usr/bin`, `/usr/sbin`, `/usr/local/bin`, `/usr/lib`, `/usr/libexec`, `/usr/local/lib`, `/usr/share`, `/opt`, `/etc`, `/root` or `/home`, or changes the content of a file in `/usr/bin`, `/usr/local/bin` or `/bin` (a write through a symlink). A snapshot that cannot be taken or compared fails too. New files are fine |
 
 ```
@@ -18,6 +19,8 @@ python3 tools/hygiene/repo_hygiene.py --selftest             # plants each defec
 python3 tools/hygiene/repo_hygiene.py --print-root-safety    # the config's root_safety commands
 python3 tests/tools/test_repo_hygiene.py                     # command-line and root_safety.sh tests (this repo)
 ```
+
+The deny list is the repository secret `HYGIENE_DENY_TERMS` (comma or newline separated). The workflow passes it into the static job. Do not commit the term list, and do not print it. Before the check prints results it registers each term with the Actions log masker, so a match line does not show the term in the public log. The selftest does not read this secret. It sets fake terms of its own, and it still checks that a missing list fails closed.
 
 Write an invisible character as an escape (a `\u` escape in code and JSON, an HTML entity in markdown). A file that holds
 one on purpose, such as a test fixture, goes on `invisible_allow` with the reason.
@@ -42,7 +45,12 @@ one on purpose, such as a test fixture, goes on `invisible_allow` with the reaso
        uses: rivendale/opensource/.github/workflows/hygiene.yml@<sha>
        with:
          hygiene_ref: <sha>
+       secrets:
+         HYGIENE_DENY_TERMS: ${{ secrets.HYGIENE_DENY_TERMS }}
    ```
+
+   Create that repository secret in the calling repo (one term per line, or comma-separated).
+   A missing secret fails the static check closed.
 
 3. Add `.hygiene.json` at the repo root (schema below), run the tool locally against a checkout of this repo,
    and fix or allow-list what it finds:
@@ -85,6 +93,8 @@ does not turn a check off.
 | `stale_fails` | bool | `false` | a stale marker fails instead of warning |
 | `instructions` | list | `[]` | `{"file": "AGENTS.md", "max_bytes": 32768, "sentinel": "..."}`; `max_bytes` defaults to 32768, `sentinel` is optional and must be the last non-blank line |
 | `root_safety` | list of strings | `[]` | one-line shell commands the workflow runs as root in a container, from the repo root, stdin closed |
+| `deny_globs` | list of globs | `["**/*"]` | files the deny_phrases check reads |
+| `deny_exclude` | list of globs | `[]` | files the deny_phrases check skips |
 
 A glob entry is either a string or `{"glob": "...", "why": "..."}`. Globs match tracked paths from the repo root:
 `*` and `?` stay inside one directory, `**/` matches any number of directories, `dir/**` matches everything under `dir`,
