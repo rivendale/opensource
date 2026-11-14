@@ -1,0 +1,9 @@
+{
+  "name": "pages-game-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node -e \"const assert = require('node:assert/strict'); assert.match(require('node:fs').readFileSync('static/index.html', 'utf8'), /Static fixture/); console.log('fixture test passed')\"",
+    "build:pages": "node -e \"const fs = require('node:fs'); fs.mkdirSync('.output/public', {recursive: true}); fs.writeFileSync('.output/public/index.html', '<!doctype html><title>Build fixture</title><h1>Build fixture</h1>'); console.log('fixture build passed')\""
+  }
+}

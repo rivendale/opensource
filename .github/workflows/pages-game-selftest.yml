@@ -1,0 +1,30 @@
+name: pages-game selftest
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pages-game.yml
+      - .github/workflows/pages-game-selftest.yml
+      - fixtures/pages-game/**
+      - tests/tools/test_pages_game.py
+      - docs/pages-game.md
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-family:
+    uses: ./.github/workflows/pages-game.yml
+    with:
+      deploy: false
+      working-directory: fixtures/pages-game
+
+  static-family:
+    uses: ./.github/workflows/pages-game.yml
+    with:
+      deploy: false
+      working-directory: fixtures/pages-game
+      build: ""
+      artifact-path: static
