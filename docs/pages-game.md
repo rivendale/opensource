@@ -23,7 +23,8 @@ so `npx` uses that installed version.
 | `working-directory` | string | `.` | Checkout-relative directory for commands and artifact-path |
 
 The lockfile is optional. The setup step caches npm only when `package-lock.json`
-exists in working-directory. Optional commands run only
+exists in working-directory. A caller without a lockfile must also clear `install`.
+Optional commands run only
 when nonempty. Commands, artifact upload, deployment and smoke failures fail the job.
 The test job uploads an artifact even when deployment is disabled. Set a distinct `artifact-name` for each call in a run to avoid artifact name collisions.
 Deployments share a repository concurrency group and do not cancel a running deploy.
@@ -68,6 +69,30 @@ jobs:
   pages:
     uses: rivendale/opensource/.github/workflows/pages-game.yml@v1
     with:
+      build: ""
+      artifact-path: public
+      smoke-url: https://example.github.io/game/
+```
+
+Bare static site (no package.json):
+
+```yaml
+name: Pages
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  pages:
+    uses: rivendale/opensource/.github/workflows/pages-game.yml@v1
+    with:
+      install: ""
+      test: ""
       build: ""
       artifact-path: public
       smoke-url: https://example.github.io/game/

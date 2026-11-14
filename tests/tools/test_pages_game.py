@@ -38,7 +38,7 @@ class PagesGame(unittest.TestCase):
         self.assertEqual(upload['with']['name'], '${{ inputs.artifact-name }}')
         self.assertEqual(deploy['with']['artifact_name'], '${{ inputs.artifact-name }}')
         selftest = yaml.safe_load((ROOT / '.github/workflows/pages-game-selftest.yml').read_text())
-        calls = [j['with'] for j in selftest['jobs'].values()]
+        calls = [j['with'] for j in selftest['jobs'].values() if 'uses' in j]
         self.assertEqual(len(calls), 3)
         self.assertEqual(len({j['artifact-name'] for j in calls}), 3)
         bare = next(j for j in calls if j['working-directory'] == 'fixtures/pages-game-bare')
@@ -50,13 +50,35 @@ class PagesGame(unittest.TestCase):
         self.assertEqual(sorted(str(p.relative_to(folder)) for p in folder.rglob('*') if p.is_file()), ['site/index.html'])
         print('three distinct artifacts; bare fixture has only site/index.html')
 
+    def test_caller_commands_use_strict_bash(self):
+        for name in ('Install', 'Typecheck', 'Test', 'Build', 'E2E'):
+            with self.subTest(step=name):
+                step = next(s for s in self.steps if s.get('name') == name)
+                self.assertEqual(step['run'], 'bash -eo pipefail -c "$COMMAND"')
+
     def test_failed_command_stops_step(self):
-        step = next(s for s in self.steps if s.get('name') == 'Test')
-        result = subprocess.run(['bash', '-e', '-c', step['run']],
-                                env={**os.environ, 'COMMAND': 'echo deliberate-failure; exit 17'},
-                                capture_output=True, text=True)
-        self.assertEqual(result.returncode, 17)
-        print(f'{result.stdout.strip()}: exit {result.returncode}')
+        for command in ('false; echo second', 'false | true; echo second'):
+            with self.subTest(command=command):
+                step = next(s for s in self.steps if s.get('name') == 'Test')
+                result = subprocess.run(['bash', '-e', '-c', step['run']],
+                                        env={**os.environ, 'COMMAND': command},
+                                        capture_output=True, text=True)
+                print(f'{command}: exit {result.returncode}; stdout={result.stdout!r}')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertNotIn('second', result.stdout)
+
+    def test_contract_test_runs_in_ci(self):
+        selftest = yaml.safe_load((ROOT / '.github/workflows/pages-game-selftest.yml').read_text())
+        self.assertIn('contract-test', selftest['jobs'])
+        job = selftest['jobs']['contract-test']
+        self.assertEqual(job['permissions'], {'contents': 'read'})
+        self.assertEqual(job['runs-on'], 'ubuntu-24.04')
+        checkout = next(s for s in job['steps'] if 'uses' in s)
+        self.assertEqual(checkout['uses'], self.steps[0]['uses'])
+        self.assertIs(checkout['with']['persist-credentials'], False)
+        self.assertTrue(any(s.get('run') == 'python3 tests/tools/test_pages_game.py'
+                            for s in job['steps']))
+        print('CI contract test: pinned checkout, read-only contents, Python test enabled')
 
     def test_command_is_data_until_bash_executes_it(self):
         for job in self.workflow['jobs'].values():

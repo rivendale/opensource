@@ -75,22 +75,22 @@ jobs:
         if: inputs.install != ''
         env:
           COMMAND: ${{ inputs.install }}
-        run: bash -c "$COMMAND"
+        run: bash -eo pipefail -c "$COMMAND"
       - name: Typecheck
         if: inputs.typecheck != ''
         env:
           COMMAND: ${{ inputs.typecheck }}
-        run: bash -c "$COMMAND"
+        run: bash -eo pipefail -c "$COMMAND"
       - name: Test
         if: inputs.test != ''
         env:
           COMMAND: ${{ inputs.test }}
-        run: bash -c "$COMMAND"
+        run: bash -eo pipefail -c "$COMMAND"
       - name: Build
         if: inputs.build != ''
         env:
           COMMAND: ${{ inputs.build }}
-        run: bash -c "$COMMAND"
+        run: bash -eo pipefail -c "$COMMAND"
       - name: Install Playwright
         if: inputs.e2e != ''
         run: npx playwright install --with-deps
@@ -98,7 +98,7 @@ jobs:
         if: inputs.e2e != ''
         env:
           COMMAND: ${{ inputs.e2e }}
-        run: bash -c "$COMMAND"
+        run: bash -eo pipefail -c "$COMMAND"
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:

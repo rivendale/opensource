@@ -16,6 +16,19 @@ permissions:
   id-token: write
 
 jobs:
+  contract-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Workflow contract tests
+        run: python3 tests/tools/test_pages_game.py
+
   build-family:
     uses: ./.github/workflows/pages-game.yml
     with:
