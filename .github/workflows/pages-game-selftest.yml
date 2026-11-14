@@ -1,0 +1,57 @@
+name: pages-game selftest
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pages-game.yml
+      - .github/workflows/pages-game-selftest.yml
+      - fixtures/pages-game/**
+      - fixtures/pages-game-bare/**
+      - tests/tools/test_pages_game.py
+      - docs/pages-game.md
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  contract-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Workflow contract tests
+        run: python3 tests/tools/test_pages_game.py
+
+  build-family:
+    uses: ./.github/workflows/pages-game.yml
+    with:
+      deploy: false
+      working-directory: fixtures/pages-game
+      artifact-name: github-pages-build
+
+  static-family:
+    uses: ./.github/workflows/pages-game.yml
+    with:
+      deploy: false
+      working-directory: fixtures/pages-game
+      artifact-name: github-pages-static
+      build: ""
+      artifact-path: static
+
+  bare-family:
+    uses: ./.github/workflows/pages-game.yml
+    with:
+      deploy: false
+      working-directory: fixtures/pages-game-bare
+      artifact-name: github-pages-bare
+      install: ""
+      test: ""
+      build: ""
+      artifact-path: site

@@ -1,0 +1,134 @@
+# Shared Pages deployment. Inputs come from the calling repo's own workflow file.
+name: pages-game
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version.
+        type: string
+        default: "22"
+      install:
+        description: Dependency installation command.
+        type: string
+        default: npm ci
+      typecheck:
+        description: Optional typecheck command.
+        type: string
+        default: ""
+      test:
+        description: Test command.
+        type: string
+        default: npm test
+      build:
+        description: Build command; empty for static games.
+        type: string
+        default: npm run build:pages
+      artifact-name:
+        description: Pages artifact name; use distinct names for multiple calls per run.
+        type: string
+        default: github-pages
+      artifact-path:
+        description: Pages folder, relative to working-directory.
+        type: string
+        default: .output/public
+      e2e:
+        description: Optional command run after installing Playwright browsers.
+        type: string
+        default: ""
+      smoke-url:
+        description: URL to check after deployment; callers should set it.
+        type: string
+        default: ""
+      deploy:
+        description: Whether to deploy after testing (never on pull requests).
+        type: boolean
+        default: true
+      working-directory:
+        description: Directory for commands and artifact-path, relative to checkout.
+        type: string
+        default: .
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ hashFiles(format('{0}/package-lock.json', inputs.working-directory)) != '' && 'npm' || '' }}
+          cache-dependency-path: ${{ hashFiles(format('{0}/package-lock.json', inputs.working-directory)) != '' && format('{0}/package-lock.json', inputs.working-directory) || '' }}
+      - name: Install
+        if: inputs.install != ''
+        env:
+          COMMAND: ${{ inputs.install }}
+        run: bash -eo pipefail -c "$COMMAND"
+      - name: Typecheck
+        if: inputs.typecheck != ''
+        env:
+          COMMAND: ${{ inputs.typecheck }}
+        run: bash -eo pipefail -c "$COMMAND"
+      - name: Test
+        if: inputs.test != ''
+        env:
+          COMMAND: ${{ inputs.test }}
+        run: bash -eo pipefail -c "$COMMAND"
+      - name: Build
+        if: inputs.build != ''
+        env:
+          COMMAND: ${{ inputs.build }}
+        run: bash -eo pipefail -c "$COMMAND"
+      - name: Install Playwright
+        if: inputs.e2e != ''
+        run: npx playwright install --with-deps
+      - name: E2E
+        if: inputs.e2e != ''
+        env:
+          COMMAND: ${{ inputs.e2e }}
+        run: bash -eo pipefail -c "$COMMAND"
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ inputs.working-directory }}/${{ inputs.artifact-path }}
+
+  deploy:
+    needs: test
+    if: inputs.deploy && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages-game-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+        with:
+          artifact_name: ${{ inputs.artifact-name }}
+      - name: Smoke check
+        if: inputs.smoke-url != ''
+        env:
+          SMOKE_URL: ${{ inputs.smoke-url }}
+        run: curl --fail --retry 6 --retry-delay 5 --retry-all-errors --max-time 40 -o /dev/null "$SMOKE_URL"
