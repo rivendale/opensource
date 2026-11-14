@@ -6,6 +6,7 @@ on:
       - .github/workflows/pages-game.yml
       - .github/workflows/pages-game-selftest.yml
       - fixtures/pages-game/**
+      - fixtures/pages-game-bare/**
       - tests/tools/test_pages_game.py
       - docs/pages-game.md
 
@@ -20,11 +21,24 @@ jobs:
     with:
       deploy: false
       working-directory: fixtures/pages-game
+      artifact-name: github-pages-build
 
   static-family:
     uses: ./.github/workflows/pages-game.yml
     with:
       deploy: false
       working-directory: fixtures/pages-game
+      artifact-name: github-pages-static
       build: ""
       artifact-path: static
+
+  bare-family:
+    uses: ./.github/workflows/pages-game.yml
+    with:
+      deploy: false
+      working-directory: fixtures/pages-game-bare
+      artifact-name: github-pages-bare
+      install: ""
+      test: ""
+      build: ""
+      artifact-path: site
